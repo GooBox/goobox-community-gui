@@ -2,8 +2,8 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
-  font-weight: lighter;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 300;
 }
 
 body{
@@ -64,15 +64,14 @@ footer {
 
 main span {
   display: inline-block;
-  font-weight: lighter;
 }
 
-.underlined {
-  font-weight: normal;
+.light {
+  font-weight: 300;
 }
 
 .bold{
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .left{
@@ -90,4 +89,16 @@ main span {
 }
 :-ms-input-placeholder {
    text-align: center;
+}
+
+.arrow{
+  width: 17px;
+  height: 11px;
+  margin-left: 9px;
+  margin-right: 9px;
+}
+
+.icon{
+  width: 41px;
+  height: 40px;
 }

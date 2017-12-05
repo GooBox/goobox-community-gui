@@ -2,6 +2,7 @@
 
   <head>
     <link href="./main.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700" rel="stylesheet">
     <style>
       main{
         color: white;
@@ -20,7 +21,7 @@
         border-radius: 5px;
         border-style: none;
       }
-      .arrow{
+      .down-arrow{
         position: absolute;
         top: 179px;
         padding-right: 89px;
@@ -35,20 +36,20 @@
 
   <body>
     <div id="app" class="background-gradation">
-      <header><img src="./white_icon.png" width="41px" height="40px" /></header>
+      <header><img class="icon" src="./assets/left_white_icon.svg"/></header>
       <main class="left">
         <div style="font-size: 14.1px;">You choose <span class="bold">Storj</span></div>
-        <div style="font-size: 21.1px;">Now, choose the location of your <span class="underlined">sync folder<span>.</div>
+        <div class="bold" style="font-size: 21.1px;">Now, choose the location of your <span class="underlined bold">sync folder<span>.</div>
       </main>
-      <main class="arrow">
+      <main class="down-arrow">
         <div style="font-size: 29pt;">↓</div>
       </main>
       <main class="browse-btn">
         <div><button>Browse...</button></div>
       </main>
       <footer>
-        <a class="back-btn" href="javascript:void();">← Back</a>
-        <a class="next-btn" href="javascript:void();">Next →</a>
+        <a class="back-btn" href="javascript:void();"><img class="arrow" src="./assets/left_arrow.svg"/> Back</a>
+        <a class="next-btn" href="javascript:void();">Next <img class="arrow" src="./assets/right_arrow.svg"/></a>
       </footer>
     </div>
   </body>
