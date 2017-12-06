@@ -128,3 +128,16 @@ input{
   margin-bottom: 9px;
   text-align: center;
 }
+
+.up-and-down{
+  animation: up-and-down 1s ease-in-out infinite alternate
+}
+
+@keyframes up-and-down {
+  0% {
+    transform: translateY(0px);
+  }
+  100%{
+    transform: translateY(10px);
+  }
+}
