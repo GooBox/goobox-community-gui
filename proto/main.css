@@ -102,3 +102,13 @@ main span {
   width: 41px;
   height: 40px;
 }
+
+input{
+  background-color: white;
+  border-radius: 5px;
+  border-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 9px;
+  text-align: center;
+}
