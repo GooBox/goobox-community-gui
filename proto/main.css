@@ -46,9 +46,25 @@ footer {
   font-size: 12pt;
 }
 
+.back-btn:active {
+  padding-top: 1px;
+  padding-left: 1px;
+  transform: scale(0.9);
+}
+
 .next-btn {
   float: right;
   font-size: 12pt;
+}
+
+.next-btn:active{
+  padding-top: 1px;
+  padding-left: 1px;
+  transform: scale(0.9);
+}
+
+button:active{
+  transform: scale(0.9);
 }
 
 .underlined:after {
