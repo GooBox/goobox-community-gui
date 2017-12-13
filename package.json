@@ -1,0 +1,35 @@
+{
+  "name": "goobox-community-gui",
+  "version": "0.1.0",
+  "description": "Goobox community edition sync app for sia and storj 🎉🚀",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --out=dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/GooBox/goobox-community-gui.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/GooBox/goobox-community-gui/issues"
+  },
+  "homepage": "https://github.com/GooBox/goobox-community-gui#readme",
+  "devDependencies": {
+    "electron": "1.7.9",
+    "electron-packager": "^10.1.0"
+  },
+  "babel": {
+    "sourceMaps": "inline",
+    "presets": [
+      "env"
+    ]
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0"
+  }
+}
