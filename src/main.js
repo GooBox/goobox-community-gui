@@ -1,24 +1,18 @@
 "use strict";
 import path from "path";
 import {app, BrowserWindow, Menu, Tray} from "electron";
+import menubar from "menubar";
 
-let tray = null;
-let mainWindow = null;
-app.on("ready", () => {
+const mb = menubar({
+  index: "file://" + path.join(__dirname, "../proto/opening_screen.html"),
+  icon: path.join(__dirname, "../proto/assets/icon-win.png"),
+  tooltip: app.getName(),
+  preloadWindow: true,
+  width: 600,
+  height: 400,
+});
 
-  mainWindow = new BrowserWindow({
-    "width": 600, "height": 400,
-    "frame": false,
-    "resizable": false,
-    "show": false,
-    "skip-taskbar": true,
-    useContentSize: true
-  });
-  mainWindow.loadURL("file://" + path.join(__dirname, "../proto/opening_screen.html"));
-
-  mainWindow.on("blur", () => mainWindow.hide());
-
-  tray = new Tray(path.join(__dirname, "../proto/assets/icon-win.png"));
+mb.on("ready", () => {
 
   const ctxMenu = Menu.buildFromTemplate([
     {
@@ -26,44 +20,9 @@ app.on("ready", () => {
       click: () => app.quit()
     }
   ]);
-  tray.setToolTip(app.getName());
 
-  tray.on("click", () => {
-    toggleWindow();
+  mb.tray.on("right-click", () =>{
+    mb.tray.popUpContextMenu(ctxMenu);
   });
-
-  tray.on("right-click", () =>{
-    tray.popUpContextMenu(ctxMenu);
-  });
-
 
 });
-
-const getWindowPosition = () => {
-  const windowBounds = mainWindow.getBounds()
-  const trayBounds = tray.getBounds()
-
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
-
-  // Position window 4 pixels vertically below the tray icon
-  // const y = Math.round(trayBounds.y + trayBounds.height + 4)
-  const y = Math.round(trayBounds.y - windowBounds.height - 4)
-
-  return {x: x, y: y}
-}
-
-const toggleWindow = () => {
-  if (mainWindow.isVisible()) {
-    mainWindow.hide()
-  } else {
-    showWindow()
-  }
-}
-
-const showWindow = () => {
-  const position = getWindowPosition()
-  mainWindow.setPosition(position.x, position.y, false)
-  mainWindow.show()
-  mainWindow.focus()
-}

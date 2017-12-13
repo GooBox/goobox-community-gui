@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "menubar": "^5.2.3"
   }
 }
