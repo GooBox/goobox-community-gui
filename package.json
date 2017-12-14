@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --out=dist"
   },
   "repository": {
@@ -18,19 +18,41 @@
     "url": "https://github.com/GooBox/goobox-community-gui/issues"
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui#readme",
+  "dependencies": {
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "menubar": "^5.2.3",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2"
+  },
   "devDependencies": {
+    "babel-jest": "^21.2.0",
     "electron": "1.7.9",
-    "electron-packager": "^10.1.0"
+    "electron-packager": "^10.1.0",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
+    "jest": "^21.2.1"
   },
   "babel": {
     "sourceMaps": "inline",
     "presets": [
-      "env"
+      "env",
+      "react"
     ]
   },
-  "dependencies": {
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0",
-    "menubar": "^5.2.3"
+  "jest": {
+    "setupFiles": [
+      "raf/polyfill",
+      "./setupTests.js"
+    ],
+    "moduleNameMapper": {
+      "electron": "<rootDir>/src/mock/electron.js"
+    },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/dist"
+    ]
   }
 }
