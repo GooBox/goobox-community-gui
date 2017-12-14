@@ -4,7 +4,7 @@ import {app, BrowserWindow, Menu, Tray} from "electron";
 import menubar from "menubar";
 
 const mb = menubar({
-  index: "file://" + path.join(__dirname, "../proto/opening_screen.html"),
+  index: "file://" + path.join(__dirname, "../static/opening_screen.html"),
   icon: path.join(__dirname, "../proto/assets/icon-win.png"),
   tooltip: app.getName(),
   preloadWindow: true,
