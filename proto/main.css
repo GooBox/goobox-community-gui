@@ -6,7 +6,7 @@
   font-weight: 300;
 }
 
-body{
+body {
   background-color: gray;
 }
 
@@ -47,8 +47,7 @@ footer {
 }
 
 .back-btn:active {
-  padding-top: 1px;
-  padding-left: 1px;
+  position: relative;
   transform: scale(0.9);
 }
 
@@ -57,17 +56,17 @@ footer {
   font-size: 12pt;
 }
 
-.next-btn:active{
-  padding-top: 1px;
-  padding-left: 1px;
+.next-btn:active {
+  position: relative;
   transform: scale(0.9);
 }
 
-button:active{
+button:active {
+  position: relative;
   transform: scale(0.9);
 }
 
-button:focus{
+button:focus {
   outline: none;
 }
 
@@ -90,40 +89,43 @@ main span {
   font-weight: 300;
 }
 
-.bold{
+.bold {
   font-weight: 700;
 }
 
-.left{
+.left {
   text-align: left;
 }
 
 ::-webkit-input-placeholder {
-   text-align: center;
-}
-:-moz-placeholder { /* Firefox 18- */
-   text-align: center;
-}
-::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;
-}
-:-ms-input-placeholder {
-   text-align: center;
+  text-align: center;
 }
 
-.arrow{
+:-moz-placeholder { /* Firefox 18- */
+  text-align: center;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+  text-align: center;
+}
+
+:-ms-input-placeholder {
+  text-align: center;
+}
+
+.arrow {
   width: 17px;
   height: 11px;
   margin-left: 9px;
   margin-right: 9px;
 }
 
-.icon{
+.icon {
   width: 41px;
   height: 40px;
 }
 
-input{
+input {
   background-color: white;
   border-radius: 5px;
   border-style: none;
@@ -133,7 +135,7 @@ input{
   text-align: center;
 }
 
-.up-and-down{
+.up-and-down {
   animation: up-and-down 1s ease-in-out infinite alternate
 }
 
@@ -141,7 +143,7 @@ input{
   0% {
     transform: translateY(0px);
   }
-  100%{
+  100% {
     transform: translateY(10px);
   }
 }
