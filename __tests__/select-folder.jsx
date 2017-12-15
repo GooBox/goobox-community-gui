@@ -18,20 +18,29 @@
 import React from "react";
 import {remote} from "electron";
 import {shallow} from "enzyme";
-import StorjSelectFolder from "../src/storj-select-folder.jsx";
+import SelectFolder from "../src/select-folder.jsx";
 
 const dialog = remote.dialog;
 
-describe("StorjSelectFolder component", () => {
+describe("SelectFolder component", () => {
 
   it("has background-gradation class", () => {
-    const wrapper = shallow(<StorjSelectFolder/>);
+    const wrapper = shallow(<SelectFolder/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
+  });
+
+  it("takes a name of service and shows it", () => {
+    const service = "Storj or SIA";
+    const wrapper = shallow(<SelectFolder service={service}/>);
+
+    const place = wrapper.find(".service-name");
+    expect(place.exists()).toBeTruthy();
+    expect(place.text()).toEqual(service);
   });
 
   it("has a back link", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<StorjSelectFolder onClickBack={fn}/>);
+    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
 
     const link = wrapper.find(".back-btn");
     expect(link.exists()).toBeTruthy();
@@ -42,7 +51,7 @@ describe("StorjSelectFolder component", () => {
 
   it("disables the back link while a dialog is open", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<StorjSelectFolder onClickBack={fn}/>);
+    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
     wrapper.instance().selecting = true;
 
     const link = wrapper.find(".back-btn");
@@ -52,7 +61,7 @@ describe("StorjSelectFolder component", () => {
 
   it("has a next link", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<StorjSelectFolder onClickNext={fn}/>);
+    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
 
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
@@ -63,7 +72,7 @@ describe("StorjSelectFolder component", () => {
 
   it("disables the next link while a dialog is open", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<StorjSelectFolder onClickNext={fn}/>);
+    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
     wrapper.instance().selecting = true;
 
     const link = wrapper.find(".next-btn");
@@ -72,7 +81,7 @@ describe("StorjSelectFolder component", () => {
   });
 
   it("has a button to open a dialog", () => {
-    const wrapper = shallow(<StorjSelectFolder/>);
+    const wrapper = shallow(<SelectFolder/>);
     expect(wrapper.find("button").prop("onClick")).toBe(wrapper.instance()._onClickBrowse);
   });
 
@@ -90,7 +99,7 @@ describe("StorjSelectFolder component", () => {
       });
 
       const fn = jest.fn();
-      const wrapper = shallow(<StorjSelectFolder onSelectFolder={fn}/>);
+      const wrapper = shallow(<SelectFolder onSelectFolder={fn}/>);
 
       return wrapper.instance()._onClickBrowse().then(() => {
         expect(fn).toHaveBeenCalledWith(sampleDir);
@@ -109,7 +118,7 @@ describe("StorjSelectFolder component", () => {
       });
 
       const fn = jest.fn();
-      const wrapper = shallow(<StorjSelectFolder folder={defaultDir} onSelectFolder={fn}/>);
+      const wrapper = shallow(<SelectFolder folder={defaultDir} onSelectFolder={fn}/>);
 
       return wrapper.instance()._onClickBrowse().then(() => {
         expect(fn).toHaveBeenCalledWith(defaultDir);
@@ -128,7 +137,7 @@ describe("StorjSelectFolder component", () => {
       });
 
       const fn = jest.fn();
-      const wrapper = shallow(<StorjSelectFolder onSelectFolder={fn}/>);
+      const wrapper = shallow(<SelectFolder onSelectFolder={fn}/>);
 
       return wrapper.instance()._onClickBrowse().then(() => {
         expect(fn).not.toHaveBeenCalled();
@@ -141,7 +150,7 @@ describe("StorjSelectFolder component", () => {
 
     it("disables all buttons on the screen until the dialog is closed", () => {
 
-      const wrapper = shallow(<StorjSelectFolder/>);
+      const wrapper = shallow(<SelectFolder/>);
       dialog.showOpenDialog.mockImplementation((window, opts, cb) => {
         expect(wrapper.instance().selecting).toBeTruthy();
         cb(null);
@@ -156,7 +165,7 @@ describe("StorjSelectFolder component", () => {
 
     it("is disabled if another dialog is already open", () => {
 
-      const wrapper = shallow(<StorjSelectFolder/>);
+      const wrapper = shallow(<SelectFolder/>);
       wrapper.instance().selecting = true;
 
       return wrapper.instance()._onClickBrowse().catch((e) => {

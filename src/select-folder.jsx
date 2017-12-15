@@ -69,7 +69,7 @@ const style = {
 
 };
 
-export default class StorjSelectFolder extends React.Component {
+export default class SelectFolder extends React.Component {
 
   constructor(props) {
     super(props);
@@ -128,7 +128,7 @@ export default class StorjSelectFolder extends React.Component {
       <div className="background-gradation">
         <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
         <main className="left" style={style.main}>
-          <div style={style.f141}>You chose <span className="bold">Storj</span>.</div>
+          <div style={style.f141}>You chose <span className="bold service-name">{this.props.service}</span>.</div>
           <div className="bold" style={style.f211}>
             Now, choose the location of your <span className="underlined bold">sync folder</span>.
           </div>
@@ -155,7 +155,8 @@ export default class StorjSelectFolder extends React.Component {
 
 }
 
-StorjSelectFolder.propsTypes = {
+SelectFolder.propsTypes = {
+  service: PropTypes.string,
   folder: PropTypes.string,
   onClickBack: PropTypes.func,
   onClickNext: PropTypes.func,
