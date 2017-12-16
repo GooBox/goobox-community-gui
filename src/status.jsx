@@ -18,21 +18,24 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+const synchronizing = "synchronizing";
+const paused = "paused";
+
 
 export default class Status extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onClickPauseSync = this._onClickPauseSync.bind(this);
+    this._onChangeState = this._onChangeState.bind(this);
     this._onClickSettings = this._onClickSettings.bind(this);
     this._onClickInfo = this._onClickInfo.bind(this);
     this._onClickSyncFolder = this._onClickSyncFolder.bind(this);
     this._onClickImportDrive = this._onClickImportDrive.bind(this);
   }
 
-  _onClickPauseSync() {
-    if (this.props.onClickPauseSync) {
-      this.props.onClickPauseSync();
+  _onChangeState(state) {
+    if (this.props.onChangeState) {
+      this.props.onChangeState(state);
     }
   }
 
@@ -67,13 +70,39 @@ export default class Status extends React.Component {
       width: `${rate}%`
     };
 
+    let pauseRestartBtn;
+    let stateInfo;
+    if (this.props.state === synchronizing) {
+      pauseRestartBtn = (
+        <a className="pause-sync-btn" onClick={() => this._onChangeState(paused)}>
+          <img src="../resources/pause_sync.svg" width="23px" height="23px"/>
+        </a>
+      );
+      stateInfo = (
+        <div>
+          <img className="state-icon" src="../resources/synchronized.svg" width="81px" height="81px"/>,
+          <p className="state-text bold">Goobox is up to date.</p>
+        </div>
+      );
+    } else {
+      pauseRestartBtn = (
+        <a className="sync-again-btn" onClick={() => this._onChangeState(synchronizing)}>
+          <img src="../resources/sync_again.svg" width="23px" height="23px"/>
+        </a>
+      );
+      stateInfo = (
+        <div>
+          <img className="state-icon" src="../resources/paused.svg" width="81px" height="81px"/>,
+          <p className="state-text bold">File transfers paused.</p>
+        </div>
+      );
+    }
+
     return (
       <div>
         <nav className="background-gradation">
           <img src="../resources/left_white_icon.svg" width="41px" height="40px"/>
-          <a className="pause-sync-btn" onClick={this._onClickPauseSync}>
-            <img src="../resources/pause_sync.svg" width="23px" height="23px"/>
-          </a>
+          {pauseRestartBtn}
           <a className="settings-btn" onClick={this._onClickSettings}>
             <img src="../resources/settings.svg" width="23px" height="23px"/>
           </a>
@@ -83,8 +112,7 @@ export default class Status extends React.Component {
           <img className="title" src="../resources/title.svg" width="43px" height="11px"/>
         </nav>
         <main>
-          <img className="state-icon" src="../resources/synchronized.svg" width="81px" height="81px"/>
-          <p className="state-text bold">Goobox is up to date.</p>
+          {stateInfo}
           <div className="usage-box">
             <span className="usage">Usage: {this.props.usedVolume}GB</span>
             <span className="usage-rate">{rate}% of {this.props.totalVolume}GB</span>
@@ -115,7 +143,8 @@ export default class Status extends React.Component {
 Status.propTypes = {
   usedVolume: PropTypes.number,
   totalVolume: PropTypes.number,
-  onClickPauseSync: PropTypes.func,
+  state: PropTypes.string,
+  onChangeState: PropTypes.func,
   onClickSettings: PropTypes.func,
   onClickInfo: PropTypes.func,
   onClickSyncFolder: PropTypes.func,

@@ -21,14 +21,36 @@ import Status from "../src/status";
 
 describe("Status component", () => {
 
-  it("has a pause button", () => {
+  it("has a synchronized icon and text when the state is synchronizing", () => {
+    const wrapper = shallow(<Status state="synchronizing"/>);
+    expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/synchronized.svg");
+    expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
+  });
+
+  it("has a paused icon and text when the state is paused", () => {
+    const wrapper = shallow(<Status state="paused"/>);
+    expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/paused.svg");
+    expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
+  });
+
+  it("has a pause button when the state is synchronizing", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Status onClickPauseSync={fn}/>);
+    const wrapper = shallow(<Status state="synchronizing" onChangeState={fn}/>);
     const pause = wrapper.find(".pause-sync-btn");
     expect(pause.exists()).toBeTruthy();
 
     pause.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledWith("paused");
+  });
+
+  it("has a restart button when the state is paused", () => {
+    const fn = jest.fn();
+    const wrapper = shallow(<Status state="paused" onChangeState={fn}/>);
+    const restart = wrapper.find(".sync-again-btn");
+    expect(restart.exists()).toBeTruthy();
+
+    restart.simulate("click");
+    expect(fn).toHaveBeenCalledWith("synchronizing");
   });
 
   it("has a settings button", () => {
