@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui#readme",
   "dependencies": {
+    "about-window": "^1.8.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
