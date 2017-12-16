@@ -70,12 +70,12 @@ a:active {
 }
 
 .pause-sync-btn {
-  margin-top: 75px;
+  margin-top: 70px;
   display: inline-block;
 }
 
 .sync-again-btn {
-  margin-top: 75px;
+  margin-top: 70px;
   display: inline-block;
 }
 
@@ -94,11 +94,11 @@ a:active {
 }
 
 .state-icon {
-  margin-top: 49px;
+  margin-top: 40px;
 }
 
 .state-text {
-  margin-top: 29px;
+  margin-top: 10px;
   font-size: 19.7px;
   color: rgb(153, 153, 153);
   display: inline-block;
@@ -164,4 +164,8 @@ a:active {
 .import-drive {
   float: right;
   margin-right: 85px;
+}
+
+::selection {
+  background: transparent;
 }
