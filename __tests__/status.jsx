@@ -17,13 +17,13 @@
 
 import React from "react";
 import {shallow} from "enzyme";
-import Running from "../src/running";
+import Status from "../src/status";
 
-describe("Running component", () => {
+describe("Status component", () => {
 
   it("has a pause button", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Running onClickPauseSync={fn}/>);
+    const wrapper = shallow(<Status onClickPauseSync={fn}/>);
     const pause = wrapper.find(".pause-sync-btn");
     expect(pause.exists()).toBeTruthy();
 
@@ -33,7 +33,7 @@ describe("Running component", () => {
 
   it("has a settings button", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Running onClickSettings={fn}/>);
+    const wrapper = shallow(<Status onClickSettings={fn}/>);
     const settings = wrapper.find(".settings-btn");
     expect(settings.exists()).toBeTruthy();
 
@@ -43,7 +43,7 @@ describe("Running component", () => {
 
   it("has an info button", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Running onClickInfo={fn}/>);
+    const wrapper = shallow(<Status onClickInfo={fn}/>);
     const info = wrapper.find(".info-btn");
     expect(info.exists()).toBeTruthy();
 
@@ -53,7 +53,7 @@ describe("Running component", () => {
 
   it("has a sync folder button", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Running onClickSyncFolder={fn}/>);
+    const wrapper = shallow(<Status onClickSyncFolder={fn}/>);
     const folder = wrapper.find(".sync-folder");
     expect(folder.exists()).toBeTruthy();
 
@@ -63,7 +63,7 @@ describe("Running component", () => {
 
   it("has an import drive button", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Running onClickImportDrive={fn}/>);
+    const wrapper = shallow(<Status onClickImportDrive={fn}/>);
     const drive = wrapper.find(".import-drive");
     expect(drive.exists()).toBeTruthy();
 
@@ -73,7 +73,7 @@ describe("Running component", () => {
 
   it("has a usage text box", () => {
     const used = 12;
-    const wrapper = shallow(<Running usedVolume={used}/>);
+    const wrapper = shallow(<Status usedVolume={used}/>);
     const usage = wrapper.find(".usage");
     expect(usage.exists()).toBeTruthy();
     expect(usage.text()).toEqual(`Usage: ${used}GB`);
@@ -82,7 +82,7 @@ describe("Running component", () => {
   it("has a usage percentage box", () => {
     const used = 12;
     const total = 48;
-    const wrapper = shallow(<Running usedVolume={used} totalVolume={total}/>);
+    const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
     const usage = wrapper.find(".usage-rate");
     expect(usage.exists()).toBeTruthy();
     expect(usage.text()).toEqual(`${Math.round(used / total * 100)}% of ${total}GB`);
@@ -91,7 +91,7 @@ describe("Running component", () => {
   it("has a usage bar", () => {
     const used = 10;
     const total = 30;
-    const wrapper = shallow(<Running usedVolume={used} totalVolume={total}/>);
+    const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
     const usageBar = wrapper.find(".bar");
     expect(usageBar.exists()).toBeTruthy();
     expect(usageBar.prop("style")).toEqual({

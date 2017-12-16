@@ -19,7 +19,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 
-export default class Running extends React.Component {
+export default class Status extends React.Component {
 
   constructor(props) {
     super(props);
@@ -112,7 +112,7 @@ export default class Running extends React.Component {
 }
 
 
-Running.propTypes = {
+Status.propTypes = {
   usedVolume: PropTypes.number,
   totalVolume: PropTypes.number,
   onClickPauseSync: PropTypes.func,
