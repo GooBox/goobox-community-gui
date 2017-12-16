@@ -1,0 +1,167 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 300;
+}
+
+body {
+  background-color: gray;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+#app {
+  background-color: white;
+  width: 518px;
+  height: 400px;
+}
+
+.background-gradation {
+  background: -prefix-linear-gradient(top, #00AFB1, #7A55DE);
+  background: linear-gradient(to bottom, #00AFB1, #7A55DE);
+}
+
+nav {
+  float: left;
+  width: 84px;
+  height: 400px;
+  padding-top: 24px;
+  padding-bottom: 17px;
+}
+
+nav img {
+  width: 84px;
+  padding: 0 auto;
+}
+
+main {
+  float: right;
+  width: 434px;
+  height: 400px;
+  background-color: #F7F7F7;
+  text-align: center;
+}
+
+main * {
+  width: 434px;
+  padding: 0 auto;
+}
+
+.light {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.left {
+  text-align: left;
+}
+
+a:active {
+  position: relative;
+  transform: scale(0.9);
+}
+
+.pause-sync-btn {
+  margin-top: 75px;
+  display: inline-block;
+}
+
+.sync-again-btn {
+  margin-top: 75px;
+  display: inline-block;
+}
+
+.settings-btn {
+  margin-top: 38px;
+  display: inline-block;
+}
+
+.info-btn {
+  margin-top: 38px;
+  display: inline-block;
+}
+
+.title {
+  margin-top: 65px;
+}
+
+.state-icon {
+  margin-top: 49px;
+}
+
+.state-text {
+  margin-top: 29px;
+  font-size: 19.7px;
+  color: rgb(153, 153, 153);
+  display: inline-block;
+}
+
+.usage-box {
+  height: 80px;
+  background-color: white;
+  margin-top: 50px;
+  font-size: 9px;
+  color: rgb(153, 153, 153);
+  padding: 20px 30px;
+}
+
+.usage {
+  float: left;
+  width: auto;
+}
+
+.usage-rate {
+  float: right;
+  width: auto;
+}
+
+.meter {
+  display: block;
+  border: #F7F7F7 1px solid;
+  clear: both;
+  width: auto;
+  height: 12px;
+  margin-top: 20px;
+  border-radius: 50px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: -prefix-linear-gradient(left, #7A55DE, #00AFB1);
+  background: linear-gradient(to right, #7A55DE, #00AFB1);
+  border-radius: 50px;
+}
+
+.links {
+  margin-top: 20px;
+}
+
+.links * {
+  width: auto;
+}
+
+.links span {
+  width: auto;
+  font-size: 11px;
+  color: rgb(153, 153, 153);
+}
+
+.sync-folder {
+  float: left;
+  padding-top: 3px;
+  margin-left: 80px;
+}
+
+.import-drive {
+  float: right;
+  margin-right: 85px;
+}
