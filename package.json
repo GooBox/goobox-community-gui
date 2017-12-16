@@ -26,7 +26,8 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2"
+    "react-router-dom": "^4.2.2",
+    "semver": "^5.4.1"
   },
   "devDependencies": {
     "babel-jest": "^21.2.0",
