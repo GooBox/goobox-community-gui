@@ -6,13 +6,13 @@
   "scripts": {
     "start": "electron .",
     "test": "jest",
-    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --out=dist"
+    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/GooBox/goobox-community-gui.git"
   },
-  "author": "",
+  "author": "Junpei Kawamoto <kawamoto.junpei@gmail.com>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/GooBox/goobox-community-gui/issues"
