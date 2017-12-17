@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/GooBox/goobox-community-gui.git"
   },
-  "author": "",
+  "author": "Junpei Kawamoto <kawamoto.junpei@gmail.com>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/GooBox/goobox-community-gui/issues"
@@ -56,4 +56,3 @@
     ]
   }
 }
- 

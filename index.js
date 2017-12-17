@@ -1,3 +1,2 @@
 require("babel-register");
-// require("./src/main.js");
-require("./src/installer.js");
+require("./src/main-process/installer.js");

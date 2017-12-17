@@ -6,6 +6,18 @@
   font-weight: 300;
 }
 
+::selection {
+  background: transparent;
+}
+
+input::selection {
+  background: lightskyblue;
+}
+
+#seed::selection {
+  background: lightskyblue;
+}
+
 body {
   background-color: gray;
 }
@@ -17,6 +29,11 @@ a {
 
 #app {
   background-color: white;
+  width: 600px;
+  height: 400px;
+}
+
+#app > div {
   width: 600px;
   height: 400px;
 }
@@ -146,4 +163,12 @@ input {
   100% {
     transform: translateY(10px);
   }
+}
+
+.f141 {
+  font-size: 14.1px;
+}
+
+.f211 {
+  font-size: 21.1px;
 }

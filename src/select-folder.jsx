@@ -59,14 +59,7 @@ const style = {
     textAlign: "center",
     width: "600px",
     paddingLeft: "91px"
-  },
-  f141: {
-    fontSize: "14.1px"
-  },
-  f211: {
-    fontSize: "21.1px"
   }
-
 };
 
 export default class SelectFolder extends React.Component {
@@ -128,8 +121,8 @@ export default class SelectFolder extends React.Component {
       <div className="background-gradation">
         <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
         <main className="left" style={style.main}>
-          <div style={style.f141}>You chose <span className="bold service-name">{this.props.service}</span>.</div>
-          <div className="bold" style={style.f211}>
+          <div className="f141">You chose <span className="bold service-name">{this.props.service}</span>.</div>
+          <div className="f211 bold">
             Now, choose the location of your <span className="underlined bold">sync folder</span>.
           </div>
         </main>
