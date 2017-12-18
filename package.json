@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
+    "build": "browserify src/installer.jsx -o lib/installer.js",
     "test": "jest",
-    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --out=dist"
+    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,8 @@
   },
   "devDependencies": {
     "babel-jest": "^21.2.0",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0",
     "electron": "1.7.9",
     "electron-packager": "^10.1.0",
     "enzyme": "^3.2.0",
@@ -41,6 +44,11 @@
     "presets": [
       "env",
       "react"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
     ]
   },
   "jest": {
