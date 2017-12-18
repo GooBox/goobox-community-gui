@@ -17,9 +17,10 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import {webFrame} from "electron";
 import Installer from "./installer.jsx";
 
-
+webFrame.setZoomLevelLimits(1, 1);
 ReactDOM.render(
   <Installer/>,
   document.getElementById("app"))
