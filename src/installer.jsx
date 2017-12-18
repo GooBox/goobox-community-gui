@@ -61,7 +61,7 @@ export class Installer extends React.Component {
       // true if the user chooses SIA.
       sia: false,
       // default sync folder: <home>/<app-name>
-      folder: path.join(app.getPath("home"), app.getName()),
+      folder: process.env.DEFAULT_SYNC_FOLDER,
       // Storj account information.
       storjAccount: {
         email: "",

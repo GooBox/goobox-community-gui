@@ -28,6 +28,8 @@ import {
 
 const app = remote.app;
 
+const sampleHome = path.join("/home", "some-user");
+process.env.DEFAULT_SYNC_FOLDER = path.join(sampleHome, app.getName());
 
 describe("Installer component", () => {
 
@@ -100,16 +102,11 @@ describe("Installer component", () => {
     });
 
     it("shows SelectFolder component for storj when the hash is StorjSelected", () => {
-      const sampleHome = path.join("/home", "some-user");
-      app.getPath.mockReturnValue(sampleHome);
-
       const wrapper = mount(<Installer/>);
       const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(Storj);
-      expect(selector.prop("folder")).toEqual(path.join(sampleHome, app.getName()));
-
-      expect(app.getPath).toHaveBeenCalledWith("home");
+      expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
@@ -144,16 +141,11 @@ describe("Installer component", () => {
     });
 
     it("shows SelectFolder component for sia when the hash is SiaSelected", () => {
-      const sampleHome = path.join("/home", "some-user");
-      app.getPath.mockReturnValue(sampleHome);
-
       const wrapper = mount(<Installer/>);
       const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(Sia);
-      expect(selector.prop("folder")).toEqual(path.join(sampleHome, app.getName()));
-
-      expect(app.getPath).toHaveBeenCalledWith("home");
+      expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
@@ -188,16 +180,11 @@ describe("Installer component", () => {
     });
 
     it("shows SelectFolder component for storj and sia when the hash is BothSelected", () => {
-      const sampleHome = path.join("/home", "some-user");
-      app.getPath.mockReturnValue(sampleHome);
-
       const wrapper = mount(<Installer/>);
       const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(`${Storj} and ${Sia}`);
-      expect(selector.prop("folder")).toEqual(path.join(sampleHome, app.getName()));
-
-      expect(app.getPath).toHaveBeenCalledWith("home");
+      expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
