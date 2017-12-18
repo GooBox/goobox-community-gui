@@ -19,8 +19,10 @@
 import os from "os";
 import path from "path";
 import semver from "semver";
-import {app, Menu} from "electron";
+import {app, Menu, ipcMain} from "electron";
 import menubar from "menubar";
+
+import {ChangeStateEvent, Synchronizing, Paused} from "../constants";
 
 
 let idleIcon, syncIcon, pausedIcon, errorIcon;
@@ -34,22 +36,24 @@ if (process.platform === 'darwin') {
 } else {
 
   // windows
-  // let version = os.release();
-  // if (version.split('.').length === 2) {
-  //   version += '.0';
-  // }
-  //
-  // if (semver.satisfies(version, '<6.2')) {
-  //   // windows7 or older.
-  //   idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
-  //   syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
-  // } else {
-  // windows8 or later.
-  idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-  syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-  pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-  errorIcon = path.join(__dirname, "../../resources/win/error.png");
-  // }
+  let version = os.release();
+  if (version.split('.').length === 2) {
+    version += '.0';
+  }
+
+  if (semver.satisfies(version, '<6.2')) {
+    // windows7 or older.
+    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
+    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
+    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
+    errorIcon = path.join(__dirname, "../../resources/win/error.png");
+  } else {
+    // windows8 or later.
+    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
+    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
+    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
+    errorIcon = path.join(__dirname, "../../resources/win/error.png");
+  }
 
 }
 
@@ -82,4 +86,14 @@ mb.on("ready", () => {
 
 mb.on("focus-lost", () => {
   mb.hideWindow();
+});
+
+ipcMain.on(ChangeStateEvent, (event, arg) => {
+  console.log(arg);
+  if (arg === Synchronizing) {
+    mb.tray.setImage(idleIcon);
+  } else {
+    mb.tray.setImage(pausedIcon);
+  }
+  event.sender.send(ChangeStateEvent, arg);
 });

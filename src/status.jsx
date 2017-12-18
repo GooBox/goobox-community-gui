@@ -18,11 +18,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const synchronizing = "synchronizing";
-const paused = "paused";
+import {Synchronizing, Paused} from "./constants";
 
-
-export default class Status extends React.Component {
+export class Status extends React.Component {
 
   constructor(props) {
     super(props);
@@ -72,9 +70,9 @@ export default class Status extends React.Component {
 
     let pauseRestartBtn;
     let stateInfo;
-    if (this.props.state === synchronizing) {
+    if (this.props.state === Synchronizing) {
       pauseRestartBtn = (
-        <a className="pause-sync-btn" onClick={() => this._onChangeState(paused)}>
+        <a className="pause-sync-btn" onClick={() => this._onChangeState(Paused)}>
           <img src="../resources/pause_sync.svg" width="23px" height="23px"/>
         </a>
       );
@@ -86,7 +84,7 @@ export default class Status extends React.Component {
       );
     } else {
       pauseRestartBtn = (
-        <a className="sync-again-btn" onClick={() => this._onChangeState(synchronizing)}>
+        <a className="sync-again-btn" onClick={() => this._onChangeState(Synchronizing)}>
           <img src="../resources/sync_again.svg" width="23px" height="23px"/>
         </a>
       );
@@ -139,7 +137,6 @@ export default class Status extends React.Component {
 
 }
 
-
 Status.propTypes = {
   usedVolume: PropTypes.number,
   totalVolume: PropTypes.number,
@@ -150,3 +147,5 @@ Status.propTypes = {
   onClickSyncFolder: PropTypes.func,
   onClickImportDrive: PropTypes.func,
 };
+
+export default Status;

@@ -16,55 +16,60 @@
  */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import {ipcRenderer} from "electron";
 import Status from "./status.jsx";
-import {webFrame} from "electron";
-
-webFrame.setZoomLevelLimits(1, 1);
 
 import path from "path";
-import openAboutWindow from 'about-window';
+import openAboutWindow from "about-window";
 
-const synchronizing = "synchronizing";
+import {ChangeStateEvent, Synchronizing} from "./constants";
 
-class Popup extends React.Component {
+
+export function showInfoWindow() {
+  openAboutWindow({
+    icon_path: path.join(__dirname, "../resources/goobox.svg"),
+    package_json_dir: path.join(__dirname, ".."),
+    win_options: {
+      resizable: false,
+      fullscreenable: false,
+      minimizable: false,
+      maximizable: false
+    }
+  });
+}
+
+
+export class Popup extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      state: synchronizing,
+      state: Synchronizing,
+      usedVolume: 0,
+      totalVolume: 50,
     };
-    this._showInfoWindow = this._showInfoWindow.bind(this);
     this._onChangeState = this._onChangeState.bind(this);
   }
 
-  _showInfoWindow() {
-    openAboutWindow({
-      icon_path: path.join(__dirname, "../resources/goobox.svg"),
-      package_json_dir: path.join(__dirname, ".."),
-      win_options: {
-        resizable: false,
-        fullscreenable: false,
-        minimizable: false,
-        maximizable: false
+  _onChangeState(state) {
+    ipcRenderer.on(ChangeStateEvent, (event, acceptedState) => {
+      if (acceptedState === state) {
+        this.setState({state: state});
       }
     });
-  }
-
-  _onChangeState(state) {
-    this.setState({state: state});
+    ipcRenderer.send(ChangeStateEvent, state);
   }
 
   render() {
     return (
-      <Status usedVolume="15" totalVolume="50" state={this.state.state}
-              onClickInfo={this._showInfoWindow} onChangeState={this._onChangeState}/>
+      <Status usedVolume={this.state.usedVolume}
+              totalVolume={this.state.totalVolume}
+              state={this.state.state}
+              onClickInfo={() => showInfoWindow()}
+              onChangeState={this._onChangeState}
+      />
     )
   }
 }
 
-
-ReactDOM.render(
-  <Popup/>,
-  document.getElementById("app")
-);
+export default Popup;

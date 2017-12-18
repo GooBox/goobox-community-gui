@@ -18,24 +18,26 @@
 import React from "react";
 import {shallow} from "enzyme";
 import Status from "../src/status";
+import {Synchronizing, Paused} from "../src/constants";
+
 
 describe("Status component", () => {
 
   it("has a synchronized icon and text when the state is synchronizing", () => {
-    const wrapper = shallow(<Status state="synchronizing"/>);
+    const wrapper = shallow(<Status state={Synchronizing}/>);
     expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/synchronized.svg");
     expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
   });
 
   it("has a paused icon and text when the state is paused", () => {
-    const wrapper = shallow(<Status state="paused"/>);
+    const wrapper = shallow(<Status state={Paused}/>);
     expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/paused.svg");
     expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
   });
 
   it("has a pause button when the state is synchronizing", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Status state="synchronizing" onChangeState={fn}/>);
+    const wrapper = shallow(<Status state={Synchronizing} onChangeState={fn}/>);
     const pause = wrapper.find(".pause-sync-btn");
     expect(pause.exists()).toBeTruthy();
 
@@ -45,12 +47,12 @@ describe("Status component", () => {
 
   it("has a restart button when the state is paused", () => {
     const fn = jest.fn();
-    const wrapper = shallow(<Status state="paused" onChangeState={fn}/>);
+    const wrapper = shallow(<Status state={Paused} onChangeState={fn}/>);
     const restart = wrapper.find(".sync-again-btn");
     expect(restart.exists()).toBeTruthy();
 
     restart.simulate("click");
-    expect(fn).toHaveBeenCalledWith("synchronizing");
+    expect(fn).toHaveBeenCalledWith(Synchronizing);
   });
 
   it("has a settings button", () => {
