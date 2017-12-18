@@ -21,7 +21,14 @@ export const ipcRenderer = {
 };
 
 export const remote = {
+  app: {
+    getName: () => "Goobox",
+    getPath: jest.fn(),
+  },
   dialog: {
     showOpenDialog: jest.fn()
-  }
+  },
+  getCurrentWindow: jest.fn()
 };
+
+

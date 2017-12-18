@@ -22,7 +22,7 @@ import {app, ipcMain, BrowserWindow} from "electron";
 app.on("ready", () => {
 
   const mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 600,
     height: 400,
     useContentSize: true,
     resizable: false,

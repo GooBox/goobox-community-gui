@@ -14,27 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React from "react";
-import {shallow} from "enzyme";
-import Welcome from "../src/welcome.jsx";
+import ReactDOM from "react-dom";
+import Installer from "./installer.jsx";
 
 
-describe("Welcome component", () => {
-
-  it("has background-gradation class", () => {
-    const wrapper = shallow(<Welcome/>);
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
-  });
-
-  it("has a link to move next screen", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<Welcome onClickNext={fn}/>);
-
-    const link = wrapper.find("a");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
-
-});
+ReactDOM.render(
+  <Installer/>,
+  document.getElementById("app"))
+;

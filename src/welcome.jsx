@@ -19,48 +19,36 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const style = {
-    main: {
-        color: "white",
-        position: "absolute",
-        top: "181px",
-        fontSize: "30px",
-        textAlign: "center",
-        width: "600px"
-    }
+  main: {
+    color: "white",
+    position: "absolute",
+    top: "181px",
+    fontSize: "30px",
+    textAlign: "center",
+    width: "600px"
+  }
 };
 
 export default class Welcome extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this._onClickNext = this._onClickNext.bind(this);
-    }
-
-    _onClickNext() {
-        if (this.props.onClick) {
-            this.props.onClick();
-        }
-    }
-
-    render() {
-        return (
-            <div className="background-gradation">
-                <header><img src="../resources/left_white_icon.svg" width="41px" height="40px"/></header>
-                <main style={style.main}>
-                    <span>Welcome to</span>
-                    <span className="underlined bold">Goobox</span>
-                </main>
-                <footer>
-                    <a className="next-btn" onClick={this._onClickNext}>
-                        Next <img className="arrow" src="../resources/right_arrow.svg"/>
-                    </a>
-                </footer>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="background-gradation">
+        <header><img src="../resources/left_white_icon.svg" width="41px" height="40px"/></header>
+        <main style={style.main}>
+          <span>Welcome to</span> <span className="underlined bold">Goobox</span>
+        </main>
+        <footer>
+          <a className="next-btn" onClick={() => this.props.onClickNext && this.props.onClickNext()}>
+            Next <img className="arrow" src="../resources/right_arrow.svg"/>
+          </a>
+        </footer>
+      </div>
+    );
+  }
 
 }
 
 Welcome.propTypes = {
-    onClick: PropTypes.func
+  onClickNext: PropTypes.func
 };
