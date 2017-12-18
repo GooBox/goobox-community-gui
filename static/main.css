@@ -1,0 +1,174 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 300;
+}
+
+::selection {
+  background: transparent;
+}
+
+input::selection {
+  background: lightskyblue;
+}
+
+#seed::selection {
+  background: lightskyblue;
+}
+
+body {
+  background-color: gray;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+#app {
+  background-color: white;
+  width: 600px;
+  height: 400px;
+}
+
+#app > div {
+  width: 600px;
+  height: 400px;
+}
+
+.background-gradation {
+  background: -prefix-linear-gradient(left, #00AFB1, #7A55DE);
+  background: linear-gradient(to right, #00AFB1, #7A55DE);
+}
+
+header {
+  padding-top: 18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  width: 600px;
+}
+
+footer {
+  position: absolute;
+  top: 373px;
+  padding-left: 17px;
+  padding-right: 11px;
+  width: 600px;
+}
+
+.back-btn {
+  float: left;
+  font-size: 12pt;
+}
+
+.back-btn:active {
+  position: relative;
+  transform: scale(0.9);
+}
+
+.next-btn {
+  float: right;
+  font-size: 12pt;
+}
+
+.next-btn:active {
+  position: relative;
+  transform: scale(0.9);
+}
+
+button:active {
+  position: relative;
+  transform: scale(0.9);
+}
+
+button:focus {
+  outline: none;
+}
+
+.underlined:after {
+  content: "";
+  display: block;
+  height: 4px;
+  width: 100%;
+  background: -moz-linear-gradient(left, #7A55DE 0%, #00AFB1 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #7A55DE), color-stop(100%, #00AFB1));
+  background: -webkit-linear-gradient(left, #7A55DE 0%, #00AFB1 100%);
+  border-radius: 50px
+}
+
+main span {
+  display: inline-block;
+}
+
+.light {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.left {
+  text-align: left;
+}
+
+::-webkit-input-placeholder {
+  text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  text-align: center;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+  text-align: center;
+}
+
+:-ms-input-placeholder {
+  text-align: center;
+}
+
+.arrow {
+  width: 17px;
+  height: 11px;
+  margin-left: 9px;
+  margin-right: 9px;
+}
+
+.icon {
+  width: 41px;
+  height: 40px;
+}
+
+input {
+  background-color: white;
+  border-radius: 5px;
+  border-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 9px;
+  text-align: center;
+}
+
+.up-and-down {
+  animation: up-and-down 1s ease-in-out infinite alternate
+}
+
+@keyframes up-and-down {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+.f141 {
+  font-size: 14.1px;
+}
+
+.f211 {
+  font-size: 21.1px;
+}
