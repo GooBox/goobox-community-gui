@@ -23,29 +23,33 @@ import {app, Menu} from "electron";
 import menubar from "menubar";
 
 
-let idleIcon, syncIcon;
+let idleIcon, syncIcon, pausedIcon, errorIcon;
 
 if (process.platform === 'darwin') {
   // mac
   idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
   syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
+  pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
+  errorIcon = path.join(__dirname, "../../resources/mac/error.png");
 } else {
 
   // windows
-  let version = os.release();
-  if (version.split('.').length === 2) {
-    version += '.0';
-  }
-
-  if (semver.satisfies(version, '<6.2')) {
-    // windows7 or older.
-    idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
-  } else {
-    // windows8 or later.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-  }
+  // let version = os.release();
+  // if (version.split('.').length === 2) {
+  //   version += '.0';
+  // }
+  //
+  // if (semver.satisfies(version, '<6.2')) {
+  //   // windows7 or older.
+  //   idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
+  //   syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
+  // } else {
+  // windows8 or later.
+  idleIcon = path.join(__dirname, "../../resources/win/idle.png");
+  syncIcon = path.join(__dirname, "../../resources/win/sync.png");
+  pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
+  errorIcon = path.join(__dirname, "../../resources/win/error.png");
+  // }
 
 }
 
@@ -57,6 +61,8 @@ const mb = menubar({
   preloadWindow: true,
   width: 518,
   height: 400,
+  alwaysOnTop: true,
+  showDockIcon: false,
 });
 
 mb.on("ready", () => {
@@ -72,4 +78,8 @@ mb.on("ready", () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
+});
+
+mb.on("focus-lost", () => {
+  mb.hideWindow();
 });
