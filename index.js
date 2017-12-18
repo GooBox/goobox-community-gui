@@ -1,2 +1,7 @@
 require("babel-register");
-require("./src/main-process/installer.js");
+
+if (process.argv[2] === "installer") {
+  require("./src/main-process/installer.js");
+} else {
+  require("./src/main-process/main.js");
+}

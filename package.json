@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
+    "start:installer": "electron . installer",
     "build": "browserify src/installer.jsx -o lib/installer.js",
     "test": "jest",
     "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist"
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui#readme",
   "dependencies": {
+    "about-window": "^1.8.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
@@ -27,7 +29,8 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2"
+    "react-router-dom": "^4.2.2",
+    "semver": "^5.4.1"
   },
   "devDependencies": {
     "babel-jest": "^21.2.0",
