@@ -26,7 +26,8 @@ app.on("ready", () => {
     height: 400,
     useContentSize: true,
     resizable: false,
-    fullscreenable: false
+    fullscreenable: false,
+    title: "Goobox installer",
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
