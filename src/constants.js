@@ -20,3 +20,9 @@ export const OpenSyncFolderEvent = "open-sync-folder";
 
 export const Synchronizing = "synchronizing";
 export const Paused = "paused";
+
+export const Storj = "Storj";
+export const Sia = "SIA";
+
+export const StorjLoginEvent = "storj-login";
+export const StorjRegisterationEvent = "storj-registration";

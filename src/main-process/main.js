@@ -132,3 +132,11 @@ ipcMain.on(OpenSyncFolderEvent, (event) => {
   openDirectory(DefaultSyncFolder);
   event.sender.send(OpenSyncFolderEvent);
 });
+
+// Allow running only one instance.
+const shouldQuit = app.makeSingleInstance(() => {
+  mb.showWindow();
+});
+if (shouldQuit) {
+  app.quit();
+}
