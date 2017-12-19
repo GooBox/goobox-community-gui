@@ -57,36 +57,34 @@ const style = {
 };
 
 
-export default class SiaWallet extends React.Component {
+export default function SiaWallet(props) {
 
-  render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main className="left address" style={style.address}>
-          <div className="f141">SIA installation.</div>
-          <div className="f211">
-            Please save your <span className="underlined bold">SIA wallet address</span>.
-          </div>
-          <input id="wallet" type="text" readOnly="readonly" value={this.props.address} style={style.wallet}/>
-        </main>
-        <main className="seed" style={style.seed}>
-          <div className="f211">
-            And your <span className="underlined bold">SIA seed</span>.
-          </div>
-          <p id="seed" style={style.seedValue}>{this.props.seed}</p>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
-          </a>
-          <a className="next-btn" onClick={() => this.props.onClickNext && this.props.onClickNext()}>
-            Next <img className="arrow" src="../resources/right_arrow.svg"/>
-          </a>
-        </footer>
-      </div>
-    );
-  }
+  return (
+    <div className="background-gradation">
+      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <main className="left address" style={style.address}>
+        <div className="f141">SIA installation.</div>
+        <div className="f211">
+          Please save your <span className="underlined bold">SIA wallet address</span>.
+        </div>
+        <input id="wallet" type="text" readOnly="readonly" value={props.address} style={style.wallet}/>
+      </main>
+      <main className="seed" style={style.seed}>
+        <div className="f211">
+          And your <span className="underlined bold">SIA seed</span>.
+        </div>
+        <p id="seed" style={style.seedValue}>{props.seed}</p>
+      </main>
+      <footer>
+        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+        </a>
+        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
+          Next <img className="arrow" src="../resources/right_arrow.svg"/>
+        </a>
+      </footer>
+    </div>
+  );
 
 }
 

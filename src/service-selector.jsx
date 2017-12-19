@@ -56,57 +56,33 @@ const style = {
   }
 };
 
-export default class ServiceSelector extends React.Component {
+export default function ServiceSelector(props) {
 
-  constructor(props) {
-    super(props);
-    this._onSelectStorj = this._onSelectStorj.bind(this);
-    this._onSelectSia = this._onSelectSia.bind(this);
-    this._onSelectBoth = this._onSelectBoth.bind(this);
-  }
-
-  _onSelectStorj() {
-    if (this.props.onSelectStorj) {
-      this.props.onSelectStorj();
-    }
-  }
-
-  _onSelectSia() {
-    if (this.props.onSelectSia) {
-      this.props.onSelectSia();
-    }
-  }
-
-  _onSelectBoth() {
-    if (this.props.onSelectBoth) {
-      this.props.onSelectBoth();
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <header><img className="icon" src="../resources/left_color_icon.svg"/></header>
-        <main style={style.main}>
-          <span>Please choose your</span> <span className="underlined bold">cloud service</span>
-        </main>
-        <section style={style.downArrow}>
-          <img className="up-and-down" src="../resources/down_arrow.svg" width="15px" height="24px"/>
-        </section>
-        <section>
-          <button className="option-storj" style={style.optionStorj} onClick={this._onSelectStorj}>
-            <img src="../resources/storj_logo.svg" width="56px" height="83px"/>
-          </button>
-          <button className="option-sia" style={style.optionSia} onClick={this._onSelectSia}>
-            <img src="../resources/sia_logo.svg" width="78px" height="47px"/>
-          </button>
-          <button className="option-both" style={style.optionBoth} onClick={this._onSelectBoth}>
-            <img src="../resources/storj_and_sia_logo.svg" width="140px" height="68px"/>
-          </button>
-        </section>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <header><img className="icon" src="../resources/left_color_icon.svg"/></header>
+      <main style={style.main}>
+        <span>Please choose your</span> <span className="underlined bold">cloud service</span>
+      </main>
+      <section style={style.downArrow}>
+        <img className="up-and-down" src="../resources/down_arrow.svg" width="15px" height="24px"/>
+      </section>
+      <section>
+        <button className="option-storj" style={style.optionStorj}
+                onClick={() => props.onSelectStorj && props.onSelectStorj()}>
+          <img src="../resources/storj_logo.svg" width="56px" height="83px"/>
+        </button>
+        <button className="option-sia" style={style.optionSia}
+                onClick={() => props.onSelectSia && props.onSelectSia()}>
+          <img src="../resources/sia_logo.svg" width="78px" height="47px"/>
+        </button>
+        <button className="option-both" style={style.optionBoth}
+                onClick={() => props.onSelectBoth && props.onSelectBoth()}>
+          <img src="../resources/storj_and_sia_logo.svg" width="140px" height="68px"/>
+        </button>
+      </section>
+    </div>
+  );
 
 }
 

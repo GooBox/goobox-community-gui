@@ -44,33 +44,31 @@ const style = {
   }
 };
 
-export default class StorjEncryptionKey extends React.Component {
+export default function StorjEncryptionKey(props) {
 
-  render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main style={style.main}>
-          <div className="f141">Storj new account.</div>
-          <div className="f211">Please save your <span className="underlined bold">Storj encryption key</span></div>
-        </main>
-        <main style={style.accountInfo}>
-          <div>
-            <input id="encryption-key" placeholder="encryption key" readOnly="readonly" style={style.input}
-                   value={this.props.encryptionKey}/>
-          </div>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
-          </a>
-          <a className="next-btn" onClick={() => this.props.onClickNext && this.props.onClickNext()}>
-            Next <img className="arrow" src="../resources/right_arrow.svg"/>
-          </a>
-        </footer>
-      </div>
-    );
-  }
+  return (
+    <div className="background-gradation">
+      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <main style={style.main}>
+        <div className="f141">Storj new account.</div>
+        <div className="f211">Please save your <span className="underlined bold">Storj encryption key</span></div>
+      </main>
+      <main style={style.accountInfo}>
+        <div>
+          <input id="encryption-key" placeholder="encryption key" readOnly="readonly" style={style.input}
+                 value={props.encryptionKey}/>
+        </div>
+      </main>
+      <footer>
+        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+        </a>
+        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
+          Next <img className="arrow" src="../resources/right_arrow.svg"/>
+        </a>
+      </footer>
+    </div>
+  );
 
 }
 

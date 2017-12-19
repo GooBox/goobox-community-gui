@@ -41,33 +41,31 @@ const style = {
 };
 
 
-export default class SiaFinish extends React.Component {
+export default function SiaFinish(props) {
 
-  render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main style={style.main}>
-          <div className="f141">SIA installation.</div>
-          <div className="f211">
-            We're preparing your account...<br/>
-            It can take up to <span className="underlined bold">2 hours</span>.
-          </div>
-        </main>
-        <main style={style.additionalInfo}>
-          You can close this window.
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
-          </a>
-          <a className="next-btn" onClick={() => this.props.onClickClose && this.props.onClickClose()}>
-            Close
-          </a>
-        </footer>
-      </div>
-    );
-  }
+  return (
+    <div className="background-gradation">
+      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <main style={style.main}>
+        <div className="f141">SIA installation.</div>
+        <div className="f211">
+          We're preparing your account...<br/>
+          It can take up to <span className="underlined bold">2 hours</span>.
+        </div>
+      </main>
+      <main style={style.additionalInfo}>
+        You can close this window.
+      </main>
+      <footer>
+        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+        </a>
+        <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
+          Close
+        </a>
+      </footer>
+    </div>
+  );
 
 }
 

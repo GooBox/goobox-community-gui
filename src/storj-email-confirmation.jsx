@@ -30,30 +30,28 @@ const style = {
   }
 };
 
-export default class StorjEmailConfirmation extends React.Component {
+export default function StorjEmailConfirmation(props) {
 
-  render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main style={style.main}>
-          <div className="f141">Storj new account.</div>
-          <div className="f211">
-            Please confirm your <span className="underlined bold">Storj account <span
-            className="light">in your email</span></span>
-          </div>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
-          </a>
-          <a className="next-btn" onClick={() => this.props.onClickLogin && this.props.onClickLogin()}>
-            Login <img className="arrow" src="../resources/right_arrow.svg"/>
-          </a>
-        </footer>
-      </div>
-    );
-  }
+  return (
+    <div className="background-gradation">
+      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <main style={style.main}>
+        <div className="f141">Storj new account.</div>
+        <div className="f211">
+          Please confirm your <span className="underlined bold">Storj account <span
+          className="light">in your email</span></span>
+        </div>
+      </main>
+      <footer>
+        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+        </a>
+        <a className="next-btn" onClick={() => props.onClickLogin && props.onClickLogin()}>
+          Login <img className="arrow" src="../resources/right_arrow.svg"/>
+        </a>
+      </footer>
+    </div>
+  );
 
 }
 

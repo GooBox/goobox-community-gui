@@ -30,27 +30,25 @@ const style = {
   },
 };
 
-export default class Finish extends React.Component {
+export default function Finish(props) {
 
-  render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main style={style.main}>
-          <div className="f141">You're ready to go!</div>
-          <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
-          </a>
-          <a className="next-btn" onClick={() => this.props.onClickClose && this.props.onClickClose()}>
-            Close
-          </a>
-        </footer>
-      </div>
-    );
-  }
+  return (
+    <div className="background-gradation">
+      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <main style={style.main}>
+        <div className="f141">You're ready to go!</div>
+        <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
+      </main>
+      <footer>
+        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+        </a>
+        <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
+          Close
+        </a>
+      </footer>
+    </div>
+  );
 
 }
 
