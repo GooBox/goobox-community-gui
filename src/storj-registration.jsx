@@ -72,6 +72,16 @@ export default class StorjRegistration extends React.Component {
     this.state = {
       email: "",
       password: "",
+    };
+    this._onClickNext = this._onClickNext.bind(this);
+  }
+
+  _onClickNext() {
+    if (this.props.onClickNext) {
+      this.props.onClickNext({
+        email: this.state.email,
+        password: this.state.password,
+      });
     }
   }
 
@@ -106,7 +116,7 @@ export default class StorjRegistration extends React.Component {
           <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
             <img className="arrow" src="../resources/left_arrow.svg"/> Back
           </a>
-          <a className="next-btn" onClick={() => this.props.onClickNext && this.props.onClickNext()}>
+          <a className="next-btn" onClick={this._onClickNext}>
             Next <img className="arrow" src="../resources/right_arrow.svg"/>
           </a>
         </footer>

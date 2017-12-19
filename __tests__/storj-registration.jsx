@@ -77,13 +77,23 @@ describe("StorjRegistration component", () => {
 
   it("has a next link", () => {
     const fn = jest.fn();
+    const sampleEmail = "test@example.com";
+    const samplePassword = "1234567";
     const wrapper = shallow(<StorjRegistration onClickNext={fn}/>);
+    wrapper.setState({
+      email: sampleEmail,
+      password: samplePassword,
+    });
 
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
 
     link.simulate("click");
     expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledWith({
+      email: sampleEmail,
+      password: samplePassword,
+    });
   });
 
 });

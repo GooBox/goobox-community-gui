@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {remote} from "electron";
-import path from "path";
+import {remote, ipcRenderer} from "electron";
 import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
 import Welcome from "./welcome.jsx";
@@ -29,8 +28,7 @@ import StorjEmailConfirmation from "./storj-email-confirmation";
 import SiaWallet from "./sia-wallet";
 import SiaFinish from "./sia-finish";
 import Finish from "./finish-all";
-
-const app = remote.app;
+import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent} from "./constants";
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -45,10 +43,6 @@ export const Hash = {
   SiaFinish: "sia-finish",
   FinishAll: "finish-all",
 };
-
-
-export const Storj = "Storj";
-export const Sia = "SIA";
 
 
 export class Installer extends React.Component {
@@ -74,7 +68,46 @@ export class Installer extends React.Component {
         seed: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
 
       }
-    }
+    };
+
+    this._storjLogin = this._storjLogin.bind(this);
+    this._storjRegister = this._storjRegister.bind(this);
+  }
+
+  _storjLogin(info) {
+
+    ipcRenderer.on(StorjLoginEvent, (_, res) => {
+
+      this.setState({storjAccount: info}, () => {
+        if (this.state.sia) {
+          location.hash = Hash.SiaWallet;
+        } else {
+          location.hash = Hash.FinishAll;
+        }
+      });
+
+    });
+    ipcRenderer.send(StorjLoginEvent, info);
+
+  };
+
+  _storjRegister(info) {
+
+    ipcRenderer.on(StorjRegisterationEvent, (_, key) => {
+
+      this.setState({
+        storjAccount: {
+          email: info.email,
+          password: info.password,
+          key: key,
+        }
+      }, () => {
+        location.hash = Hash.StorjEncryptionKey;
+      });
+
+    });
+    ipcRenderer.send(StorjRegisterationEvent, info);
+
   }
 
   render() {
@@ -148,14 +181,7 @@ export class Installer extends React.Component {
                     location.hash = Hash.StorjSelected;
                   }
                 }}
-                onClickFinish={(info) => {
-                  this.setState({storjAccount: info});
-                  if (this.state.sia) {
-                    location.hash = Hash.SiaWallet;
-                  } else {
-                    location.hash = Hash.FinishAll;
-                  }
-                }}
+                onClickFinish={(info) => this._storjLogin(info)}
               />
             );
           }}/>
@@ -170,7 +196,7 @@ export class Installer extends React.Component {
                     location.hash = Hash.StorjSelected;
                   }
                 }}
-                onClickNext={() => location.hash = Hash.StorjEncryptionKey}
+                onClickNext={(info) => this._storjRegister(info)}
               />
             );
           }}/>

@@ -18,13 +18,9 @@
 import path from "path";
 import React from "react";
 import {mount} from "enzyme";
-import {remote} from "electron";
-import {
-  Installer,
-  Hash,
-  Storj,
-  Sia
-} from "../src/installer.jsx";
+import {ipcRenderer, remote} from "electron";
+import {Installer, Hash} from "../src/installer.jsx";
+import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent} from "../src/constants";
 
 const app = remote.app;
 
@@ -215,6 +211,15 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.StorjLogin}`, () => {
 
     beforeEach(() => {
+      ipcRenderer.on.mockReset();
+      ipcRenderer.send.mockReset();
+      ipcRenderer.on.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method, arg) => {
+          if (listen === method) {
+            cb(null, arg);
+          }
+        });
+      });
       location.hash = Hash.StorjLogin;
     });
 
@@ -293,11 +298,45 @@ describe("Installer component", () => {
 
     });
 
+    describe("with ipc", () => {
+
+      it("requests logging in to Storj when onClickFinish is called", () => {
+        const email = "user@example.com";
+        const password = "password";
+        const key = "1234567890";
+
+        const wrapper = mount(<Installer/>);
+        const login = wrapper.find("StorjLogin");
+        login.prop("onClickFinish")({
+          email: email,
+          password: password,
+          key: key
+        });
+
+        expect(ipcRenderer.on).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
+        expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, {
+          email: email,
+          password: password,
+          key: key
+        });
+      });
+
+    });
+
   });
 
   describe(`hash is ${Hash.StorjRegistration}`, () => {
 
     beforeEach(() => {
+      ipcRenderer.on.mockReset();
+      ipcRenderer.send.mockReset();
+      ipcRenderer.on.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method, arg) => {
+          if (listen === method) {
+            cb(null, arg);
+          }
+        });
+      });
       location.hash = Hash.StorjRegistration;
     });
 
@@ -327,12 +366,51 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
     });
 
-    it("updates the hash to StorjEncryptionKey when on ClickNext is called", () => {
+    it("updates the hash to StorjEncryptionKey and update storjAccount state when on ClickNext is called", () => {
+      const email = "user@example.com";
+      const password = "password";
       const wrapper = mount(<Installer/>);
 
       const registration = wrapper.find("StorjRegistration");
-      registration.prop("onClickNext")();
+      registration.prop("onClickNext")({
+        email: email,
+        password: password,
+      });
+      expect(wrapper.state("storjAccount").email).toEqual(email);
+      expect(wrapper.state("storjAccount").password).toEqual(password);
       expect(location.hash).toEqual(`#${Hash.StorjEncryptionKey}`);
+    });
+
+    describe("with ipc", () => {
+
+      it("requests to create a Storj account when onClickNext is called", () => {
+        const email = "user@example.com";
+        const password = "password";
+        const key = "1234567890";
+
+        ipcRenderer.on.mockImplementation((listen, cb) => {
+          ipcRenderer.send.mockImplementation((method) => {
+            if (listen === method) {
+              cb(null, key);
+            }
+          });
+        });
+
+        const wrapper = mount(<Installer/>);
+        const login = wrapper.find("StorjRegistration");
+        login.prop("onClickNext")({
+          email: email,
+          password: password,
+        });
+
+        expect(ipcRenderer.on).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
+        expect(ipcRenderer.send).toHaveBeenCalledWith(StorjRegisterationEvent, {
+          email: email,
+          password: password,
+        });
+        expect(wrapper.state("storjAccount").key).toEqual(key);
+      });
+
     });
 
   });
