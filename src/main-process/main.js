@@ -90,12 +90,27 @@ mb.on("ready", () => {
     }
   ]);
 
-  mb.tray.on("right-click", () => {
-    mb.tray.popUpContextMenu(ctxMenu);
+  const onClick = mb.tray.listeners("click")[0];
+  let singleClicked = false;
+  mb.tray.removeAllListeners("click");
+  mb.tray.on("click", (e, bounds) => {
+    singleClicked = true;
+    setTimeout(() => {
+      if (singleClicked) {
+        onClick(e, bounds);
+      }
+    }, 250);
+
   });
 
+  mb.tray.removeAllListeners("double-click");
   mb.tray.on("double-click", () => {
+    singleClicked = false;
     openDirectory(DefaultSyncFolder);
+  });
+
+  mb.tray.on("right-click", () => {
+    mb.tray.popUpContextMenu(ctxMenu);
   });
 
 });
