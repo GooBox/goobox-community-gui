@@ -15,20 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ipcRenderer = {
-  send: jest.fn(),
-  on: jest.fn()
+export const fs = {
+  existsSync: jest.fn(),
+  mkdirSync: jest.fn()
 };
 
-export const remote = {
-  app: {
-    getName: () => "Goobox",
-    getPath: jest.fn(),
-  },
-  dialog: {
-    showOpenDialog: jest.fn()
-  },
-  getCurrentWindow: jest.fn()
-};
-
-
+export default fs;

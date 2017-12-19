@@ -61,10 +61,6 @@
       "raf/polyfill",
       "./setupTests.js"
     ],
-    "moduleNameMapper": {
-      "electron": "<rootDir>/src/mock/electron.js",
-      "about-window": "<rootDir>/src/mock/about-window.js"
-    },
     "modulePathIgnorePatterns": [
       "<rootDir>/dist"
     ]
