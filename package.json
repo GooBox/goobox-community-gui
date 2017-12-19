@@ -7,8 +7,10 @@
     "start": "electron .",
     "start:installer": "electron . installer",
     "build": "browserify src/installer.jsx -o lib/installer.js",
+    "build:render:main": "browserify src/main.jsx -o lib/main.js",
+    "build:render:installer": "browserify src/installer-main.jsx -o lib/installer.js",
     "test": "jest",
-    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist"
+    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist --asar"
   },
   "repository": {
     "type": "git",
@@ -60,7 +62,8 @@
       "./setupTests.js"
     ],
     "moduleNameMapper": {
-      "electron": "<rootDir>/src/mock/electron.js"
+      "electron": "<rootDir>/src/mock/electron.js",
+      "about-window": "<rootDir>/src/mock/about-window.js"
     },
     "modulePathIgnorePatterns": [
       "<rootDir>/dist"
