@@ -83,6 +83,8 @@ const mb = menubar({
 
 mb.on("ready", () => {
 
+  mb.window.setResizable(false);
+
   const ctxMenu = Menu.buildFromTemplate([
     {
       label: "exit",
@@ -100,7 +102,6 @@ mb.on("ready", () => {
         onClick(e, bounds);
       }
     }, 250);
-
   });
 
   mb.tray.removeAllListeners("double-click");
