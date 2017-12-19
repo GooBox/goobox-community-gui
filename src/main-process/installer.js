@@ -20,7 +20,7 @@ import fs from "fs";
 import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
 
-const DefaultSyncFolder = path.join(app.getPath("home"), app.getName() + "2");
+const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 process.env.DEFAULT_SYNC_FOLDER = DefaultSyncFolder;
 
 if (!fs.existsSync(DefaultSyncFolder)) {

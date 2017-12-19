@@ -18,21 +18,29 @@
 "use strict";
 import os from "os";
 import path from "path";
-import semver from "semver";
+import {spawn} from "child_process";
+
 import {app, Menu, ipcMain} from "electron";
 import menubar from "menubar";
+import semver from "semver";
 
-import {ChangeStateEvent, Synchronizing, Paused} from "../constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../constants";
 
+const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
 let idleIcon, syncIcon, pausedIcon, errorIcon;
-
+let openDirectory;
 if (process.platform === 'darwin') {
   // mac
   idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
   syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
   pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
   errorIcon = path.join(__dirname, "../../resources/mac/error.png");
+
+  openDirectory = (path) => {
+    spawn("open", [path]);
+  }
+
 } else {
 
   // windows
@@ -53,6 +61,10 @@ if (process.platform === 'darwin') {
     syncIcon = path.join(__dirname, "../../resources/win/sync.png");
     pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
     errorIcon = path.join(__dirname, "../../resources/win/error.png");
+  }
+
+  openDirectory = (path) => {
+    spawn("cmd", ["/C", "start " + path]);
   }
 
 }
@@ -82,6 +94,10 @@ mb.on("ready", () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
+  mb.tray.on("double-click", () => {
+    openDirectory(DefaultSyncFolder);
+  });
+
 });
 
 mb.on("focus-lost", () => {
@@ -89,11 +105,15 @@ mb.on("focus-lost", () => {
 });
 
 ipcMain.on(ChangeStateEvent, (event, arg) => {
-  console.log(arg);
   if (arg === Synchronizing) {
     mb.tray.setImage(idleIcon);
   } else {
     mb.tray.setImage(pausedIcon);
   }
   event.sender.send(ChangeStateEvent, arg);
+});
+
+ipcMain.on(OpenSyncFolderEvent, (event) => {
+  openDirectory(DefaultSyncFolder);
+  event.sender.send(OpenSyncFolderEvent);
 });

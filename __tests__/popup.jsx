@@ -22,7 +22,7 @@ import {ipcRenderer} from "electron";
 import openAboutWindow from "about-window";
 
 import Popup from "../src/popup.jsx";
-import {ChangeStateEvent, Paused, Synchronizing} from "../src/constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing} from "../src/constants";
 
 describe("Popup component", () => {
 
@@ -74,9 +74,6 @@ describe("Popup component", () => {
     beforeEach(() => {
       ipcRenderer.on.mockReset();
       ipcRenderer.send.mockReset();
-    });
-
-    it("requests pausing the app via ipc when the state is changed to paused", () => {
       ipcRenderer.on.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
           if (listen === method) {
@@ -84,7 +81,9 @@ describe("Popup component", () => {
           }
         });
       });
+    });
 
+    it("requests pausing the app via ipc when the state is changed to paused", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Paused);
 
@@ -93,19 +92,19 @@ describe("Popup component", () => {
     });
 
     it("requests restarting the app via ipc when the state is changed to synchronizing", () => {
-      ipcRenderer.on.mockImplementation((listen, cb) => {
-        ipcRenderer.send.mockImplementation((method, arg) => {
-          if (listen === method) {
-            cb(null, arg);
-          }
-        });
-      });
-
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Synchronizing);
 
       expect(ipcRenderer.on).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
       expect(ipcRenderer.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
+    });
+
+    it("requests opening sync folder via ipc when onClickSyncFolder is called", () => {
+      const wrapper = shallow(<Popup/>);
+      wrapper.find("Status").prop("onClickSyncFolder")();
+
+      expect(ipcRenderer.on).toHaveBeenCalledWith(OpenSyncFolderEvent, expect.anything());
+      expect(ipcRenderer.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
     });
 
   });

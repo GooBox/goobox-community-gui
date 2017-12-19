@@ -22,7 +22,7 @@ import Status from "./status.jsx";
 import path from "path";
 import openAboutWindow from "about-window";
 
-import {ChangeStateEvent, Synchronizing} from "./constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing} from "./constants";
 
 
 export function showInfoWindow() {
@@ -49,6 +49,7 @@ export class Popup extends React.Component {
       totalVolume: 50,
     };
     this._onChangeState = this._onChangeState.bind(this);
+    this._onClickSyncFolder = this._onClickSyncFolder.bind(this);
   }
 
   _onChangeState(state) {
@@ -60,6 +61,12 @@ export class Popup extends React.Component {
     ipcRenderer.send(ChangeStateEvent, state);
   }
 
+  _onClickSyncFolder() {
+    ipcRenderer.on(OpenSyncFolderEvent, () => {
+    });
+    ipcRenderer.send(OpenSyncFolderEvent);
+  };
+
   render() {
     return (
       <Status usedVolume={this.state.usedVolume}
@@ -67,6 +74,7 @@ export class Popup extends React.Component {
               state={this.state.state}
               onClickInfo={() => showInfoWindow()}
               onChangeState={this._onChangeState}
+              onClickSyncFolder={this._onClickSyncFolder}
       />
     )
   }
