@@ -19,15 +19,18 @@
 import fs from "fs";
 import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
+import {StorjLoginEvent, StorjRegisterationEvent} from "../constants";
 
-const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
-process.env.DEFAULT_SYNC_FOLDER = DefaultSyncFolder;
-
-if (!fs.existsSync(DefaultSyncFolder)) {
-  fs.mkdirSync(DefaultSyncFolder);
+if (!process.env.DEFAULT_SYNC_FOLDER) {
+  process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
 
+
 app.on("ready", () => {
+
+  if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
+    fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
+  }
 
   const mainWindow = new BrowserWindow({
     width: 600,
@@ -41,6 +44,14 @@ app.on("ready", () => {
 
   app.on("window-all-closed", () => {
     app.quit();
+  });
+
+  ipcMain.on(StorjLoginEvent, (event, arg) => {
+    event.sender.send(StorjLoginEvent, true);
+  });
+
+  ipcMain.on(StorjRegisterationEvent, (event, info) => {
+    event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
   });
 
 });

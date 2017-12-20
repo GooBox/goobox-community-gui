@@ -21,7 +21,17 @@ export const app = {
   getPath: () => ".",
 };
 
-export const BrowserWindow = jest.fn();
+export class BrowserWindow {
+
+  constructor(opts) {
+    this.opts = opts;
+  }
+
+  loadURL(url) {
+    this.url = url;
+  }
+
+}
 
 export const ipcMain = {
   send: jest.fn(),
