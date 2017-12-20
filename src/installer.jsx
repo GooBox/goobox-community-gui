@@ -76,7 +76,7 @@ export class Installer extends React.Component {
 
   _storjLogin(info) {
 
-    ipcRenderer.on(StorjLoginEvent, (_, res) => {
+    ipcRenderer.once(StorjLoginEvent, (_, res) => {
 
       this.setState({storjAccount: info}, () => {
         if (this.state.sia) {
@@ -93,7 +93,7 @@ export class Installer extends React.Component {
 
   _storjRegister(info) {
 
-    ipcRenderer.on(StorjRegisterationEvent, (_, key) => {
+    ipcRenderer.once(StorjRegisterationEvent, (_, key) => {
 
       this.setState({
         storjAccount: {
@@ -112,7 +112,7 @@ export class Installer extends React.Component {
 
   _requestSiaWallet() {
 
-    ipcRenderer.on(SiaWalletEvent, (_, info) => {
+    ipcRenderer.once(SiaWalletEvent, (_, info) => {
 
       this.setState({siaAccount: info}, () => {
         location.hash = Hash.SiaWallet;

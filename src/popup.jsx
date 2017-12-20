@@ -53,7 +53,7 @@ export class Popup extends React.Component {
   }
 
   _onChangeState(state) {
-    ipcRenderer.on(ChangeStateEvent, (event, acceptedState) => {
+    ipcRenderer.once(ChangeStateEvent, (event, acceptedState) => {
       if (acceptedState === state) {
         this.setState({state: state});
       }
@@ -62,7 +62,7 @@ export class Popup extends React.Component {
   }
 
   _onClickSyncFolder() {
-    ipcRenderer.on(OpenSyncFolderEvent, () => {
+    ipcRenderer.once(OpenSyncFolderEvent, () => {
     });
     ipcRenderer.send(OpenSyncFolderEvent);
   };

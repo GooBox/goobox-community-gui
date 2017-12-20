@@ -40,7 +40,7 @@ export const ipcMain = {
 
 export const ipcRenderer = {
   send: jest.fn(),
-  on: jest.fn()
+  once: jest.fn(),
 };
 
 export const remote = {

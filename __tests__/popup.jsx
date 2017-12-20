@@ -72,9 +72,9 @@ describe("Popup component", () => {
   describe("with IPC", () => {
 
     beforeEach(() => {
-      ipcRenderer.on.mockReset();
+      ipcRenderer.once.mockReset();
       ipcRenderer.send.mockReset();
-      ipcRenderer.on.mockImplementation((listen, cb) => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
           if (listen === method) {
             cb(null, arg);
@@ -87,7 +87,7 @@ describe("Popup component", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Paused);
 
-      expect(ipcRenderer.on).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
+      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
       expect(ipcRenderer.send).toHaveBeenCalledWith(ChangeStateEvent, Paused);
     });
 
@@ -95,7 +95,7 @@ describe("Popup component", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Synchronizing);
 
-      expect(ipcRenderer.on).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
+      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
       expect(ipcRenderer.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
     });
 
@@ -103,7 +103,7 @@ describe("Popup component", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onClickSyncFolder")();
 
-      expect(ipcRenderer.on).toHaveBeenCalledWith(OpenSyncFolderEvent, expect.anything());
+      expect(ipcRenderer.once).toHaveBeenCalledWith(OpenSyncFolderEvent, expect.anything());
       expect(ipcRenderer.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
     });
 

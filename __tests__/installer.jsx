@@ -133,9 +133,9 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.SiaSelected}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.on.mockReset();
+      ipcRenderer.once.mockReset();
       ipcRenderer.send.mockReset();
-      ipcRenderer.on.mockImplementation((listen, cb) => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
           if (listen === method) {
             cb(null, arg);
@@ -181,7 +181,7 @@ describe("Installer component", () => {
       it("requests wallet address and seed to Sia when onClickNext is called", () => {
         const address = "1234567890";
         const seed = "xxx xxx xxx xxx";
-        ipcRenderer.on.mockImplementation((listen, cb) => {
+        ipcRenderer.once.mockImplementation((listen, cb) => {
           ipcRenderer.send.mockImplementation((method) => {
             if (listen === method) {
               cb(null, {
@@ -196,7 +196,7 @@ describe("Installer component", () => {
         const c = wrapper.find("SelectFolder");
         c.prop("onClickNext")();
 
-        expect(ipcRenderer.on).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+        expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
         expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
 
         expect(wrapper.state("siaAccount").address).toEqual(address);
@@ -249,9 +249,9 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.StorjLogin}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.on.mockReset();
+      ipcRenderer.once.mockReset();
       ipcRenderer.send.mockReset();
-      ipcRenderer.on.mockImplementation((listen, cb) => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
           if (listen === method) {
             cb(null, arg);
@@ -351,7 +351,7 @@ describe("Installer component", () => {
           key: key
         });
 
-        expect(ipcRenderer.on).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
+        expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
         expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, {
           email: email,
           password: password,
@@ -366,9 +366,9 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.StorjRegistration}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.on.mockReset();
+      ipcRenderer.once.mockReset();
       ipcRenderer.send.mockReset();
-      ipcRenderer.on.mockImplementation((listen, cb) => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
           if (listen === method) {
             cb(null, arg);
@@ -426,7 +426,7 @@ describe("Installer component", () => {
         const password = "password";
         const key = "1234567890";
 
-        ipcRenderer.on.mockImplementation((listen, cb) => {
+        ipcRenderer.once.mockImplementation((listen, cb) => {
           ipcRenderer.send.mockImplementation((method) => {
             if (listen === method) {
               cb(null, key);
@@ -441,7 +441,7 @@ describe("Installer component", () => {
           password: password,
         });
 
-        expect(ipcRenderer.on).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
+        expect(ipcRenderer.once).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
         expect(ipcRenderer.send).toHaveBeenCalledWith(StorjRegisterationEvent, {
           email: email,
           password: password,
