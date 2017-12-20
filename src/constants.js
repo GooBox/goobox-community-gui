@@ -24,6 +24,7 @@ export const Paused = "paused";
 export const Storj = "Storj";
 export const Sia = "SIA";
 
+export const JREInstallEvent = "jre-install";
 export const StorjLoginEvent = "storj-login";
 export const StorjRegisterationEvent = "storj-registration";
 export const SiaWalletEvent = "sia-wallet";

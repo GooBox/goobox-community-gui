@@ -21,7 +21,7 @@ import {app, ipcMain, BrowserWindow} from "electron";
 import path from "path";
 import fs from "fs";
 import "../../src/main-process/installer";
-import {StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../../src/constants";
+import {JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../../src/constants";
 
 let onReady;
 app.on.mock.calls.forEach(args => {
@@ -72,6 +72,21 @@ describe("main process of the installer", () => {
   it("loads static/installer.html", () => {
     onReady();
     expect(mockLoadURL).toHaveBeenCalledWith("file://" + path.join(__dirname, "../../static/installer.html"));
+  });
+
+  it("handles JREInstallEvent", () => {
+    const sender = {
+      send: jest.fn()
+    };
+
+    ipcMain.on.mockImplementation((event, cb) => {
+      if (event === JREInstallEvent) {
+        cb({sender: sender}, true);
+        expect(sender.send).toHaveBeenCalledWith(JREInstallEvent);
+      }
+    });
+    onReady();
+    expect(ipcMain.on).toHaveBeenCalledWith(JREInstallEvent, expect.anything());
   });
 
   it("handles StorjLoginEvent", () => {

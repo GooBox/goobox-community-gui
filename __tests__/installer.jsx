@@ -20,7 +20,7 @@ import React from "react";
 import {mount} from "enzyme";
 import {ipcRenderer, remote} from "electron";
 import {Installer, Hash} from "../src/installer.jsx";
-import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../src/constants";
+import {Storj, Sia, JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../src/constants";
 
 const app = remote.app;
 
@@ -33,19 +33,49 @@ describe("Installer component", () => {
     app.getPath.mockReset();
     app.getPath.mockReturnValue(".");
     remote.getCurrentWindow.mockReset();
+    ipcRenderer.once.mockReset();
+    ipcRenderer.send.mockReset();
+    ipcRenderer.once.mockImplementation((listen, cb) => {
+      ipcRenderer.send.mockImplementation((method, arg) => {
+        if (listen === method) {
+          cb(null, arg);
+        }
+      });
+    });
   });
 
-  it("shows Welcome component at first", () => {
-    const wrapper = mount(<Installer/>);
-    expect(wrapper.find("Welcome").exists()).toBeTruthy();
-  });
+  describe("hash is empty", () => {
 
-  it("moves to the choose service screen when next button in the welcome screen is clicked", () => {
-    location.hash = "";
+    beforeEach(() => {
+      location.hash = "";
+    });
 
-    const wrapper = mount(<Installer/>);
-    wrapper.find("Welcome").prop("onClickNext")();
-    expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+    it("shows Welcome component at first", () => {
+      const wrapper = mount(<Installer/>);
+      expect(wrapper.find("Welcome").exists()).toBeTruthy();
+    });
+
+    it("moves to the choose service screen when next button in the welcome screen is clicked", () => {
+      location.hash = "";
+
+      const wrapper = mount(<Installer/>);
+      wrapper.find("Welcome").prop("onClickNext")();
+      expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+
+    });
+
+    describe("with ipc", () => {
+
+      it("requests starting JRE installer when onClickNext is called", () => {
+        const wrapper = mount(<Installer/>);
+        const login = wrapper.find("Welcome");
+        login.prop("onClickNext")();
+
+        expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.anything());
+        expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
+      });
+
+    });
 
   });
 
@@ -133,15 +163,6 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.SiaSelected}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.once.mockReset();
-      ipcRenderer.send.mockReset();
-      ipcRenderer.once.mockImplementation((listen, cb) => {
-        ipcRenderer.send.mockImplementation((method, arg) => {
-          if (listen === method) {
-            cb(null, arg);
-          }
-        });
-      });
       location.hash = Hash.SiaSelected;
     });
 
@@ -249,15 +270,6 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.StorjLogin}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.once.mockReset();
-      ipcRenderer.send.mockReset();
-      ipcRenderer.once.mockImplementation((listen, cb) => {
-        ipcRenderer.send.mockImplementation((method, arg) => {
-          if (listen === method) {
-            cb(null, arg);
-          }
-        });
-      });
       location.hash = Hash.StorjLogin;
     });
 
@@ -366,15 +378,6 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.StorjRegistration}`, () => {
 
     beforeEach(() => {
-      ipcRenderer.once.mockReset();
-      ipcRenderer.send.mockReset();
-      ipcRenderer.once.mockImplementation((listen, cb) => {
-        ipcRenderer.send.mockImplementation((method, arg) => {
-          if (listen === method) {
-            cb(null, arg);
-          }
-        });
-      });
       location.hash = Hash.StorjRegistration;
     });
 

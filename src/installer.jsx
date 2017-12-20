@@ -28,7 +28,7 @@ import StorjEmailConfirmation from "./storj-email-confirmation";
 import SiaWallet from "./sia-wallet";
 import SiaFinish from "./sia-finish";
 import Finish from "./finish-all";
-import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "./constants";
+import {Storj, Sia, JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "./constants";
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -69,9 +69,19 @@ export class Installer extends React.Component {
       }
     };
 
+    this._checkJRE = this._checkJRE.bind(this);
     this._storjLogin = this._storjLogin.bind(this);
     this._storjRegister = this._storjRegister.bind(this);
     this._requestSiaWallet = this._requestSiaWallet.bind(this);
+  }
+
+  _checkJRE() {
+
+    ipcRenderer.once(JREInstallEvent, () => {
+      location.hash = Hash.ChooseCloudService
+    });
+    ipcRenderer.send(JREInstallEvent);
+
   }
 
   _storjLogin(info) {
@@ -129,7 +139,7 @@ export class Installer extends React.Component {
         <Switch>
           <Route exact path="/" render={() => {
             return (
-              <Welcome onClickNext={() => location.hash = Hash.ChooseCloudService}/>
+              <Welcome onClickNext={this._checkJRE}/>
             );
           }}/>
           <Route path={`/${Hash.ChooseCloudService}`} render={() => {
