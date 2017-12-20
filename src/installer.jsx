@@ -194,7 +194,11 @@ export class Installer extends React.Component {
                 service={Sia}
                 folder={this.state.folder}
                 onSelectFolder={folder => this.setState({folder: folder})}
-                onClickBack={() => location.hash = Hash.ChooseCloudService}
+                onClickBack={() => {
+                  if (!this.requesting) {
+                    location.hash = Hash.ChooseCloudService;
+                  }
+                }}
                 onClickNext={this._requestSiaWallet}
               />
             );
@@ -213,12 +217,18 @@ export class Installer extends React.Component {
           <Route path={`/${Hash.StorjLogin}`} render={() => {
             return (
               <StorjLogin
-                onClickCreateAccount={() => location.hash = Hash.StorjRegistration}
+                onClickCreateAccount={() => {
+                  if (!this.requesting) {
+                    location.hash = Hash.StorjRegistration;
+                  }
+                }}
                 onClickBack={() => {
-                  if (this.state.sia) {
-                    location.hash = Hash.BothSelected;
-                  } else {
-                    location.hash = Hash.StorjSelected;
+                  if (!this.requesting) {
+                    if (this.state.sia) {
+                      location.hash = Hash.BothSelected;
+                    } else {
+                      location.hash = Hash.StorjSelected;
+                    }
                   }
                 }}
                 onClickFinish={(info) => this._storjLogin(info)}
@@ -228,12 +238,18 @@ export class Installer extends React.Component {
           <Route path={`/${Hash.StorjRegistration}`} render={() => {
             return (
               <StorjRegistration
-                onClickLogin={() => location.hash = Hash.StorjLogin}
+                onClickLogin={() => {
+                  if (!this.requesting) {
+                    location.hash = Hash.StorjLogin
+                  }
+                }}
                 onClickBack={() => {
-                  if (this.state.sia) {
-                    location.hash = Hash.BothSelected;
-                  } else {
-                    location.hash = Hash.StorjSelected;
+                  if (!this.requesting) {
+                    if (this.state.sia) {
+                      location.hash = Hash.BothSelected;
+                    } else {
+                      location.hash = Hash.StorjSelected;
+                    }
                   }
                 }}
                 onClickNext={(info) => this._storjRegister(info)}

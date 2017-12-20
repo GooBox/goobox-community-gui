@@ -62,6 +62,13 @@ describe("Installer component", () => {
 
     });
 
+    it("doesn't moves to the choose service screen when next button is clicked but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      wrapper.find("Welcome").prop("onClickNext")();
+      expect(location.hash).toEqual("");
+    });
+
     describe("with ipc", () => {
 
       it("requests starting JRE installer when onClickNext is called", () => {
@@ -216,6 +223,14 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
     });
 
+    it("doesn't set the hash is ChooseCloudService when back button is clicked but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      const selector = wrapper.find("SelectFolder");
+      selector.prop("onClickBack")();
+      expect(location.hash).toEqual(`#${Hash.SiaSelected}`);
+    });
+
     it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
       const wrapper = mount(<Installer/>);
       const selector = wrapper.find("SelectFolder");
@@ -340,6 +355,14 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
+    it("doesn't update the hash when onClickCreateAccount is called but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      const login = wrapper.find("StorjLogin");
+      login.prop("onClickCreateAccount")();
+      expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
+    });
+
     it("updates the hash to StorjSelected when onClickBack is called and sia state is false", () => {
       const wrapper = mount(<Installer/>);
       wrapper.setState({sia: false});
@@ -356,6 +379,16 @@ describe("Installer component", () => {
       const login = wrapper.find("StorjLogin");
       login.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
+    });
+
+    it("doesn't update the hash when onClickBack is called but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      wrapper.setState({sia: true});
+
+      const login = wrapper.find("StorjLogin");
+      login.prop("onClickBack")();
+      expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
     it("updates related states when onClickFinish is called with an account information", () => {
@@ -469,7 +502,22 @@ describe("Installer component", () => {
       expect(registration.exists()).toBeTruthy();
     });
 
-    it("updates the hash to StorjLogin when onClickLogin is called");
+    it("updates the hash to StorjLogin when onClickLogin is called", () => {
+      const wrapper = mount(<Installer/>);
+      const registration = wrapper.find("StorjRegistration");
+
+      registration.prop("onClickLogin")();
+      expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
+    });
+
+    it("doesn't update the hash when onClickLogin is called but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      const registration = wrapper.find("StorjRegistration");
+
+      registration.prop("onClickLogin")();
+      expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
+    });
 
     it("updates the hash to StorjSelected when onClickBack is called and sia state is false", () => {
       const wrapper = mount(<Installer/>);
@@ -487,6 +535,16 @@ describe("Installer component", () => {
       const registration = wrapper.find("StorjRegistration");
       registration.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
+    });
+
+    it("doesn't update the hash when onClickBack is called but requesting is true", () => {
+      const wrapper = mount(<Installer/>);
+      wrapper.instance().requesting = true;
+      wrapper.setState({sia: true});
+
+      const registration = wrapper.find("StorjRegistration");
+      registration.prop("onClickBack")();
+      expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
     it("updates the hash to StorjEncryptionKey and update storjAccount state when on ClickNext is called", () => {
