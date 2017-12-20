@@ -38,6 +38,11 @@ a {
   height: 400px;
 }
 
+#app > div > div {
+  width: 600px;
+  height: 400px;
+}
+
 .background-gradation {
   background: -prefix-linear-gradient(left, #00AFB1, #7A55DE);
   background: linear-gradient(to right, #00AFB1, #7A55DE);

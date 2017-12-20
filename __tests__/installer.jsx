@@ -97,6 +97,7 @@ describe("Installer component", () => {
 
         ipcRenderer.once.mockImplementation((listen, cb) => {
           expect(wrapper.instance().requesting).toBeTruthy();
+          expect(wrapper.state("wait")).toBeTruthy();
           ipcRenderer.send.mockImplementation((method, arg) => {
             if (listen === method) {
               cb(null, arg);
@@ -106,6 +107,7 @@ describe("Installer component", () => {
 
         welcome.prop("onClickNext")();
         expect(wrapper.instance().requesting).toBeFalsy();
+        expect(wrapper.state("wait")).toBeFalsy();
       });
 
     });
@@ -282,6 +284,7 @@ describe("Installer component", () => {
 
         ipcRenderer.once.mockImplementation((listen, cb) => {
           expect(wrapper.instance().requesting).toBeTruthy();
+          expect(wrapper.state("wait")).toBeTruthy();
           ipcRenderer.send.mockImplementation((method) => {
             if (listen === method) {
               cb(null, {});
@@ -291,6 +294,7 @@ describe("Installer component", () => {
 
         c.prop("onClickNext")();
         expect(wrapper.instance().requesting).toBeFalsy();
+        expect(wrapper.state("wait")).toBeFalsy();
       });
 
     });
@@ -475,6 +479,7 @@ describe("Installer component", () => {
 
         ipcRenderer.once.mockImplementation((listen, cb) => {
           expect(wrapper.instance().requesting).toBeTruthy();
+          expect(wrapper.state("wait")).toBeTruthy();
           ipcRenderer.send.mockImplementation((method, arg) => {
             if (listen === method) {
               cb(null, arg);
@@ -484,6 +489,7 @@ describe("Installer component", () => {
 
         c.prop("onClickFinish")();
         expect(wrapper.instance().requesting).toBeFalsy();
+        expect(wrapper.state("wait")).toBeFalsy();
       });
 
     });
@@ -609,6 +615,7 @@ describe("Installer component", () => {
 
         ipcRenderer.once.mockImplementation((listen, cb) => {
           expect(wrapper.instance().requesting).toBeTruthy();
+          expect(wrapper.state("wait")).toBeTruthy();
           ipcRenderer.send.mockImplementation((method, arg) => {
             if (listen === method) {
               cb(null, key);
@@ -621,6 +628,7 @@ describe("Installer component", () => {
           password: password
         });
         expect(wrapper.instance().requesting).toBeFalsy();
+        expect(wrapper.state("wait")).toBeFalsy();
       });
 
     });
