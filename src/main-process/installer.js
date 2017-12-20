@@ -19,7 +19,7 @@
 import fs from "fs";
 import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
-import {StorjLoginEvent, StorjRegisterationEvent} from "../constants";
+import {SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -52,6 +52,13 @@ app.on("ready", () => {
 
   ipcMain.on(StorjRegisterationEvent, (event, info) => {
     event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
+  });
+
+  ipcMain.on(SiaWalletEvent, (event) => {
+    event.sender.send(SiaWalletEvent, {
+      wallet: "aaaaaaaa",
+      seed: "xxx xxx xxx",
+    });
   });
 
 });
