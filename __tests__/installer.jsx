@@ -20,7 +20,7 @@ import React from "react";
 import {mount} from "enzyme";
 import {ipcRenderer, remote} from "electron";
 import {Installer, Hash} from "../src/installer.jsx";
-import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent} from "../src/constants";
+import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../src/constants";
 
 const app = remote.app;
 
@@ -133,6 +133,15 @@ describe("Installer component", () => {
   describe(`hash is ${Hash.SiaSelected}`, () => {
 
     beforeEach(() => {
+      ipcRenderer.on.mockReset();
+      ipcRenderer.send.mockReset();
+      ipcRenderer.on.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method, arg) => {
+          if (listen === method) {
+            cb(null, arg);
+          }
+        });
+      });
       location.hash = Hash.SiaSelected;
     });
 
@@ -165,6 +174,35 @@ describe("Installer component", () => {
       const selector = wrapper.find("SelectFolder");
       selector.prop("onClickNext")();
       expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
+    });
+
+    describe("with ipc", () => {
+
+      it("requests wallet address and seed to Sia when onClickNext is called", () => {
+        const address = "1234567890";
+        const seed = "xxx xxx xxx xxx";
+        ipcRenderer.on.mockImplementation((listen, cb) => {
+          ipcRenderer.send.mockImplementation((method) => {
+            if (listen === method) {
+              cb(null, {
+                address: address,
+                seed: seed,
+              });
+            }
+          });
+        });
+
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("SelectFolder");
+        c.prop("onClickNext")();
+
+        expect(ipcRenderer.on).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+        expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
+
+        expect(wrapper.state("siaAccount").address).toEqual(address);
+        expect(wrapper.state("siaAccount").seed).toEqual(seed);
+      });
+
     });
 
   });

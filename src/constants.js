@@ -26,3 +26,4 @@ export const Sia = "SIA";
 
 export const StorjLoginEvent = "storj-login";
 export const StorjRegisterationEvent = "storj-registration";
+export const SiaWalletEvent = "sia-wallet";

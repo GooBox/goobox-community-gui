@@ -21,7 +21,7 @@ import {app, ipcMain, BrowserWindow} from "electron";
 import path from "path";
 import fs from "fs";
 import "../../src/main-process/installer";
-import {StorjLoginEvent, StorjRegisterationEvent} from "../../src/constants";
+import {StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../../src/constants";
 
 let onReady;
 app.on.mock.calls.forEach(args => {
@@ -102,6 +102,22 @@ describe("main process of the installer", () => {
     });
     onReady();
     expect(ipcMain.on).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
+  });
+
+  it("handles SiaWalletEvent", () => {
+    const sender = {
+      send: jest.fn()
+    };
+    const folder = "/tmp/somewhere";
+
+    ipcMain.on.mockImplementation((event, cb) => {
+      if (event === SiaWalletEvent) {
+        cb({sender: sender});
+        expect(sender.send).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+      }
+    });
+    onReady();
+    expect(ipcMain.on).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
   });
 
 });

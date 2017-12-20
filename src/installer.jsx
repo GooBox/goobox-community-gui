@@ -28,7 +28,7 @@ import StorjEmailConfirmation from "./storj-email-confirmation";
 import SiaWallet from "./sia-wallet";
 import SiaFinish from "./sia-finish";
 import Finish from "./finish-all";
-import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent} from "./constants";
+import {Storj, Sia, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "./constants";
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -66,12 +66,12 @@ export class Installer extends React.Component {
       siaAccount: {
         address: "00000000000000000000000000000",
         seed: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
-
       }
     };
 
     this._storjLogin = this._storjLogin.bind(this);
     this._storjRegister = this._storjRegister.bind(this);
+    this._requestSiaWallet = this._requestSiaWallet.bind(this);
   }
 
   _storjLogin(info) {
@@ -107,6 +107,19 @@ export class Installer extends React.Component {
 
     });
     ipcRenderer.send(StorjRegisterationEvent, info);
+
+  }
+
+  _requestSiaWallet() {
+
+    ipcRenderer.on(SiaWalletEvent, (_, info) => {
+
+      this.setState({siaAccount: info}, () => {
+        location.hash = Hash.SiaWallet;
+      });
+
+    });
+    ipcRenderer.send(SiaWalletEvent);
 
   }
 
@@ -155,7 +168,7 @@ export class Installer extends React.Component {
                 folder={this.state.folder}
                 onSelectFolder={folder => this.setState({folder: folder})}
                 onClickBack={() => location.hash = Hash.ChooseCloudService}
-                onClickNext={() => location.hash = Hash.SiaWallet}
+                onClickNext={this._requestSiaWallet}
               />
             );
           }}/>
