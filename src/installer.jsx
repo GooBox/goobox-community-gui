@@ -69,6 +69,7 @@ export class Installer extends React.Component {
       }
     };
 
+    this.requesting = false;
     this._checkJRE = this._checkJRE.bind(this);
     this._storjLogin = this._storjLogin.bind(this);
     this._storjRegister = this._storjRegister.bind(this);
@@ -77,59 +78,75 @@ export class Installer extends React.Component {
 
   _checkJRE() {
 
-    ipcRenderer.once(JREInstallEvent, () => {
-      location.hash = Hash.ChooseCloudService
-    });
-    ipcRenderer.send(JREInstallEvent);
+    if (!this.requesting) {
+      this.requesting = true;
+      ipcRenderer.once(JREInstallEvent, () => {
+        location.hash = Hash.ChooseCloudService
+        this.requesting = false;
+      });
+      ipcRenderer.send(JREInstallEvent);
+    }
 
   }
 
   _storjLogin(info) {
 
-    ipcRenderer.once(StorjLoginEvent, (_, res) => {
+    if (!this.requesting) {
+      this.requesting = true;
+      ipcRenderer.once(StorjLoginEvent, (_, res) => {
 
-      this.setState({storjAccount: info}, () => {
-        if (this.state.sia) {
-          location.hash = Hash.SiaWallet;
-        } else {
-          location.hash = Hash.FinishAll;
-        }
+        this.setState({storjAccount: info}, () => {
+          if (this.state.sia) {
+            location.hash = Hash.SiaWallet;
+          } else {
+            location.hash = Hash.FinishAll;
+          }
+          this.requesting = false;
+        });
+
       });
-
-    });
-    ipcRenderer.send(StorjLoginEvent, info);
+      ipcRenderer.send(StorjLoginEvent, info);
+    }
 
   };
 
   _storjRegister(info) {
 
-    ipcRenderer.once(StorjRegisterationEvent, (_, key) => {
+    if (!this.requesting) {
+      this.requesting = true;
+      ipcRenderer.once(StorjRegisterationEvent, (_, key) => {
 
-      this.setState({
-        storjAccount: {
-          email: info.email,
-          password: info.password,
-          key: key,
-        }
-      }, () => {
-        location.hash = Hash.StorjEncryptionKey;
+        this.setState({
+          storjAccount: {
+            email: info.email,
+            password: info.password,
+            key: key,
+          }
+        }, () => {
+          location.hash = Hash.StorjEncryptionKey;
+          this.requesting = false;
+        });
+
       });
-
-    });
-    ipcRenderer.send(StorjRegisterationEvent, info);
+      ipcRenderer.send(StorjRegisterationEvent, info);
+    }
 
   }
 
   _requestSiaWallet() {
 
-    ipcRenderer.once(SiaWalletEvent, (_, info) => {
+    if (!this.requesting) {
+      this.requesting = true;
+      ipcRenderer.once(SiaWalletEvent, (_, info) => {
 
-      this.setState({siaAccount: info}, () => {
-        location.hash = Hash.SiaWallet;
+        this.setState({siaAccount: info}, () => {
+          location.hash = Hash.SiaWallet;
+          this.requesting = false;
+        });
+
       });
-
-    });
-    ipcRenderer.send(SiaWalletEvent);
+      ipcRenderer.send(SiaWalletEvent);
+    }
 
   }
 

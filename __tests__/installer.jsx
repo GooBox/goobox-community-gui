@@ -56,8 +56,6 @@ describe("Installer component", () => {
     });
 
     it("moves to the choose service screen when next button in the welcome screen is clicked", () => {
-      location.hash = "";
-
       const wrapper = mount(<Installer/>);
       wrapper.find("Welcome").prop("onClickNext")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
@@ -68,11 +66,39 @@ describe("Installer component", () => {
 
       it("requests starting JRE installer when onClickNext is called", () => {
         const wrapper = mount(<Installer/>);
-        const login = wrapper.find("Welcome");
-        login.prop("onClickNext")();
+        const welcome = wrapper.find("Welcome");
+        welcome.prop("onClickNext")();
 
         expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.anything());
         expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
+      });
+
+      it("doesn't requests when this.requesting is true", () => {
+        const wrapper = mount(<Installer/>);
+        const welcome = wrapper.find("Welcome");
+        wrapper.instance().requesting = true;
+        welcome.prop("onClickNext")();
+
+        expect(ipcRenderer.once).not.toHaveBeenCalled();
+        expect(ipcRenderer.send).not.toHaveBeenCalled();
+      });
+
+      it("sets this.requesting is true while it's connecting to main process", () => {
+        const wrapper = mount(<Installer/>);
+        const welcome = wrapper.find("Welcome");
+        expect(wrapper.instance().requesting).toBeFalsy();
+
+        ipcRenderer.once.mockImplementation((listen, cb) => {
+          expect(wrapper.instance().requesting).toBeTruthy();
+          ipcRenderer.send.mockImplementation((method, arg) => {
+            if (listen === method) {
+              cb(null, arg);
+            }
+          });
+        });
+
+        welcome.prop("onClickNext")();
+        expect(wrapper.instance().requesting).toBeFalsy();
       });
 
     });
@@ -224,6 +250,34 @@ describe("Installer component", () => {
         expect(wrapper.state("siaAccount").seed).toEqual(seed);
       });
 
+      it("doesn't requests when this.requesting is true", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("SelectFolder");
+        wrapper.instance().requesting = true;
+        c.prop("onClickNext")();
+
+        expect(ipcRenderer.once).not.toHaveBeenCalled();
+        expect(ipcRenderer.send).not.toHaveBeenCalled();
+      });
+
+      it("sets this.requesting is true while it's connecting to main process", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("SelectFolder");
+        expect(wrapper.instance().requesting).toBeFalsy();
+
+        ipcRenderer.once.mockImplementation((listen, cb) => {
+          expect(wrapper.instance().requesting).toBeTruthy();
+          ipcRenderer.send.mockImplementation((method) => {
+            if (listen === method) {
+              cb(null, {});
+            }
+          });
+        });
+
+        c.prop("onClickNext")();
+        expect(wrapper.instance().requesting).toBeFalsy();
+      });
+
     });
 
   });
@@ -371,6 +425,34 @@ describe("Installer component", () => {
         });
       });
 
+      it("doesn't requests when this.requesting is true", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("StorjLogin");
+        wrapper.instance().requesting = true;
+        c.prop("onClickFinish")();
+
+        expect(ipcRenderer.once).not.toHaveBeenCalled();
+        expect(ipcRenderer.send).not.toHaveBeenCalled();
+      });
+
+      it("sets this.requesting is true while it's connecting to main process", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("StorjLogin");
+        expect(wrapper.instance().requesting).toBeFalsy();
+
+        ipcRenderer.once.mockImplementation((listen, cb) => {
+          expect(wrapper.instance().requesting).toBeTruthy();
+          ipcRenderer.send.mockImplementation((method, arg) => {
+            if (listen === method) {
+              cb(null, arg);
+            }
+          });
+        });
+
+        c.prop("onClickFinish")();
+        expect(wrapper.instance().requesting).toBeFalsy();
+      });
+
     });
 
   });
@@ -424,11 +506,11 @@ describe("Installer component", () => {
 
     describe("with ipc", () => {
 
-      it("requests to create a Storj account when onClickNext is called", () => {
-        const email = "user@example.com";
-        const password = "password";
-        const key = "1234567890";
+      const email = "user@example.com";
+      const password = "password";
+      const key = "1234567890";
 
+      it("requests to create a Storj account when onClickNext is called", () => {
         ipcRenderer.once.mockImplementation((listen, cb) => {
           ipcRenderer.send.mockImplementation((method) => {
             if (listen === method) {
@@ -450,6 +532,37 @@ describe("Installer component", () => {
           password: password,
         });
         expect(wrapper.state("storjAccount").key).toEqual(key);
+      });
+
+      it("doesn't requests when this.requesting is true", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("StorjRegistration");
+        wrapper.instance().requesting = true;
+        c.prop("onClickNext")();
+
+        expect(ipcRenderer.once).not.toHaveBeenCalled();
+        expect(ipcRenderer.send).not.toHaveBeenCalled();
+      });
+
+      it("sets this.requesting is true while it's connecting to main process", () => {
+        const wrapper = mount(<Installer/>);
+        const c = wrapper.find("StorjRegistration");
+        expect(wrapper.instance().requesting).toBeFalsy();
+
+        ipcRenderer.once.mockImplementation((listen, cb) => {
+          expect(wrapper.instance().requesting).toBeTruthy();
+          ipcRenderer.send.mockImplementation((method, arg) => {
+            if (listen === method) {
+              cb(null, key);
+            }
+          });
+        });
+
+        c.prop("onClickNext")({
+          email: email,
+          password: password
+        });
+        expect(wrapper.instance().requesting).toBeFalsy();
       });
 
     });
