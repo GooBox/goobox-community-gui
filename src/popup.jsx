@@ -22,7 +22,7 @@ import Status from "./status.jsx";
 import path from "path";
 import openAboutWindow from "about-window";
 
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing} from "./constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, UsedVolumeEvent, Synchronizing} from "./constants";
 
 
 export function showInfoWindow() {
@@ -48,8 +48,40 @@ export class Popup extends React.Component {
       usedVolume: 0,
       totalVolume: 50,
     };
+    this.timerID = null;
+    this._requestUsedVolume = this._requestUsedVolume.bind(this);
     this._onChangeState = this._onChangeState.bind(this);
     this._onClickSyncFolder = this._onClickSyncFolder.bind(this);
+  }
+
+  componentDidMount() {
+
+    if (!this.timerID) {
+      this.timerID = setTimeout(() => {
+        this._requestUsedVolume();
+      }, 30000);
+    }
+
+  }
+
+  componentWillUnmount() {
+
+    if (this.timerID) {
+      clearTimeout(this.timerID);
+      this.timerID = null;
+    }
+
+  }
+
+  _requestUsedVolume() {
+
+    ipcRenderer.once(UsedVolumeEvent, (event, volume) => {
+      this.setState({usedVolume: volume}, () => {
+        this.timerID = setTimeout(this._requestUsedVolume, 30000);
+      });
+    });
+    ipcRenderer.send(UsedVolumeEvent);
+
   }
 
   _onChangeState(state) {

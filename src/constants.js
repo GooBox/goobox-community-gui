@@ -17,6 +17,7 @@
 
 export const ChangeStateEvent = "change-state";
 export const OpenSyncFolderEvent = "open-sync-folder";
+export const UsedVolumeEvent = "used-volume";
 
 export const Synchronizing = "synchronizing";
 export const Paused = "paused";
