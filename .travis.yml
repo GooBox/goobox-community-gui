@@ -7,9 +7,10 @@ before_deploy:
 - sudo add-apt-repository ppa:ubuntu-wine/ppa -y
 - sudo apt-get update -q
 - sudo apt-get install -y wine1.7
+- npm run build
 - npm run dist
-- cd dist && zip -r goobox-darwin-x64 goobox-darwin-x64
-- cd dist && zip -r goobox-win32-x64 goobox-win32-x64
+- (cd dist && zip -r goobox-darwin-x64 goobox-darwin-x64)
+- (cd dist && zip -r goobox-win32-x64 goobox-win32-x64)
 deploy:
   provider: releases
   api_key:
