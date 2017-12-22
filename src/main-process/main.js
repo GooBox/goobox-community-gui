@@ -18,28 +18,30 @@
 "use strict";
 import os from "os";
 import path from "path";
-import {spawn} from "child_process";
 
 import {app, Menu, ipcMain} from "electron";
 import menubar from "menubar";
 import semver from "semver";
+
+import utils from "./utils";
 
 import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
 let idleIcon, syncIcon, pausedIcon, errorIcon;
-let openDirectory;
+
+let u;
+
 if (process.platform === 'darwin') {
+
   // mac
   idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
   syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
   pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
   errorIcon = path.join(__dirname, "../../resources/mac/error.png");
 
-  openDirectory = (path) => {
-    spawn("open", [path]);
-  }
+  u = utils.mac;
 
 } else {
 
@@ -63,9 +65,7 @@ if (process.platform === 'darwin') {
     errorIcon = path.join(__dirname, "../../resources/win/error.png");
   }
 
-  openDirectory = (path) => {
-    spawn("cmd", ["/C", "start " + path]);
-  }
+  u = utils.windows;
 
 }
 
@@ -114,25 +114,26 @@ mb.on("ready", () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
+  mb.on("focus-lost", () => {
+    mb.hideWindow();
+  });
+
+  ipcMain.on(ChangeStateEvent, (event, arg) => {
+    if (arg === Synchronizing) {
+      mb.tray.setImage(idleIcon);
+    } else {
+      mb.tray.setImage(pausedIcon);
+    }
+    event.sender.send(ChangeStateEvent, arg);
+  });
+
+  ipcMain.on(OpenSyncFolderEvent, (event) => {
+    u.openDirectory(DefaultSyncFolder);
+    event.sender.send(OpenSyncFolderEvent);
+  });
+  
 });
 
-mb.on("focus-lost", () => {
-  mb.hideWindow();
-});
-
-ipcMain.on(ChangeStateEvent, (event, arg) => {
-  if (arg === Synchronizing) {
-    mb.tray.setImage(idleIcon);
-  } else {
-    mb.tray.setImage(pausedIcon);
-  }
-  event.sender.send(ChangeStateEvent, arg);
-});
-
-ipcMain.on(OpenSyncFolderEvent, (event) => {
-  openDirectory(DefaultSyncFolder);
-  event.sender.send(OpenSyncFolderEvent);
-});
 
 // Allow running only one instance.
 const shouldQuit = app.makeSingleInstance(() => {
