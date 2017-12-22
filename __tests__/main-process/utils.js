@@ -16,13 +16,13 @@
  */
 jest.mock("child_process");
 
-import {spawn, execFile} from "child_process";
+import {spawnSync, execFile} from "child_process";
 import utils from "../../src/main-process/utils";
 
 describe("utils module for mac", () => {
 
   beforeEach(() => {
-    spawn.mockReset();
+    spawnSync.mockReset();
     execFile.mockReset();
   });
 
@@ -31,7 +31,7 @@ describe("utils module for mac", () => {
     it("open a given directory with Finder", () => {
       const dir = "/tmp/some-dir";
       utils.mac.openDirectory(dir);
-      expect(spawn).toHaveBeenCalledWith("open", [dir]);
+      expect(spawnSync).toHaveBeenCalledWith("open", [dir]);
     });
 
   });
@@ -58,7 +58,7 @@ describe("utils module for mac", () => {
 describe("utils module for windows", () => {
 
   beforeEach(() => {
-    spawn.mockReset();
+    spawnSync.mockReset();
   });
 
   describe("openDirectory", () => {
@@ -66,7 +66,7 @@ describe("utils module for windows", () => {
     it("open a given directory with explorer", () => {
       const dir = "/tmp/some-dir";
       utils.windows.openDirectory(dir);
-      expect(spawn).toHaveBeenCalledWith("cmd", ["/C", "start " + dir]);
+      expect(spawnSync).toHaveBeenCalledWith("cmd.exe", ["/c", "start " + dir]);
     });
 
   });

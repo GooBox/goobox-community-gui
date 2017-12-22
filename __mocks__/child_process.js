@@ -16,4 +16,5 @@
  */
 
 export const spawn = jest.fn();
+export const spawnSync = jest.fn();
 export const execFile = jest.fn();

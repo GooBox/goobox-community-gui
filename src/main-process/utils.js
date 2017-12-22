@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {spawn, execFile} from "child_process";
+import {spawnSync, execFile} from "child_process";
 
 export const utils = {
 
   mac: {
 
     openDirectory: (dir) => {
-      spawn("open", [dir]);
+      spawnSync("open", [dir]);
     },
 
     totalVolume: (dir) => {
@@ -45,7 +45,7 @@ export const utils = {
   windows: {
 
     openDirectory: (dir) => {
-      spawn("cmd", ["/C", "start " + dir]);
+      spawnSync("cmd.exe", ["/c", "start " + dir]);
     },
 
     totalVolume: (dir) => {
