@@ -25,7 +25,6 @@ if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
 
-
 app.on("ready", () => {
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
@@ -43,7 +42,10 @@ app.on("ready", () => {
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
   app.on("window-all-closed", () => {
-    app.quit();
+    // if the installation process is finished.
+    require("./main");
+    // otherwise
+    // app.quit();
   });
 
   ipcMain.on(JREInstallEvent, (event) => {

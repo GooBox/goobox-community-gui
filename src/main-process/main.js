@@ -81,8 +81,14 @@ const mb = menubar({
   showDockIcon: false,
 });
 
-mb.on("ready", () => {
+if (app.isReady()) {
+  appReady();
+} else {
+  mb.on("ready", appReady);
+}
 
+function appReady() {
+  
   mb.window.setResizable(false);
 
   const ctxMenu = Menu.buildFromTemplate([
@@ -107,7 +113,7 @@ mb.on("ready", () => {
   mb.tray.removeAllListeners("double-click");
   mb.tray.on("double-click", () => {
     singleClicked = false;
-    openDirectory(DefaultSyncFolder);
+    u.openDirectory(DefaultSyncFolder);
   });
 
   mb.tray.on("right-click", () => {
@@ -131,8 +137,8 @@ mb.on("ready", () => {
     u.openDirectory(DefaultSyncFolder);
     event.sender.send(OpenSyncFolderEvent);
   });
-  
-});
+
+}
 
 
 // Allow running only one instance.
