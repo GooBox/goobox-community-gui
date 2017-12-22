@@ -18,10 +18,18 @@
 jest.mock('fs');
 
 import {app, ipcMain, BrowserWindow} from "electron";
+import storage from "electron-json-storage";
+import menubar from "menubar";
 import path from "path";
 import fs from "fs";
 import "../../src/main-process/installer";
-import {JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../../src/constants";
+import {
+  JREInstallEvent,
+  StorjLoginEvent,
+  StorjRegisterationEvent,
+  SiaWalletEvent,
+  ConfigFile
+} from "../../src/constants";
 
 let onReady;
 app.on.mock.calls.forEach(args => {
@@ -37,6 +45,10 @@ describe("main process of the installer", () => {
   beforeEach(() => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     ipcMain.on.mockReset();
+    app.quit.mockClear();
+    // Do not reset those mocks because they have implementations.
+    storage.get.mockClear();
+    menubar.mockClear();
   });
 
   afterEach(() => {
@@ -133,6 +145,41 @@ describe("main process of the installer", () => {
     });
     onReady();
     expect(ipcMain.on).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+  });
+
+  it("starts the core app when all windows are closed and installed is true", () => {
+
+    onReady();
+    const onWindowAllClosed = app.on.mock.calls
+      .filter(args => args[0] === "window-all-closed")
+      .map(args => args[1])[0];
+
+    storage.set(ConfigFile, {
+      installed: true
+    });
+    onWindowAllClosed();
+    expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+    expect(menubar).toHaveBeenCalled();
+    expect(app.quit).not.toHaveBeenCalled();
+
+  });
+
+  // TODO: it shows some message to make sure users want to quie the installer.
+  it("does nothing when all windows are closed but installed is false", () => {
+
+    onReady();
+    const onWindowAllClosed = app.on.mock.calls
+      .filter(args => args[0] === "window-all-closed")
+      .map(args => args[1])[0];
+    storage.set(ConfigFile, {
+      installed: false
+    });
+    onWindowAllClosed();
+    expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+    expect(menubar).not.toHaveBeenCalled();
+    expect(app.quit).toHaveBeenCalled();
+
+
   });
 
 });

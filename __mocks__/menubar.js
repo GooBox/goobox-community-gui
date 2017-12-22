@@ -15,52 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import electronJsonStorage from "./electron-json-storage";
-
-export const app = {
-  on: jest.fn(),
-  getName: () => "Goobox",
-  getPath: () => ".",
-  isReady: jest.fn(),
-  quit: jest.fn(),
-};
-
-export class BrowserWindow {
-
-  constructor(opts) {
-    this.opts = opts;
-  }
-
-  loadURL(url) {
-    this.url = url;
-  }
-
-}
-
-export const ipcMain = {
-  send: jest.fn(),
+export const menubar = jest.fn();
+export const mock = {
   on: jest.fn(),
 };
 
-export const ipcRenderer = {
-  send: jest.fn(),
-  once: jest.fn(),
-};
+menubar.mockReturnValue(mock);
 
-export const remote = {
-  app: {
-    getName: () => "Goobox",
-    getPath: jest.fn(),
-  },
-  dialog: {
-    showOpenDialog: jest.fn()
-  },
-  getCurrentWindow: jest.fn(),
-  require: (module) => {
-    if (module === "electron-json-storage") {
-      return electronJsonStorage;
-    }
 
-  }
-};
-
+export default menubar;

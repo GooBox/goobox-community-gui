@@ -69,7 +69,6 @@ if (process.platform === 'darwin') {
 
 }
 
-
 const mb = menubar({
   index: "file://" + path.join(__dirname, "../../static/popup.html"),
   icon: idleIcon,
@@ -81,6 +80,7 @@ const mb = menubar({
   showDockIcon: false,
 });
 
+
 if (app.isReady()) {
   appReady();
 } else {
@@ -88,7 +88,14 @@ if (app.isReady()) {
 }
 
 function appReady() {
-  
+
+  // Allow running only one instance.
+  const shouldQuit = mb.app.makeSingleInstance(() => {
+    mb.showWindow();
+  });
+  if (shouldQuit) {
+    mb.app.quit();
+  }
   mb.window.setResizable(false);
 
   const ctxMenu = Menu.buildFromTemplate([
@@ -138,13 +145,4 @@ function appReady() {
     event.sender.send(OpenSyncFolderEvent);
   });
 
-}
-
-
-// Allow running only one instance.
-const shouldQuit = app.makeSingleInstance(() => {
-  mb.showWindow();
-});
-if (shouldQuit) {
-  app.quit();
 }

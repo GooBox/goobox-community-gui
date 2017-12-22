@@ -19,7 +19,8 @@
 import fs from "fs";
 import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
-import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
+import storage from "electron-json-storage";
+import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent, ConfigFile} from "../constants";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -42,10 +43,23 @@ app.on("ready", () => {
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
   app.on("window-all-closed", () => {
-    // if the installation process is finished.
-    require("./main");
-    // otherwise
-    // app.quit();
+
+    storage.get(ConfigFile, (err, cfg) => {
+      if (err) {
+        console.log(err);
+        app.quit();
+      }
+
+      if (cfg && cfg.installed) {
+        // if the installation process is finished.
+        require("./main");
+      } else {
+        // otherwise
+        app.quit();
+      }
+
+    });
+
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
@@ -67,4 +81,5 @@ app.on("ready", () => {
     });
   });
 
-});
+})
+;

@@ -15,9 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const storage = {};
+
 export const electronJsonStorage = {
   get: jest.fn(),
   set: jest.fn()
 };
+
+electronJsonStorage.get.mockImplementation((key, cb) => {
+  cb(null, storage[key]);
+});
+
+electronJsonStorage.set.mockImplementation((key, value, cb) => {
+  storage[key] = value;
+  if (cb) {
+    cb();
+  }
+});
+
 
 export default electronJsonStorage;
