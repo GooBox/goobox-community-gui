@@ -6,11 +6,9 @@
   "scripts": {
     "start": "electron .",
     "start:installer": "electron . installer",
-    "build": "browserify src/installer.jsx -o lib/installer.js",
-    "build:render:main": "browserify src/main.jsx -o lib/main.js",
-    "build:render:installer": "browserify src/installer-main.jsx -o lib/installer.js",
+    "build": "webpack",
     "test": "jest",
-    "dist": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --version=1.7.9 --icon=resources/goobox --out=dist --asar"
+    "dist": "rm -rf dist && electron-packager . goobox --asar --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=__mocks__ --ignore=__tests__"
   },
   "repository": {
     "type": "git",
@@ -21,39 +19,33 @@
   "bugs": {
     "url": "https://github.com/GooBox/goobox-community-gui/issues"
   },
-  "homepage": "https://github.com/GooBox/goobox-community-gui#readme",
+  "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
-    "about-window": "^1.8.0",
+    "about-window": "^1.8.0"
+  },
+  "devDependencies": {
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
     "menubar": "^5.2.3",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
-    "semver": "^5.4.1"
-  },
-  "devDependencies": {
+    "semver": "^5.4.1",
     "babel-jest": "^21.2.0",
-    "babelify": "^8.0.0",
-    "browserify": "^14.5.0",
+    "babel-loader": "^7.1.2",
     "electron": "1.7.9",
     "electron-packager": "^10.1.0",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
-    "jest": "^21.2.1"
+    "jest": "^21.2.1",
+    "webpack": "^3.10.0"
   },
   "babel": {
     "sourceMaps": "inline",
     "presets": [
       "env",
       "react"
-    ]
-  },
-  "browserify": {
-    "transform": [
-      "babelify"
     ]
   },
   "jest": {

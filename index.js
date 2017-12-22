@@ -15,10 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("babel-register");
 
 if (process.argv[2] === "installer" || process.argv[1] === "installer") {
-  require("./src/main-process/installer.js");
+  require("./lib/main-process/installer.js");
 } else {
-  require("./src/main-process/main.js");
+  require("./lib/main-process/main.js");
 }
