@@ -28,7 +28,17 @@ import StorjEmailConfirmation from "./storj-email-confirmation";
 import SiaWallet from "./sia-wallet";
 import SiaFinish from "./sia-finish";
 import Finish from "./finish-all";
-import {Storj, Sia, JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "./constants";
+import {
+  Storj,
+  Sia,
+  JREInstallEvent,
+  StorjLoginEvent,
+  StorjRegisterationEvent,
+  SiaWalletEvent,
+  ConfigFile
+} from "./constants";
+
+const storage = remote.require("electron-json-storage");
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -76,6 +86,7 @@ export class Installer extends React.Component {
     this._storjLogin = this._storjLogin.bind(this);
     this._storjRegister = this._storjRegister.bind(this);
     this._requestSiaWallet = this._requestSiaWallet.bind(this);
+    this._saveConfig = this._saveConfig.bind(this);
   }
 
   _checkJRE() {
@@ -103,6 +114,7 @@ export class Installer extends React.Component {
         ipcRenderer.once(StorjLoginEvent, (_, res) => {
 
           this.setState({storjAccount: info, wait: false}, () => {
+            this._saveConfig();
             if (this.state.sia) {
               location.hash = Hash.SiaWallet;
             } else {
@@ -163,6 +175,17 @@ export class Installer extends React.Component {
         ipcRenderer.send(SiaWalletEvent);
       });
     }
+
+  }
+
+  _saveConfig() {
+
+    storage.set(ConfigFile, {
+      syncFolder: this.state.folder,
+      installed: true,
+    }, (err) => {
+      console.log(err);
+    });
 
   }
 
@@ -302,7 +325,10 @@ export class Installer extends React.Component {
                       location.hash = Hash.SiaSelected;
                     }
                   }}
-                  onClickNext={() => location.hash = Hash.SiaFinish}
+                  onClickNext={() => {
+                    this._saveConfig();
+                    location.hash = Hash.SiaFinish;
+                  }}
                 />
               );
             }}/>

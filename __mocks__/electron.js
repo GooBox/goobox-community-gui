@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import electronJsonStorage from "./electron-json-storage";
+
 export const app = {
   on: jest.fn(),
   getName: () => "Goobox",
@@ -51,6 +53,12 @@ export const remote = {
   dialog: {
     showOpenDialog: jest.fn()
   },
-  getCurrentWindow: jest.fn()
+  getCurrentWindow: jest.fn(),
+  require: (module) => {
+    if (module === "electron-json-storage") {
+      return electronJsonStorage;
+    }
+
+  }
 };
 

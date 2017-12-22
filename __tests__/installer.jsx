@@ -20,9 +20,18 @@ import React from "react";
 import {mount} from "enzyme";
 import {ipcRenderer, remote} from "electron";
 import {Installer, Hash} from "../src/installer.jsx";
-import {Storj, Sia, JREInstallEvent, StorjLoginEvent, StorjRegisterationEvent, SiaWalletEvent} from "../src/constants";
+import {
+  Storj,
+  Sia,
+  JREInstallEvent,
+  StorjLoginEvent,
+  StorjRegisterationEvent,
+  SiaWalletEvent,
+  ConfigFile
+} from "../src/constants";
 
 const app = remote.app;
+const storage = remote.require("electron-json-storage");
 
 const sampleHome = path.join("/home", "some-user");
 process.env.DEFAULT_SYNC_FOLDER = path.join(sampleHome, app.getName());
@@ -42,6 +51,7 @@ describe("Installer component", () => {
         }
       });
     });
+    storage.set.mockReset();
   });
 
   describe("hash is empty", () => {
@@ -425,6 +435,24 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.FinishAll}`);
     });
 
+    it("stores selected folder and marks installer finished before moving to FinishAll screen", () => {
+      const folder = "/tmp";
+      const wrapper = mount(<Installer/>);
+      wrapper.setState({sia: false, folder: folder});
+      const comp = wrapper.find("StorjLogin");
+      comp.prop("onClickFinish")({
+        email: "",
+        password: "",
+        key: "",
+      });
+
+      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
+        syncFolder: folder,
+        installed: true
+      }, expect.any(Function));
+      expect(location.hash).toEqual(`#${Hash.FinishAll}`);
+    });
+
     it("updates the hash to SiaWallet when onClickFinish is called and sia state is true", () => {
       const wrapper = mount(<Installer/>);
       wrapper.setState({sia: true});
@@ -437,6 +465,24 @@ describe("Installer component", () => {
       });
       expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
 
+    });
+
+    it("stores selected folder and marks installer finished before moving to SiaWallet screen", () => {
+      const folder = "/tmp";
+      const wrapper = mount(<Installer/>);
+      wrapper.setState({sia: true, folder: folder});
+      const comp = wrapper.find("StorjLogin");
+      comp.prop("onClickFinish")({
+        email: "",
+        password: "",
+        key: "",
+      });
+
+      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
+        syncFolder: folder,
+        installed: true
+      }, expect.any(Function));
+      expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
     });
 
     describe("with ipc", () => {
@@ -738,6 +784,20 @@ describe("Installer component", () => {
       wrapper.setState({storj: true});
       const comp = wrapper.find("SiaWallet");
       comp.prop("onClickNext")();
+      expect(location.hash).toEqual(`#${Hash.SiaFinish}`);
+    });
+
+    it("stores selected folder and marks installer finished before moving to SiaFinish screen", () => {
+      const folder = "/tmp";
+      const wrapper = mount(<Installer/>);
+      wrapper.setState({storj: true, folder: folder});
+      const comp = wrapper.find("SiaWallet");
+      comp.prop("onClickNext")();
+
+      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
+        syncFolder: folder,
+        installed: true
+      }, expect.any(Function));
       expect(location.hash).toEqual(`#${Hash.SiaFinish}`);
     });
 

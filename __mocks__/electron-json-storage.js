@@ -15,19 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeStateEvent = "change-state";
-export const OpenSyncFolderEvent = "open-sync-folder";
-export const UsedVolumeEvent = "used-volume";
+export const electronJsonStorage = {
+  get: jest.fn(),
+  set: jest.fn()
+};
 
-export const Synchronizing = "synchronizing";
-export const Paused = "paused";
-
-export const Storj = "Storj";
-export const Sia = "SIA";
-
-export const JREInstallEvent = "jre-install";
-export const StorjLoginEvent = "storj-login";
-export const StorjRegisterationEvent = "storj-registration";
-export const SiaWalletEvent = "sia-wallet";
-
-export const ConfigFile = "config";
+export default electronJsonStorage;
