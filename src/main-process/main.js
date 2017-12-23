@@ -16,62 +16,31 @@
  */
 
 "use strict";
-import os from "os";
 import path from "path";
 
 import {app, Menu, ipcMain} from "electron";
 import menubar from "menubar";
-import semver from "semver";
 
+import icons from "./icons";
 import utils from "./utils";
 
 import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
-let idleIcon, syncIcon, pausedIcon, errorIcon;
-
 let u;
 
 if (process.platform === 'darwin') {
-
   // mac
-  idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
-  syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
-  pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
-  errorIcon = path.join(__dirname, "../../resources/mac/error.png");
-
   u = utils.mac;
-
 } else {
-
   // windows
-  let version = os.release();
-  if (version.split('.').length === 2) {
-    version += '.0';
-  }
-
-  if (semver.satisfies(version, '<6.2')) {
-    // windows7 or older.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-    errorIcon = path.join(__dirname, "../../resources/win/error.png");
-  } else {
-    // windows8 or later.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-    errorIcon = path.join(__dirname, "../../resources/win/error.png");
-  }
-
   u = utils.windows;
-
 }
 
 const mb = menubar({
   index: "file://" + path.join(__dirname, "../../static/popup.html"),
-  icon: idleIcon,
+  icon: icons.getIdleIcon(),
   tooltip: app.getName(),
   preloadWindow: true,
   width: 518,
@@ -133,9 +102,9 @@ function appReady() {
 
   ipcMain.on(ChangeStateEvent, (event, arg) => {
     if (arg === Synchronizing) {
-      mb.tray.setImage(idleIcon);
+      mb.tray.setImage(icons.getIdleIcon());
     } else {
-      mb.tray.setImage(pausedIcon);
+      mb.tray.setImage(icons.getPausedIcon());
     }
     event.sender.send(ChangeStateEvent, arg);
   });
