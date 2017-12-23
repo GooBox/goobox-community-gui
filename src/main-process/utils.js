@@ -17,44 +17,45 @@
 
 import {spawnSync, execFile} from "child_process";
 
-export const utils = {
+let openDirectory, totalVolume;
 
-  mac: {
+if (process.platform === "win32") {
 
-    openDirectory: (dir) => {
-      spawnSync("open", [dir]);
-    },
+  openDirectory = (dir) => {
+    spawnSync("cmd.exe", ["/c", "start " + dir]);
+  };
 
-    totalVolume: (dir) => {
-      return new Promise((resolve, reject) => {
-        execFile("du", ["-s", dir], (error, stdout) => {
-          if (error) {
-            reject(error);
-          }
-          const sp = stdout.split("\t");
-          if (!sp.length) {
-            reject("invalid response");
-          }
-          resolve(parseInt(sp[0]));
-        });
+  totalVolume = (dir) => {
+    //
+    return Promise.resolve(0);
+  };
+
+} else {
+
+  openDirectory = (dir) => {
+    spawnSync("open", [dir]);
+  };
+
+  totalVolume = (dir) => {
+    return new Promise((resolve, reject) => {
+      execFile("du", ["-s", dir], (error, stdout) => {
+        if (error) {
+          reject(error);
+        }
+        const sp = stdout.split("\t");
+        if (!sp.length) {
+          reject("invalid response");
+        }
+        resolve(parseInt(sp[0]));
       });
-    },
+    });
+  };
 
-  },
+}
 
-  windows: {
-
-    openDirectory: (dir) => {
-      spawnSync("cmd.exe", ["/c", "start " + dir]);
-    },
-
-    totalVolume: (dir) => {
-      //
-      return Promise.resolve(0);
-    },
-
-  }
-
+export const utils = {
+  openDirectory: openDirectory,
+  totalVolume: totalVolume,
 };
 
 export default utils;

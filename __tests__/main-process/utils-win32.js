@@ -14,48 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 jest.mock("child_process");
 
-import {spawnSync, execFile} from "child_process";
-import utils from "../../src/main-process/utils";
+import {spawnSync} from "child_process";
 
-describe("utils module for mac", () => {
+describe("utils module in Windows", () => {
 
-  beforeEach(() => {
-    spawnSync.mockReset();
-    execFile.mockReset();
-  });
-
-  describe("openDirectory", () => {
-
-    it("open a given directory with Finder", () => {
-      const dir = "/tmp/some-dir";
-      utils.mac.openDirectory(dir);
-      expect(spawnSync).toHaveBeenCalledWith("open", [dir]);
+  let originalPlatform;
+  let utils;
+  beforeAll(() => {
+    originalPlatform = process.platform;
+    Object.defineProperty(process, "platform", {
+      value: "win32"
     });
-
+    utils = require("../../src/main-process/utils").default;
   });
 
-  describe("totalVolume", () => {
-
-    it("calculate total volume of a given directory with du", () => {
-      const size = 12345;
-      const dir = "/tmp/some-dir";
-      execFile.mockImplementation((cmd, args, cb) => {
-        cb(null, `${size}\t${dir}`);
-      });
-
-      return utils.mac.totalVolume(dir).then((res) => {
-        expect(res).toEqual(size);
-        expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
-      });
+  afterAll(() => {
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform
     });
-
   });
-
-});
-
-describe("utils module for windows", () => {
 
   beforeEach(() => {
     spawnSync.mockReset();
@@ -65,7 +45,7 @@ describe("utils module for windows", () => {
 
     it("open a given directory with explorer", () => {
       const dir = "/tmp/some-dir";
-      utils.windows.openDirectory(dir);
+      utils.openDirectory(dir);
       expect(spawnSync).toHaveBeenCalledWith("cmd.exe", ["/c", "start " + dir]);
     });
 

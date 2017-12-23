@@ -28,16 +28,6 @@ import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../c
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
-let u;
-
-if (process.platform === 'darwin') {
-  // mac
-  u = utils.mac;
-} else {
-  // windows
-  u = utils.windows;
-}
-
 const mb = menubar({
   index: "file://" + path.join(__dirname, "../../static/popup.html"),
   icon: icons.getIdleIcon(),
@@ -89,7 +79,7 @@ function appReady() {
   mb.tray.removeAllListeners("double-click");
   mb.tray.on("double-click", () => {
     singleClicked = false;
-    u.openDirectory(DefaultSyncFolder);
+    utils.openDirectory(DefaultSyncFolder);
   });
 
   mb.tray.on("right-click", () => {
@@ -110,7 +100,7 @@ function appReady() {
   });
 
   ipcMain.on(OpenSyncFolderEvent, (event) => {
-    u.openDirectory(DefaultSyncFolder);
+    utils.openDirectory(DefaultSyncFolder);
     event.sender.send(OpenSyncFolderEvent);
   });
 
