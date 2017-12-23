@@ -19,34 +19,34 @@
 import path from "path";
 
 import {app, Menu, ipcMain} from "electron";
+import storage from "electron-json-storage";
 import menubar from "menubar";
 
 import icons from "./icons";
 import utils from "./utils";
 
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
-
-const mb = menubar({
-  index: "file://" + path.join(__dirname, "../../static/popup.html"),
-  icon: icons.getIdleIcon(),
-  tooltip: app.getName(),
-  preloadWindow: true,
-  width: 518,
-  height: 400,
-  alwaysOnTop: true,
-  showDockIcon: false,
-});
-
 
 if (app.isReady()) {
   appReady();
 } else {
-  mb.on("ready", appReady);
+  app.on("ready", appReady);
 }
 
 function appReady() {
+
+  const mb = menubar({
+    index: "file://" + path.join(__dirname, "../../static/popup.html"),
+    icon: icons.getIdleIcon(),
+    tooltip: app.getName(),
+    preloadWindow: true,
+    width: 518,
+    height: 400,
+    alwaysOnTop: true,
+    showDockIcon: false,
+  });
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
@@ -100,8 +100,10 @@ function appReady() {
   });
 
   ipcMain.on(OpenSyncFolderEvent, (event) => {
-    utils.openDirectory(DefaultSyncFolder);
-    event.sender.send(OpenSyncFolderEvent);
+    storage.get(ConfigFile, cfg => {
+      utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
+      event.sender.send(OpenSyncFolderEvent);
+    });
   });
 
 }
