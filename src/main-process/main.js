@@ -25,7 +25,7 @@ import menubar from "menubar";
 import icons from "./icons";
 import utils from "./utils";
 
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile} from "../constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile, UsedVolumeEvent} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
@@ -103,6 +103,14 @@ function appReady() {
     storage.get(ConfigFile, cfg => {
       utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
       event.sender.send(OpenSyncFolderEvent);
+    });
+  });
+
+  ipcMain.on(UsedVolumeEvent, (event) => {
+    storage.get(ConfigFile, cfg => {
+      utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder).then(volume => {
+        event.sender.send(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
+      }).catch(err => console.log(err));
     });
   });
 

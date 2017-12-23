@@ -20,8 +20,8 @@ jest.mock("child_process");
 import path from "path";
 import {menubar, menuberMock} from "menubar";
 import {app, ipcMain} from "electron";
-import {spawnSync} from "child_process";
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../../src/constants";
+import {spawnSync, execFile} from "child_process";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused, UsedVolumeEvent} from "../../src/constants";
 import icons from "../../src/main-process/icons";
 import storage from "electron-json-storage";
 
@@ -133,6 +133,46 @@ describe("main process of the core app", () => {
       handler(event);
       expect(spawnSync).toHaveBeenCalledWith("open", [syncFolder]);
       expect(event.sender.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
+    });
+
+  });
+
+  describe("UsedVolumeEvent handler", () => {
+
+    let handler;
+    let event;
+    beforeEach(() => {
+      onReady();
+      handler = ipcMain.on.mock.calls.filter(args => args[0] === UsedVolumeEvent).map(args => args[1])[0];
+      menuberMock.tray.setImage.mockClear();
+      event = {
+        sender: {
+          send: jest.fn()
+        }
+      };
+    });
+
+    it("calculate the volume of the sync folder", () => {
+      const syncFolder = "/tmp";
+      storage.get.mockImplementationOnce((key, cb) => {
+        cb({
+          syncFolder: syncFolder,
+        });
+      });
+
+      const volume = 1234567;
+      execFile.mockImplementation((cmd, args, cb) => {
+        cb(null, `${volume}\t${syncFolder}`);
+      });
+
+      handler(event);
+      expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
+      return new Promise(resolve => {
+        setTimeout(() => {
+          expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
+          resolve();
+        }, 100);
+      });
     });
 
   });
