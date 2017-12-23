@@ -114,10 +114,10 @@ export class Installer extends React.Component {
         ipcRenderer.once(StorjLoginEvent, (_, res) => {
 
           this.setState({storjAccount: info, wait: false}, () => {
-            this._saveConfig();
             if (this.state.sia) {
               location.hash = Hash.SiaWallet;
             } else {
+              this._saveConfig();
               location.hash = Hash.FinishAll;
             }
             this.requesting = false;
@@ -183,6 +183,8 @@ export class Installer extends React.Component {
     storage.set(ConfigFile, {
       syncFolder: this.state.folder,
       installed: true,
+      storj: this.state.storj,
+      sia: this.state.sia,
     }, (err) => {
       console.log(err);
     });
