@@ -15,12 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {app, BrowserWindow} from "./electron";
+
 export const menubar = jest.fn();
-export const mock = {
+export const menuberMock = {
   on: jest.fn(),
+  app: app,
+  showWindow: jest.fn(),
+  window: new BrowserWindow(),
+  tray: {
+    on: jest.fn(),
+    listeners: jest.fn(),
+    removeAllListeners: jest.fn(),
+    setImage: jest.fn()
+  }
 };
 
-menubar.mockReturnValue(mock);
-
+menubar.mockReturnValue(menuberMock);
 
 export default menubar;

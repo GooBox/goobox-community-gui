@@ -19,7 +19,7 @@ jest.mock('fs');
 
 import {app, ipcMain, BrowserWindow} from "electron";
 import storage from "electron-json-storage";
-import menubar from "menubar";
+import menubar, {menuberMock} from "menubar";
 import path from "path";
 import fs from "fs";
 import "../../src/main-process/installer";
@@ -149,6 +149,9 @@ describe("main process of the installer", () => {
 
   it("starts the core app when all windows are closed and installed is true", () => {
 
+    app.isReady.mockReturnValue(true);
+    menuberMock.tray.listeners.mockReturnValue([() => null]);
+
     onReady();
     const onWindowAllClosed = app.on.mock.calls
       .filter(args => args[0] === "window-all-closed")
@@ -178,7 +181,6 @@ describe("main process of the installer", () => {
     expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
     expect(menubar).not.toHaveBeenCalled();
     expect(app.quit).toHaveBeenCalled();
-
 
   });
 

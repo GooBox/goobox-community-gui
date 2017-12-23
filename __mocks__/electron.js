@@ -23,7 +23,12 @@ export const app = {
   getPath: () => ".",
   isReady: jest.fn(),
   quit: jest.fn(),
+  makeSingleInstance: jest.fn(),
 };
+
+app.makeSingleInstance.mockImplementation(callback => {
+  callback();
+});
 
 export class BrowserWindow {
 
@@ -33,6 +38,9 @@ export class BrowserWindow {
 
   loadURL(url) {
     this.url = url;
+  }
+
+  setResizable() {
   }
 
 }
@@ -62,5 +70,9 @@ export const remote = {
     }
 
   }
+};
+
+export const Menu = {
+  buildFromTemplate: jest.fn()
 };
 
