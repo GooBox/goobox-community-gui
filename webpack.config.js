@@ -33,6 +33,9 @@ module.exports = [
     resolve: {
       extensions: [".js"]
     },
+    externals: [{
+      "node-jre": "commonjs node-jre"
+    }],
     module: {
       loaders: [
         {exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader"}

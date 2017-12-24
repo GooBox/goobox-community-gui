@@ -22,6 +22,7 @@ import storage from "electron-json-storage";
 import menubar, {menuberMock} from "menubar";
 import path from "path";
 import fs from "fs";
+import jre from "node-jre";
 import "../../src/main-process/installer";
 import {
   JREInstallEvent,
@@ -86,19 +87,47 @@ describe("main process of the installer", () => {
     expect(mockLoadURL).toHaveBeenCalledWith("file://" + path.join(__dirname, "../../static/installer.html"));
   });
 
-  it("handles JREInstallEvent", () => {
-    const sender = {
-      send: jest.fn()
+  describe("JREInstallEvent handler", () => {
+
+    let handler;
+    const event = {
+      sender: {
+        send: jest.fn()
+      }
     };
 
-    ipcMain.on.mockImplementation((event, cb) => {
-      if (event === JREInstallEvent) {
-        cb({sender: sender}, true);
-        expect(sender.send).toHaveBeenCalledWith(JREInstallEvent);
-      }
+    beforeEach(() => {
+      onReady();
+      handler = ipcMain.on.mock.calls.filter(args => args[0] === JREInstallEvent).map(args => args[1])[0];
+      event.sender.send.mockClear();
+      jre.driver.mockClear();
+      fs.existsSync.mockClear();
     });
-    onReady();
-    expect(ipcMain.on).toHaveBeenCalledWith(JREInstallEvent, expect.anything());
+
+    it("checks JRE is installed and if exists, does nothing", () => {
+      const jrePath = "/tmp/java";
+      jre.driver.mockReturnValue(jrePath);
+      fs.existsSync.mockReturnValue(true);
+
+      handler(event);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
+      expect(jre.install).not.toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent);
+    });
+
+    it("checks JRE is installed and if not exists, installs a JRE", () => {
+      const jrePath = "/tmp/java";
+      jre.driver.mockReturnValue(jrePath);
+      fs.existsSync.mockReturnValue(false);
+
+      handler(event);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
+      expect(jre.install).toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
+    });
+
   });
 
   it("handles StorjLoginEvent", () => {
@@ -167,7 +196,7 @@ describe("main process of the installer", () => {
 
   });
 
-  // TODO: it shows some message to make sure users want to quie the installer.
+// TODO: it shows some message to make sure users want to quie the installer.
   it("does nothing when all windows are closed but installed is false", () => {
 
     onReady();
@@ -184,4 +213,5 @@ describe("main process of the installer", () => {
 
   });
 
-});
+})
+;

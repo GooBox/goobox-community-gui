@@ -20,11 +20,13 @@ import fs from "fs";
 import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
 import storage from "electron-json-storage";
+import jre from "node-jre";
 import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent, ConfigFile} from "../constants";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
+
 
 app.on("ready", () => {
 
@@ -63,7 +65,14 @@ app.on("ready", () => {
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
-    event.sender.send(JREInstallEvent);
+    console.log(jre.driver());
+    if (fs.existsSync(jre.driver())) {
+      event.sender.send(JREInstallEvent);
+      return;
+    }
+    jre.install((err) => {
+      event.sender.send(JREInstallEvent, err);
+    });
   });
 
   ipcMain.on(StorjLoginEvent, (event, arg) => {
