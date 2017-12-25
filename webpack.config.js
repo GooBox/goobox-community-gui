@@ -19,31 +19,59 @@
 
 const path = require("path");
 
-module.exports = {
-    target: "electron",
+module.exports = [
+  {
+    target: "electron-main",
     node: {
-        __dirname: false,
-        __filename: false
+      __dirname: false,
+      __filename: false
     },
     entry: {
-        "main-process/main": "./src/main-process/main.js",
-        "main": "./src/main.jsx",
-        "main-process/installer": "./src/main-process/installer.js",
-        "installer-main": "./src/installer-main.jsx",
+      "main-process/startup": "./src/main-process/startup-installer.js",
     },
     resolve: {
-        extensions: [".js", ".jsx"]
+      extensions: [".js"]
     },
     externals: [{
-        "about-window": "commonjs about-window"
+      "node-jre": "commonjs node-jre"
     }],
     module: {
-        loaders: [
-            { exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader" }
-        ]
+      loaders: [
+        {exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader"}
+      ],
+      rules: [{
+        test: require.resolve("startup-installer.js")
+      }]
     },
     output: {
-        path: path.join(__dirname, "lib"),
-        filename: "[name].js"
+      path: path.join(__dirname, "lib"),
+      filename: "[name].js"
     }
-};
+  },
+  {
+    target: "electron-renderer",
+    node: {
+      __dirname: false,
+      __filename: false
+    },
+    entry: {
+      "main": "./src/main.jsx",
+      "installer-main": "./src/installer-main.jsx",
+    },
+    resolve: {
+      extensions: [".js", ".jsx"]
+    },
+    externals: [{
+      "about-window": "commonjs about-window"
+    }],
+    module: {
+      loaders: [
+        {exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader"}
+      ]
+    },
+    output: {
+      path: path.join(__dirname, "lib"),
+      filename: "[name].js"
+    }
+  }
+];

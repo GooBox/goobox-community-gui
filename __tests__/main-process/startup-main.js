@@ -15,19 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeStateEvent = "change-state";
-export const OpenSyncFolderEvent = "open-sync-folder";
-export const UsedVolumeEvent = "used-volume";
+import storage from "electron-json-storage";
+import {ConfigFile} from "../../src/constants";
 
-export const Synchronizing = "synchronizing";
-export const Paused = "paused";
+import {app} from "electron";
 
-export const Storj = "Storj";
-export const Sia = "SIA";
+describe("startup script", () => {
+  
+  it("loads the main script for the core app when already installed", () => {
+    storage.get.mockImplementationOnce((key, callback) => {
+      if (key === ConfigFile) {
+        callback(null, {installed: true});
+      }
+    });
+    require("../../src/main-process/startup");
+    expect(app.on.mock.calls[0][1].name).toEqual("main");
+  });
 
-export const JREInstallEvent = "jre-install";
-export const StorjLoginEvent = "storj-login";
-export const StorjRegisterationEvent = "storj-registration";
-export const SiaWalletEvent = "sia-wallet";
-
-export const ConfigFile = "config";
+});

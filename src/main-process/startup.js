@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeStateEvent = "change-state";
-export const OpenSyncFolderEvent = "open-sync-folder";
-export const UsedVolumeEvent = "used-volume";
+import storage from "electron-json-storage";
+import {ConfigFile} from "../constants";
 
-export const Synchronizing = "synchronizing";
-export const Paused = "paused";
+if (process.argv[2] === "installer" || process.argv[1] === "installer") {
+  require("./installer.js");
+} else {
+  storage.get(ConfigFile, (err, cfg) => {
+    if (err || !cfg.installed) {
+      require("./installer.js");
+    } else {
+      require("./main.js");
+    }
+  });
+}
 
-export const Storj = "Storj";
-export const Sia = "SIA";
 
-export const JREInstallEvent = "jre-install";
-export const StorjLoginEvent = "storj-login";
-export const StorjRegisterationEvent = "storj-registration";
-export const SiaWalletEvent = "sia-wallet";
-
-export const ConfigFile = "config";

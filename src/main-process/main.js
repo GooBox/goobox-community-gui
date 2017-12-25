@@ -16,73 +16,45 @@
  */
 
 "use strict";
-import os from "os";
 import path from "path";
-import {spawn} from "child_process";
 
 import {app, Menu, ipcMain} from "electron";
+import storage from "electron-json-storage";
 import menubar from "menubar";
-import semver from "semver";
 
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused} from "../constants";
+import icons from "./icons";
+import utils from "./utils";
+
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile, UsedVolumeEvent} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
-let idleIcon, syncIcon, pausedIcon, errorIcon;
-let openDirectory;
-if (process.platform === 'darwin') {
-  // mac
-  idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
-  syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
-  pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
-  errorIcon = path.join(__dirname, "../../resources/mac/error.png");
-
-  openDirectory = (path) => {
-    spawn("open", [path]);
-  }
-
+if (app.isReady()) {
+  main();
 } else {
-
-  // windows
-  let version = os.release();
-  if (version.split('.').length === 2) {
-    version += '.0';
-  }
-
-  if (semver.satisfies(version, '<6.2')) {
-    // windows7 or older.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-    errorIcon = path.join(__dirname, "../../resources/win/error.png");
-  } else {
-    // windows8 or later.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-    errorIcon = path.join(__dirname, "../../resources/win/error.png");
-  }
-
-  openDirectory = (path) => {
-    spawn("cmd", ["/C", "start " + path]);
-  }
-
+  app.on("ready", main);
 }
 
+function main() {
 
-const mb = menubar({
-  index: "file://" + path.join(__dirname, "../../static/popup.html"),
-  icon: idleIcon,
-  tooltip: app.getName(),
-  preloadWindow: true,
-  width: 518,
-  height: 400,
-  alwaysOnTop: true,
-  showDockIcon: false,
-});
+  const mb = menubar({
+    index: "file://" + path.join(__dirname, "../../static/popup.html"),
+    icon: icons.getIdleIcon(),
+    tooltip: app.getName(),
+    preloadWindow: true,
+    width: 518,
+    height: 400,
+    alwaysOnTop: true,
+    showDockIcon: false,
+  });
 
-mb.on("ready", () => {
-
+  // Allow running only one instance.
+  const shouldQuit = mb.app.makeSingleInstance(() => {
+    mb.showWindow();
+  });
+  if (shouldQuit) {
+    mb.app.quit();
+  }
   mb.window.setResizable(false);
 
   const ctxMenu = Menu.buildFromTemplate([
@@ -107,37 +79,39 @@ mb.on("ready", () => {
   mb.tray.removeAllListeners("double-click");
   mb.tray.on("double-click", () => {
     singleClicked = false;
-    openDirectory(DefaultSyncFolder);
+    utils.openDirectory(DefaultSyncFolder);
   });
 
   mb.tray.on("right-click", () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
-});
+  mb.on("focus-lost", () => {
+    mb.hideWindow();
+  });
 
-mb.on("focus-lost", () => {
-  mb.hideWindow();
-});
+  ipcMain.on(ChangeStateEvent, (event, arg) => {
+    if (arg === Synchronizing) {
+      mb.tray.setImage(icons.getIdleIcon());
+    } else {
+      mb.tray.setImage(icons.getPausedIcon());
+    }
+    event.sender.send(ChangeStateEvent, arg);
+  });
 
-ipcMain.on(ChangeStateEvent, (event, arg) => {
-  if (arg === Synchronizing) {
-    mb.tray.setImage(idleIcon);
-  } else {
-    mb.tray.setImage(pausedIcon);
-  }
-  event.sender.send(ChangeStateEvent, arg);
-});
+  ipcMain.on(OpenSyncFolderEvent, (event) => {
+    storage.get(ConfigFile, cfg => {
+      utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
+      event.sender.send(OpenSyncFolderEvent);
+    });
+  });
 
-ipcMain.on(OpenSyncFolderEvent, (event) => {
-  openDirectory(DefaultSyncFolder);
-  event.sender.send(OpenSyncFolderEvent);
-});
+  ipcMain.on(UsedVolumeEvent, (event) => {
+    storage.get(ConfigFile, cfg => {
+      utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder).then(volume => {
+        event.sender.send(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
+      }).catch(err => console.log(err));
+    });
+  });
 
-// Allow running only one instance.
-const shouldQuit = app.makeSingleInstance(() => {
-  mb.showWindow();
-});
-if (shouldQuit) {
-  app.quit();
 }

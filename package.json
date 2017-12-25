@@ -7,8 +7,9 @@
     "start": "electron .",
     "start:installer": "electron . installer",
     "build": "webpack",
+    "watch": "webpack -w",
     "test": "jest",
-    "dist": "rm -rf dist && electron-packager . goobox --asar --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=__mocks__ --ignore=__tests__"
+    "dist": "rm -rf dist && electron-packager . goobox --asar --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__"
   },
   "repository": {
     "type": "git",
@@ -21,24 +22,26 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
-    "about-window": "^1.8.0"
+    "about-window": "^1.8.0",
+    "node-jre": "^0.2.3"
   },
   "devDependencies": {
+    "babel-jest": "^21.2.0",
+    "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "electron": "1.7.9",
+    "electron-json-storage": "^4.0.2",
+    "electron-packager": "^10.1.0",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-16": "^1.1.0",
+    "jest": "^21.2.1",
     "menubar": "^5.2.3",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
     "semver": "^5.4.1",
-    "babel-jest": "^21.2.0",
-    "babel-loader": "^7.1.2",
-    "electron": "1.7.9",
-    "electron-packager": "^10.1.0",
-    "enzyme": "^3.2.0",
-    "enzyme-adapter-react-16": "^1.1.0",
-    "jest": "^21.2.1",
     "webpack": "^3.10.0"
   },
   "babel": {

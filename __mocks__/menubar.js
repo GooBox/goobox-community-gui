@@ -15,19 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeStateEvent = "change-state";
-export const OpenSyncFolderEvent = "open-sync-folder";
-export const UsedVolumeEvent = "used-volume";
+import {app, BrowserWindow} from "./electron";
 
-export const Synchronizing = "synchronizing";
-export const Paused = "paused";
+export const menubar = jest.fn();
+export const menuberMock = {
+  on: jest.fn(),
+  app: app,
+  showWindow: jest.fn(),
+  window: new BrowserWindow(),
+  tray: {
+    on: jest.fn(),
+    listeners: jest.fn(),
+    removeAllListeners: jest.fn(),
+    setImage: jest.fn()
+  }
+};
 
-export const Storj = "Storj";
-export const Sia = "SIA";
+menubar.mockReturnValue(menuberMock);
 
-export const JREInstallEvent = "jre-install";
-export const StorjLoginEvent = "storj-login";
-export const StorjRegisterationEvent = "storj-registration";
-export const SiaWalletEvent = "sia-wallet";
-
-export const ConfigFile = "config";
+export default menubar;

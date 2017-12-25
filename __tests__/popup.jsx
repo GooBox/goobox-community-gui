@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+jest.useFakeTimers();
+
 import React from "react";
 import {shallow} from "enzyme";
 import path from "path";
@@ -22,9 +24,14 @@ import {ipcRenderer} from "electron";
 import openAboutWindow from "about-window";
 
 import Popup from "../src/popup.jsx";
-import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing} from "../src/constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, UsedVolumeEvent, Paused, Synchronizing} from "../src/constants";
 
 describe("Popup component", () => {
+
+  beforeEach(() => {
+    jest.clearAllTimers();
+    setTimeout.mockReset();
+  });
 
   it("has a Status component", () => {
     const wrapper = shallow(<Popup/>);
@@ -105,6 +112,38 @@ describe("Popup component", () => {
 
       expect(ipcRenderer.once).toHaveBeenCalledWith(OpenSyncFolderEvent, expect.anything());
       expect(ipcRenderer.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
+    });
+
+    it("requests total volume ", () => {
+      const timerID = 9999;
+      setTimeout.mockReturnValue(timerID);
+
+      const volume = 334;
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method, arg) => {
+          if (listen === method) {
+            cb(null, volume);
+          }
+        });
+      });
+
+      const wrapper = shallow(<Popup/>);
+      expect(setTimeout).toHaveBeenCalledTimes(1);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 30000);
+
+      // jest.runOnlyPendingTimers();
+      setTimeout.mock.calls[0][0]();
+
+      expect(ipcRenderer.once).toHaveBeenCalledWith(UsedVolumeEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(UsedVolumeEvent);
+
+      expect(setTimeout).toHaveBeenCalledTimes(2);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 30000);
+
+      expect(wrapper.state("usedVolume")).toEqual(volume);
+
+      wrapper.unmount();
+      expect(clearTimeout).toHaveBeenCalledWith(timerID);
     });
 
   });

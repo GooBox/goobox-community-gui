@@ -15,9 +15,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-if (process.argv[2] === "installer" || process.argv[1] === "installer") {
-  require("./lib/main-process/installer.js");
-} else {
-  require("./lib/main-process/main.js");
-}
+require("./lib/main-process/startup");

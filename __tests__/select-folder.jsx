@@ -38,6 +38,16 @@ describe("SelectFolder component", () => {
     expect(place.text()).toEqual(service);
   });
 
+  it("shows current selected folder", () => {
+    const folder = "/tmp";
+    const wrapper = shallow(<SelectFolder folder={folder}/>);
+
+    const c = wrapper.find(".folder");
+    expect(c.exists()).toBeTruthy();
+    expect(c.text()).toEqual(folder);
+
+  });
+
   it("has a back link", () => {
     const fn = jest.fn();
     const wrapper = shallow(<SelectFolder onClickBack={fn}/>);

@@ -59,7 +59,13 @@ const style = {
     textAlign: "center",
     width: "600px",
     paddingLeft: "91px"
-  }
+  },
+  selectedFolder: {
+    fontSize: "11px",
+    textAlign: "center",
+    paddingTop: "9px",
+    color: "white",
+  },
 };
 
 export default class SelectFolder extends React.Component {
@@ -130,9 +136,9 @@ export default class SelectFolder extends React.Component {
           <img className="up-and-down" src="../resources/down_arrow_white.svg" width="17px" height="29px"/>
         </main>
         <main style={style.browseBtn}>
-          <div>
-            <button style={style.button} onClick={this._onClickBrowse}>Browse...</button>
-          </div>
+          <button style={style.button} onClick={this._onClickBrowse}>Browse...</button>
+          <br/>
+          <span className="folder" style={style.selectedFolder}>{this.props.folder}</span>
         </main>
         <footer>
           <a className="back-btn" onClick={this._onClickBack} role="button">
