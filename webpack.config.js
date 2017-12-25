@@ -27,7 +27,7 @@ module.exports = [
       __filename: false
     },
     entry: {
-      "main-process/startup": "./src/main-process/startup-installer.js",
+      "main-process/startup": "./src/main-process/startup.js",
     },
     resolve: {
       extensions: [".js"]
@@ -39,9 +39,6 @@ module.exports = [
       loaders: [
         {exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader"}
       ],
-      rules: [{
-        test: require.resolve("startup-installer.js")
-      }]
     },
     output: {
       path: path.join(__dirname, "lib"),
