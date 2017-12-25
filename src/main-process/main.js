@@ -30,12 +30,12 @@ import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile, UsedVo
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
 if (app.isReady()) {
-  appReady();
+  main();
 } else {
-  app.on("ready", appReady);
+  app.on("ready", main);
 }
 
-function appReady() {
+function main() {
 
   const mb = menubar({
     index: "file://" + path.join(__dirname, "../../static/popup.html"),

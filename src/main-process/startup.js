@@ -15,4 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main-process/startup");
+import storage from "electron-json-storage";
+import {ConfigFile} from "../constants";
+
+if (process.argv[2] === "installer" || process.argv[1] === "installer") {
+  require("./installer.js");
+} else {
+  storage.get(ConfigFile, (err, cfg) => {
+    if (err || !cfg.installed) {
+      require("./installer.js");
+    } else {
+      require("./main.js");
+    }
+  });
+}
+
+

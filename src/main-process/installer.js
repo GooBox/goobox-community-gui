@@ -27,8 +27,9 @@ if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
 
+app.on("ready", installer);
 
-app.on("ready", () => {
+function installer() {
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
@@ -90,5 +91,5 @@ app.on("ready", () => {
     });
   });
 
-})
-;
+}
+
