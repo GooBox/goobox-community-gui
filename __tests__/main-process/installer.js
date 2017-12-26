@@ -16,6 +16,7 @@
  */
 
 jest.mock('fs');
+jest.mock("child_process");
 
 import {app, ipcMain, BrowserWindow} from "electron";
 import storage from "electron-json-storage";
@@ -23,6 +24,8 @@ import menubar, {menuberMock} from "menubar";
 import path from "path";
 import fs from "fs";
 import jre from "node-jre";
+import {execFile} from "child_process";
+import yaml from "js-yaml";
 import "../../src/main-process/installer";
 import {
   JREInstallEvent,
@@ -160,20 +163,54 @@ describe("main process of the installer", () => {
     expect(ipcMain.on).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
   });
 
-  it("handles SiaWalletEvent", () => {
-    const sender = {
-      send: jest.fn()
-    };
-    const folder = "/tmp/somewhere";
+  describe("SiaWalletEvent handler", () => {
 
-    ipcMain.on.mockImplementation((event, cb) => {
-      if (event === SiaWalletEvent) {
-        cb({sender: sender});
-        expect(sender.send).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+    let handler;
+    const event = {
+      sender: {
+        send: jest.fn()
       }
+    };
+
+    beforeEach(() => {
+      onReady();
+      handler = ipcMain.on.mock.calls.filter(args => args[0] === SiaWalletEvent).map(args => args[1])[0];
+      event.sender.send.mockClear();
+      execFile.mockClear();
     });
-    onReady();
-    expect(ipcMain.on).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
+
+    it("execute the wallet command of sync sia app", () => {
+      const address = "0x01234567890";
+      const seed = "hello world";
+
+      execFile.mockImplementation((file, args, opts, callback) => {
+        callback(null, yaml.dump({
+          "wallet address": address,
+          "primary seed": seed
+        }));
+      });
+      handler(event);
+
+      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin/goobox-sync-sia"));
+      if (process.platform === "win32") {
+        cmd += ".bat";
+      }
+      expect(execFile).toHaveBeenCalledWith(cmd, ["wallet"], {
+          cwd: path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin")),
+          env: {
+            JAVA_HOME: path.join(jre.driver(), "../../"),
+          },
+          windowsHide: true,
+        },
+        expect.any(Function)
+      );
+
+      expect(event.sender.send).toHaveBeenCalledWith(SiaWalletEvent, {
+        address: address,
+        seed: seed,
+      });
+    });
+
   });
 
   it("starts the core app when all windows are closed and installed is true", () => {
@@ -213,5 +250,4 @@ describe("main process of the installer", () => {
 
   });
 
-})
-;
+});

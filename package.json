@@ -9,7 +9,7 @@
     "build": "webpack",
     "watch": "webpack -w",
     "test": "jest",
-    "dist": "rm -rf dist && electron-packager . goobox --asar --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__"
+    "dist": "rm -rf dist && electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
     "jest": "^21.2.1",
+    "js-yaml": "^3.10.0",
     "menubar": "^5.2.3",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",

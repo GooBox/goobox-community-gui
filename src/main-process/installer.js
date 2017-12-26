@@ -21,6 +21,8 @@ import path from "path";
 import {app, ipcMain, BrowserWindow} from "electron";
 import storage from "electron-json-storage";
 import jre from "node-jre";
+import {execFile} from "child_process";
+import yaml from "js-yaml";
 import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent, ConfigFile} from "../constants";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
@@ -85,10 +87,33 @@ function installer() {
   });
 
   ipcMain.on(SiaWalletEvent, (event) => {
-    event.sender.send(SiaWalletEvent, {
-      wallet: "aaaaaaaa",
-      seed: "xxx xxx xxx",
+
+    let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin/goobox-sync-sia"));
+    if (process.platform === "win32") {
+      cmd += ".bat";
+    }
+    execFile(cmd, ["wallet"], {
+      cwd: path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin")),
+      env: {
+        JAVA_HOME: path.join(jre.driver(), "../../"),
+      },
+      windowsHide: true,
+    }, (error, stdout) => {
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      const res = yaml.safeLoad(stdout);
+      console.log(res["wallet address"])
+      event.sender.send(SiaWalletEvent, {
+        address: res["wallet address"],
+        seed: res["primary seed"],
+      });
+
     });
+
   });
 
 }
