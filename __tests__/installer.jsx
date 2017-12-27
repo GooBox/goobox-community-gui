@@ -17,7 +17,7 @@
 
 import path from "path";
 import React from "react";
-import {mount} from "enzyme";
+import {shallow, mount} from "enzyme";
 import {ipcRenderer, remote} from "electron";
 import {Installer, Hash} from "../src/installer.jsx";
 import {
@@ -910,6 +910,55 @@ describe("Installer component", () => {
       comp.prop("onClickClose")();
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
       expect(mockWindow.close).toHaveBeenCalledTimes(1);
+    });
+
+  });
+
+  describe("_requestSiaWallet", () => {
+
+    beforeEach(() => {
+      ipcRenderer.once.mockClear();
+      ipcRenderer.send.mockClear();
+      location.hash = "";
+    });
+
+    it("requests SIA wallet information only once", () => {
+
+      const address = "1234567890";
+      const seed = "xxx xxx xxx xxx";
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, {
+              address: address,
+              seed: seed,
+            });
+          }
+        });
+      });
+
+      const wrapper = shallow(<Installer/>);
+      wrapper.instance()._requestSiaWallet();
+      wrapper.instance()._requestSiaWallet();
+      expect(ipcRenderer.once).toHaveBeenCalledTimes(1);
+      expect(ipcRenderer.send).toHaveBeenCalledTimes(1);
+
+    });
+
+    it("moves to SiaWallet if address and seed was received", () => {
+      const address = "1234567890";
+      const seed = "xxx xxx xxx xxx";
+      const wrapper = shallow(<Installer/>);
+      wrapper.setState({
+        siaAccount: {
+          address: address,
+          seed: seed
+        }
+      });
+      wrapper.instance()._requestSiaWallet();
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+      expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
     });
 
   });

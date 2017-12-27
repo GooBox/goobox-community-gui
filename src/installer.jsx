@@ -74,8 +74,8 @@ export class Installer extends React.Component {
       },
       // Sia account information.
       siaAccount: {
-        address: "00000000000000000000000000000",
-        seed: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
+        address: "",
+        seed: "",
       },
       // true if the background process is working.
       wait: false,
@@ -161,20 +161,27 @@ export class Installer extends React.Component {
 
   _requestSiaWallet() {
 
-    if (!this.requesting) {
-      this.requesting = true;
-      this.setState({wait: true}, () => {
-        ipcRenderer.once(SiaWalletEvent, (_, info) => {
-
-          this.setState({siaAccount: info, wait: false}, () => {
-            location.hash = Hash.SiaWallet;
-            this.requesting = false;
-          });
-
-        });
-        ipcRenderer.send(SiaWalletEvent);
-      });
+    if (this.requesting) {
+      return;
     }
+
+    if (this.state.siaAccount.address) {
+      location.hash = Hash.SiaWallet;
+      return;
+    }
+
+    this.requesting = true;
+    this.setState({wait: true}, () => {
+      ipcRenderer.once(SiaWalletEvent, (_, info) => {
+
+        this.setState({siaAccount: info, wait: false}, () => {
+          location.hash = Hash.SiaWallet;
+          this.requesting = false;
+        });
+
+      });
+      ipcRenderer.send(SiaWalletEvent);
+    });
 
   }
 
