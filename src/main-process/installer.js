@@ -28,7 +28,11 @@ if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
 
-app.on("ready", installer);
+if (app.isReady()) {
+  installer();
+} else {
+  app.on("ready", installer);
+}
 
 function installer() {
 
@@ -45,6 +49,7 @@ function installer() {
     title: "Goobox installer",
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
+  mainWindow.toggleDevTools();
 
   app.on("window-all-closed", () => {
 
@@ -82,8 +87,8 @@ function installer() {
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
-    console.log(jre.driver());
-    if (fs.existsSync(jre.driver())) {
+    console.log(jre.jreDir());
+    if (fs.existsSync(jre.jreDir())) {
       event.sender.send(JREInstallEvent);
       return;
     }

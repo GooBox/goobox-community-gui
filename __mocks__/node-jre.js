@@ -17,14 +17,17 @@
 
 export const driver = jest.fn();
 export const install = jest.fn();
+export const jreDir = jest.fn();
 
 install.mockImplementation((callback) => {
   callback(null);
 });
 
+jreDir.mockReturnValue("/tmp/jre");
 
 const jre = {
   driver: driver,
   install: install,
+  jreDir: jreDir,
 };
 export default jre;

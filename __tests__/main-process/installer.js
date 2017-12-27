@@ -109,11 +109,11 @@ describe("main process of the installer", () => {
 
     it("checks JRE is installed and if exists, does nothing", () => {
       const jrePath = "/tmp/java";
-      jre.driver.mockReturnValue(jrePath);
+      jre.jreDir.mockReturnValue(jrePath);
       fs.existsSync.mockReturnValue(true);
 
       handler(event);
-      expect(jre.driver).toHaveBeenCalled();
+      expect(jre.jreDir).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
       expect(jre.install).not.toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent);
@@ -121,11 +121,11 @@ describe("main process of the installer", () => {
 
     it("checks JRE is installed and if not exists, installs a JRE", () => {
       const jrePath = "/tmp/java";
-      jre.driver.mockReturnValue(jrePath);
+      jre.jreDir.mockReturnValue(jrePath);
       fs.existsSync.mockReturnValue(false);
 
       handler(event);
-      expect(jre.driver).toHaveBeenCalled();
+      expect(jre.jreDir).toHaveBeenCalled();
       expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
       expect(jre.install).toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
