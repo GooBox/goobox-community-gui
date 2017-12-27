@@ -26,6 +26,9 @@ export default class Sia {
   constructor() {
     this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"));
     this.cmd = path.join(this.wd, "goobox-sync-sia");
+    if (process.platform === "win32") {
+      this.cmd += ".bat";
+    }
     this.javaHome = path.join(jre.driver(), "../../");
     this.stdin = null;
     this.stdout = null;
