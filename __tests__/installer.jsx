@@ -537,6 +537,32 @@ describe("Installer component", () => {
         expect(wrapper.state("wait")).toBeFalsy();
       });
 
+      it("requests wallet address and seed to Sia after the login is succeeded and sia is true", () => {
+        const address = "1234567890";
+        const seed = "xxx xxx xxx xxx";
+        ipcRenderer.once.mockImplementation((listen, cb) => {
+          ipcRenderer.send.mockImplementation((method) => {
+            if (listen === method) {
+              cb(null, {
+                address: address,
+                seed: seed,
+              });
+            }
+          });
+        });
+
+        const wrapper = mount(<Installer/>);
+        wrapper.setState({sia: true});
+        const c = wrapper.find("StorjLogin");
+        c.prop("onClickFinish")();
+
+        expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.any(Function));
+        expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
+
+        expect(wrapper.state("siaAccount").address).toEqual(address);
+        expect(wrapper.state("siaAccount").seed).toEqual(seed);
+      });
+
     });
 
   });

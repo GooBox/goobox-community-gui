@@ -114,13 +114,13 @@ export class Installer extends React.Component {
         ipcRenderer.once(StorjLoginEvent, (_, res) => {
 
           this.setState({storjAccount: info, wait: false}, () => {
+            this.requesting = false;
             if (this.state.sia) {
-              location.hash = Hash.SiaWallet;
+              this._requestSiaWallet();
             } else {
               this._saveConfig();
               location.hash = Hash.FinishAll;
             }
-            this.requesting = false;
           });
 
         });
