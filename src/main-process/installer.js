@@ -48,19 +48,34 @@ function installer() {
 
   app.on("window-all-closed", () => {
 
-    storage.get(ConfigFile, (err, cfg) => {
-      if (err) {
-        console.log(err);
-        app.quit();
-      }
+    return new Promise(resolve => {
 
-      if (cfg && cfg.installed) {
-        // if the installation process is finished.
-        require("./main");
-      } else {
-        // otherwise
-        app.quit();
-      }
+      storage.get(ConfigFile, (err, cfg) => {
+        if (err) {
+          console.log(err);
+          app.quit();
+          resolve();
+        }
+
+        if (cfg && cfg.installed) {
+          // if the installation process is finished.
+          require("./main");
+          resolve();
+        } else {
+          // otherwise
+          if (global.sia) {
+            global.sia.close().then(() => {
+              global.sia = null;
+              app.quit();
+              resolve();
+            });
+          } else {
+            app.quit();
+            resolve();
+          }
+        }
+
+      });
 
     });
 

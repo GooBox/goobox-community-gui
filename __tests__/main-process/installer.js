@@ -217,41 +217,59 @@ describe("main process of the installer", () => {
 
   describe("WindowAllClosed event handler", () => {
 
+    let onWindowAllClosed;
+    beforeEach(() => {
+      onReady();
+      onWindowAllClosed = app.on.mock.calls
+        .filter(args => args[0] === "window-all-closed")
+        .map(args => args[1])[0];
+    });
+
     it("starts the core app when all windows are closed and installed is true", () => {
 
       app.isReady.mockReturnValue(true);
       menuberMock.tray.listeners.mockReturnValue([() => null]);
 
-      onReady();
-      const onWindowAllClosed = app.on.mock.calls
-        .filter(args => args[0] === "window-all-closed")
-        .map(args => args[1])[0];
-
       storage.set(ConfigFile, {
         installed: true
       });
-      onWindowAllClosed();
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-      expect(menubar).toHaveBeenCalled();
-      expect(app.quit).not.toHaveBeenCalled();
+
+      return onWindowAllClosed().then(() => {
+        expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+        expect(menubar).toHaveBeenCalled();
+        expect(app.quit).not.toHaveBeenCalled();
+      });
 
     });
 
     // TODO: it shows some message to make sure users want to quit the installer.
-    // TODO: stop backends, if running.
     it("does nothing when all windows are closed but installed is false", () => {
 
-      onReady();
-      const onWindowAllClosed = app.on.mock.calls
-        .filter(args => args[0] === "window-all-closed")
-        .map(args => args[1])[0];
       storage.set(ConfigFile, {
         installed: false
       });
-      onWindowAllClosed();
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-      expect(menubar).not.toHaveBeenCalled();
-      expect(app.quit).toHaveBeenCalled();
+      return onWindowAllClosed().then(() => {
+        expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+        expect(menubar).not.toHaveBeenCalled();
+        expect(app.quit).toHaveBeenCalled();
+      });
+
+    });
+
+    it("closes the sync sia app if running in spite of the installation is canceled", () => {
+
+      global.sia = new Sia();
+      const close = jest.spyOn(global.sia, "close");
+      close.mockReturnValue(Promise.resolve());
+
+      storage.set(ConfigFile, {
+        installed: false
+      });
+
+      return onWindowAllClosed().then(() => {
+        expect(global.sia).toBeNull();
+        expect(close).toHaveBeenCalled();
+      });
 
     });
 
