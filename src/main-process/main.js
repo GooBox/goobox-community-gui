@@ -16,16 +16,15 @@
  */
 
 "use strict";
-import path from "path";
-
-import {app, Menu, ipcMain} from "electron";
+import {app, ipcMain, Menu} from "electron";
 import storage from "electron-json-storage";
 import menubar from "menubar";
+import path from "path";
+
+import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
 
 import icons from "./icons";
 import utils from "./utils";
-
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile, UsedVolumeEvent} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
@@ -54,6 +53,7 @@ function main() {
   });
   if (shouldQuit) {
     mb.app.quit();
+    return;
   }
   mb.window.setResizable(false);
 
