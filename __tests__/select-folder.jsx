@@ -69,6 +69,25 @@ describe("SelectFolder component", () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
+  it("disables other actions after the back link is clicked", () => {
+    const fn = jest.fn();
+    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
+    const link = wrapper.find(".back-btn");
+    link.simulate("click");
+    expect(wrapper.state("disabled")).toBeTruthy();
+    expect(fn).toHaveBeenCalled();
+  });
+
+  it("disables the back link when the disabled state is true", () => {
+    const fn = jest.fn();
+    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
+    wrapper.setState({disabled: true});
+
+    const link = wrapper.find(".back-btn");
+    link.simulate("click");
+    expect(fn).not.toHaveBeenCalled();
+  });
+
   it("has a next link", () => {
     const fn = jest.fn();
     const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
@@ -90,9 +109,38 @@ describe("SelectFolder component", () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
+  it("disables other actions after the next link is clicked", () => {
+    const fn = jest.fn();
+    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
+    const link = wrapper.find(".next-btn");
+    link.simulate("click");
+    expect(wrapper.state("disabled")).toBeTruthy();
+    expect(fn).toHaveBeenCalled();
+  });
+
+  it("disables the nect link when disabled state is true", () => {
+    const fn = jest.fn();
+    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
+    wrapper.setState({disabled: true});
+    const link = wrapper.find(".next-btn");
+    link.simulate("click");
+    expect(fn).not.toHaveBeenCalled();
+  });
+
   it("has a button to open a dialog", () => {
     const wrapper = shallow(<SelectFolder/>);
     expect(wrapper.find("button").prop("onClick")).toBe(wrapper.instance()._onClickBrowse);
+  });
+
+  it("disabled the open dialog button when disabled state is true", () => {
+    const wrapper = shallow(<SelectFolder/>);
+    wrapper.setState({disabled: true});
+    let err;
+    return wrapper.instance()._onClickBrowse().catch((reason) => {
+      err = reason;
+    }).then(() => {
+      expect(err).toBeDefined();
+    });
   });
 
   describe("_onClickBrowse", () => {

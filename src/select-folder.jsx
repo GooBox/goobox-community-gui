@@ -76,21 +76,34 @@ export default class SelectFolder extends React.Component {
     this._onClickNext = this._onClickNext.bind(this);
     this._onClickBrowse = this._onClickBrowse.bind(this);
     this.selecting = false;
+    this.state = {
+      disabled: false,
+    };
   }
 
   _onClickBack() {
+    if (this.state.disabled) {
+      return;
+    }
     if (this.props.onClickBack && !this.selecting) {
-      this.props.onClickBack();
+      this.setState({disabled: true}, this.props.onClickBack);
     }
   }
 
   _onClickNext() {
+    if (this.state.disabled) {
+      return;
+    }
     if (this.props.onClickNext && !this.selecting) {
-      this.props.onClickNext();
+      this.setState({disabled: true}, this.props.onClickNext);
     }
   }
 
   _onClickBrowse() {
+
+    if (this.state.disabled) {
+      return Promise.reject("disabled");
+    }
 
     if (this.selecting) {
       return Promise.reject("already opened");

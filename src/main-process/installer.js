@@ -106,7 +106,6 @@ function installer() {
       }
 
       const res = yaml.safeLoad(stdout);
-      console.log(res["wallet address"])
       event.sender.send(SiaWalletEvent, {
         address: res["wallet address"],
         seed: res["primary seed"],
