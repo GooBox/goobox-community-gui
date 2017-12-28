@@ -90,14 +90,25 @@ function installer() {
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
-    console.log(jre.jreDir());
-    if (fs.existsSync(jre.jreDir())) {
-      event.sender.send(JREInstallEvent);
-      return;
+    console.log("JRE path: " + jre.jreDir());
+    let shouldInstall = false;
+    try {
+      if (!fs.existsSync(jre.driver())) {
+        shouldInstall = true;
+      }
+    } catch (err) {
+      console.error(err);
+      shouldInstall = true;
     }
-    jre.install((err) => {
-      event.sender.send(JREInstallEvent, err);
-    });
+
+    if (shouldInstall) {
+      jre.install((err) => {
+        console.log(`JRE install finished ${err ? `with an error: ${err}` : ""}`);
+        event.sender.send(JREInstallEvent, err);
+      });
+    } else {
+      event.sender.send(JREInstallEvent);
+    }
   });
 
   ipcMain.on(StorjLoginEvent, (event, arg) => {

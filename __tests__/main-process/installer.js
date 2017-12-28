@@ -98,37 +98,66 @@ describe("main process of the installer", () => {
         send: jest.fn()
       }
     };
+    const jrePath = "/tmp/java";
+    const jreExec = path.join(jrePath, "bin/java");
 
     beforeEach(() => {
       onReady();
       handler = ipcMain.on.mock.calls.filter(args => args[0] === JREInstallEvent).map(args => args[1])[0];
       event.sender.send.mockClear();
+      fs.existsSync.mockReset();
+      jre.jreDir.mockClear();
+      jre.jreDir.mockReturnValue(jrePath);
       jre.driver.mockClear();
-      fs.existsSync.mockClear();
+      jre.driver.mockReturnValue(jreExec);
+      jre.install.mockClear();
     });
 
     it("checks JRE is installed and if exists, does nothing", () => {
-      const jrePath = "/tmp/java";
-      jre.jreDir.mockReturnValue(jrePath);
       fs.existsSync.mockReturnValue(true);
 
       handler(event);
-      expect(jre.jreDir).toHaveBeenCalled();
-      expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
       expect(jre.install).not.toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent);
     });
 
     it("checks JRE is installed and if not exists, installs a JRE", () => {
-      const jrePath = "/tmp/java";
-      jre.jreDir.mockReturnValue(jrePath);
       fs.existsSync.mockReturnValue(false);
 
       handler(event);
-      expect(jre.jreDir).toHaveBeenCalled();
-      expect(fs.existsSync).toHaveBeenCalledWith(jrePath);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
       expect(jre.install).toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
+    });
+
+    it("checks JRE is installed and if an error is raised, installs a JRE", () => {
+      jre.driver.mockImplementation(() => {
+        throw "expected jre.driver error";
+      });
+
+      handler(event);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).not.toHaveBeenCalledWith();
+      expect(jre.install).toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
+    });
+
+    it("sends back error messages if the installation fails", () => {
+      fs.existsSync.mockReturnValue(false);
+
+      const err = "expected error";
+      jre.install.mockImplementationOnce((callback) => {
+        callback(err)
+      });
+
+      handler(event);
+      expect(jre.driver).toHaveBeenCalled();
+      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
+      expect(jre.install).toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, err);
     });
 
   });
@@ -206,7 +235,7 @@ describe("main process of the installer", () => {
       });
     });
 
-    it("starts the sync sia app with reset-db flag", () => {
+    it("starts the sync sia app", () => {
       return handler(event).then(() => {
         expect(start).toHaveBeenCalled();
         expect(global.sia instanceof Sia).toBeTruthy();
