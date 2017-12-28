@@ -107,10 +107,18 @@ function main() {
   });
 
   ipcMain.on(UsedVolumeEvent, (event) => {
-    storage.get(ConfigFile, cfg => {
-      utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder).then(volume => {
-        event.sender.send(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
-      }).catch(err => console.log(err));
+    return new Promise((resolve, reject) => {
+      storage.get(ConfigFile, cfg => {
+        utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder)
+          .then(volume => {
+            event.sender.send(UsedVolumeEvent, volume / 1024 / 1024);
+          })
+          .catch(err => {
+            console.log(err);
+            reject();
+          })
+          .then(resolve);
+      });
     });
   });
 

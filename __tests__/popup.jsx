@@ -17,14 +17,14 @@
 
 jest.useFakeTimers();
 
-import React from "react";
+import openAboutWindow from "about-window";
+import {ipcRenderer} from "electron";
 import {shallow} from "enzyme";
 import path from "path";
-import {ipcRenderer} from "electron";
-import openAboutWindow from "about-window";
+import React from "react";
+import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../src/constants";
 
 import Popup from "../src/popup.jsx";
-import {ChangeStateEvent, OpenSyncFolderEvent, UsedVolumeEvent, Paused, Synchronizing} from "../src/constants";
 
 describe("Popup component", () => {
 
@@ -140,6 +140,7 @@ describe("Popup component", () => {
       expect(setTimeout).toHaveBeenCalledTimes(2);
       expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 30000);
 
+      expect(isFinite(wrapper.state("usedVolume"))).toBeTruthy();
       expect(wrapper.state("usedVolume")).toEqual(volume);
 
       wrapper.unmount();

@@ -17,13 +17,13 @@
 jest.mock("child_process");
 
 
-import path from "path";
-import {menubar, menuberMock} from "menubar";
+import {execFile, spawnSync} from "child_process";
 import {app, ipcMain} from "electron";
-import {spawnSync, execFile} from "child_process";
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, Paused, UsedVolumeEvent} from "../../src/constants";
-import icons from "../../src/main-process/icons";
 import storage from "electron-json-storage";
+import {menubar, menuberMock} from "menubar";
+import path from "path";
+import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../../src/constants";
+import icons from "../../src/main-process/icons";
 
 
 describe("main process of the core app", () => {
@@ -165,13 +165,9 @@ describe("main process of the core app", () => {
         cb(null, `${volume}\t${syncFolder}`);
       });
 
-      handler(event);
-      expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
-      return new Promise(resolve => {
-        setTimeout(() => {
-          expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
-          resolve();
-        }, 100);
+      return handler(event).then(() => {
+        expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
+        expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
       });
     });
 
