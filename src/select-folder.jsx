@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
-import PropTypes from "prop-types";
 import {remote} from "electron";
+import PropTypes from "prop-types";
+import React from "react";
 
 const dialog = remote.dialog;
 
@@ -149,7 +149,8 @@ export default class SelectFolder extends React.Component {
           <img className="up-and-down" src="../resources/down_arrow_white.svg" width="17px" height="29px"/>
         </main>
         <main style={style.browseBtn}>
-          <button style={style.button} onClick={this._onClickBrowse}>Browse...</button>
+          <button style={style.button} onClick={() => this._onClickBrowse().catch(console.debug)}>Browse...
+          </button>
           <br/>
           <span className="folder" style={style.selectedFolder}>{this.props.folder}</span>
         </main>

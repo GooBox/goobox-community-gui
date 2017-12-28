@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {remote} from "electron";
 import {shallow} from "enzyme";
+import React from "react";
 import SelectFolder from "../src/select-folder.jsx";
 
 const dialog = remote.dialog;
@@ -128,8 +128,15 @@ describe("SelectFolder component", () => {
   });
 
   it("has a button to open a dialog", () => {
-    const wrapper = shallow(<SelectFolder/>);
-    expect(wrapper.find("button").prop("onClick")).toBe(wrapper.instance()._onClickBrowse);
+    const onClickBrowse = jest.spyOn(SelectFolder.prototype, "_onClickBrowse");
+    try {
+      onClickBrowse.mockReturnValue(Promise.resolve());
+      const wrapper = shallow(<SelectFolder/>);
+      wrapper.find("button").prop("onClick")();
+      expect(onClickBrowse).toHaveBeenCalled();
+    } finally {
+      onClickBrowse.mockRestore();
+    }
   });
 
   it("disabled the open dialog button when disabled state is true", () => {
