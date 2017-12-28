@@ -56,6 +56,9 @@ function main() {
     return;
   }
   mb.window.setResizable(false);
+  if ("production" !== process.env.NODE_ENV) {
+    mb.window.toggleDevTools();
+  }
 
   const ctxMenu = Menu.buildFromTemplate([
     {

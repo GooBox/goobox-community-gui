@@ -43,6 +43,9 @@ export class BrowserWindow {
   setResizable() {
   }
 
+  toggleDevTools() {
+  }
+
 }
 
 export const ipcMain = {

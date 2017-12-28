@@ -49,7 +49,10 @@ function installer() {
     title: "Goobox installer",
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
-  mainWindow.toggleDevTools();
+
+  if ("production" !== process.env.NODE_ENV) {
+    mainWindow.toggleDevTools();
+  }
 
   app.on("window-all-closed", () => {
 
