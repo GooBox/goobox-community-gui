@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
+import {Paused, Synchronizing} from "../src/constants";
 import Status from "../src/status";
-import {Synchronizing, Paused} from "../src/constants";
 
 
 describe("Status component", () => {
@@ -96,11 +96,11 @@ describe("Status component", () => {
   });
 
   it("has a usage text box", () => {
-    const used = 12;
+    const used = 12.334;
     const wrapper = shallow(<Status usedVolume={used}/>);
     const usage = wrapper.find(".usage");
     expect(usage.exists()).toBeTruthy();
-    expect(usage.text()).toEqual(`Usage: ${used}GB`);
+    expect(usage.text()).toEqual(`Usage: ${used.toFixed(2)}GB`);
   });
 
   it("has a usage percentage box", () => {

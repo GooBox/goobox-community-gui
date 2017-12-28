@@ -16,16 +16,15 @@
  */
 
 "use strict";
-import path from "path";
-
-import {app, Menu, ipcMain} from "electron";
+import {app, ipcMain, Menu} from "electron";
 import storage from "electron-json-storage";
 import menubar from "menubar";
+import path from "path";
+
+import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
 
 import icons from "./icons";
 import utils from "./utils";
-
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, ConfigFile, UsedVolumeEvent} from "../constants";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
@@ -54,8 +53,12 @@ function main() {
   });
   if (shouldQuit) {
     mb.app.quit();
+    return;
   }
   mb.window.setResizable(false);
+  if ("production" !== process.env.NODE_ENV) {
+    mb.window.toggleDevTools();
+  }
 
   const ctxMenu = Menu.buildFromTemplate([
     {
@@ -107,10 +110,18 @@ function main() {
   });
 
   ipcMain.on(UsedVolumeEvent, (event) => {
-    storage.get(ConfigFile, cfg => {
-      utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder).then(volume => {
-        event.sender.send(UsedVolumeEvent, (volume / 1024 / 1024).toFixed(2));
-      }).catch(err => console.log(err));
+    return new Promise((resolve, reject) => {
+      storage.get(ConfigFile, cfg => {
+        utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder)
+          .then(volume => {
+            event.sender.send(UsedVolumeEvent, volume / 1024 / 1024);
+          })
+          .catch(err => {
+            console.log(err);
+            reject();
+          })
+          .then(resolve);
+      });
     });
   });
 

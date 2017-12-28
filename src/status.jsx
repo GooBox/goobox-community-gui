@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
-import {Synchronizing, Paused} from "./constants";
+import {Paused, Synchronizing} from "./constants";
 
 export class Status extends React.Component {
 
@@ -112,7 +112,7 @@ export class Status extends React.Component {
         <main>
           {stateInfo}
           <div className="usage-box">
-            <span className="usage">Usage: {this.props.usedVolume}GB</span>
+            <span className="usage">Usage: {this.props.usedVolume && this.props.usedVolume.toFixed(2)}GB</span>
             <span className="usage-rate">{rate}% of {this.props.totalVolume}GB</span>
             <div className="meter">
               <span className="bar" style={barStyle}/>

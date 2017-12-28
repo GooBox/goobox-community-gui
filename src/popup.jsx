@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+import openAboutWindow from "about-window";
 import {ipcRenderer} from "electron";
-import Status from "./status.jsx";
 
 import path from "path";
-import openAboutWindow from "about-window";
+import React from "react";
 
-import {ChangeStateEvent, OpenSyncFolderEvent, UsedVolumeEvent, Synchronizing} from "./constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "./constants";
+import Status from "./status.jsx";
 
 
 export function showInfoWindow() {
@@ -76,7 +76,7 @@ export class Popup extends React.Component {
   _requestUsedVolume() {
 
     ipcRenderer.once(UsedVolumeEvent, (event, volume) => {
-      this.setState({usedVolume: volume}, () => {
+      this.setState({usedVolume: volume || 0}, () => {
         this.timerID = setTimeout(this._requestUsedVolume, 30000);
       });
     });

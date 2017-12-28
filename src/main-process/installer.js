@@ -16,18 +16,23 @@
  */
 
 "use strict";
-import fs from "fs";
-import path from "path";
-import {app, ipcMain, BrowserWindow} from "electron";
+import {app, BrowserWindow, ipcMain} from "electron";
 import storage from "electron-json-storage";
+import fs from "fs";
 import jre from "node-jre";
-import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent, ConfigFile} from "../constants";
+import path from "path";
+import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
+import Sia from "./sia";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
 }
 
-app.on("ready", installer);
+if (app.isReady()) {
+  installer();
+} else {
+  app.on("ready", installer);
+}
 
 function installer() {
 
@@ -45,29 +50,48 @@ function installer() {
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
+  if ("production" !== process.env.NODE_ENV) {
+    mainWindow.toggleDevTools();
+  }
+
   app.on("window-all-closed", () => {
 
-    storage.get(ConfigFile, (err, cfg) => {
-      if (err) {
-        console.log(err);
-        app.quit();
-      }
+    return new Promise(resolve => {
 
-      if (cfg && cfg.installed) {
-        // if the installation process is finished.
-        require("./main");
-      } else {
-        // otherwise
-        app.quit();
-      }
+      storage.get(ConfigFile, (err, cfg) => {
+        if (err) {
+          console.log(err);
+          app.quit();
+          resolve();
+        }
+
+        if (cfg && cfg.installed) {
+          // if the installation process is finished.
+          require("./main");
+          resolve();
+        } else {
+          // otherwise
+          if (global.sia) {
+            global.sia.close().then(() => {
+              global.sia = null;
+              app.quit();
+              resolve();
+            });
+          } else {
+            app.quit();
+            resolve();
+          }
+        }
+
+      });
 
     });
 
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
-    console.log(jre.driver());
-    if (fs.existsSync(jre.driver())) {
+    console.log(jre.jreDir());
+    if (fs.existsSync(jre.jreDir())) {
       event.sender.send(JREInstallEvent);
       return;
     }
@@ -85,9 +109,17 @@ function installer() {
   });
 
   ipcMain.on(SiaWalletEvent, (event) => {
-    event.sender.send(SiaWalletEvent, {
-      wallet: "aaaaaaaa",
-      seed: "xxx xxx xxx",
+    return new Promise(resolve => {
+      const sia = new Sia();
+      sia.wallet().then((res) => {
+        event.sender.send(SiaWalletEvent, {
+          address: res["wallet address"],
+          seed: res["primary seed"],
+        });
+        sia.start();
+        global.sia = sia;
+        resolve();
+      });
     });
   });
 
