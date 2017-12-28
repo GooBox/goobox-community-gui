@@ -97,7 +97,7 @@ export class Status extends React.Component {
     }
 
     return (
-      <div>
+      <div style={this.props.style}>
         <nav className="background-gradation">
           <img src="../resources/left_white_icon.svg" width="41px" height="40px"/>
           {pauseRestartBtn}
