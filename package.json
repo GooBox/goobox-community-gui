@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
+    "electron-json-storage": "^4.0.2",
     "about-window": "^1.8.0",
     "node-jre": "^0.2.3"
   },
@@ -31,7 +32,6 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "electron": "1.7.9",
-    "electron-json-storage": "^4.0.2",
     "electron-packager": "^10.1.0",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
