@@ -109,7 +109,7 @@ function main() {
     });
   });
 
-  ipcMain.on(UsedVolumeEvent, (event) => {
+  ipcMain.on(UsedVolumeEvent, async (event) => {
     return new Promise((resolve, reject) => {
       storage.get(ConfigFile, cfg => {
         utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder)

@@ -152,7 +152,7 @@ describe("main process of the core app", () => {
       };
     });
 
-    it("calculate the volume of the sync folder", () => {
+    it("calculate the volume of the sync folder", async () => {
       const syncFolder = "/tmp";
       storage.get.mockImplementationOnce((key, cb) => {
         cb({
@@ -165,12 +165,14 @@ describe("main process of the core app", () => {
         cb(null, `${volume}\t${syncFolder}`);
       });
 
-      return handler(event).then(() => {
-        expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
-        expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
-      });
+      await handler(event);
+      expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
+      expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
     });
 
   });
 
 });
+
+
+// todo: quit event handler must quit subprocessed, too.

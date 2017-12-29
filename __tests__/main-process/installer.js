@@ -225,21 +225,19 @@ describe("main process of the installer", () => {
       start.mockRestore();
     });
 
-    it("execute the wallet command of sync sia app", () => {
-      return handler(event).then(() => {
-        expect(wallet).toHaveBeenCalled();
-        expect(event.sender.send).toHaveBeenCalledWith(SiaWalletEvent, {
-          address: address,
-          seed: seed,
-        });
+    it("execute the wallet command of sync sia app", async () => {
+      await handler(event);
+      expect(wallet).toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(SiaWalletEvent, {
+        address: address,
+        seed: seed,
       });
     });
 
-    it("starts the sync sia app", () => {
-      return handler(event).then(() => {
-        expect(start).toHaveBeenCalled();
-        expect(global.sia instanceof Sia).toBeTruthy();
-      });
+    it("starts the sync sia app", async () => {
+      await handler(event);
+      expect(start).toHaveBeenCalled();
+      expect(global.sia instanceof Sia).toBeTruthy();
     });
 
   });
@@ -254,7 +252,7 @@ describe("main process of the installer", () => {
         .map(args => args[1])[0];
     });
 
-    it("starts the core app when all windows are closed and installed is true", () => {
+    it("starts the core app when all windows are closed and installed is true", async () => {
 
       app.isReady.mockReturnValue(true);
       menuberMock.tray.listeners.mockReturnValue([() => null]);
@@ -263,29 +261,27 @@ describe("main process of the installer", () => {
         installed: true
       });
 
-      return onWindowAllClosed().then(() => {
-        expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-        expect(menubar).toHaveBeenCalled();
-        expect(app.quit).not.toHaveBeenCalled();
-      });
+      await onWindowAllClosed();
+      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+      expect(menubar).toHaveBeenCalled();
+      expect(app.quit).not.toHaveBeenCalled();
 
     });
 
     // TODO: it shows some message to make sure users want to quit the installer.
-    it("does nothing when all windows are closed but installed is false", () => {
+    it("does nothing when all windows are closed but installed is false", async () => {
 
       storage.set(ConfigFile, {
         installed: false
       });
-      return onWindowAllClosed().then(() => {
-        expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-        expect(menubar).not.toHaveBeenCalled();
-        expect(app.quit).toHaveBeenCalled();
-      });
+      await  onWindowAllClosed();
+      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+      expect(menubar).not.toHaveBeenCalled();
+      expect(app.quit).toHaveBeenCalled();
 
     });
 
-    it("closes the sync sia app if running in spite of the installation is canceled", () => {
+    it("closes the sync sia app if running in spite of the installation is canceled", async () => {
 
       global.sia = new Sia();
       const close = jest.spyOn(global.sia, "close");
@@ -295,10 +291,9 @@ describe("main process of the installer", () => {
         installed: false
       });
 
-      return onWindowAllClosed().then(() => {
-        expect(global.sia).toBeNull();
-        expect(close).toHaveBeenCalled();
-      });
+      await onWindowAllClosed();
+      expect(global.sia).toBeNull();
+      expect(close).toHaveBeenCalled();
 
     });
 

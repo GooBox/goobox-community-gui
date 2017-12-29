@@ -51,10 +51,10 @@ export default class Sia {
 
   }
 
-  close() {
+  async close() {
 
     if (!this.proc) {
-      return Promise.resolve();
+      return;
     }
 
     return new Promise(resolve => {
@@ -67,7 +67,7 @@ export default class Sia {
 
   }
 
-  wallet() {
+  async wallet() {
 
     return new Promise((resolve, reject) => {
 

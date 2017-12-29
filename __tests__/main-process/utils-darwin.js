@@ -16,7 +16,7 @@
  */
 jest.mock("child_process");
 
-import {spawnSync, execFile} from "child_process";
+import {execFile, spawnSync} from "child_process";
 
 describe("utils module for mac", () => {
 
@@ -53,17 +53,15 @@ describe("utils module for mac", () => {
 
   describe("totalVolume", () => {
 
-    it("calculate total volume of a given directory with du", () => {
+    it("calculate total volume of a given directory with du", async () => {
       const size = 12345;
       const dir = "/tmp/some-dir";
       execFile.mockImplementation((cmd, args, cb) => {
         cb(null, `${size}\t${dir}`);
       });
 
-      return utils.totalVolume(dir).then((res) => {
-        expect(res).toEqual(size);
-        expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
-      });
+      await expect(utils.totalVolume(dir)).resolves.toEqual(size);
+      expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
     });
 
   });

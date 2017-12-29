@@ -54,7 +54,7 @@ function installer() {
     mainWindow.toggleDevTools();
   }
 
-  app.on("window-all-closed", () => {
+  app.on("window-all-closed", async () => {
 
     return new Promise(resolve => {
 
@@ -119,19 +119,15 @@ function installer() {
     event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
   });
 
-  ipcMain.on(SiaWalletEvent, (event) => {
-    return new Promise(resolve => {
-      const sia = new Sia();
-      sia.wallet().then((res) => {
-        event.sender.send(SiaWalletEvent, {
-          address: res["wallet address"],
-          seed: res["primary seed"],
-        });
-        sia.start();
-        global.sia = sia;
-        resolve();
-      });
+  ipcMain.on(SiaWalletEvent, async (event) => {
+    const sia = new Sia();
+    const res = await sia.wallet();
+    event.sender.send(SiaWalletEvent, {
+      address: res["wallet address"],
+      seed: res["primary seed"],
     });
+    sia.start();
+    global.sia = sia;
   });
 
 }

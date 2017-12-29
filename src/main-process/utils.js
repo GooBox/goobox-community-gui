@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {spawnSync, execFile} from "child_process";
+import {execFile, spawnSync} from "child_process";
 
 let openDirectory, totalVolume;
 
@@ -25,9 +25,9 @@ if (process.platform === "win32") {
     spawnSync("cmd.exe", ["/c", "start " + dir]);
   };
 
-  totalVolume = (dir) => {
+  totalVolume = async (dir) => {
     //
-    return Promise.resolve(0);
+    return 0;
   };
 
 } else {
@@ -36,7 +36,7 @@ if (process.platform === "win32") {
     spawnSync("open", [dir]);
   };
 
-  totalVolume = (dir) => {
+  totalVolume = async (dir) => {
     return new Promise((resolve, reject) => {
       execFile("du", ["-s", dir], (error, stdout) => {
         if (error) {
