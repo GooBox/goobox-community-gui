@@ -1,10 +1,10 @@
 environment:
   nodejs_version: Current
 install:
-  - ps: Install-Product node $env:nodejs_version
-  - npm install
-test_script:
+  - ps: Install-Product node $env:nodejs_version x64
   - node --version
   - npm --version
+  - npm install
+test_script:
   - npm test
 build: off
