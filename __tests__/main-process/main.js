@@ -172,7 +172,39 @@ describe("main process of the core app", () => {
 
   });
 
+  describe("quit event handler", () => {
+
+    let handler;
+    beforeEach(() => {
+      onReady();
+      handler = app.on.mock.calls.filter(args => args[0] === "quit").map(args => args[1])[0];
+    });
+
+    afterEach(() => {
+      delete global.storj;
+      delete global.sia;
+    });
+
+    it("closes storj instance if it exists", async () => {
+      global.storj = {
+        close: jest.fn(),
+      };
+      global.storj.close.mockReturnValue(Promise.resolve());
+
+      await handler();
+      expect(global.storj.close).toHaveBeenCalled();
+    });
+
+    it("closes sia instance if it exists", async () => {
+      global.sia = {
+        close: jest.fn()
+      };
+      global.sia.close.mockReturnValue(Promise.resolve());
+
+      await handler();
+      expect(global.sia.close).toHaveBeenCalled();
+    });
+
+  });
+
 });
-
-
-// todo: quit event handler must quit subprocessed, too.

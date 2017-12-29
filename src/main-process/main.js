@@ -47,6 +47,15 @@ function main() {
     showDockIcon: false,
   });
 
+  mb.app.on("quit", async () => {
+    if (global.storj) {
+      await global.storj.close();
+    }
+    if (global.sia) {
+      await global.sia.close();
+    }
+  });
+
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
     mb.showWindow();
