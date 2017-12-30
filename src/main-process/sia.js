@@ -47,6 +47,7 @@ export default class Sia {
     this.stdin = proc.stdin;
     this.stdout = readline.createInterface({input: proc.stdout});
     this.stderr = readline.createInterface({input: proc.stderr});
+    this.stderr.on("line", console.log);
     this.proc = proc;
 
   }

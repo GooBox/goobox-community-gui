@@ -22,8 +22,12 @@ import {app, ipcMain} from "electron";
 import storage from "electron-json-storage";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
-import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../../src/constants";
+import {
+  ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Paused, Synchronizing,
+  UsedVolumeEvent
+} from "../../src/constants";
 import icons from "../../src/main-process/icons";
+import Sia from "../../src/main-process/sia";
 
 
 describe("main process of the core app", () => {
@@ -41,7 +45,6 @@ describe("main process of the core app", () => {
     onReady = app.on.mock.calls
       .filter(args => args[0] === "ready")
       .map(args => args[1])[0];
-
   });
 
   afterAll(() => {
@@ -57,6 +60,14 @@ describe("main process of the core app", () => {
     menuberMock.tray.listeners.mockReturnValue([() => null]);
     app.quit.mockClear();
     ipcMain.on.mockClear();
+    storage.get.mockReset();
+    storage.get.mockImplementation(() => {
+    });
+  });
+
+  afterEach(() => {
+    delete global.storj;
+    delete global.sia;
   });
 
   it("create a menubar instance", () => {
@@ -71,6 +82,51 @@ describe("main process of the core app", () => {
       alwaysOnTop: true,
       showDockIcon: false,
     });
+  });
+
+  it("starts the storj backend if storj conf is true but not running", () => {
+
+  });
+
+  it("doesn't start the storj backend if it is already running", () => {
+
+  });
+
+  it("starts the sia backend if sia conf is true but not running", () => {
+    storage.get.mockImplementation((key, callback) => {
+      expect(key).toEqual(ConfigFile);
+      callback(null, {
+        sia: true,
+      });
+    });
+    const start = jest.spyOn(Sia.prototype, "start");
+    start.mockImplementation(() => {
+    });
+    try {
+      onReady();
+      expect(start).toHaveBeenCalled();
+    } finally {
+      start.mockRestore();
+    }
+  });
+
+  it("doesn't start the sia backend if it is already running", () => {
+    storage.get.mockImplementation((key, callback) => {
+      expect(key).toEqual(ConfigFile);
+      callback(null, {
+        sia: true,
+      });
+    });
+    global.sia = {};
+    const start = jest.spyOn(Sia.prototype, "start");
+    start.mockImplementation(() => {
+    });
+    try {
+      onReady();
+      expect(start).not.toHaveBeenCalled();
+    } finally {
+      start.mockRestore();
+    }
   });
 
   it("closes the process if another process is already running", () => {
@@ -178,11 +234,6 @@ describe("main process of the core app", () => {
     beforeEach(() => {
       onReady();
       handler = app.on.mock.calls.filter(args => args[0] === "quit").map(args => args[1])[0];
-    });
-
-    afterEach(() => {
-      delete global.storj;
-      delete global.sia;
     });
 
     it("closes storj instance if it exists", async () => {

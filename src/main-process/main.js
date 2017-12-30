@@ -24,6 +24,7 @@ import path from "path";
 import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
 
 import icons from "./icons";
+import Sia from "./sia";
 import utils from "./utils";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
@@ -102,6 +103,19 @@ function main() {
     mb.hideWindow();
   });
 
+  // Start backends.
+  storage.get(ConfigFile, (err, cfg) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    if (cfg.sia && !global.sia) {
+      global.sia = new Sia();
+      global.sia.start();
+    }
+  });
+
+  // Register event handlers.
   ipcMain.on(ChangeStateEvent, (event, arg) => {
     if (arg === Synchronizing) {
       mb.tray.setImage(icons.getIdleIcon());
