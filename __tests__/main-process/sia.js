@@ -73,6 +73,7 @@ describe("Sia class", () => {
       stderr.push("standard\n");
       stderr.push("utput\n");
       stderr.push(null);
+      spawn.mockClear();
       spawn.mockReturnValue({
         stdin: stdin,
         stdout: stdout,
@@ -122,6 +123,13 @@ describe("Sia class", () => {
       });
     });
 
+    it("doesn't start a new process if this.proc is not null", () => {
+      const sia = new Sia();
+      sia.proc = "some-object";
+      sia.start();
+      expect(spawn).not.toHaveBeenCalled();
+    });
+
   });
 
   describe("close method", () => {
@@ -140,6 +148,7 @@ describe("Sia class", () => {
       };
       await sia.close();
       expect(sia.closed).toBeTruthy();
+      expect(sia.proc).toBeNull();
     });
 
     it("does nothing if proc is null", async () => {

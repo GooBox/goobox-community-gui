@@ -20,6 +20,7 @@ import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
+import winston from "winston";
 
 export default class Sia {
 
@@ -37,18 +38,21 @@ export default class Sia {
 
   start() {
 
-    const proc = spawn(this.cmd, {
+    if (this.proc) {
+      return;
+    }
+
+    this.proc = spawn(this.cmd, {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,
       },
       windowsHide: true,
     });
-    this.stdin = proc.stdin;
-    this.stdout = readline.createInterface({input: proc.stdout});
-    this.stderr = readline.createInterface({input: proc.stderr});
+    this.stdin = this.proc.stdin;
+    this.stdout = readline.createInterface({input: this.proc.stdout});
+    this.stderr = readline.createInterface({input: this.proc.stderr});
     this.stderr.on("line", console.log);
-    this.proc = proc;
 
   }
 
@@ -61,6 +65,7 @@ export default class Sia {
     return new Promise(resolve => {
       this.proc.on("exit", () => {
         this.closed = true;
+        this.proc = null;
         resolve();
       });
       this.proc.kill("SIGTERM");
@@ -72,6 +77,7 @@ export default class Sia {
 
     return new Promise((resolve, reject) => {
 
+      winston.info(`Executing ${this.cmd} wallet`);
       execFile(this.cmd, ["wallet"], {
         cwd: this.wd,
         env: {
@@ -80,6 +86,7 @@ export default class Sia {
         windowsHide: true,
       }, (err, stdout) => {
         if (err) {
+          winston.error(err);
           reject(err);
         }
         resolve(yaml.safeLoad(stdout));

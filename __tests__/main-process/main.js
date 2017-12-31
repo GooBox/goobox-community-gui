@@ -148,18 +148,35 @@ describe("main process of the core app", () => {
           send: jest.fn()
         }
       };
+      delete global.sia;
     });
 
-    it("sets the idle icon when the state is Synchronizing", () => {
-      handler(event, Synchronizing);
+    it("sets the idle icon when the state is Synchronizing", async () => {
+      await handler(event, Synchronizing);
       expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
       expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
     });
 
-    it("sets the paused icon when the state is Paused", () => {
-      handler(event, Paused);
+    it("sets the paused icon when the state is Paused", async () => {
+      await handler(event, Paused);
       expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
       expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Paused);
+    });
+
+    it("restart the SIA instance if exists when the new state is Synchronizing", async () => {
+      global.sia = {
+        start: jest.fn(),
+      };
+      await handler(event, Synchronizing);
+      expect(global.sia.start).toHaveBeenCalled();
+    });
+
+    it("closes the SIA instance if exists when the new state is Paused", async () => {
+      global.sia = {
+        close: jest.fn()
+      };
+      await handler(event, Paused);
+      expect(global.sia.close).toHaveBeenCalled();
     });
 
   });

@@ -21,6 +21,8 @@ import storage from "electron-json-storage";
 import menubar from "menubar";
 import path from "path";
 
+import winston from "winston";
+
 import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
 
 import icons from "./icons";
@@ -29,7 +31,9 @@ import utils from "./utils";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
+
 if (app.isReady()) {
+  winston.info("the app is already ready");
   main();
 } else {
   app.on("ready", main);
@@ -104,11 +108,13 @@ function main() {
   });
 
   // Start backends.
+  winston.info("Loading the config file.");
   storage.get(ConfigFile, (err, cfg) => {
     if (err) {
-      console.error(err);
+      winston.error(err);
       return;
     }
+    winston.info(cfg);
     if (cfg.sia && !global.sia) {
       global.sia = new Sia();
       global.sia.start();
@@ -116,10 +122,16 @@ function main() {
   });
 
   // Register event handlers.
-  ipcMain.on(ChangeStateEvent, (event, arg) => {
+  ipcMain.on(ChangeStateEvent, async (event, arg) => {
     if (arg === Synchronizing) {
+      if (global.sia) {
+        global.sia.start();
+      }
       mb.tray.setImage(icons.getIdleIcon());
     } else {
+      if (global.sia) {
+        await global.sia.close();
+      }
       mb.tray.setImage(icons.getPausedIcon());
     }
     event.sender.send(ChangeStateEvent, arg);
