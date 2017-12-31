@@ -18,13 +18,10 @@
 "use strict";
 import {app, ipcMain, Menu} from "electron";
 import storage from "electron-json-storage";
+import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
-
-import winston from "winston";
-
 import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
-
 import icons from "./icons";
 import Sia from "./sia";
 import utils from "./utils";
@@ -33,7 +30,7 @@ const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
 
 if (app.isReady()) {
-  winston.info("the app is already ready");
+  log.info("the app is already ready");
   main();
 } else {
   app.on("ready", main);
@@ -108,13 +105,13 @@ function main() {
   });
 
   // Start backends.
-  winston.info("Loading the config file.");
+  log.info("Loading the config file.");
   storage.get(ConfigFile, (err, cfg) => {
     if (err) {
-      winston.error(err);
+      log.error(err);
       return;
     }
-    winston.info(cfg);
+    log.debug(JSON.stringify(cfg));
     if (cfg.sia && !global.sia) {
       global.sia = new Sia();
       global.sia.start();

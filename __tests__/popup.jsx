@@ -82,7 +82,6 @@ describe("Popup component", () => {
     try {
       const wrapper = shallow(<Popup/>);
       wrapper.setState({disabled: true});
-      console.log(wrapper.find("Status").props())
       wrapper.find("Status").prop("onChangeState")();
       expect(onChangeState).not.toHaveBeenCalled();
       wrapper.find("Status").prop("onClickSyncFolder")();

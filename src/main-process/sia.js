@@ -16,11 +16,11 @@
  */
 
 import {execFile, spawn} from "child_process";
+import log from "electron-log";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
-import winston from "winston";
 
 export default class Sia {
 
@@ -34,6 +34,7 @@ export default class Sia {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
+    log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
   start() {
@@ -42,6 +43,7 @@ export default class Sia {
       return;
     }
 
+    log.info(`starting sync-sia app in ${this.cmd}`);
     this.proc = spawn(this.cmd, {
       cwd: this.wd,
       env: {
@@ -52,7 +54,7 @@ export default class Sia {
     this.stdin = this.proc.stdin;
     this.stdout = readline.createInterface({input: this.proc.stdout});
     this.stderr = readline.createInterface({input: this.proc.stderr});
-    this.stderr.on("line", console.log);
+    this.stderr.on("line", log.verbose);
 
   }
 
@@ -62,22 +64,27 @@ export default class Sia {
       return;
     }
 
+    log.info("closing the sync-sia app");
     return new Promise(resolve => {
+
       this.proc.on("exit", () => {
+        log.info("the sync-sia app is closed");
         this.closed = true;
         this.proc = null;
         resolve();
       });
+
       this.proc.kill("SIGTERM");
+
     });
 
   }
 
   async wallet() {
 
+    log.info(`requesting the wallet info to ${this.cmd}`);
     return new Promise((resolve, reject) => {
 
-      winston.info(`Executing ${this.cmd} wallet`);
       execFile(this.cmd, ["wallet"], {
         cwd: this.wd,
         env: {
@@ -86,9 +93,10 @@ export default class Sia {
         windowsHide: true,
       }, (err, stdout) => {
         if (err) {
-          winston.error(err);
+          log.error(err);
           reject(err);
         }
+        log.info("the wallet info is received");
         resolve(yaml.safeLoad(stdout));
       });
 

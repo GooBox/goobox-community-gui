@@ -15,28 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {remote, ipcRenderer} from "electron";
+import {ipcRenderer, remote} from "electron";
+import log from "electron-log";
 import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
-import Welcome from "./welcome.jsx";
-import ServiceSelector from "./service-selector";
+import {
+  ConfigFile, JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "./constants";
+import Finish from "./finish-all";
 import SelectFolder from "./select-folder";
+import ServiceSelector from "./service-selector";
+import SiaFinish from "./sia-finish";
+import SiaWallet from "./sia-wallet";
+import StorjEmailConfirmation from "./storj-email-confirmation";
+import StorjEncryptionKey from "./storj-encryption-key";
 import StorjLogin from "./storj-login";
 import StorjRegistration from "./storj-registration";
-import StorjEncryptionKey from "./storj-encryption-key";
-import StorjEmailConfirmation from "./storj-email-confirmation";
-import SiaWallet from "./sia-wallet";
-import SiaFinish from "./sia-finish";
-import Finish from "./finish-all";
-import {
-  Storj,
-  Sia,
-  JREInstallEvent,
-  StorjLoginEvent,
-  StorjRegisterationEvent,
-  SiaWalletEvent,
-  ConfigFile
-} from "./constants";
+import Welcome from "./welcome.jsx";
 
 const storage = remote.require("electron-json-storage");
 
@@ -92,15 +88,27 @@ export class Installer extends React.Component {
   _checkJRE() {
 
     if (!this.requesting) {
+
       this.requesting = true;
+      log.debug("set the wait mouse cursor");
       this.setState({wait: true}, () => {
+
         ipcRenderer.once(JREInstallEvent, () => {
+
+          log.debug("JRE installation ends, reset the mouse cursor");
           this.setState({wait: false}, () => {
-            location.hash = Hash.ChooseCloudService;
+
+            log.debug("moving to the next screen");
             this.requesting = false;
+            location.hash = Hash.ChooseCloudService;
+
           });
+
         });
+
+        log.debug("requesting JRE installation");
         ipcRenderer.send(JREInstallEvent);
+
       });
     }
 
@@ -175,8 +183,8 @@ export class Installer extends React.Component {
       ipcRenderer.once(SiaWalletEvent, (_, info) => {
 
         this.setState({siaAccount: info, wait: false}, () => {
-          location.hash = Hash.SiaWallet;
           this.requesting = false;
+          location.hash = Hash.SiaWallet;
         });
 
       });
@@ -193,7 +201,9 @@ export class Installer extends React.Component {
       storj: this.state.storj,
       sia: this.state.sia,
     }, (err) => {
-      console.log(err);
+      if (err) {
+        log.error(err);
+      }
     });
 
   }
@@ -209,6 +219,7 @@ export class Installer extends React.Component {
               );
             }}/>
             <Route path={`/${Hash.ChooseCloudService}`} render={() => {
+              log.debug("Rendering the choose cloud service screen");
               return (
                 <ServiceSelector
                   onSelectStorj={() => {

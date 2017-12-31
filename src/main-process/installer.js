@@ -18,6 +18,7 @@
 "use strict";
 import {app, BrowserWindow, ipcMain} from "electron";
 import storage from "electron-json-storage";
+import log from "electron-log";
 import fs from "fs";
 import jre from "node-jre";
 import path from "path";
@@ -37,6 +38,7 @@ if (app.isReady()) {
 function installer() {
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
+    log.verbose(`creating the default sync folder: ${process.env.DEFAULT_SYNC_FOLDER}`);
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 
@@ -56,21 +58,24 @@ function installer() {
 
   app.on("window-all-closed", async () => {
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
 
+      log.info(`loading the config file ${ConfigFile}`);
       storage.get(ConfigFile, (err, cfg) => {
         if (err) {
-          console.log(err);
+          log.error(`failed to read/write the config: ${err}`);
           app.quit();
-          resolve();
+          reject(err);
         }
 
         if (cfg && cfg.installed) {
           // if the installation process is finished.
+          log.info("installation has been finished, now starting Goobox");
           require("./main");
           resolve();
         } else {
           // otherwise
+          log.info("installation has been canceled");
           if (global.sia) {
             global.sia.close().then(() => {
               global.sia = null;
@@ -90,20 +95,21 @@ function installer() {
   });
 
   ipcMain.on(JREInstallEvent, (event) => {
-    console.log("JRE path: " + jre.jreDir());
+    log.verbose(`JRE path: ${jre.jreDir()}`);
     let shouldInstall = false;
     try {
       if (!fs.existsSync(jre.driver())) {
         shouldInstall = true;
       }
     } catch (err) {
-      console.error(err);
+      log.debug(err);
       shouldInstall = true;
     }
 
     if (shouldInstall) {
+      log.info("JRE is not found and starts installation of a JRE");
       jre.install((err) => {
-        console.log(`JRE install finished ${err ? `with an error: ${err}` : ""}`);
+        log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
         event.sender.send(JREInstallEvent, err);
       });
     } else {
@@ -112,10 +118,12 @@ function installer() {
   });
 
   ipcMain.on(StorjLoginEvent, (event, arg) => {
+    log.info("logging in to Storj");
     event.sender.send(StorjLoginEvent, true);
   });
 
   ipcMain.on(StorjRegisterationEvent, (event, info) => {
+    log.info("creating a new Storj account");
     event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
   });
 

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import log from "electron-log";
 import os from "os";
 import path from "path";
 import semver from "semver";
@@ -51,6 +52,11 @@ if (process.platform === 'darwin') {
   }
 
 }
+
+log.debug(`idle icon path: ${idleIcon}`);
+log.debug(`sync icon path: ${syncIcon}`);
+log.debug(`paused icon path: ${pausedIcon}`);
+log.debug(`error icon path: ${errorIcon}`);
 
 export const icons = {
   getIdleIcon: () => idleIcon,
