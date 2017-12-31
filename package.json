@@ -9,7 +9,7 @@
     "build": "webpack",
     "watch": "webpack -w",
     "test": "jest",
-    "dist": "rm -rf dist && electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__",
+    "dist": "rm -rf dist && electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__",
     "check-update": "ncu -u"
   },
   "repository": {
@@ -47,7 +47,8 @@
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
     "semver": "^5.4.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "winston": "^2.4.0"
   },
   "babel": {
     "sourceMaps": "inline",

@@ -17,5 +17,7 @@
 
 import {configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import winston from "winston";
 
 configure({adapter: new Adapter()});
+winston.level = "debug";
