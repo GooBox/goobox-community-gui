@@ -16,6 +16,7 @@
  */
 
 import {execFile, spawn} from "child_process";
+import log from "electron-log";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
@@ -33,42 +34,55 @@ export default class Sia {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
+    log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
   start() {
 
-    const proc = spawn(this.cmd, {
+    if (this.proc) {
+      return;
+    }
+
+    log.info(`starting sync-sia app in ${this.cmd}`);
+    this.proc = spawn(this.cmd, {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,
       },
       windowsHide: true,
     });
-    this.stdin = proc.stdin;
-    this.stdout = readline.createInterface({input: proc.stdout});
-    this.stderr = readline.createInterface({input: proc.stderr});
-    this.proc = proc;
+    this.stdin = this.proc.stdin;
+    this.stdout = readline.createInterface({input: this.proc.stdout});
+    this.stderr = readline.createInterface({input: this.proc.stderr});
+    this.stderr.on("line", log.verbose);
 
   }
 
-  close() {
+  async close() {
 
     if (!this.proc) {
-      return Promise.resolve();
+      return;
     }
 
+    log.info("closing the sync-sia app");
     return new Promise(resolve => {
+
       this.proc.on("exit", () => {
+        log.info("the sync-sia app is closed");
         this.closed = true;
+        this.proc = null;
         resolve();
       });
+
       this.proc.kill("SIGTERM");
+
     });
 
   }
 
-  wallet() {
+  async wallet() {
 
+    log.info(`requesting the wallet info to ${this.cmd}`);
     return new Promise((resolve, reject) => {
 
       execFile(this.cmd, ["wallet"], {
@@ -76,11 +90,14 @@ export default class Sia {
         env: {
           JAVA_HOME: this.javaHome,
         },
+        timeout: 10 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
         if (err) {
+          log.error(err);
           reject(err);
         }
+        log.info("the wallet info is received");
         resolve(yaml.safeLoad(stdout));
       });
 

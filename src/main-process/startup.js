@@ -16,7 +16,18 @@
  */
 
 import storage from "electron-json-storage";
+import log from "electron-log";
 import {ConfigFile} from "../constants";
+
+if ("test" === process.env.NODE_ENV) {
+  // Pass.
+} else if ("production" !== process.env.NODE_ENV) {
+  log.transports.file.level = "debug";
+  log.transports.console.level = "debug";
+} else {
+  log.transports.file.level = "info";
+  log.transports.console.level = "warn";
+}
 
 if (process.argv[2] === "installer" || process.argv[1] === "installer") {
   require("./installer.js");

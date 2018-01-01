@@ -19,6 +19,8 @@ export const driver = jest.fn();
 export const install = jest.fn();
 export const jreDir = jest.fn();
 
+driver.mockReturnValue("/tmp/jre/bin/java");
+
 install.mockImplementation((callback) => {
   callback(null);
 });

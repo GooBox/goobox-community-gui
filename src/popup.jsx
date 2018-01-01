@@ -47,6 +47,7 @@ export class Popup extends React.Component {
       state: Synchronizing,
       usedVolume: 0,
       totalVolume: 50,
+      disabled: false,
     };
     this.timerID = null;
     this._requestUsedVolume = this._requestUsedVolume.bind(this);
@@ -85,12 +86,16 @@ export class Popup extends React.Component {
   }
 
   _onChangeState(state) {
-    ipcRenderer.once(ChangeStateEvent, (event, acceptedState) => {
-      if (acceptedState === state) {
-        this.setState({state: state});
-      }
+    this.setState({disabled: true}, () => {
+      ipcRenderer.once(ChangeStateEvent, (event, acceptedState) => {
+        if (acceptedState === state) {
+          this.setState({state: state, disabled: false});
+        } else {
+          this.setState({disabled: false});
+        }
+      });
+      ipcRenderer.send(ChangeStateEvent, state);
     });
-    ipcRenderer.send(ChangeStateEvent, state);
   }
 
   _onClickSyncFolder() {
@@ -101,12 +106,18 @@ export class Popup extends React.Component {
 
   render() {
     return (
-      <Status usedVolume={this.state.usedVolume}
-              totalVolume={this.state.totalVolume}
-              state={this.state.state}
-              onClickInfo={() => showInfoWindow()}
-              onChangeState={this._onChangeState}
-              onClickSyncFolder={this._onClickSyncFolder}
+      <Status
+        style={{cursor: this.state.disabled ? "wait" : "auto"}}
+        usedVolume={this.state.usedVolume}
+        totalVolume={this.state.totalVolume}
+        state={this.state.state}
+        onClickInfo={() => showInfoWindow()}
+        onChangeState={(args) => {
+          this.state.disabled || this._onChangeState(args);
+        }}
+        onClickSyncFolder={() => {
+          this.state.disabled || this._onClickSyncFolder();
+        }}
       />
     )
   }

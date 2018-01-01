@@ -76,6 +76,22 @@ describe("Popup component", () => {
 
   });
 
+  it("disables any buttons when disabled is true", () => {
+    const onChangeState = jest.spyOn(Popup.prototype, "_onChangeState");
+    const onClickSyncFolder = jest.spyOn(Popup.prototype, "_onClickSyncFolder");
+    try {
+      const wrapper = shallow(<Popup/>);
+      wrapper.setState({disabled: true});
+      wrapper.find("Status").prop("onChangeState")();
+      expect(onChangeState).not.toHaveBeenCalled();
+      wrapper.find("Status").prop("onClickSyncFolder")();
+      expect(onClickSyncFolder).not.toHaveBeenCalled();
+    } finally {
+      onChangeState.mockRestore();
+      onClickSyncFolder.mockRestore();
+    }
+  });
+
   describe("with IPC", () => {
 
     beforeEach(() => {
@@ -94,7 +110,7 @@ describe("Popup component", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Paused);
 
-      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
+      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.any(Function));
       expect(ipcRenderer.send).toHaveBeenCalledWith(ChangeStateEvent, Paused);
     });
 
@@ -102,8 +118,22 @@ describe("Popup component", () => {
       const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Synchronizing);
 
-      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.anything());
+      expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.any(Function));
       expect(ipcRenderer.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
+    });
+
+    it("disables any buttons during processing ChangeStateEvent", () => {
+      const wrapper = shallow(<Popup/>);
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(wrapper.state("disabled")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method, arg) => {
+          if (listen === method) {
+            cb(null, arg);
+          }
+        });
+      });
+      wrapper.find("Status").prop("onChangeState")(Synchronizing);
+      expect(wrapper.prop("disabled")).toBeFalsy();
     });
 
     it("requests opening sync folder via ipc when onClickSyncFolder is called", () => {

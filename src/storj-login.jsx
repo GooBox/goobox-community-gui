@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const style = {
   main: {
@@ -39,6 +39,7 @@ const style = {
   input: {
     width: "198px",
     height: "27px",
+    marginBottom: 0,
   },
   accountInfo: {
     position: "absolute",
@@ -51,7 +52,7 @@ const style = {
   },
   createAccount: {
     position: "absolute",
-    top: "309px",
+    top: "320px",
     fontSize: "11px",
     paddingRight: "140px",
     textAlign: "center",

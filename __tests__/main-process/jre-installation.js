@@ -15,8 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {configure} from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+jest.unmock("node-jre");
+jest.setTimeout(9 * 60 * 1000);
+import jre from "node-jre";
+import rmdir from "rmdir";
 
-configure({adapter: new Adapter()});
+describe("JRE installation test in Windows", () => {
 
+  if (process.platform !== "win32") {
+    it = it.skip;
+  }
+
+  it("installs JRE", callback => {
+    rmdir(jre.jreDir(), (err) => {
+
+      console.log(`Deleting JRE directory: ${err || "ok"}`);
+      expect(err).toBeNull();
+
+      jre.install((err) => {
+        console.log(`Installing JRE: ${err || "ok"}`);
+        expect(err === null || err === "Smoketest failed.").toBeTruthy();
+        callback();
+      });
+
+    });
+
+  });
+
+});

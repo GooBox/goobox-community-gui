@@ -9,7 +9,14 @@
     "build": "webpack",
     "watch": "webpack -w",
     "test": "jest",
-    "dist": "rm -rf dist && electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.9 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__"
+    "test:watch": "jest --watch",
+    "dist": "run-s dist:pre dist:package dist:post",
+    "dist:pre": "rm -rf dist",
+    "dist:package": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=goobox-sync --ignore=.idea --ignore=__mocks__ --ignore=__tests__",
+    "dist:post": "run-p dist:post:*",
+    "dist:post:mac": "mkdir -p dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.14/goobox-sync-sia-0.0.14-mac.tar.gz | tar -zxv -C dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia --strip-components 1",
+    "dist:post:win": "mkdir -p dist/goobox-win32-x64/resources/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.14/goobox-sync-sia-0.0.14-win64.tar.gz | tar -zxv -C dist/goobox-win32-x64/resources/goobox-sync-sia --strip-components 1",
+    "check-update": "ncu -u"
   },
   "repository": {
     "type": "git",
@@ -22,22 +29,27 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
-    "electron-json-storage": "^4.0.2",
     "about-window": "^1.8.0",
+    "electron-json-storage": "^4.0.2",
     "node-jre": "^0.2.3"
   },
   "devDependencies": {
-    "babel-jest": "^21.2.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "electron": "1.7.9",
+    "@babel/core": "^7.0.0-beta.36",
+    "@babel/preset-env": "^7.0.0-beta.36",
+    "@babel/preset-react": "^7.0.0-beta.36",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^22.0.4",
+    "babel-loader": "^8.0.0-beta.0",
+    "electron": "1.7.10",
+    "electron-log": "^2.2.13",
     "electron-packager": "^10.1.0",
     "enzyme": "^3.2.0",
     "enzyme-adapter-react-16": "^1.1.0",
-    "jest": "^21.2.1",
+    "jest": "^22.0.4",
     "js-yaml": "^3.10.0",
     "menubar": "^5.2.3",
+    "npm-check-updates": "^2.14.0",
+    "npm-run-all": "^4.1.2",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -48,8 +60,17 @@
   "babel": {
     "sourceMaps": "inline",
     "presets": [
-      "env",
-      "react"
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current",
+            "electron": "1.7.10"
+          },
+          "useBuiltIns": "usage"
+        }
+      ],
+      "@babel/preset-react"
     ]
   },
   "jest": {
@@ -59,6 +80,9 @@
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/dist"
-    ]
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   }
 }

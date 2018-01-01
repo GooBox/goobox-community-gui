@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+"use strict";
 jest.mock("child_process");
 
 import {execFile, spawn} from "child_process";
@@ -72,6 +73,7 @@ describe("Sia class", () => {
       stderr.push("standard\n");
       stderr.push("utput\n");
       stderr.push(null);
+      spawn.mockClear();
       spawn.mockReturnValue({
         stdin: stdin,
         stdout: stdout,
@@ -121,11 +123,18 @@ describe("Sia class", () => {
       });
     });
 
+    it("doesn't start a new process if this.proc is not null", () => {
+      const sia = new Sia();
+      sia.proc = "some-object";
+      sia.start();
+      expect(spawn).not.toHaveBeenCalled();
+    });
+
   });
 
   describe("close method", () => {
 
-    it("sends SIGTERM and waits exit event is emitted", () => {
+    it("sends SIGTERM and waits exit event is emitted", async () => {
       const sia = new Sia();
       sia.proc = {
         kill(signal) {
@@ -137,16 +146,15 @@ describe("Sia class", () => {
           this.callback = callback;
         }
       };
-      return sia.close().then(() => {
-        expect(sia.closed).toBeTruthy();
-      });
+      await sia.close();
+      expect(sia.closed).toBeTruthy();
+      expect(sia.proc).toBeNull();
     });
 
-    it("does nothing if proc is null", () => {
+    it("does nothing if proc is null", async () => {
       const sia = new Sia();
-      return sia.close().then(() => {
-        expect(sia.closed).toBeFalsy();
-      });
+      await sia.close();
+      expect(sia.closed).toBeFalsy();
     });
 
   });
@@ -159,7 +167,7 @@ describe("Sia class", () => {
       execFile.mockClear();
     });
 
-    it("executes wallet command of sync sia app and returns the result via Promise", () => {
+    it("executes wallet command of sync sia app and returns the result via Promise", async () => {
       execFile.mockImplementation((file, args, opts, callback) => {
         callback(null, yaml.dump({
           "wallet address": address,
@@ -168,31 +176,28 @@ describe("Sia class", () => {
       });
 
       const sia = new Sia();
-      return sia.wallet().then((res) => {
-        expect(res["wallet address"]).toEqual(address);
-        expect(res["primary seed"]).toEqual(seed);
-        expect(execFile).toHaveBeenCalledWith(sia.cmd, ["wallet"], {
-            cwd: sia.wd,
-            env: {
-              JAVA_HOME: sia.javaHome,
-            },
-            windowsHide: true,
-          }, expect.any(Function)
-        );
-      });
+      const res = await sia.wallet();
+      expect(res["wallet address"]).toEqual(address);
+      expect(res["primary seed"]).toEqual(seed);
+      expect(execFile).toHaveBeenCalledWith(sia.cmd, ["wallet"], {
+          cwd: sia.wd,
+          env: {
+            JAVA_HOME: sia.javaHome,
+          },
+        timeout: 10 * 1000,
+          windowsHide: true,
+        }, expect.any(Function)
+      );
     });
 
-    it("returns a rejected promise when execFile returns an error", () => {
+    it("returns a rejected promise when execFile returns an error", async () => {
       const msg = "expected error";
       execFile.mockImplementation((file, args, opts, callback) => {
         callback(msg, null);
       });
 
       const sia = new Sia();
-      return sia.wallet().catch((err) => {
-        expect(err).toEqual(msg);
-      });
-
+      await expect(sia.wallet()).rejects.toEqual(msg);
     });
 
   });

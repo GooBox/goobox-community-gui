@@ -16,6 +16,7 @@
  */
 
 import {app} from "electron";
+import storage from "electron-json-storage";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
 
@@ -26,6 +27,9 @@ describe("main process of the core app invoked by the installer", () => {
     menuberMock.tray.listeners.mockReturnValue([() => null]);
     menubar.mockClear();
     menuberMock.showWindow.mockClear();
+    storage.get.mockReset();
+    storage.get.mockImplementation(() => {
+    });
     require("../../src/main-process/main");
   });
 

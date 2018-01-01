@@ -18,17 +18,19 @@
 "use strict";
 import {app, ipcMain, Menu} from "electron";
 import storage from "electron-json-storage";
+import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
-
 import {ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
-
 import icons from "./icons";
+import Sia from "./sia";
 import utils from "./utils";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
+
 if (app.isReady()) {
+  log.info("the app is already ready");
   main();
 } else {
   app.on("ready", main);
@@ -45,6 +47,15 @@ function main() {
     height: 400,
     alwaysOnTop: true,
     showDockIcon: false,
+  });
+
+  mb.app.on("quit", async () => {
+    if (global.storj) {
+      await global.storj.close();
+    }
+    if (global.sia) {
+      await global.sia.close();
+    }
   });
 
   // Allow running only one instance.
@@ -93,10 +104,31 @@ function main() {
     mb.hideWindow();
   });
 
-  ipcMain.on(ChangeStateEvent, (event, arg) => {
+  // Start backends.
+  log.info("Loading the config file.");
+  storage.get(ConfigFile, (err, cfg) => {
+    if (err) {
+      log.error(err);
+      return;
+    }
+    log.debug(JSON.stringify(cfg));
+    if (cfg.sia && !global.sia) {
+      global.sia = new Sia();
+      global.sia.start();
+    }
+  });
+
+  // Register event handlers.
+  ipcMain.on(ChangeStateEvent, async (event, arg) => {
     if (arg === Synchronizing) {
+      if (global.sia) {
+        global.sia.start();
+      }
       mb.tray.setImage(icons.getIdleIcon());
     } else {
+      if (global.sia) {
+        await global.sia.close();
+      }
       mb.tray.setImage(icons.getPausedIcon());
     }
     event.sender.send(ChangeStateEvent, arg);
@@ -109,7 +141,7 @@ function main() {
     });
   });
 
-  ipcMain.on(UsedVolumeEvent, (event) => {
+  ipcMain.on(UsedVolumeEvent, async (event) => {
     return new Promise((resolve, reject) => {
       storage.get(ConfigFile, cfg => {
         utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder)
