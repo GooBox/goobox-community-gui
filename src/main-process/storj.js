@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {execFile, spawn} from "child_process";
+"use strict";
+import {spawn} from "child_process";
 import log from "electron-log";
-import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 
-export default class Sia {
+export default class Storj {
 
   constructor() {
-    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"));
-    this.cmd = path.join(this.wd, "goobox-sync-sia");
+    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin"));
+    this.cmd = path.join(this.wd, "goobox-sync-storj");
     if (process.platform === "win32") {
       this.cmd += ".bat";
     }
@@ -34,7 +34,7 @@ export default class Sia {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
-    log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
+    log.debug(`new storj instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
   start() {
@@ -43,7 +43,7 @@ export default class Sia {
       return;
     }
 
-    log.info(`starting sync-sia app in ${this.cmd}`);
+    log.info(`starting sync-storj app in ${this.cmd}`);
     this.proc = spawn(this.cmd, {
       cwd: this.wd,
       env: {
@@ -64,41 +64,16 @@ export default class Sia {
       return;
     }
 
-    log.info("closing the sync-sia app");
+    log.info("closing the sync-storj app");
     return new Promise(resolve => {
 
       this.proc.on("exit", () => {
-        log.info("the sync-sia app is closed");
+        log.info("the sync-storj app is closed");
         this.proc = null;
         resolve();
       });
 
       this.proc.kill("SIGTERM");
-
-    });
-
-  }
-
-  async wallet() {
-
-    log.info(`requesting the wallet info to ${this.cmd}`);
-    return new Promise((resolve, reject) => {
-
-      execFile(this.cmd, ["wallet"], {
-        cwd: this.wd,
-        env: {
-          JAVA_HOME: this.javaHome,
-        },
-        timeout: 10 * 1000,
-        windowsHide: true,
-      }, (err, stdout) => {
-        if (err) {
-          log.error(err);
-          reject(err);
-        }
-        log.info("the wallet info is received");
-        resolve(yaml.safeLoad(stdout));
-      });
 
     });
 

@@ -53,11 +53,6 @@ describe("Sia class", () => {
       expect(sia.javaHome).toEqual(path.join(jre.driver(), "../../"));
     });
 
-    it("has closed which will be true after the child process is closed", () => {
-      const sia = new Sia();
-      expect(sia.closed).toBeFalsy();
-    });
-
   });
 
   describe("start method", () => {
@@ -147,14 +142,12 @@ describe("Sia class", () => {
         }
       };
       await sia.close();
-      expect(sia.closed).toBeTruthy();
       expect(sia.proc).toBeNull();
     });
 
     it("does nothing if proc is null", async () => {
       const sia = new Sia();
       await sia.close();
-      expect(sia.closed).toBeFalsy();
     });
 
   });
