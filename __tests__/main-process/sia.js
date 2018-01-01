@@ -184,6 +184,7 @@ describe("Sia class", () => {
           env: {
             JAVA_HOME: sia.javaHome,
           },
+        timeout: 10 * 1000,
           windowsHide: true,
         }, expect.any(Function)
       );

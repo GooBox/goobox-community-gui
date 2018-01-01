@@ -9,6 +9,7 @@
     "build": "webpack",
     "watch": "webpack -w",
     "test": "jest",
+    "test:watch": "jest --watch",
     "dist": "rm -rf dist && electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=.idea --ignore=__mocks__ --ignore=__tests__",
     "check-update": "ncu -u"
   },

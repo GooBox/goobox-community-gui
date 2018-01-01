@@ -129,13 +129,17 @@ function installer() {
 
   ipcMain.on(SiaWalletEvent, async (event) => {
     const sia = new Sia();
-    const res = await sia.wallet();
-    event.sender.send(SiaWalletEvent, {
-      address: res["wallet address"],
-      seed: res["primary seed"],
-    });
-    sia.start();
-    global.sia = sia;
+    try {
+      const res = await sia.wallet();
+      event.sender.send(SiaWalletEvent, {
+        address: res["wallet address"],
+        seed: res["primary seed"],
+      });
+      sia.start();
+      global.sia = sia;
+    } catch (error) {
+      event.sender.send(SiaWalletEvent, null, error);
+    }
   });
 
 }

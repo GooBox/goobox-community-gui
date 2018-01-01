@@ -240,6 +240,14 @@ describe("main process of the installer", () => {
       expect(global.sia instanceof Sia).toBeTruthy();
     });
 
+    it("shows an error message when the wallet command returns an error", async () => {
+      const error = "expected error";
+      wallet.mockReturnValue(Promise.reject(error));
+      await handler(event);
+      expect(start).not.toHaveBeenCalled();
+      expect(event.sender.send).toHaveBeenCalledWith(SiaWalletEvent, null, error);
+    });
+
   });
 
   describe("WindowAllClosed event handler", () => {

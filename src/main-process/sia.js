@@ -90,6 +90,7 @@ export default class Sia {
         env: {
           JAVA_HOME: this.javaHome,
         },
+        timeout: 10 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
         if (err) {
