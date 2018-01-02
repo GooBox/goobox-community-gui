@@ -92,12 +92,20 @@ export default class Sia {
         timeout: 10 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
+
         if (err) {
           log.error(err);
           reject(err);
         }
-        log.info("the wallet info is received");
-        resolve(yaml.safeLoad(stdout));
+
+        const info = yaml.safeLoad(stdout);
+        if (!info["wallet address"]) {
+          log.error("failed to obtain the wallet information");
+          throw "failed to obtain the wallet information";
+        }
+
+        log.info(`the wallet info is received: ${info["wallet address"]}`);
+        resolve(info);
       });
 
     });

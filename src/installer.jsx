@@ -180,8 +180,12 @@ export class Installer extends React.Component {
 
     this.requesting = true;
     this.setState({wait: true}, () => {
-      ipcRenderer.once(SiaWalletEvent, (_, info) => {
-
+      ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
+        if (err) {
+          this.requesting = false;
+          log.error(err);
+          return;
+        }
         this.setState({siaAccount: info, wait: false}, () => {
           this.requesting = false;
           location.hash = Hash.SiaWallet;
@@ -336,8 +340,8 @@ export class Installer extends React.Component {
             <Route path={`/${Hash.SiaWallet}`} render={() => {
               return (
                 <SiaWallet
-                  address={this.state.siaAccount.address}
-                  seed={this.state.siaAccount.seed}
+                  address={this.state.siaAccount === null || this.state.siaAccount.address}
+                  seed={this.state.siaAccount === null || this.state.siaAccount.seed}
                   onClickBack={() => {
                     if (this.state.storj) {
                       location.hash = Hash.StorjLogin;

@@ -193,6 +193,15 @@ describe("Sia class", () => {
       await expect(sia.wallet()).rejects.toEqual(msg);
     });
 
+    it("returns a rejected promise when the output of wallet command doesn't have enough information", async () => {
+      execFile.mockImplementation((file, args, opts, callback) => {
+        callback(null, "");
+      });
+
+      const sia = new Sia();
+      await expect(sia.wallet()).rejects.toBeDefined();
+    });
+
   });
 
 });

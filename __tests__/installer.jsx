@@ -15,20 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ipcRenderer, remote} from "electron";
+import {mount, shallow} from "enzyme";
 import path from "path";
 import React from "react";
-import {shallow, mount} from "enzyme";
-import {ipcRenderer, remote} from "electron";
-import {Installer, Hash} from "../src/installer.jsx";
 import {
-  Storj,
-  Sia,
-  JREInstallEvent,
-  StorjLoginEvent,
-  StorjRegisterationEvent,
-  SiaWalletEvent,
-  ConfigFile
+  ConfigFile, JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent,
+  StorjRegisterationEvent
 } from "../src/constants";
+import {Hash, Installer} from "../src/installer.jsx";
 
 const app = remote.app;
 const storage = remote.require("electron-json-storage");
@@ -923,7 +918,6 @@ describe("Installer component", () => {
     });
 
     it("requests SIA wallet information only once", () => {
-
       const address = "1234567890";
       const seed = "xxx xxx xxx xxx";
       ipcRenderer.once.mockImplementation((listen, cb) => {
@@ -942,7 +936,6 @@ describe("Installer component", () => {
       wrapper.instance()._requestSiaWallet();
       expect(ipcRenderer.once).toHaveBeenCalledTimes(1);
       expect(ipcRenderer.send).toHaveBeenCalledTimes(1);
-
     });
 
     it("moves to SiaWallet if address and seed was received", () => {
@@ -959,6 +952,24 @@ describe("Installer component", () => {
       expect(ipcRenderer.once).not.toHaveBeenCalled();
       expect(ipcRenderer.send).not.toHaveBeenCalled();
       expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
+    });
+
+    it("doesn't move to SiaWallet and shows an error message if ipc request fails", () => {
+      const error = "expected error";
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, null, error);
+          }
+        });
+      });
+
+      const wrapper = shallow(<Installer/>);
+      wrapper.instance()._requestSiaWallet();
+      expect(ipcRenderer.once).toHaveBeenCalled();
+      expect(ipcRenderer.send).toHaveBeenCalled();
+      expect(location.hash).toEqual("");
+      expect(wrapper.instance().requesting).toBeFalsy();
     });
 
   });
