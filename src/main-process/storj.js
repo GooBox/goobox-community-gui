@@ -58,6 +58,33 @@ export default class Storj {
 
   }
 
+  async login(email, password, encryptionKey) {
+
+    if (!this.proc) {
+      throw "sync storj app is not running";
+    }
+
+    return Promise.race([
+      new Promise(resolve => {
+        this.stdout.once("line", line => resolve(JSON.parse(line)));
+        this.stdin.write(JSON.stringify({
+          method: "login",
+          args: {
+            email: email,
+            password: password,
+            encryptionKey: encryptionKey,
+          }
+        }));
+      }),
+      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), 60000))
+    ]).then(res => {
+      if ("ok" !== res.status) {
+        return Promise.reject(res.message);
+      }
+    });
+
+  }
+
   async close() {
 
     if (!this.proc) {

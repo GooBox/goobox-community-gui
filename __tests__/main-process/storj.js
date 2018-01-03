@@ -16,6 +16,8 @@
  */
 "use strict";
 jest.mock("child_process");
+jest.useFakeTimers();
+jest.setTimeout(5 * 60000);
 
 import {spawn} from "child_process";
 import jre from "node-jre";
@@ -145,6 +147,93 @@ describe("Storj class", () => {
       const storj = new Storj();
       await storj.close();
     });
+
+  });
+
+  describe("login method", () => {
+
+    const email = "abc@example.com";
+    const password = "password";
+    const key = "xxx xxx xxx";
+
+    it("requests logging in", async () => {
+      const storj = new Storj();
+      const stdout = new Readable();
+      stdout.push(JSON.stringify({
+        status: "ok",
+        message: "",
+      }));
+      stdout.push("\n");
+      stdout.push(null);
+
+      storj.stdin = {
+        write: jest.fn()
+      };
+      storj.stdout = readline.createInterface({input: stdout});
+      storj.proc = {
+        stdin: storj.stdin,
+        stdout: storj.stdout
+      };
+
+      await expect(storj.login(email, password, key)).resolves.not.toBeDefined();
+      expect(storj.stdin.write).toHaveBeenCalledWith(JSON.stringify({
+        method: "login",
+        args: {
+          email: email,
+          password: password,
+          encryptionKey: key,
+        }
+      }));
+    });
+
+    it("returns an error when no process is running", async () => {
+      const storj = new Storj();
+      await expect(storj.login(email, password, key)).rejects.toEqual("sync storj app is not running");
+    });
+
+    it("returns a rejected promise when failed to log in", async () => {
+      const error = "failed to log in";
+      const storj = new Storj();
+      const stdout = new Readable();
+      stdout.push(JSON.stringify({
+        status: "error",
+        message: error,
+      }));
+      stdout.push("\n");
+      stdout.push(null);
+
+      storj.stdin = {
+        write: jest.fn()
+      };
+      storj.stdout = readline.createInterface({input: stdout});
+      storj.proc = {
+        stdin: storj.stdin,
+        stdout: storj.stdout
+      };
+
+      await expect(storj.login(email, password, key)).rejects.toEqual(error);
+    });
+
+    it("returns a rejected promise when no response is returned", async () => {
+      const storj = new Storj();
+      storj.stdin = {
+        write: jest.fn()
+      };
+      storj.stdout = {
+        once: jest.fn()
+      };
+      storj.proc = {
+        stdin: storj.stdin,
+        stdout: storj.stdout
+      };
+
+      setTimeout.mockImplementationOnce(cb => cb());
+      await expect(storj.login(email, password, key)).rejects.toEqual("time out");
+    });
+
+  });
+
+  describe("createAccount method", () => {
 
   });
 
