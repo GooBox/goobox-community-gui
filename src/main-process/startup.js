@@ -19,6 +19,10 @@ import storage from "electron-json-storage";
 import log from "electron-log";
 import {ConfigFile} from "../constants";
 
+if ("production" !== process.env.NODE_ENV && (process.argv[3] === "--dev" || process.argv[2] === "--dev")) {
+  process.env.NODE_ENV = "development";
+}
+
 if ("test" === process.env.NODE_ENV) {
   // Pass.
 } else if ("production" !== process.env.NODE_ENV) {

@@ -22,7 +22,7 @@ let openDirectory, totalVolume;
 if (process.platform === "win32") {
 
   openDirectory = (dir) => {
-    spawnSync("cmd.exe", ["/c", "start " + dir]);
+    spawnSync("cmd.exe", ["/c", `start "${dir}"`]);
   };
 
   totalVolume = async (dir) => {

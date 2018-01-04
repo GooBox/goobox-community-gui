@@ -180,13 +180,19 @@ export class Installer extends React.Component {
 
     this.requesting = true;
     this.setState({wait: true}, () => {
-      ipcRenderer.once(SiaWalletEvent, (_, info) => {
-
-        this.setState({siaAccount: info, wait: false}, () => {
-          this.requesting = false;
-          location.hash = Hash.SiaWallet;
-        });
-
+      ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
+        log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
+        if (err) {
+          this.setState({wait: false}, () => {
+            this.requesting = false;
+            log.error(err);
+          });
+        } else {
+          this.setState({siaAccount: info, wait: false}, () => {
+            this.requesting = false;
+            location.hash = Hash.SiaWallet;
+          });
+        }
       });
       ipcRenderer.send(SiaWalletEvent);
     });
@@ -210,7 +216,7 @@ export class Installer extends React.Component {
 
   render() {
     return (
-      <div style={{cursor: this.state.wait ? "wait" : "auto"}}>
+      <div className={this.state.wait ? "wait" : ""}>
         <HashRouter hashType="noslash">
           <Switch>
             <Route exact path="/" render={() => {
@@ -336,8 +342,8 @@ export class Installer extends React.Component {
             <Route path={`/${Hash.SiaWallet}`} render={() => {
               return (
                 <SiaWallet
-                  address={this.state.siaAccount.address}
-                  seed={this.state.siaAccount.seed}
+                  address={this.state.siaAccount === null || this.state.siaAccount.address}
+                  seed={this.state.siaAccount === null || this.state.siaAccount.seed}
                   onClickBack={() => {
                     if (this.state.storj) {
                       location.hash = Hash.StorjLogin;

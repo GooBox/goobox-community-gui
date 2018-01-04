@@ -15,11 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const log = (msg) => console.log(msg);
-export const info = (msg) => console.log(`info: ${msg}`);
-export const debug = (msg) => console.log(`debug: ${msg}`);
-export const verbose = (msg) => console.log(`verbose: ${msg}`);
-export const error = (msg) => console.log(`error: ${msg}`);
+export const log = () => {
+};
+export const info = () => {
+};
+export const debug = () => {
+};
+export const verbose = () => {
+};
+export const error = () => {
+};
+// export const log = (msg) => console.log(msg);
+// export const info = (msg) => console.log(`info: ${msg}`);
+// export const debug = (msg) => console.log(`debug: ${msg}`);
+// export const verbose = (msg) => console.log(`verbose: ${msg}`);
+// export const error = (msg) => console.log(`error: ${msg}`);
 export default {
   log: log,
   info: info,

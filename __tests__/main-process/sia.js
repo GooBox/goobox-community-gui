@@ -53,11 +53,6 @@ describe("Sia class", () => {
       expect(sia.javaHome).toEqual(path.join(jre.driver(), "../../"));
     });
 
-    it("has closed which will be true after the child process is closed", () => {
-      const sia = new Sia();
-      expect(sia.closed).toBeFalsy();
-    });
-
   });
 
   describe("start method", () => {
@@ -147,14 +142,12 @@ describe("Sia class", () => {
         }
       };
       await sia.close();
-      expect(sia.closed).toBeTruthy();
       expect(sia.proc).toBeNull();
     });
 
     it("does nothing if proc is null", async () => {
       const sia = new Sia();
       await sia.close();
-      expect(sia.closed).toBeFalsy();
     });
 
   });
@@ -184,7 +177,7 @@ describe("Sia class", () => {
           env: {
             JAVA_HOME: sia.javaHome,
           },
-        timeout: 10 * 1000,
+        timeout: 5 * 60 * 1000,
           windowsHide: true,
         }, expect.any(Function)
       );
@@ -198,6 +191,15 @@ describe("Sia class", () => {
 
       const sia = new Sia();
       await expect(sia.wallet()).rejects.toEqual(msg);
+    });
+
+    it("returns a rejected promise when the output of wallet command doesn't have enough information", async () => {
+      execFile.mockImplementation((file, args, opts, callback) => {
+        callback(null, "");
+      });
+
+      const sia = new Sia();
+      await expect(sia.wallet()).rejects.toBeDefined();
     });
 
   });

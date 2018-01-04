@@ -199,7 +199,7 @@ describe("main process of the core app", () => {
     it("opens the sync folder", () => {
       const syncFolder = "/tmp";
       storage.get.mockImplementationOnce((key, cb) => {
-        cb({
+        cb(null, {
           syncFolder: syncFolder,
         });
       });
@@ -228,7 +228,7 @@ describe("main process of the core app", () => {
     it("calculate the volume of the sync folder", async () => {
       const syncFolder = "/tmp";
       storage.get.mockImplementationOnce((key, cb) => {
-        cb({
+        cb(null, {
           syncFolder: syncFolder,
         });
       });

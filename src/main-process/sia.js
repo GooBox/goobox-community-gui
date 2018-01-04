@@ -22,6 +22,7 @@ import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 
+
 export default class Sia {
 
   constructor() {
@@ -69,7 +70,6 @@ export default class Sia {
 
       this.proc.on("exit", () => {
         log.info("the sync-sia app is closed");
-        this.closed = true;
         this.proc = null;
         resolve();
       });
@@ -90,15 +90,25 @@ export default class Sia {
         env: {
           JAVA_HOME: this.javaHome,
         },
-        timeout: 10 * 1000,
+        timeout: 5 * 60 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
+
         if (err) {
           log.error(err);
           reject(err);
+          return;
         }
-        log.info("the wallet info is received");
-        resolve(yaml.safeLoad(stdout));
+
+        const info = yaml.safeLoad(stdout);
+        if (!info || !info["wallet address"]) {
+          log.error("failed to obtain the wallet information");
+          reject("failed to obtain the wallet information");
+          return;
+        }
+
+        log.info(`the wallet info is received: ${info["wallet address"]}`);
+        resolve(info);
       });
 
     });

@@ -52,7 +52,7 @@ function installer() {
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
-  if ("production" !== process.env.NODE_ENV) {
+  if ("development" === process.env.NODE_ENV) {
     mainWindow.toggleDevTools();
   }
 
