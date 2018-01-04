@@ -22,6 +22,7 @@ import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 
+
 export default class Sia {
 
   constructor() {
@@ -89,7 +90,7 @@ export default class Sia {
         env: {
           JAVA_HOME: this.javaHome,
         },
-        timeout: 10 * 1000,
+        timeout: 30 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
 
