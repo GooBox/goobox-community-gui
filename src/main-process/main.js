@@ -135,7 +135,7 @@ function main() {
   });
 
   ipcMain.on(OpenSyncFolderEvent, (event) => {
-    storage.get(ConfigFile, cfg => {
+    storage.get(ConfigFile, (err, cfg) => {
       utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
       event.sender.send(OpenSyncFolderEvent);
     });
@@ -143,7 +143,7 @@ function main() {
 
   ipcMain.on(UsedVolumeEvent, async (event) => {
     return new Promise((resolve, reject) => {
-      storage.get(ConfigFile, cfg => {
+      storage.get(ConfigFile, (err, cfg) => {
         utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder)
           .then(volume => {
             event.sender.send(UsedVolumeEvent, volume / 1024 / 1024);
