@@ -181,16 +181,18 @@ export class Installer extends React.Component {
     this.requesting = true;
     this.setState({wait: true}, () => {
       ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
+        log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
         if (err) {
-          this.requesting = false;
-          log.error(err);
-          return;
+          this.setState({wait: false}, () => {
+            this.requesting = false;
+            log.error(err);
+          });
+        } else {
+          this.setState({siaAccount: info, wait: false}, () => {
+            this.requesting = false;
+            location.hash = Hash.SiaWallet;
+          });
         }
-        this.setState({siaAccount: info, wait: false}, () => {
-          this.requesting = false;
-          location.hash = Hash.SiaWallet;
-        });
-
       });
       ipcRenderer.send(SiaWalletEvent);
     });

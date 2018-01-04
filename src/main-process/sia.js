@@ -90,19 +90,21 @@ export default class Sia {
         env: {
           JAVA_HOME: this.javaHome,
         },
-        timeout: 30 * 1000,
+        timeout: 5 * 60 * 1000,
         windowsHide: true,
       }, (err, stdout) => {
 
         if (err) {
           log.error(err);
           reject(err);
+          return;
         }
 
         const info = yaml.safeLoad(stdout);
-        if (!info["wallet address"]) {
+        if (!info || !info["wallet address"]) {
           log.error("failed to obtain the wallet information");
-          throw "failed to obtain the wallet information";
+          reject("failed to obtain the wallet information");
+          return;
         }
 
         log.info(`the wallet info is received: ${info["wallet address"]}`);
