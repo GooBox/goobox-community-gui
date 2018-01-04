@@ -7,7 +7,7 @@
     "start": "electron .",
     "start:installer": "electron . installer",
     "build": "webpack",
-    "watch": "webpack -w",
+    "build:watch": "webpack -w",
     "test": "jest",
     "test:watch": "jest --watch",
     "dist": "run-s dist:pre dist:package dist:post",
