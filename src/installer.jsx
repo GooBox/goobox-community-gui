@@ -216,7 +216,7 @@ export class Installer extends React.Component {
 
   render() {
     return (
-      <div style={{cursor: this.state.wait ? "wait" : "auto"}}>
+      <div className={this.state.wait ? "wait" : ""}>
         <HashRouter hashType="noslash">
           <Switch>
             <Route exact path="/" render={() => {

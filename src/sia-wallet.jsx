@@ -41,6 +41,7 @@ const style = {
     width: "600px",
     paddingLeft: "75px",
     textAlign: "left",
+    cursor: "text",
   },
   seedValue: {
     display: "block",
@@ -73,7 +74,7 @@ export default function SiaWallet(props) {
         <div className="f211">
           And your <span className="underlined bold">SIA seed</span>.
         </div>
-        <p id="seed" style={style.seedValue}>{props.seed}</p>
+        <p id="seed" className="text" style={style.seedValue}>{props.seed}</p>
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
