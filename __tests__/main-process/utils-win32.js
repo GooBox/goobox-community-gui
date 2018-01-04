@@ -46,7 +46,7 @@ describe("utils module in Windows", () => {
     it("open a given directory with explorer", () => {
       const dir = "/tmp/some-dir";
       utils.openDirectory(dir);
-      expect(spawnSync).toHaveBeenCalledWith("cmd.exe", ["/c", "start " + dir]);
+      expect(spawnSync).toHaveBeenCalledWith("cmd.exe", ["/c", `start "${dir}"`]);
     });
 
   });
