@@ -17,13 +17,13 @@
 
 "use strict";
 import {app, BrowserWindow, ipcMain} from "electron";
-import storage from "electron-json-storage";
 import log from "electron-log";
 import fs from "fs";
 import jre from "node-jre";
 import path from "path";
 import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
 import Sia from "./sia";
+import {getConfig} from "./config";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -33,18 +33,6 @@ if (app.isReady()) {
   installer();
 } else {
   app.on("ready", installer);
-}
-
-async function getConfig() {
-  return new Promise((resolve, reject) => {
-    storage.get(ConfigFile, (err, cfg) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(cfg);
-      }
-    });
-  });
 }
 
 function installer() {
