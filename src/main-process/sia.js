@@ -38,14 +38,14 @@ export default class Sia {
     log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
-  start() {
+  start(dir) {
 
     if (this.proc) {
       return;
     }
 
     log.info(`starting sync-sia app in ${this.cmd}`);
-    this.proc = spawn(this.cmd, {
+    this.proc = spawn(this.cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,

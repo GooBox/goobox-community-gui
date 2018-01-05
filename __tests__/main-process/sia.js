@@ -77,9 +77,10 @@ describe("Sia class", () => {
     });
 
     it("spawns sync sia app", () => {
+      const dir = "/tmp";
       const sia = new Sia();
-      sia.start();
-      expect(spawn).toBeCalledWith(sia.cmd, {
+      sia.start(dir);
+      expect(spawn).toBeCalledWith(sia.cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
         cwd: sia.wd,
         env: {
           JAVA_HOME: sia.javaHome,
