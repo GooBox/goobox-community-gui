@@ -33,26 +33,46 @@ const style = {
     textAlign: "center",
     width: "600px",
   },
-  optionStorj: {
+  options: {
     position: "absolute",
     top: "247px",
-    left: "80px",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center"
+  },
+  //
+  // The following configurations will be enabled when Goobox supports Storj & SIA.
+  //
+  // optionStorj: {
+  //   width: "25%",
+  //   border: "none",
+  //   background: "none"
+  // },
+  // optionSia: {
+  //   width: "25%",
+  //   border: "none",
+  //   background: "none"
+  // },
+  // optionBoth: {
+  //   width: "40%",
+  //   border: "none",
+  //   background: "none"
+  // }
+  //
+  // Currently, Goobox only supports Storj or SIA.
+  //
+  optionStorj: {
+    width: "30%",
     border: "none",
     background: "none"
   },
   optionSia: {
-    position: "absolute",
-    top: "258px",
-    left: "216px",
+    width: "30%",
     border: "none",
     background: "none"
   },
   optionBoth: {
-    position: "absolute",
-    top: "257px",
-    left: "381px",
-    border: "none",
-    background: "none"
+    display: "none",
   }
 };
 
@@ -67,7 +87,7 @@ export default function ServiceSelector(props) {
       <section style={style.downArrow}>
         <img className="up-and-down" src="../resources/down_arrow.svg" width="15px" height="24px"/>
       </section>
-      <section>
+      <section style={style.options}>
         <button className="option-storj" style={style.optionStorj}
                 onClick={() => props.onSelectStorj && props.onSelectStorj()}>
           <img src="../resources/storj_logo.svg" width="56px" height="83px"/>

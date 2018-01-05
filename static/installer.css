@@ -35,6 +35,10 @@ button:hover {
   cursor: pointer;
 }
 
+button *:hover {
+  cursor: pointer;
+}
+
 input:hover {
   cursor: text;
 }
