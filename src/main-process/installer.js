@@ -19,11 +19,11 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import log from "electron-log";
 import fs from "fs";
-import jre from "node-jre";
 import path from "path";
 import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
 import Sia from "./sia";
 import {getConfig} from "./config";
+import {installJRE} from "./jre";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -91,26 +91,12 @@ function installer() {
   });
 
 
-  ipcMain.on(JREInstallEvent, (event) => {
-    log.verbose(`JRE path: ${jre.jreDir()}`);
-    let shouldInstall = false;
+  ipcMain.on(JREInstallEvent, async (event) => {
     try {
-      if (!fs.existsSync(jre.driver())) {
-        shouldInstall = true;
-      }
-    } catch (err) {
-      log.debug(err);
-      shouldInstall = true;
-    }
-
-    if (shouldInstall) {
-      log.info("JRE is not found and starts installation of a JRE");
-      jre.install((err) => {
-        log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
-        event.sender.send(JREInstallEvent, err);
-      });
-    } else {
+      await installJRE();
       event.sender.send(JREInstallEvent);
+    } catch (err) {
+      event.sender.send(JREInstallEvent, err);
     }
   });
 

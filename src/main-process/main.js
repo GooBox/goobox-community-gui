@@ -16,7 +16,7 @@
  */
 
 "use strict";
-import {app, ipcMain, Menu} from "electron";
+import {app, dialog, ipcMain, Menu} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
@@ -25,6 +25,7 @@ import icons from "./icons";
 import Sia from "./sia";
 import utils from "./utils";
 import {getConfig} from "./config";
+import {installJRE} from "./jre";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
@@ -40,7 +41,7 @@ async function main() {
 
   const mb = menubar({
     index: "file://" + path.join(__dirname, "../../static/popup.html"),
-    icon: icons.getIdleIcon(),
+    icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
     width: 518,
@@ -159,9 +160,10 @@ async function main() {
     event.sender.send(UsedVolumeEvent, volume / 1024 / 1024);
   });
 
-  // Start backends.
+  // Start back ends.
   log.info("Loading the config file.");
   try {
+    await installJRE();
 
     const cfg = await getConfig();
     log.debug(JSON.stringify(cfg));
@@ -175,6 +177,8 @@ async function main() {
 
   } catch (err) {
     log.error(err);
+    dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
+    app.quit();
   }
 
 }

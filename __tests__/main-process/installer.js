@@ -15,43 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock('fs');
+jest.mock("fs");
 jest.mock("child_process");
+jest.mock("../../src/main-process/jre");
+jest.mock("../../src/main-process/config");
 
 import {app, BrowserWindow, ipcMain} from "electron";
-import storage from "electron-json-storage";
 import fs from "fs";
 import menubar, {menuberMock} from "menubar";
 import jre from "node-jre";
 import path from "path";
-import {
-  ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent,
-  StorjRegisterationEvent
-} from "../../src/constants";
+import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../../src/constants";
 import "../../src/main-process/installer";
 import Sia from "../../src/main-process/sia";
-
-let onReady;
-app.on.mock.calls.forEach(args => {
-  if (args[0] === "ready") {
-    onReady = args[1];
-  }
-});
-
+import {installJRE} from "../../src/main-process/jre";
+import {getConfig} from "../../src/main-process/config";
 
 describe("main process of the installer", () => {
 
+  let onReady;
   beforeAll(() => {
     jre.driver.mockReturnValue("/tmp/jre/bin/java");
+    app.on.mock.calls.forEach(args => {
+      if (args[0] === "ready") {
+        onReady = args[1];
+      }
+    });
   });
 
   let mockLoadURL;
   beforeEach(() => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     ipcMain.on.mockReset();
-    app.quit.mockClear();
     // Do not reset those mocks because they have implementations.
-    storage.get.mockClear();
     menubar.mockClear();
   });
 
@@ -98,65 +94,26 @@ describe("main process of the installer", () => {
         send: jest.fn()
       }
     };
-    const jrePath = "/tmp/java";
-    const jreExec = path.join(jrePath, "bin/java");
 
     beforeEach(() => {
       onReady();
       handler = ipcMain.on.mock.calls.filter(args => args[0] === JREInstallEvent).map(args => args[1])[0];
       event.sender.send.mockClear();
-      fs.existsSync.mockReset();
-      jre.jreDir.mockClear();
-      jre.jreDir.mockReturnValue(jrePath);
-      jre.driver.mockClear();
-      jre.driver.mockReturnValue(jreExec);
-      jre.install.mockClear();
+      installJRE.mockReset();
     });
 
-    it("checks JRE is installed and if exists, does nothing", () => {
-      fs.existsSync.mockReturnValue(true);
-
-      handler(event);
-      expect(jre.driver).toHaveBeenCalled();
-      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
-      expect(jre.install).not.toHaveBeenCalled();
+    it("installs JRE and send nothing if the installation is succeeded", async () => {
+      await handler(event);
+      expect(installJRE).toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent);
     });
 
-    it("checks JRE is installed and if not exists, installs a JRE", () => {
-      fs.existsSync.mockReturnValue(false);
-
-      handler(event);
-      expect(jre.driver).toHaveBeenCalled();
-      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
-      expect(jre.install).toHaveBeenCalled();
-      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
-    });
-
-    it("checks JRE is installed and if an error is raised, installs a JRE", () => {
-      jre.driver.mockImplementation(() => {
-        throw "expected jre.driver error";
-      });
-
-      handler(event);
-      expect(jre.driver).toHaveBeenCalled();
-      expect(fs.existsSync).not.toHaveBeenCalledWith();
-      expect(jre.install).toHaveBeenCalled();
-      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, null);
-    });
-
-    it("sends back error messages if the installation fails", () => {
-      fs.existsSync.mockReturnValue(false);
-
+    it("sends back error messages if the installation fails", async () => {
       const err = "expected error";
-      jre.install.mockImplementationOnce((callback) => {
-        callback(err)
-      });
+      installJRE.mockReturnValue(Promise.reject(err));
 
-      handler(event);
-      expect(jre.driver).toHaveBeenCalled();
-      expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
-      expect(jre.install).toHaveBeenCalled();
+      await handler(event);
+      expect(installJRE).toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, err);
     });
 
@@ -208,15 +165,14 @@ describe("main process of the installer", () => {
       onReady();
       handler = ipcMain.on.mock.calls.filter(args => args[0] === SiaWalletEvent).map(args => args[1])[0];
       event.sender.send.mockClear();
+      getConfig.mockReset();
 
-      wallet = jest.spyOn(Sia.prototype, "wallet");
-      wallet.mockReturnValue(Promise.resolve({
+      wallet = jest.spyOn(Sia.prototype, "wallet").mockReturnValue(Promise.resolve({
         "wallet address": address,
         "primary seed": seed,
       }));
 
-      start = jest.spyOn(Sia.prototype, "start");
-      start.mockImplementation(() => {
+      start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
       });
     });
 
@@ -236,11 +192,12 @@ describe("main process of the installer", () => {
 
     it("starts the sync sia app", async () => {
       const dir = "/tmp";
-      storage.set(ConfigFile, {
+      getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
-      });
+      }));
 
       await handler(event);
+      expect(getConfig).toHaveBeenCalled();
       expect(start).toHaveBeenCalledWith(dir);
       expect(global.sia instanceof Sia).toBeTruthy();
 
@@ -264,20 +221,23 @@ describe("main process of the installer", () => {
       onWindowAllClosed = app.on.mock.calls
         .filter(args => args[0] === "window-all-closed")
         .map(args => args[1])[0];
+      getConfig.mockReset();
+      app.isReady.mockReset();
+      app.on.mockReset();
+      app.quit.mockReset();
     });
 
     it("starts the core app when all windows are closed and installed is true", async () => {
 
-      app.isReady.mockReturnValue(true);
-      menuberMock.tray.listeners.mockReturnValue([() => null]);
-
-      storage.set(ConfigFile, {
-        installed: true
-      });
+      app.isReady.mockReturnValue(false);
+      getConfig.mockReturnValue(Promise.resolve({
+        installed: true,
+      }));
 
       await onWindowAllClosed();
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-      expect(menubar).toHaveBeenCalled();
+      expect(getConfig).toHaveBeenCalled();
+      // This calling of app.on is in main.js.
+      expect(app.on).toHaveBeenCalledWith("ready", expect.any(Function));
       expect(app.quit).not.toHaveBeenCalled();
 
     });
@@ -285,12 +245,13 @@ describe("main process of the installer", () => {
     // TODO: it shows some message to make sure users want to quit the installer.
     it("does nothing when all windows are closed but installed is false", async () => {
 
-      storage.set(ConfigFile, {
-        installed: false
-      });
-      await  onWindowAllClosed();
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
-      expect(menubar).not.toHaveBeenCalled();
+      getConfig.mockReturnValue(Promise.resolve({
+        installed: false,
+      }));
+
+      await onWindowAllClosed();
+      expect(getConfig).toHaveBeenCalled();
+      expect(app.isReady).not.toHaveBeenCalled();
       expect(app.quit).toHaveBeenCalled();
 
     });
@@ -301,9 +262,9 @@ describe("main process of the installer", () => {
       const close = jest.spyOn(global.sia, "close");
       close.mockReturnValue(Promise.resolve());
 
-      storage.set(ConfigFile, {
+      getConfig.mockReturnValue(Promise.resolve({
         installed: false
-      });
+      }));
 
       await onWindowAllClosed();
       expect(global.sia).toBeNull();

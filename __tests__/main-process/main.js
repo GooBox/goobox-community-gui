@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 jest.mock("child_process");
+jest.mock("../../src/main-process/jre");
+jest.mock("../../src/main-process/config");
 
 import {execFile, spawnSync} from "child_process";
-import {app, ipcMain} from "electron";
-import storage from "electron-json-storage";
+import {app, dialog, ipcMain} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
-import {
-  ChangeStateEvent, ConfigFile, OpenSyncFolderEvent, Paused, Synchronizing,
-  UsedVolumeEvent
-} from "../../src/constants";
+import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../../src/constants";
 import icons from "../../src/main-process/icons";
 import Sia from "../../src/main-process/sia";
+import {installJRE} from "../../src/main-process/jre";
+import {getConfig} from "../../src/main-process/config";
 
 describe("main process of the core app", () => {
 
@@ -51,17 +51,13 @@ describe("main process of the core app", () => {
     });
   });
 
-
   beforeEach(() => {
     menubar.mockClear();
     menuberMock.on.mockClear();
     menuberMock.tray.listeners.mockReturnValue([() => null]);
     app.quit.mockClear();
     ipcMain.on.mockClear();
-    storage.get.mockReset();
-    storage.get.mockImplementation((_, cb) => {
-      cb(null, {});
-    });
+    getConfig.mockReset();
   });
 
   afterEach(() => {
@@ -83,55 +79,70 @@ describe("main process of the core app", () => {
     });
   });
 
-  it("starts the storj backend if storj conf is true but not running", () => {
+  describe("back end management", () => {
 
-  });
-
-  it("doesn't start the storj backend if it is already running", () => {
-
-  });
-
-  it("starts the sia backend if sia conf is true but not running", async () => {
-    storage.get.mockImplementation((key, callback) => {
-      expect(key).toEqual(ConfigFile);
-      callback(null, {
-        sia: true,
+    let start;
+    beforeEach(() => {
+      start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
       });
+      installJRE.mockReset();
+      dialog.showErrorBox.mockReset();
     });
-    const start = jest.spyOn(Sia.prototype, "start");
-    start.mockImplementation(() => {
+
+    afterEach(() => {
+      start.mockRestore();
     });
-    try {
+
+    it("installs JRE if not exists", async () => {
       await onReady();
+      expect(installJRE).toHaveBeenCalled();
+    });
+
+    it("shows an error message and quits when the JRE installation is failed", async () => {
+      const err = "expected error";
+      installJRE.mockReturnValue(Promise.reject(err));
+
+      await onReady();
+      expect(installJRE).toHaveBeenCalled();
+      expect(dialog.showErrorBox).toHaveBeenCalledWith("Goobox", `Cannot start Goobox: ${err}`);
+      expect(app.quit).toHaveBeenCalled();
+    });
+
+    it("starts the storj backend if storj conf is true but not running", () => {
+
+    });
+
+    it("doesn't start the storj backend if it is already running", () => {
+
+    });
+
+    it("starts the sia backend if sia conf is true but not running", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
+        sia: true,
+      }));
+
+      await onReady();
+      expect(getConfig).toHaveBeenCalled();
       expect(start).toHaveBeenCalled();
-    } finally {
-      start.mockRestore();
-    }
-  });
+    });
 
-  it("doesn't start the sia backend if it is already running", async () => {
-    storage.get.mockImplementation((key, callback) => {
-      expect(key).toEqual(ConfigFile);
-      callback(null, {
+    it("doesn't start the sia backend if it is already running", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
         sia: true,
-      });
-    });
-    global.sia = {};
-    const start = jest.spyOn(Sia.prototype, "start");
-    start.mockImplementation(() => {
-    });
-    try {
-      await onReady();
-      expect(start).not.toHaveBeenCalled();
-    } finally {
-      start.mockRestore();
-    }
-  });
+      }));
+      global.sia = {};
 
-  it("closes the process if another process is already running", async () => {
-    app.makeSingleInstance.mockReturnValueOnce(true);
-    await onReady();
-    expect(app.quit).toHaveBeenCalled();
+      await onReady();
+      expect(getConfig).toHaveBeenCalled();
+      expect(start).not.toHaveBeenCalled();
+    });
+
+    it("closes the process if another process is already running", async () => {
+      app.makeSingleInstance.mockReturnValueOnce(true);
+      await onReady();
+      expect(app.quit).toHaveBeenCalled();
+    });
+
   });
 
   describe("ChangeStateEvent handler", () => {
@@ -206,12 +217,12 @@ describe("main process of the core app", () => {
 
     it("opens the sync folder", async () => {
       const syncFolder = "/tmp";
-      storage.get.mockImplementation((key, cb) => {
-        cb(null, {
-          syncFolder: syncFolder,
-        });
-      });
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: syncFolder,
+      }));
+
       await handler(event);
+      expect(getConfig).toHaveBeenCalled();
       expect(spawnSync).toHaveBeenCalledWith("open", [syncFolder]);
       expect(event.sender.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
     });
@@ -235,11 +246,9 @@ describe("main process of the core app", () => {
 
     it("calculate the volume of the sync folder", async () => {
       const syncFolder = "/tmp";
-      storage.get.mockImplementationOnce((key, cb) => {
-        cb(null, {
-          syncFolder: syncFolder,
-        });
-      });
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: syncFolder,
+      }));
 
       const volume = 1234567;
       execFile.mockImplementation((cmd, args, cb) => {
@@ -247,6 +256,7 @@ describe("main process of the core app", () => {
       });
 
       await handler(event);
+      expect(getConfig).toHaveBeenCalled();
       expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
       expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
     });
