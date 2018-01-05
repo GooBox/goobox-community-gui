@@ -14,11 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("child_process");
 jest.mock("../../src/main-process/jre");
 jest.mock("../../src/main-process/config");
+jest.mock("../../src/main-process/utils");
 
-import {execFile, spawnSync} from "child_process";
 import {app, dialog, ipcMain} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
@@ -27,6 +26,7 @@ import icons from "../../src/main-process/icons";
 import Sia from "../../src/main-process/sia";
 import {installJRE} from "../../src/main-process/jre";
 import {getConfig} from "../../src/main-process/config";
+import utils from "../../src/main-process/utils";
 
 describe("main process of the core app", () => {
 
@@ -212,7 +212,7 @@ describe("main process of the core app", () => {
           send: jest.fn()
         }
       };
-      spawnSync.mockClear();
+      utils.openDirectory.mockReset();
     });
 
     it("opens the sync folder", async () => {
@@ -223,7 +223,7 @@ describe("main process of the core app", () => {
 
       await handler(event);
       expect(getConfig).toHaveBeenCalled();
-      expect(spawnSync).toHaveBeenCalledWith("open", [syncFolder]);
+      expect(utils.openDirectory).toHaveBeenCalledWith(syncFolder);
       expect(event.sender.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
     });
 
@@ -242,6 +242,7 @@ describe("main process of the core app", () => {
           send: jest.fn()
         }
       };
+      utils.totalVolume.mockReset();
     });
 
     it("calculate the volume of the sync folder", async () => {
@@ -251,13 +252,11 @@ describe("main process of the core app", () => {
       }));
 
       const volume = 1234567;
-      execFile.mockImplementation((cmd, args, cb) => {
-        cb(null, `${volume}\t${syncFolder}`);
-      });
+      utils.totalVolume.mockReturnValue(Promise.resolve(volume));
 
       await handler(event);
       expect(getConfig).toHaveBeenCalled();
-      expect(execFile).toHaveBeenCalledWith("du", ["-s", syncFolder], expect.any(Function));
+      expect(utils.totalVolume).toHaveBeenCalledWith(syncFolder);
       expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
     });
 

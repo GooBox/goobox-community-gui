@@ -16,14 +16,12 @@
  */
 
 jest.mock("fs");
-jest.mock("child_process");
 jest.mock("../../src/main-process/jre");
 jest.mock("../../src/main-process/config");
 
 import {app, BrowserWindow, ipcMain} from "electron";
 import fs from "fs";
 import menubar, {menuberMock} from "menubar";
-import jre from "node-jre";
 import path from "path";
 import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../../src/constants";
 import "../../src/main-process/installer";
@@ -35,7 +33,6 @@ describe("main process of the installer", () => {
 
   let onReady;
   beforeAll(() => {
-    jre.driver.mockReturnValue("/tmp/jre/bin/java");
     app.on.mock.calls.forEach(args => {
       if (args[0] === "ready") {
         onReady = args[1];
