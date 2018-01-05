@@ -235,9 +235,15 @@ describe("main process of the installer", () => {
     });
 
     it("starts the sync sia app", async () => {
+      const dir = "/tmp";
+      storage.set(ConfigFile, {
+        syncFolder: dir
+      });
+
       await handler(event);
-      expect(start).toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir);
       expect(global.sia instanceof Sia).toBeTruthy();
+
     });
 
     it("shows an error message when the wallet command returns an error", async () => {

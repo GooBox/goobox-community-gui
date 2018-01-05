@@ -35,6 +35,18 @@ if (app.isReady()) {
   app.on("ready", installer);
 }
 
+async function getConfig() {
+  return new Promise((resolve, reject) => {
+    storage.get(ConfigFile, (err, cfg) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(cfg);
+      }
+    });
+  });
+}
+
 function installer() {
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
@@ -58,41 +70,38 @@ function installer() {
 
   app.on("window-all-closed", async () => {
 
-    return new Promise((resolve, reject) => {
+    log.info(`loading the config file ${ConfigFile}`);
+    try {
 
-      log.info(`loading the config file ${ConfigFile}`);
-      storage.get(ConfigFile, (err, cfg) => {
-        if (err) {
-          log.error(`failed to read/write the config: ${err}`);
+      const cfg = await getConfig();
+      if (cfg && cfg.installed) {
+
+        // if the installation process is finished.
+        log.info("installation has been finished, now starting Goobox");
+        require("./main");
+
+      } else {
+
+        // otherwise
+        log.info("installation has been canceled");
+        if (global.sia) {
+          await global.sia.close();
+          global.sia = null;
           app.quit();
-          reject(err);
-        }
-
-        if (cfg && cfg.installed) {
-          // if the installation process is finished.
-          log.info("installation has been finished, now starting Goobox");
-          require("./main");
-          resolve();
         } else {
-          // otherwise
-          log.info("installation has been canceled");
-          if (global.sia) {
-            global.sia.close().then(() => {
-              global.sia = null;
-              app.quit();
-              resolve();
-            });
-          } else {
-            app.quit();
-            resolve();
-          }
+          app.quit();
         }
 
-      });
+      }
 
-    });
+    } catch (err) {
+      log.error(`failed to read/write the config: ${err}`);
+      app.quit();
+      throw err;
+    }
 
   });
+
 
   ipcMain.on(JREInstallEvent, (event) => {
     log.verbose(`JRE path: ${jre.jreDir()}`);
@@ -128,17 +137,21 @@ function installer() {
   });
 
   ipcMain.on(SiaWalletEvent, async (event) => {
-    const sia = new Sia();
+    global.sia = new Sia();
     try {
-      const res = await sia.wallet();
+      const res = await global.sia.wallet();
       event.sender.send(SiaWalletEvent, {
         address: res["wallet address"],
         seed: res["primary seed"],
       });
-      sia.start();
-      global.sia = sia;
+
+      const cfg = await getConfig();
+      global.sia.start(cfg.syncFolder);
+
     } catch (error) {
+      log.error(error);
       event.sender.send(SiaWalletEvent, null, error);
+      delete global.sia;
     }
   });
 
