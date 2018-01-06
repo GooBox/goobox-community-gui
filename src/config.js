@@ -15,8 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import storage from "electron-json-storage";
-import {ConfigFile} from "../constants";
+import {remote} from "electron";
+import {ConfigFile} from "./constants";
+
+const storage = remote.require("electron-json-storage");
 
 export async function getConfig() {
   return new Promise((resolve, reject) => {

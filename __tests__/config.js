@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import storage from "electron-json-storage";
-import {ConfigFile} from "../../src/constants";
-import {getConfig, saveConfig} from "../../src/main-process/config";
+import {remote} from "electron";
+import {getConfig, saveConfig} from "../src/config";
+import {ConfigFile} from "../src/constants";
+
+const storage = remote.require("electron-json-storage");
 
 describe("config module", () => {
 
