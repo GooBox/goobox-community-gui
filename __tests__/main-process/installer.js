@@ -343,6 +343,11 @@ describe("main process of the installer", () => {
       app.quit.mockReset();
     });
 
+    afterEach(() => {
+      delete global.storj;
+      delete global.sia;
+    });
+
     it("starts the core app when all windows are closed and installed is true", async () => {
 
       app.isReady.mockReturnValue(false);
@@ -372,20 +377,34 @@ describe("main process of the installer", () => {
 
     });
 
-    it("closes the sync sia app if running in spite of the installation is canceled", async () => {
-
-      global.sia = new Sia();
-      const close = jest.spyOn(global.sia, "close");
-      close.mockReturnValue(Promise.resolve());
-
+    it("closes the sync storj app if running in spite of the installation is canceled", async () => {
+      const close = jest.fn().mockReturnValue(Promise.resolve());
+      global.storj = {
+        close: close
+      };
       getConfig.mockReturnValue(Promise.resolve({
         installed: false
       }));
 
       await onWindowAllClosed();
-      expect(global.sia).toBeNull();
+      expect(global.storj).not.toBeDefined();
       expect(close).toHaveBeenCalled();
+      expect(app.quit).toHaveBeenCalled();
+    });
 
+    it("closes the sync sia app if running in spite of the installation is canceled", async () => {
+      const close = jest.fn().mockReturnValue(Promise.resolve());
+      global.sia = {
+        close: close
+      };
+      getConfig.mockReturnValue(Promise.resolve({
+        installed: false
+      }));
+
+      await onWindowAllClosed();
+      expect(global.sia).not.toBeDefined();
+      expect(close).toHaveBeenCalled();
+      expect(app.quit).toHaveBeenCalled();
     });
 
   });

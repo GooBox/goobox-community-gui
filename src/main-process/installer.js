@@ -73,13 +73,17 @@ function installer() {
 
         // otherwise
         log.info("installation has been canceled");
-        if (global.sia) {
-          await global.sia.close();
-          global.sia = null;
-          app.quit();
-        } else {
-          app.quit();
+        if (global.storj) {
+          log.info("closing Storj instance");
+          await global.storj.close();
+          delete global.storj;
         }
+        if (global.sia) {
+          log.info("closing SIA instance");
+          await global.sia.close();
+          delete global.sia;
+        }
+        app.quit();
 
       }
 
