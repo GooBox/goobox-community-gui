@@ -27,7 +27,7 @@ const DefaultTimeout = 60000;
 export default class Storj {
 
   constructor() {
-    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin"));
+    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/"));
     this.cmd = path.join(this.wd, "goobox-sync-storj");
     if (process.platform === "win32") {
       this.cmd += ".bat";

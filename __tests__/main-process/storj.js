@@ -34,7 +34,7 @@ describe("Storj class", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
       const storj = new Storj();
-      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin/goobox-sync-storj"));
+      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/goobox-sync-storj"));
       if (process.platform === "win32") {
         cmd += ".bat";
       }
@@ -43,7 +43,7 @@ describe("Storj class", () => {
 
     it("has wd which describes the directory containing the sync storj app", () => {
       const storj = new Storj();
-      expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin")));
+      expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/")));
     });
 
     it("has javaHome where the home directory of a JRE", () => {

@@ -22,10 +22,11 @@ import {app, dialog, ipcMain} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
 import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../../src/constants";
-import icons from "../../src/main-process/icons";
-import Sia from "../../src/main-process/sia";
-import {installJRE} from "../../src/main-process/jre";
 import {getConfig} from "../../src/main-process/config";
+import icons from "../../src/main-process/icons";
+import {installJRE} from "../../src/main-process/jre";
+import Sia from "../../src/main-process/sia";
+import Storj from "../../src/main-process/storj";
 import utils from "../../src/main-process/utils";
 
 describe("main process of the core app", () => {
@@ -81,16 +82,19 @@ describe("main process of the core app", () => {
 
   describe("back end management", () => {
 
-    let start;
+    let startStorj, startSia;
     beforeEach(() => {
-      start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
+      startStorj = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
+      });
+      startSia = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
       });
       installJRE.mockReset();
       dialog.showErrorBox.mockReset();
     });
 
     afterEach(() => {
-      start.mockRestore();
+      startStorj.mockRestore();
+      startSia.mockRestore();
     });
 
     it("installs JRE if not exists", async () => {
@@ -108,12 +112,25 @@ describe("main process of the core app", () => {
       expect(app.quit).toHaveBeenCalled();
     });
 
-    it("starts the storj backend if storj conf is true but not running", () => {
+    it("starts the storj backend if storj conf is true but not running", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
+        storj: true,
+      }));
 
+      await onReady();
+      expect(getConfig).toHaveBeenCalled();
+      expect(startStorj).toHaveBeenCalled();
     });
 
-    it("doesn't start the storj backend if it is already running", () => {
+    it("doesn't start the storj backend if it is already running", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
+        storj: true,
+      }));
+      global.storj = {};
 
+      await onReady();
+      expect(getConfig).toHaveBeenCalled();
+      expect(startStorj).not.toHaveBeenCalled();
     });
 
     it("starts the sia backend if sia conf is true but not running", async () => {
@@ -123,7 +140,7 @@ describe("main process of the core app", () => {
 
       await onReady();
       expect(getConfig).toHaveBeenCalled();
-      expect(start).toHaveBeenCalled();
+      expect(startSia).toHaveBeenCalled();
     });
 
     it("doesn't start the sia backend if it is already running", async () => {
@@ -134,7 +151,7 @@ describe("main process of the core app", () => {
 
       await onReady();
       expect(getConfig).toHaveBeenCalled();
-      expect(start).not.toHaveBeenCalled();
+      expect(startSia).not.toHaveBeenCalled();
     });
 
     it("closes the process if another process is already running", async () => {

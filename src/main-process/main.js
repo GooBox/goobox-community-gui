@@ -21,11 +21,12 @@ import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
 import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
-import icons from "./icons";
-import Sia from "./sia";
-import utils from "./utils";
 import {getConfig} from "./config";
+import icons from "./icons";
 import {installJRE} from "./jre";
+import Sia from "./sia";
+import Storj from "./storj";
+import utils from "./utils";
 
 const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
 
@@ -167,6 +168,13 @@ async function main() {
 
     const cfg = await getConfig();
     log.debug(JSON.stringify(cfg));
+    // Start sync-storj app.
+    if (cfg.storj && !global.storj) {
+      global.storj = new Storj();
+      global.storj.start();
+    }
+
+    // Start sync-sia app.
     if (cfg.sia && !global.sia) {
       global.sia = new Sia();
       global.sia.start(cfg.syncFolder);
