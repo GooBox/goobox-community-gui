@@ -115,7 +115,7 @@ export default class SelectFolder extends React.Component {
 
       dialog.showOpenDialog(null, {
         defaultPath: this.props.folder,
-        properties: ["openDirectory"]
+        properties: ["openDirectory", "createDirectory"]
       }, resolve);
 
     }).then(selected => {

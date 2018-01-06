@@ -169,7 +169,7 @@ describe("SelectFolder component", () => {
       return wrapper.instance()._onClickBrowse().then(() => {
         expect(fn).toHaveBeenCalledWith(sampleDir);
         expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
-          properties: ["openDirectory"]
+          properties: ["openDirectory", "createDirectory"]
         }, expect.any(Function));
       });
 
@@ -189,7 +189,7 @@ describe("SelectFolder component", () => {
         expect(fn).toHaveBeenCalledWith(defaultDir);
         expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
           defaultPath: defaultDir,
-          properties: ["openDirectory"]
+          properties: ["openDirectory", "createDirectory"]
         }, expect.any(Function));
       });
 
@@ -207,7 +207,7 @@ describe("SelectFolder component", () => {
       return wrapper.instance()._onClickBrowse().then(() => {
         expect(fn).not.toHaveBeenCalled();
         expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
-          properties: ["openDirectory"]
+          properties: ["openDirectory", "createDirectory"]
         }, expect.any(Function));
       });
 
