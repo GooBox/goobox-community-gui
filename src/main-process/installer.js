@@ -115,9 +115,19 @@ function installer() {
     }
   });
 
-  ipcMain.on(StorjRegisterationEvent, async (event, info) => {
-    log.info("creating a new Storj account");
-    event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
+  ipcMain.on(StorjRegisterationEvent, async (event, args) => {
+    log.info(`creating a new Storj account: ${args.email}`);
+    if (!global.storj) {
+      global.storj = new Storj();
+      global.storj.start();
+    }
+    try {
+      const encryptionKey = await global.storj.createAccount(args.email, args.password);
+      event.sender.send(StorjRegisterationEvent, true, encryptionKey);
+    } catch (err) {
+      log.error(err);
+      event.sender.send(StorjRegisterationEvent, false, err);
+    }
   });
 
   ipcMain.on(SiaWalletEvent, async (event) => {

@@ -194,19 +194,75 @@ describe("main process of the installer", () => {
 
   });
 
-  it("handles StorjRegistrationEvent", () => {
-    const sender = {
-      send: jest.fn()
-    };
+  describe("StorjRegistrationEvent handler", () => {
 
-    ipcMain.on.mockImplementation((event, cb) => {
-      if (event === StorjRegisterationEvent) {
-        cb({sender: sender}, "0000 0000 00000 000000");
-        expect(sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
-      }
+    let handler, event, start, createAccount;
+    const email = "abc@example.com";
+    const password = "password";
+    const key = "xxx xxx xxx";
+
+    beforeEach(() => {
+      onReady();
+      handler = getEventHandler(StorjRegisterationEvent);
+      event = {
+        sender: {
+          send: jest.fn()
+        }
+      };
+      delete global.storj;
+      start = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
+        if (global.storj) {
+          global.storj.proc = "a dummy storj instance";
+        }
+      });
+      createAccount = jest.spyOn(Storj.prototype, "createAccount").mockReturnValue(Promise.resolve(key));
     });
-    onReady();
-    expect(ipcMain.on).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
+
+    afterEach(() => {
+      start.mockRestore();
+      createAccount.mockRestore();
+    });
+
+    it("starts Storj instance if not running", async () => {
+      await handler(event, {
+        email: email,
+        password: password,
+      });
+      expect(global.storj).toBeDefined();
+      expect(start).toHaveBeenCalled();
+      expect(createAccount).toHaveBeenCalledWith(email, password);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
+    });
+
+    it("sends a create account request", async () => {
+      global.storj = new Storj();
+      global.storj.proc = {};
+      await handler(event, {
+        email: email,
+        password: password,
+      });
+      expect(start).not.toHaveBeenCalled();
+      expect(createAccount).toHaveBeenCalledWith(email, password);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
+    });
+
+    it("sends an error message when creating an account is failed", async () => {
+      global.storj = new Storj();
+      global.storj.proc = {};
+
+      const err = "expected error";
+      createAccount.mockReturnValue(Promise.reject(err));
+
+      await handler(event, {
+        email: email,
+        password: password,
+      });
+
+      expect(start).not.toHaveBeenCalled();
+      expect(createAccount).toHaveBeenCalledWith(email, password);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, false, err);
+    });
+
   });
 
   describe("SiaWalletEvent handler", () => {
