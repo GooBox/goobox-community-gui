@@ -74,6 +74,11 @@ describe("Sia class", () => {
         stdout: stdout,
         stderr: stderr,
       });
+      process.env.NODE_ENV = "production";
+    });
+
+    afterEach(() => {
+      process.env.NODE_ENV = "test";
     });
 
     it("spawns sync sia app", () => {
@@ -87,6 +92,22 @@ describe("Sia class", () => {
         },
         windowsHide: true,
       });
+    });
+
+    it("adds --reset-db flag when NODE_ENV != production", () => {
+      process.env.NODE_ENV = "test";
+
+      const dir = "/tmp";
+      const sia = new Sia();
+      sia.start(dir);
+      expect(spawn).toBeCalledWith(sia.cmd, ["--sync-dir", `"${dir}"`, "--output-events", "--reset-db"], {
+        cwd: sia.wd,
+        env: {
+          JAVA_HOME: sia.javaHome,
+        },
+        windowsHide: true,
+      });
+
     });
 
     it("adds stdin field which is the spawned process's stdin", () => {

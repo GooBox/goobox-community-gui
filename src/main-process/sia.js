@@ -45,7 +45,11 @@ export default class Sia {
     }
 
     log.info(`starting sync-sia app in ${this.cmd}`);
-    this.proc = spawn(this.cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
+    const args = ["--sync-dir", `"${dir}"`, "--output-events"];
+    if ("production" !== process.env.NODE_ENV) {
+      args.push("--reset-db");
+    }
+    this.proc = spawn(this.cmd, args, {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,
