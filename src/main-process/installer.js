@@ -22,6 +22,7 @@ import fs from "fs";
 import path from "path";
 import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
 import Sia from "./sia";
+import Storj from "./storj";
 import {getConfig} from "./config";
 import {installJRE} from "./jre";
 
@@ -90,7 +91,6 @@ function installer() {
 
   });
 
-
   ipcMain.on(JREInstallEvent, async (event) => {
     try {
       await installJRE();
@@ -100,12 +100,22 @@ function installer() {
     }
   });
 
-  ipcMain.on(StorjLoginEvent, (event, arg) => {
-    log.info("logging in to Storj");
-    event.sender.send(StorjLoginEvent, true);
+  ipcMain.on(StorjLoginEvent, async (event, args) => {
+    log.info(`logging in to Storj: ${args.email}`);
+    if (!global.storj) {
+      global.storj = new Storj();
+      global.storj.start();
+    }
+    try {
+      await global.storj.login(args.email, args.password, args.encryptionKey);
+      event.sender.send(StorjLoginEvent, true);
+    } catch (err) {
+      log.error(err);
+      event.sender.send(StorjLoginEvent, false, err);
+    }
   });
 
-  ipcMain.on(StorjRegisterationEvent, (event, info) => {
+  ipcMain.on(StorjRegisterationEvent, async (event, info) => {
     log.info("creating a new Storj account");
     event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
   });

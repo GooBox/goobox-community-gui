@@ -22,6 +22,8 @@ import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 
+const DefaultTimeout = 60000;
+
 export default class Storj {
 
   constructor() {
@@ -76,7 +78,7 @@ export default class Storj {
           }
         }));
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), 60000))
+      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
     ]).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
@@ -102,7 +104,7 @@ export default class Storj {
           }
         }));
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), 60000))
+      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
     ]).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);

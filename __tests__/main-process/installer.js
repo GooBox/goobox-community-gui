@@ -28,6 +28,11 @@ import "../../src/main-process/installer";
 import Sia from "../../src/main-process/sia";
 import {installJRE} from "../../src/main-process/jre";
 import {getConfig} from "../../src/main-process/config";
+import Storj from "../../src/main-process/storj";
+
+function getEventHandler(event) {
+  return ipcMain.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];
+}
 
 describe("main process of the installer", () => {
 
@@ -94,7 +99,7 @@ describe("main process of the installer", () => {
 
     beforeEach(() => {
       onReady();
-      handler = ipcMain.on.mock.calls.filter(args => args[0] === JREInstallEvent).map(args => args[1])[0];
+      handler = getEventHandler(JREInstallEvent);
       event.sender.send.mockClear();
       installJRE.mockReset();
     });
@@ -116,22 +121,80 @@ describe("main process of the installer", () => {
 
   });
 
-  it("handles StorjLoginEvent", () => {
-    const sender = {
-      send: jest.fn()
-    };
+  describe("StorjLoginEvent handler", () => {
 
-    ipcMain.on.mockImplementation((event, cb) => {
-      if (event === StorjLoginEvent) {
-        cb({sender: sender}, true);
-        expect(sender.send).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
-      }
+    let handler, event, start, login;
+    const email = "abc@example.com";
+    const password = "password";
+    const key = "xxx xxx xxx";
+
+    beforeEach(() => {
+      onReady();
+      handler = getEventHandler(StorjLoginEvent);
+      event = {
+        sender: {
+          send: jest.fn()
+        }
+      };
+      delete global.storj;
+      start = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
+        if (global.storj) {
+          global.storj.proc = "a dummy storj instance";
+        }
+      });
+      login = jest.spyOn(Storj.prototype, "login").mockReturnValue(Promise.resolve());
     });
-    onReady();
-    expect(ipcMain.on).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
+
+    afterEach(() => {
+      start.mockRestore();
+      login.mockRestore();
+    });
+
+    it("starts Storj instance if not running", async () => {
+      await handler(event, {
+        email: email,
+        password: password,
+        encryptionKey: key,
+      });
+      expect(global.storj).toBeDefined();
+      expect(start).toHaveBeenCalled();
+      expect(login).toHaveBeenCalledWith(email, password, key);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
+    });
+
+    it("sends a login request", async () => {
+      global.storj = new Storj();
+      global.storj.proc = {};
+      await handler(event, {
+        email: email,
+        password: password,
+        encryptionKey: key,
+      });
+      expect(start).not.toHaveBeenCalled();
+      expect(login).toHaveBeenCalledWith(email, password, key);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
+    });
+
+    it("sends an error message if the login is failed", async () => {
+      global.storj = new Storj();
+      global.storj.proc = {};
+
+      const err = "expected error";
+      login.mockReturnValue(Promise.reject(err));
+
+      await handler(event, {
+        email: email,
+        password: password,
+        encryptionKey: key,
+      });
+      expect(start).not.toHaveBeenCalled();
+      expect(login).toHaveBeenCalledWith(email, password, key);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err);
+    });
+
   });
 
-  it("handles StorjRegisterationEvent", () => {
+  it("handles StorjRegistrationEvent", () => {
     const sender = {
       send: jest.fn()
     };
