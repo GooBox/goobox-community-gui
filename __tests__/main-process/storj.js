@@ -34,7 +34,7 @@ describe("Storj class", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
       const storj = new Storj();
-      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/goobox-sync-storj"));
+      let cmd = "goobox-sync-storj";
       if (process.platform === "win32") {
         cmd += ".bat";
       }
