@@ -24,10 +24,10 @@ import fs from "fs";
 import menubar, {menuberMock} from "menubar";
 import path from "path";
 import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../../src/constants";
-import "../../src/main-process/installer";
-import Sia from "../../src/main-process/sia";
-import {installJRE} from "../../src/main-process/jre";
 import {getConfig} from "../../src/main-process/config";
+import "../../src/main-process/installer";
+import {installJRE} from "../../src/main-process/jre";
+import Sia from "../../src/main-process/sia";
 import Storj from "../../src/main-process/storj";
 
 function getEventHandler(event) {
@@ -104,10 +104,10 @@ describe("main process of the installer", () => {
       installJRE.mockReset();
     });
 
-    it("installs JRE and send nothing if the installation is succeeded", async () => {
+    it("installs JRE and send a response if the installation is succeeded", async () => {
       await handler(event);
       expect(installJRE).toHaveBeenCalled();
-      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent);
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, true);
     });
 
     it("sends back error messages if the installation fails", async () => {
@@ -116,7 +116,7 @@ describe("main process of the installer", () => {
 
       await handler(event);
       expect(installJRE).toHaveBeenCalled();
-      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, err);
+      expect(event.sender.send).toHaveBeenCalledWith(JREInstallEvent, false, err);
     });
 
   });

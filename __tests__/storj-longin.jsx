@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
 import StorjLogin from "../src/storj-login.jsx";
 
 describe("StorjLogin component", () => {
@@ -117,7 +117,7 @@ describe("StorjLogin component", () => {
     expect(fn).toHaveBeenCalledWith({
       email: sampleEmail,
       password: samplePassword,
-      key: sampleKey
+      encryptionKey: sampleKey
     });
   });
 

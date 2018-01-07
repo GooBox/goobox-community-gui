@@ -21,10 +21,10 @@ import log from "electron-log";
 import fs from "fs";
 import path from "path";
 import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
-import Sia from "./sia";
-import Storj from "./storj";
 import {getConfig} from "./config";
 import {installJRE} from "./jre";
+import Sia from "./sia";
+import Storj from "./storj";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -95,15 +95,17 @@ function installer() {
 
   });
 
+  // JREInstallEvent handler.
   ipcMain.on(JREInstallEvent, async (event) => {
     try {
       await installJRE();
-      event.sender.send(JREInstallEvent);
+      event.sender.send(JREInstallEvent, true);
     } catch (err) {
-      event.sender.send(JREInstallEvent, err);
+      event.sender.send(JREInstallEvent, false, err);
     }
   });
 
+  // StorjLoginEvent handler.
   ipcMain.on(StorjLoginEvent, async (event, args) => {
     log.info(`logging in to Storj: ${args.email}`);
     if (!global.storj) {
@@ -119,6 +121,7 @@ function installer() {
     }
   });
 
+  // StorjRegisterationEvent handler.
   ipcMain.on(StorjRegisterationEvent, async (event, args) => {
     log.info(`creating a new Storj account: ${args.email}`);
     if (!global.storj) {
@@ -134,6 +137,7 @@ function installer() {
     }
   });
 
+  // SiaWalletEvent handler.
   ipcMain.on(SiaWalletEvent, async (event) => {
     global.sia = new Sia();
     try {

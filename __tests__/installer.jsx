@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+jest.mock("../src/config");
 
 import {ipcRenderer, remote} from "electron";
 import {mount, shallow} from "enzyme";
 import path from "path";
 import React from "react";
-import {
-  ConfigFile, JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent,
-  StorjRegisterationEvent
-} from "../src/constants";
+import {saveConfig} from "../src/config";
+import {JREInstallEvent, Sia, Storj, StorjLoginEvent, StorjRegisterationEvent} from "../src/constants";
 import {Hash, Installer} from "../src/installer.jsx";
 
 const app = remote.app;
-const storage = remote.require("electron-json-storage");
 
 const sampleHome = path.join("/home", "some-user");
 process.env.DEFAULT_SYNC_FOLDER = path.join(sampleHome, app.getName());
@@ -40,120 +38,68 @@ describe("Installer component", () => {
     ipcRenderer.once.mockReset();
     ipcRenderer.send.mockReset();
     ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method, arg) => {
+      ipcRenderer.send.mockImplementation((method) => {
         if (listen === method) {
-          cb(null, arg);
+          cb(null, true);
         }
       });
     });
-    storage.set.mockReset();
   });
 
   describe("hash is empty", () => {
 
+    let wrapper, welcome;
     beforeEach(() => {
       location.hash = "";
+      wrapper = mount(<Installer/>);
+      welcome = wrapper.find("Welcome");
     });
 
     it("shows Welcome component at first", () => {
-      const wrapper = mount(<Installer/>);
-      expect(wrapper.find("Welcome").exists()).toBeTruthy();
+      expect(welcome.exists()).toBeTruthy();
     });
 
-    it("moves to the choose service screen when next button in the welcome screen is clicked", () => {
-      const wrapper = mount(<Installer/>);
-      wrapper.find("Welcome").prop("onClickNext")();
-      expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
-
-    });
-
-    it("doesn't moves to the choose service screen when next button is clicked but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
-      wrapper.instance().requesting = true;
-      wrapper.find("Welcome").prop("onClickNext")();
-      expect(location.hash).toEqual("");
-    });
-
-    describe("with ipc", () => {
-
-      it("requests starting JRE installer when onClickNext is called", () => {
-        const wrapper = mount(<Installer/>);
-        const welcome = wrapper.find("Welcome");
-        welcome.prop("onClickNext")();
-
-        expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.anything());
-        expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
-      });
-
-      it("doesn't requests when this.requesting is true", () => {
-        const wrapper = mount(<Installer/>);
-        const welcome = wrapper.find("Welcome");
-        wrapper.instance().requesting = true;
-        welcome.prop("onClickNext")();
-
-        expect(ipcRenderer.once).not.toHaveBeenCalled();
-        expect(ipcRenderer.send).not.toHaveBeenCalled();
-      });
-
-      it("sets this.requesting is true while it's connecting to main process", () => {
-        const wrapper = mount(<Installer/>);
-        const welcome = wrapper.find("Welcome");
-        expect(wrapper.instance().requesting).toBeFalsy();
-
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          expect(wrapper.instance().requesting).toBeTruthy();
-          expect(wrapper.state("wait")).toBeTruthy();
-          ipcRenderer.send.mockImplementation((method, arg) => {
-            if (listen === method) {
-              cb(null, arg);
-            }
-          });
-        });
-
-        welcome.prop("onClickNext")();
-        expect(wrapper.instance().requesting).toBeFalsy();
-        expect(wrapper.state("wait")).toBeFalsy();
-      });
-
+    it("invokes _checkJRE when next button in the welcome screen is clicked", async () => {
+      wrapper.instance()._checkJRE = jest.fn().mockReturnValue(Promise.resolve());
+      await welcome.prop("onClickNext")();
+      expect(wrapper.instance()._checkJRE).toHaveBeenCalled();
     });
 
   });
 
   describe(`hash is ${Hash.ChooseCloudService}`, () => {
 
+    let wrapper, component;
     beforeEach(() => {
       location.hash = Hash.ChooseCloudService;
+      wrapper = mount(<Installer/>);
+      component = wrapper.find("ServiceSelector");
     });
 
     it("shows ServiceSelector component when the hash is ChooseCloudService", () => {
-      const wrapper = mount(<Installer/>);
-      expect(wrapper.find("ServiceSelector").exists()).toBeTruthy();
+      expect(component.exists()).toBeTruthy();
     });
 
     it("sets storj state true and moves to select folder screen when onSelectStorj is called", () => {
-      const wrapper = mount(<Installer/>);
       expect(wrapper.state("storj")).toBeFalsy();
 
-      wrapper.find("ServiceSelector").prop("onSelectStorj")();
+      component.prop("onSelectStorj")();
       expect(location.hash).toEqual(`#${Hash.StorjSelected}`);
       expect(wrapper.state("storj")).toBeTruthy();
     });
 
     it("sets sia state true and moves to select folder screen when onSelectSia is called", () => {
-      const wrapper = mount(<Installer/>);
       expect(wrapper.state("sia")).toBeFalsy();
-
-      wrapper.find("ServiceSelector").prop("onSelectSia")();
+      component.prop("onSelectSia")();
       expect(location.hash).toEqual(`#${Hash.SiaSelected}`);
       expect(wrapper.state("sia")).toBeTruthy();
     });
 
     it("sets storj and sia state true and moves to select folder screen when onSelectBoth is called", () => {
-      const wrapper = mount(<Installer/>);
       expect(wrapper.state("storj")).toBeFalsy();
       expect(wrapper.state("sia")).toBeFalsy();
 
-      wrapper.find("ServiceSelector").prop("onSelectBoth")();
+      component.prop("onSelectBoth")();
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
       expect(wrapper.state("storj")).toBeTruthy();
       expect(wrapper.state("sia")).toBeTruthy();
@@ -163,37 +109,31 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.StorjSelected}`, () => {
 
+    let wrapper, selector;
     beforeEach(() => {
       location.hash = Hash.StorjSelected;
+      wrapper = mount(<Installer/>);
+      selector = wrapper.find("SelectFolder");
     });
 
     it("shows SelectFolder component for storj when the hash is StorjSelected", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(Storj);
       expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
-
       const selectedFolder = "/sample/folder";
       selector.prop("onSelectFolder")(selectedFolder);
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
     it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
     });
 
     it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickNext")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
@@ -202,143 +142,71 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.SiaSelected}`, () => {
 
+    let wrapper, selector;
     beforeEach(() => {
       location.hash = Hash.SiaSelected;
+      wrapper = mount(<Installer/>);
+      selector = wrapper.find("SelectFolder");
     });
 
     it("shows SelectFolder component for sia when the hash is SiaSelected", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(Sia);
       expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
-
       const selectedFolder = "/sample/folder";
       selector.prop("onSelectFolder")(selectedFolder);
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
     it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
     });
 
     it("doesn't set the hash is ChooseCloudService when back button is clicked but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.instance().requesting = true;
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.SiaSelected}`);
     });
 
-    it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
-      selector.prop("onClickNext")();
-      expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
-    });
-
-    describe("with ipc", () => {
-
-      it("requests wallet address and seed to Sia when onClickNext is called", () => {
-        const address = "1234567890";
-        const seed = "xxx xxx xxx xxx";
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          ipcRenderer.send.mockImplementation((method) => {
-            if (listen === method) {
-              cb(null, {
-                address: address,
-                seed: seed,
-              });
-            }
-          });
-        });
-
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("SelectFolder");
-        c.prop("onClickNext")();
-
-        expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.anything());
-        expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
-
-        expect(wrapper.state("siaAccount").address).toEqual(address);
-        expect(wrapper.state("siaAccount").seed).toEqual(seed);
-      });
-
-      it("doesn't requests when this.requesting is true", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("SelectFolder");
-        wrapper.instance().requesting = true;
-        c.prop("onClickNext")();
-
-        expect(ipcRenderer.once).not.toHaveBeenCalled();
-        expect(ipcRenderer.send).not.toHaveBeenCalled();
-      });
-
-      it("sets this.requesting is true while it's connecting to main process", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("SelectFolder");
-        expect(wrapper.instance().requesting).toBeFalsy();
-
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          expect(wrapper.instance().requesting).toBeTruthy();
-          expect(wrapper.state("wait")).toBeTruthy();
-          ipcRenderer.send.mockImplementation((method) => {
-            if (listen === method) {
-              cb(null, {});
-            }
-          });
-        });
-
-        c.prop("onClickNext")();
-        expect(wrapper.instance().requesting).toBeFalsy();
-        expect(wrapper.state("wait")).toBeFalsy();
-      });
-
+    it("invokes _requestSiaWallet when onClickNext is called", async () => {
+      wrapper.instance()._requestSiaWallet = jest.fn().mockReturnValue(Promise.resolve());
+      await selector.prop("onClickNext")();
+      expect(wrapper.instance()._requestSiaWallet).toHaveBeenCalled();
     });
 
   });
 
   describe(`hash is ${Hash.BothSelected}`, () => {
 
+    let wrapper, selector;
     beforeEach(() => {
       location.hash = Hash.BothSelected;
+      wrapper = mount(<Installer/>);
+      selector = wrapper.find("SelectFolder");
     });
 
     it("shows SelectFolder component for storj and sia when the hash is BothSelected", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       expect(selector.exists()).toBeTruthy();
       expect(selector.prop("service")).toEqual(`${Storj} and ${Sia}`);
       expect(selector.prop("folder")).toEqual(process.env.DEFAULT_SYNC_FOLDER);
     });
 
     it("updates folder state when SelectFolder calls onSelectFolder", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
-
       const selectedFolder = "/sample/folder";
       selector.prop("onSelectFolder")(selectedFolder);
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
     it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
     });
 
     it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
-      const wrapper = mount(<Installer/>);
-      const selector = wrapper.find("SelectFolder");
       selector.prop("onClickNext")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
@@ -347,369 +215,136 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.StorjLogin}`, () => {
 
+    let wrapper, login;
     beforeEach(() => {
       location.hash = Hash.StorjLogin;
+      wrapper = mount(<Installer/>);
+      login = wrapper.find("StorjLogin");
     });
 
     it("shows StorjLogin component", () => {
-      const wrapper = mount(<Installer/>);
-      const login = wrapper.find("StorjLogin");
       expect(login.exists()).toBeTruthy();
     });
 
     it("updates the hash to StorjRegistration when onClickCreateAccount is called", () => {
-      const wrapper = mount(<Installer/>);
-      const login = wrapper.find("StorjLogin");
       login.prop("onClickCreateAccount")();
       expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
     it("doesn't update the hash when onClickCreateAccount is called but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.instance().requesting = true;
-      const login = wrapper.find("StorjLogin");
       login.prop("onClickCreateAccount")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
     it("updates the hash to StorjSelected when onClickBack is called and sia state is false", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({sia: false});
-
-      const login = wrapper.find("StorjLogin");
       login.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjSelected}`);
     });
 
     it("updates the hash to BothSelected when onClickBack is called and sia state is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({sia: true});
-
-      const login = wrapper.find("StorjLogin");
       login.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
     });
 
     it("doesn't update the hash when onClickBack is called but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.instance().requesting = true;
       wrapper.setState({sia: true});
-
-      const login = wrapper.find("StorjLogin");
       login.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
-    it("updates related states when onClickFinish is called with an account information", () => {
+    it("invokes _storjLogin when onClickFinish is called with an account information", async () => {
+      wrapper.instance()._storjLogin = jest.fn().mockReturnValue(Promise.resolve());
+
       const email = "user@example.com";
       const password = "password";
       const key = "1234567890";
-
-      const wrapper = mount(<Installer/>);
-      const login = wrapper.find("StorjLogin");
-      login.prop("onClickFinish")({
+      await login.prop("onClickFinish")({
         email: email,
         password: password,
-        key: key
+        encryptionKey: key
       });
-      expect(wrapper.state("storjAccount").email).toEqual(email);
-      expect(wrapper.state("storjAccount").password).toEqual(password);
-      expect(wrapper.state("storjAccount").key).toEqual(key);
-    });
-
-    it("updates the hash to FinishAll when onClickFinish is called and sia state is false", () => {
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({sia: false});
-
-      const login = wrapper.find("StorjLogin");
-      login.prop("onClickFinish")({
-        email: "",
-        password: "",
-        key: "",
+      expect(wrapper.instance()._storjLogin).toHaveBeenCalledWith({
+        email: email,
+        password: password,
+        encryptionKey: key
       });
-      expect(location.hash).toEqual(`#${Hash.FinishAll}`);
-    });
-
-    it("stores selected folder and marks installer finished before moving to FinishAll screen", () => {
-      const folder = "/tmp";
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({sia: false, storj: true, folder: folder});
-      const comp = wrapper.find("StorjLogin");
-      comp.prop("onClickFinish")({
-        email: "",
-        password: "",
-        key: "",
-      });
-
-      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
-        syncFolder: folder,
-        installed: true,
-        storj: true,
-        sia: false,
-      }, expect.any(Function));
-      expect(location.hash).toEqual(`#${Hash.FinishAll}`);
-    });
-
-    it("updates the hash to SiaWallet when onClickFinish is called and sia state is true", () => {
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({sia: true});
-
-      const login = wrapper.find("StorjLogin");
-      login.prop("onClickFinish")({
-        email: "",
-        password: "",
-        key: "",
-      });
-      expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
-
-    });
-
-    it("doesn't store selected folder and mark installer finished before moving to SiaWallet screen", () => {
-      const folder = "/tmp";
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({sia: true, folder: folder});
-      const comp = wrapper.find("StorjLogin");
-      comp.prop("onClickFinish")({
-        email: "",
-        password: "",
-        key: "",
-      });
-
-      expect(storage.set).not.toHaveBeenCalled();
-      expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
-    });
-
-    describe("with ipc", () => {
-
-      it("requests logging in to Storj when onClickFinish is called", () => {
-        const email = "user@example.com";
-        const password = "password";
-        const key = "1234567890";
-
-        const wrapper = mount(<Installer/>);
-        const login = wrapper.find("StorjLogin");
-        login.prop("onClickFinish")({
-          email: email,
-          password: password,
-          key: key
-        });
-
-        expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.anything());
-        expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, {
-          email: email,
-          password: password,
-          key: key
-        });
-      });
-
-      it("doesn't requests when this.requesting is true", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("StorjLogin");
-        wrapper.instance().requesting = true;
-        c.prop("onClickFinish")();
-
-        expect(ipcRenderer.once).not.toHaveBeenCalled();
-        expect(ipcRenderer.send).not.toHaveBeenCalled();
-      });
-
-      it("sets this.requesting is true while it's connecting to main process", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("StorjLogin");
-        expect(wrapper.instance().requesting).toBeFalsy();
-
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          expect(wrapper.instance().requesting).toBeTruthy();
-          expect(wrapper.state("wait")).toBeTruthy();
-          ipcRenderer.send.mockImplementation((method, arg) => {
-            if (listen === method) {
-              cb(null, arg);
-            }
-          });
-        });
-
-        c.prop("onClickFinish")();
-        expect(wrapper.instance().requesting).toBeFalsy();
-        expect(wrapper.state("wait")).toBeFalsy();
-      });
-
-      it("requests wallet address and seed to Sia after the login is succeeded and sia is true", () => {
-        const address = "1234567890";
-        const seed = "xxx xxx xxx xxx";
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          ipcRenderer.send.mockImplementation((method) => {
-            if (listen === method) {
-              cb(null, {
-                address: address,
-                seed: seed,
-              });
-            }
-          });
-        });
-
-        const wrapper = mount(<Installer/>);
-        wrapper.setState({sia: true});
-        const c = wrapper.find("StorjLogin");
-        c.prop("onClickFinish")();
-
-        expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.any(Function));
-        expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
-
-        expect(wrapper.state("siaAccount").address).toEqual(address);
-        expect(wrapper.state("siaAccount").seed).toEqual(seed);
-      });
-
     });
 
   });
 
   describe(`hash is ${Hash.StorjRegistration}`, () => {
 
+    let wrapper, registration;
     beforeEach(() => {
       location.hash = Hash.StorjRegistration;
+      wrapper = mount(<Installer/>);
+      registration = wrapper.find("StorjRegistration");
     });
 
     it("shows StorjRegistration component", () => {
-      const wrapper = mount(<Installer/>);
-      const registration = wrapper.find("StorjRegistration");
       expect(registration.exists()).toBeTruthy();
     });
 
     it("updates the hash to StorjLogin when onClickLogin is called", () => {
-      const wrapper = mount(<Installer/>);
-      const registration = wrapper.find("StorjRegistration");
-
       registration.prop("onClickLogin")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
     it("doesn't update the hash when onClickLogin is called but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.instance().requesting = true;
-      const registration = wrapper.find("StorjRegistration");
-
       registration.prop("onClickLogin")();
       expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
     it("updates the hash to StorjSelected when onClickBack is called and sia state is false", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({sia: false});
-
-      const registration = wrapper.find("StorjRegistration");
       registration.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjSelected}`);
     });
 
     it("updates the hash to BothSelected when onClickBack is called and sia state is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({sia: true});
-
-      const registration = wrapper.find("StorjRegistration");
       registration.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
     });
 
     it("doesn't update the hash when onClickBack is called but requesting is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.instance().requesting = true;
       wrapper.setState({sia: true});
-
-      const registration = wrapper.find("StorjRegistration");
       registration.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
-    it("updates the hash to StorjEncryptionKey and update storjAccount state when on ClickNext is called", () => {
+    it("invokes _storjRegister when onClickNext is called", async () => {
+      wrapper.instance()._storjRegister = jest.fn().mockReturnValue(Promise.resolve());
+
       const email = "user@example.com";
       const password = "password";
-      const wrapper = mount(<Installer/>);
-
-      const registration = wrapper.find("StorjRegistration");
-      registration.prop("onClickNext")({
+      const info = {
         email: email,
         password: password,
-      });
-      expect(wrapper.state("storjAccount").email).toEqual(email);
-      expect(wrapper.state("storjAccount").password).toEqual(password);
-      expect(location.hash).toEqual(`#${Hash.StorjEncryptionKey}`);
-    });
-
-    describe("with ipc", () => {
-
-      const email = "user@example.com";
-      const password = "password";
-      const key = "1234567890";
-
-      it("requests to create a Storj account when onClickNext is called", () => {
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          ipcRenderer.send.mockImplementation((method) => {
-            if (listen === method) {
-              cb(null, key);
-            }
-          });
-        });
-
-        const wrapper = mount(<Installer/>);
-        const login = wrapper.find("StorjRegistration");
-        login.prop("onClickNext")({
-          email: email,
-          password: password,
-        });
-
-        expect(ipcRenderer.once).toHaveBeenCalledWith(StorjRegisterationEvent, expect.anything());
-        expect(ipcRenderer.send).toHaveBeenCalledWith(StorjRegisterationEvent, {
-          email: email,
-          password: password,
-        });
-        expect(wrapper.state("storjAccount").key).toEqual(key);
-      });
-
-      it("doesn't requests when this.requesting is true", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("StorjRegistration");
-        wrapper.instance().requesting = true;
-        c.prop("onClickNext")();
-
-        expect(ipcRenderer.once).not.toHaveBeenCalled();
-        expect(ipcRenderer.send).not.toHaveBeenCalled();
-      });
-
-      it("sets this.requesting is true while it's connecting to main process", () => {
-        const wrapper = mount(<Installer/>);
-        const c = wrapper.find("StorjRegistration");
-        expect(wrapper.instance().requesting).toBeFalsy();
-
-        ipcRenderer.once.mockImplementation((listen, cb) => {
-          expect(wrapper.instance().requesting).toBeTruthy();
-          expect(wrapper.state("wait")).toBeTruthy();
-          ipcRenderer.send.mockImplementation((method, arg) => {
-            if (listen === method) {
-              cb(null, key);
-            }
-          });
-        });
-
-        c.prop("onClickNext")({
-          email: email,
-          password: password
-        });
-        expect(wrapper.instance().requesting).toBeFalsy();
-        expect(wrapper.state("wait")).toBeFalsy();
-      });
-
+      };
+      await registration.prop("onClickNext")(info);
+      expect(wrapper.instance()._storjRegister).toHaveBeenCalledWith(info)
     });
 
   });
 
   describe(`hash is ${Hash.StorjEncryptionKey}`, () => {
 
+    let wrapper, key;
     beforeEach(() => {
       location.hash = Hash.StorjEncryptionKey;
+      wrapper = mount(<Installer/>);
+      key = wrapper.find("StorjEncryptionKey");
     });
 
     it("shows StorjEncryptionKey component showing an encryption key in storjAccount.key state", () => {
       const encryptionKey = "000000-0000000-0000000000000";
-      const wrapper = mount(<Installer/>);
       wrapper.setState({storjAccount: {key: encryptionKey}});
 
       const key = wrapper.find("StorjEncryptionKey");
@@ -718,15 +353,11 @@ describe("Installer component", () => {
     });
 
     it("updates the hash to StorjRegistration when onClickBack is called", () => {
-      const wrapper = mount(<Installer/>);
-      const key = wrapper.find("StorjEncryptionKey");
       key.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjRegistration}`);
     });
 
     it("updates the hash to StorjEamilConfirmation when onClickNext is called", () => {
-      const wrapper = mount(<Installer/>);
-      const key = wrapper.find("StorjEncryptionKey");
       key.prop("onClickNext")();
       expect(location.hash).toEqual(`#${Hash.StorjEmailConfirmation}`);
     });
@@ -735,26 +366,23 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.StorjEmailConfirmation}`, () => {
 
+    let wrapper, comp;
     beforeEach(() => {
       location.hash = Hash.StorjEmailConfirmation;
+      wrapper = mount(<Installer/>);
+      comp = wrapper.find("StorjEmailConfirmation");
     });
 
     it("shows StorjEmailConfirmation component", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("StorjEmailConfirmation");
       expect(comp.exists()).toBeTruthy();
     });
 
     it("updates the hash to StorjEncryptionKey when onClickBack is called", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("StorjEmailConfirmation");
       comp.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjEncryptionKey}`);
     });
 
     it("updates the hash to StorjLogin when onClickLogin is called", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("StorjEmailConfirmation");
       comp.prop("onClickLogin")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
@@ -763,79 +391,44 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.SiaWallet}`, () => {
 
+    const address = "1234567890";
+    const seed = "xxx xxx xxx xxx xxxx";
+
+    let wrapper, wallet;
     beforeEach(() => {
       location.hash = Hash.SiaWallet;
-    });
-
-    it("shows SiaWallet component with information in siaAccount state", () => {
-      const address = "1234567890";
-      const seed = "xxx xxx xxx xxx xxxx";
-      const wrapper = mount(<Installer/>);
+      wrapper = mount(<Installer/>);
       wrapper.setState({
         siaAccount: {
           address: address,
           seed: seed,
         }
       });
-      const comp = wrapper.find("SiaWallet");
-      expect(comp.exists()).toBeTruthy();
-      expect(comp.prop("address")).toEqual(address);
-      expect(comp.prop("seed")).toEqual(seed);
+      wallet = wrapper.find("SiaWallet");
+    });
+
+    it("shows SiaWallet component with information in siaAccount state", () => {
+      expect(wallet.exists()).toBeTruthy();
+      expect(wallet.prop("address")).toEqual(address);
+      expect(wallet.prop("seed")).toEqual(seed);
     });
 
     it("updates the hash to SiaSelected when onClickBack is called and storj state is false", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({storj: false});
-      const comp = wrapper.find("SiaWallet");
-      comp.prop("onClickBack")();
+      wallet.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.SiaSelected}`);
     });
 
     it("updates the hash to StorjLogin when onClickBack is called and storj state is true", () => {
-      const wrapper = mount(<Installer/>);
       wrapper.setState({storj: true});
-      const comp = wrapper.find("SiaWallet");
-      comp.prop("onClickBack")();
+      wallet.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
-    it("updates the hash to SiaFinish when onClickNext is called", () => {
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({storj: true});
-      const comp = wrapper.find("SiaWallet");
-      comp.prop("onClickNext")();
-      expect(location.hash).toEqual(`#${Hash.SiaFinish}`);
-    });
-
-    it("stores selected folder and marks installer finished before moving to SiaFinish screen (sia only)", () => {
-      const folder = "/tmp";
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({storj: false, sia: true, folder: folder});
-      const comp = wrapper.find("SiaWallet");
-      comp.prop("onClickNext")();
-
-      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
-        syncFolder: folder,
-        installed: true,
-        storj: false,
-        sia: true,
-      }, expect.any(Function));
-      expect(location.hash).toEqual(`#${Hash.SiaFinish}`);
-    });
-
-    it("stores selected folder and marks installer finished before moving to SiaFinish screen (both service)", () => {
-      const folder = "/tmp";
-      const wrapper = mount(<Installer/>);
-      wrapper.setState({storj: true, sia: true, folder: folder});
-      const comp = wrapper.find("SiaWallet");
-      comp.prop("onClickNext")();
-
-      expect(storage.set).toHaveBeenCalledWith(ConfigFile, {
-        syncFolder: folder,
-        installed: true,
-        storj: true,
-        sia: true,
-      }, expect.any(Function));
+    it("invokes _saveConfig and updates the hash to SiaFinish when onClickNext is called", async () => {
+      wrapper.instance()._saveConfig = jest.fn().mockReturnValue(Promise.resolve());
+      await wallet.prop("onClickNext")();
+      expect(wrapper.instance()._saveConfig).toHaveBeenCalled();
       expect(location.hash).toEqual(`#${Hash.SiaFinish}`);
     });
 
@@ -843,20 +436,19 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.SiaFinish}`, () => {
 
+    let wrapper, finish;
     beforeEach(() => {
       location.hash = Hash.SiaFinish;
+      wrapper = mount(<Installer/>);
+      finish = wrapper.find("SiaFinish");
     });
 
     it("shows SiaFinish component", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("SiaFinish");
-      expect(comp.exists()).toBeTruthy();
+      expect(finish.exists()).toBeTruthy();
     });
 
     it("updates the hash to SiaWallet when onClickBack is called", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("SiaFinish");
-      comp.prop("onClickBack")();
+      finish.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
     });
 
@@ -866,9 +458,7 @@ describe("Installer component", () => {
       };
       remote.getCurrentWindow.mockReturnValue(mockWindow);
 
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("SiaFinish");
-      comp.prop("onClickClose")();
+      finish.prop("onClickClose")();
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
       expect(mockWindow.close).toHaveBeenCalledTimes(1);
     });
@@ -877,20 +467,19 @@ describe("Installer component", () => {
 
   describe(`hash is ${Hash.FinishAll}`, () => {
 
+    let wrapper, finish;
     beforeEach(() => {
       location.hash = Hash.FinishAll;
+      wrapper = mount(<Installer/>);
+      finish = wrapper.find("Finish");
     });
 
     it("shows FinishAll component", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("Finish");
-      expect(comp.exists()).toBeTruthy();
+      expect(finish.exists()).toBeTruthy();
     });
 
     it("updates the hash to StorjLogin when onClickBack is called", () => {
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("Finish");
-      comp.prop("onClickBack")();
+      finish.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
@@ -900,61 +489,325 @@ describe("Installer component", () => {
       };
       remote.getCurrentWindow.mockReturnValue(mockWindow);
 
-      const wrapper = mount(<Installer/>);
-      const comp = wrapper.find("Finish");
-      comp.prop("onClickClose")();
+      finish.prop("onClickClose")();
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
       expect(mockWindow.close).toHaveBeenCalledTimes(1);
     });
 
   });
 
-  describe("_requestSiaWallet", () => {
+  describe("_checkJRE", () => {
 
+    let wrapper, instance;
     beforeEach(() => {
-      ipcRenderer.once.mockClear();
-      ipcRenderer.send.mockClear();
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
       location.hash = "";
     });
 
-    it("requests SIA wallet information only once", () => {
-      const address = "1234567890";
-      const seed = "xxx xxx xxx xxx";
+    it("does nothing when requesting is true", async () => {
+      instance.requesting = true;
+      await instance._checkJRE();
+
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("sends JRE install request", async () => {
+      await instance._checkJRE();
+
+      expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
+    });
+
+    it("sets requesting and wait true while communicating to the main process", async () => {
       ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(instance.requesting).toBeTruthy();
+        expect(wrapper.state("wait")).toBeTruthy();
         ipcRenderer.send.mockImplementation((method) => {
           if (listen === method) {
-            cb(null, {
-              address: address,
-              seed: seed,
-            });
+            cb(null, true);
           }
         });
       });
 
-      const wrapper = shallow(<Installer/>);
-      wrapper.instance()._requestSiaWallet();
-      wrapper.instance()._requestSiaWallet();
-      expect(ipcRenderer.once).toHaveBeenCalledTimes(1);
-      expect(ipcRenderer.send).toHaveBeenCalledTimes(1);
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      await instance._checkJRE();
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
     });
 
-    it("moves to SiaWallet if address and seed was received", () => {
-      const address = "1234567890";
-      const seed = "xxx xxx xxx xxx";
-      const wrapper = shallow(<Installer/>);
-      wrapper.setState({
-        siaAccount: {
-          address: address,
-          seed: seed
-        }
+    it("moves to ChooseCloudService", async () => {
+      await instance._checkJRE();
+      expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+    });
+
+    // TODO: Update this test after error notification template is decided.
+    it("does not move to ChooseCloudService and show an error message when receives an error", async () => {
+      const err = "expected error";
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, false, err);
+          }
+        });
       });
-      wrapper.instance()._requestSiaWallet();
+      await instance._checkJRE();
+      expect(location.hash).toEqual("");
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+  });
+
+  describe("_storjLogin", () => {
+
+    const email = "user@example.com";
+    const password = "password";
+    const key = "1234567890";
+    const info = {
+      email: email,
+      password: password,
+      encryptionKey: key
+    };
+
+    let wrapper, instance;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
+      instance._requestSiaWallet = jest.fn().mockReturnValue(Promise.resolve());
+      instance._saveConfig = jest.fn().mockReturnValue(Promise.resolve());
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, true);
+          }
+        });
+      });
+    });
+
+    it("does nothing if requesting is true", async () => {
+      instance.requesting = true;
+      await instance._storjLogin();
       expect(ipcRenderer.once).not.toHaveBeenCalled();
       expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("send a login request", async () => {
+      await instance._storjLogin(info);
+
+      expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, info);
+      expect(wrapper.state("storjAccount")).toEqual(info);
+    });
+
+    it("sets requesting and wait true while communicating to the main process", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(instance.requesting).toBeTruthy();
+        expect(wrapper.state("wait")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, true);
+          }
+        });
+      });
+
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      await instance._storjLogin(info);
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+    it("invokes _requestSiaWallet when sia is true", async () => {
+      wrapper.setState({sia: true});
+      await instance._storjLogin(info);
+      expect(instance._requestSiaWallet).toHaveBeenCalled();
+      expect(instance._saveConfig).not.toHaveBeenCalled();
+    });
+
+    it("saves returned value to the config file and moves to FinishAll when sia is false", async () => {
+      wrapper.setState({sia: false});
+      await instance._storjLogin(info);
+      expect(instance._requestSiaWallet).not.toHaveBeenCalled();
+      expect(instance._saveConfig).toHaveBeenCalled();
+      expect(location.hash).toEqual(`#${Hash.FinishAll}`);
+    });
+
+    // TODO: Update this test after error notification template is decided.
+    it("neither call _requestSiaWallet nor move FinishAll when receives an error", async () => {
+      const err = "expected error";
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, false, err);
+          }
+        });
+      });
+      await instance._storjLogin(info);
+      expect(instance._requestSiaWallet).not.toHaveBeenCalled();
+      expect(instance._saveConfig).not.toHaveBeenCalled();
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+  });
+
+  describe("_storjRegister", () => {
+
+    const email = "user@example.com";
+    const password = "password";
+    const key = "1234567890";
+    const info = {
+      email: email,
+      password: password,
+    };
+
+    let wrapper, instance;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, true, key);
+          }
+        });
+      });
+    });
+
+    it("does nothing if requesting is true", async () => {
+      instance.requesting = true;
+      await instance._storjRegister(info);
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("send a create account request", async () => {
+      await instance._storjRegister(info);
+
+      expect(ipcRenderer.once).toHaveBeenCalledWith(StorjRegisterationEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(StorjRegisterationEvent, info);
+      expect(wrapper.state("storjAccount")).toEqual({
+        email: email,
+        password: password,
+        encryptionKey: key,
+      });
+    });
+
+    it("sets requesting and wait true while communicating to the main process", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(instance.requesting).toBeTruthy();
+        expect(wrapper.state("wait")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, true);
+          }
+        });
+      });
+
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      await instance._storjRegister(info);
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+    it("moves to StorjEncryptionKey", async () => {
+      await instance._storjRegister(info);
+      expect(location.hash).toEqual(`#${Hash.StorjEncryptionKey}`);
+    });
+
+    // TODO: Update this test after error notification template is decided.
+    it("neither call _requestSiaWallet nor move FinishAll when receives an error", async () => {
+      const err = "expected error";
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, false, err);
+          }
+        });
+      });
+      const current = location.hash;
+      await instance._storjRegister(info);
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      expect(location.hash).toEqual(current);
+    });
+
+  });
+
+
+  describe("_requestSiaWallet", () => {
+
+    const address = "1234567890";
+    const seed = "xxx xxx xxx xxx";
+    const info = {
+      address: address,
+      seed: seed
+    };
+
+    let wrapper, instance;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, info);
+          }
+        });
+      });
+      location.hash = "";
+    });
+
+    it("does nothing when requesting is true", async () => {
+      instance.requesting = true;
+      await instance._requestSiaWallet();
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("requests SIA wallet information", async () => {
+      await instance._requestSiaWallet();
+      expect(ipcRenderer.once).toHaveBeenCalled();
+      expect(ipcRenderer.send).toHaveBeenCalled();
+      expect(wrapper.state("siaAccount")).toEqual(info);
+    });
+
+    it("doesn't request SIA wallet information when siaAccount state has the information already", async () => {
+      wrapper.setState({siaAccount: info});
+      await instance._requestSiaWallet();
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("sets requesting and wait true while communicating to the main process", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(instance.requesting).toBeTruthy();
+        expect(wrapper.state("wait")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, info);
+          }
+        });
+      });
+
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      await instance._storjRegister(info);
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+    it("moves to SiaWallet if address and seed was received", async () => {
+      await instance._requestSiaWallet();
       expect(location.hash).toEqual(`#${Hash.SiaWallet}`);
     });
 
-    it("doesn't move to SiaWallet and shows an error message if ipc request fails", () => {
+    // TODO: Update this test after error notification template is decided.
+    it("doesn't move to SiaWallet and shows an error message if ipc request fails", async () => {
       const error = "expected error";
       ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method) => {
@@ -964,13 +817,40 @@ describe("Installer component", () => {
         });
       });
 
-      const wrapper = shallow(<Installer/>);
-      wrapper.instance()._requestSiaWallet();
-      expect(ipcRenderer.once).toHaveBeenCalled();
-      expect(ipcRenderer.send).toHaveBeenCalled();
+      await instance._requestSiaWallet();
       expect(location.hash).toEqual("");
       expect(wrapper.instance().requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
     });
+
+  });
+
+  describe("_saveConfig", () => {
+    const folder = "/tmp";
+
+    let wrapper, instance;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
+      saveConfig.mockReset();
+    });
+
+    it("stores selected folder and marks installer finished", async () => {
+      wrapper.setState({storj: true, sia: true, folder: folder});
+      await instance._saveConfig();
+      expect(saveConfig).toHaveBeenCalledWith({
+        syncFolder: folder,
+        installed: true,
+        storj: true,
+        sia: true,
+      });
+    });
+
+    // TODO: Update this test after error notification template is decided.
+    // it("shows an error message when saveConfig returns an error", async () => {
+    //   const err = "expected error";
+    //   saveConfig.mockReturnValue(Promise.reject(err));
+    // });
 
   });
 

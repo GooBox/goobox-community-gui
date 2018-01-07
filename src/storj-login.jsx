@@ -104,7 +104,7 @@ export default class StorjLogin extends React.Component {
       this.props.onClickFinish({
         email: this.state.email,
         password: this.state.password,
-        key: this.state.key,
+        encryptionKey: this.state.key,
       });
     }
   }

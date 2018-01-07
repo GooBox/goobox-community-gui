@@ -19,10 +19,8 @@ import {ipcRenderer, remote} from "electron";
 import log from "electron-log";
 import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
-import {
-  ConfigFile, JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent,
-  StorjRegisterationEvent
-} from "./constants";
+import {saveConfig} from "./config";
+import {JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent, StorjRegisterationEvent} from "./constants";
 import Finish from "./finish-all";
 import SelectFolder from "./select-folder";
 import ServiceSelector from "./service-selector";
@@ -34,7 +32,6 @@ import StorjLogin from "./storj-login";
 import StorjRegistration from "./storj-registration";
 import Welcome from "./welcome.jsx";
 
-const storage = remote.require("electron-json-storage");
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -85,89 +82,116 @@ export class Installer extends React.Component {
     this._saveConfig = this._saveConfig.bind(this);
   }
 
-  _checkJRE() {
+  async _checkJRE() {
 
-    if (!this.requesting) {
+    if (this.requesting) {
+      return;
+    }
 
-      this.requesting = true;
+    this.requesting = true;
+    return new Promise(resolve => {
+
       log.debug("set the wait mouse cursor");
       this.setState({wait: true}, () => {
+        ipcRenderer.once(JREInstallEvent, (_, succeeded, msg) => {
 
-        ipcRenderer.once(JREInstallEvent, () => {
+          if (succeeded) {
 
-          log.debug("JRE installation ends, reset the mouse cursor");
-          this.setState({wait: false}, () => {
+            log.debug("JRE installation ends, reset the mouse cursor");
+            this.setState({wait: false}, () => {
+              log.debug("moving to the next screen");
+              location.hash = Hash.ChooseCloudService;
+              resolve();
+            });
 
-            log.debug("moving to the next screen");
-            this.requesting = false;
-            location.hash = Hash.ChooseCloudService;
-
-          });
+          } else {
+            log.debug(`JRE installation fails: ${msg}`);
+            this.setState({wait: false}, resolve);
+          }
 
         });
 
         log.debug("requesting JRE installation");
         ipcRenderer.send(JREInstallEvent);
-
       });
-    }
+
+    }).then(() => this.requesting = false);
 
   }
 
-  _storjLogin(info) {
+  async _storjLogin(info) {
 
-    if (!this.requesting) {
-      this.requesting = true;
+    if (this.requesting) {
+      return;
+    }
+
+    this.requesting = true;
+    return new Promise(resolve => {
+
       this.setState({wait: true}, () => {
-        ipcRenderer.once(StorjLoginEvent, (_, res) => {
+        ipcRenderer.once(StorjLoginEvent, (_, succeeded, msg) => {
 
-          this.setState({storjAccount: info, wait: false}, () => {
-            this.requesting = false;
-            if (this.state.sia) {
-              this._requestSiaWallet();
-            } else {
-              this._saveConfig();
-              location.hash = Hash.FinishAll;
-            }
-          });
+          if (succeeded) {
+            this.setState({storjAccount: info, wait: false}, async () => {
+              if (this.state.sia) {
+                await this._requestSiaWallet();
+              } else {
+                await this._saveConfig();
+                location.hash = Hash.FinishAll;
+              }
+              resolve();
+            });
+          } else {
+            // TODO: Show error msaage msg.
+            this.setState({wait: false}, resolve);
+          }
 
         });
         ipcRenderer.send(StorjLoginEvent, info);
       });
-    }
+
+    }).then(() => this.requesting = false);
 
   };
 
-  _storjRegister(info) {
+  async _storjRegister(info) {
 
-    if (!this.requesting) {
-      this.requesting = true;
+    if (this.requesting) {
+      return;
+    }
+
+    this.requesting = true;
+    return new Promise(resolve => {
+
       this.setState({wait: true}, () => {
+        ipcRenderer.once(StorjRegisterationEvent, (_, succeeded, args) => {
 
-        ipcRenderer.once(StorjRegisterationEvent, (_, key) => {
-
-          this.setState({
-            storjAccount: {
-              email: info.email,
-              password: info.password,
-              key: key,
-            },
-            wait: false
-          }, () => {
-            location.hash = Hash.StorjEncryptionKey;
-            this.requesting = false;
-          });
+          if (succeeded) {
+            this.setState({
+              storjAccount: {
+                email: info.email,
+                password: info.password,
+                encryptionKey: args,
+              },
+              wait: false
+            }, () => {
+              location.hash = Hash.StorjEncryptionKey;
+              resolve();
+            });
+          } else {
+            // TODO: Show error message args.
+            this.setState({wait: false}, resolve);
+          }
 
         });
         ipcRenderer.send(StorjRegisterationEvent, info);
-
       });
 
-    }
+    }).then(() => this.requesting = false);
 
   }
 
-  _requestSiaWallet() {
+  async _requestSiaWallet() {
 
     if (this.requesting) {
       return;
@@ -179,38 +203,44 @@ export class Installer extends React.Component {
     }
 
     this.requesting = true;
-    this.setState({wait: true}, () => {
-      ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
-        log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
-        if (err) {
-          this.setState({wait: false}, () => {
-            this.requesting = false;
+    return new Promise(resolve => {
+
+      this.setState({wait: true}, () => {
+        ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
+
+          log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
+          if (err) {
+            // TODO: Show this error.
             log.error(err);
-          });
-        } else {
-          this.setState({siaAccount: info, wait: false}, () => {
-            this.requesting = false;
-            location.hash = Hash.SiaWallet;
-          });
-        }
+            this.setState({wait: false}, resolve);
+          } else {
+            this.setState({siaAccount: info, wait: false}, () => {
+              location.hash = Hash.SiaWallet;
+              resolve();
+            });
+          }
+
+        });
+        ipcRenderer.send(SiaWalletEvent);
       });
-      ipcRenderer.send(SiaWalletEvent);
-    });
+
+    }).then(() => this.requesting = false);
 
   }
 
-  _saveConfig() {
+  async _saveConfig() {
 
-    storage.set(ConfigFile, {
-      syncFolder: this.state.folder,
-      installed: true,
-      storj: this.state.storj,
-      sia: this.state.sia,
-    }, (err) => {
-      if (err) {
-        log.error(err);
-      }
-    });
+    try {
+      await saveConfig({
+        syncFolder: this.state.folder,
+        installed: true,
+        storj: this.state.storj,
+        sia: this.state.sia,
+      });
+    } catch (err) {
+      // TODO: Show this error message.
+      log.error(err);
+    }
 
   }
 
@@ -221,7 +251,7 @@ export class Installer extends React.Component {
           <Switch>
             <Route exact path="/" render={() => {
               return (
-                <Welcome onClickNext={this._checkJRE}/>
+                <Welcome onClickNext={async () => this._checkJRE()}/>
               );
             }}/>
             <Route path={`/${Hash.ChooseCloudService}`} render={() => {
@@ -265,7 +295,7 @@ export class Installer extends React.Component {
                       location.hash = Hash.ChooseCloudService;
                     }
                   }}
-                  onClickNext={this._requestSiaWallet}
+                  onClickNext={async () => this._requestSiaWallet()}
                 />
               );
             }}/>
@@ -297,7 +327,7 @@ export class Installer extends React.Component {
                       }
                     }
                   }}
-                  onClickFinish={(info) => this._storjLogin(info)}
+                  onClickFinish={async (info) => this._storjLogin(info)}
                 />
               );
             }}/>
@@ -318,7 +348,7 @@ export class Installer extends React.Component {
                       }
                     }
                   }}
-                  onClickNext={(info) => this._storjRegister(info)}
+                  onClickNext={async (info) => this._storjRegister(info)}
                 />
               );
             }}/>
@@ -351,8 +381,8 @@ export class Installer extends React.Component {
                       location.hash = Hash.SiaSelected;
                     }
                   }}
-                  onClickNext={() => {
-                    this._saveConfig();
+                  onClickNext={async () => {
+                    await this._saveConfig();
                     location.hash = Hash.SiaFinish;
                   }}
                 />
