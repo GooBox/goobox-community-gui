@@ -84,6 +84,7 @@ export default class Storj {
             encryptionKey: encryptionKey,
           }
         }));
+        this.stdin.write("\n");
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
     ]).then(res => {
@@ -110,6 +111,7 @@ export default class Storj {
             password: password,
           }
         }));
+        this.stdin.write("\n");
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
     ]).then(res => {

@@ -23,7 +23,7 @@ import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
-import {Readable} from "stream";
+import {PassThrough, Readable} from "stream";
 import Storj from "../../src/main-process/storj";
 
 
@@ -175,24 +175,26 @@ describe("Storj class", () => {
       stdout.push("\n");
       stdout.push(null);
 
-      storj.stdin = {
-        write: jest.fn()
-      };
+      storj.stdin = new PassThrough();
       storj.stdout = readline.createInterface({input: stdout});
       storj.proc = {
         stdin: storj.stdin,
         stdout: storj.stdout
       };
 
+      let res = null;
+      const reader = readline.createInterface({input: storj.stdin});
+      reader.on("line", line => res = JSON.parse(line));
+
       await expect(storj.login(email, password, key)).resolves.not.toBeDefined();
-      expect(storj.stdin.write).toHaveBeenCalledWith(JSON.stringify({
+      expect(res).toEqual({
         method: "login",
         args: {
           email: email,
           password: password,
           encryptionKey: key,
         }
-      }));
+      });
     });
 
     it("returns an error when no process is running", async () => {
@@ -258,23 +260,25 @@ describe("Storj class", () => {
       stdout.push("\n");
       stdout.push(null);
 
-      storj.stdin = {
-        write: jest.fn()
-      };
+      storj.stdin = new PassThrough();
       storj.stdout = readline.createInterface({input: stdout});
       storj.proc = {
         stdin: storj.stdin,
         stdout: storj.stdout
       };
 
+      let res = null;
+      const reader = readline.createInterface({input: storj.stdin});
+      reader.on("line", line => res = JSON.parse(line));
+
       await expect(storj.createAccount(email, password)).resolves.toEqual(key);
-      expect(storj.stdin.write).toHaveBeenCalledWith(JSON.stringify({
+      expect(res).toEqual({
         method: "createAccount",
         args: {
           email: email,
           password: password,
         }
-      }));
+      });
     });
 
     it("returns a rejected promise when no storj process is running", async () => {
