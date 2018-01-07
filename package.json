@@ -33,7 +33,7 @@
   "dependencies": {
     "about-window": "^1.8.0",
     "electron-json-storage": "^4.0.2",
-    "node-jre": "^0.2.3"
+    "node-jre": "jkawamoto/node-jre#fix-8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.36",
