@@ -28,7 +28,7 @@ export default class Storj {
 
   constructor() {
     this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/"));
-    this.cmd = path.join(this.wd, "goobox-sync-storj");
+    this.cmd = "goobox-sync-storj";
     if (process.platform === "win32") {
       this.cmd += ".bat";
     }
@@ -36,7 +36,7 @@ export default class Storj {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
-    log.debug(`new storj instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
+    log.debug(`new storj instance: cmd = ${this.cmd}, wd = ${this.wd}, java-home = ${this.javaHome}`);
   }
 
   start(dir) {
@@ -45,7 +45,7 @@ export default class Storj {
       return;
     }
 
-    log.info(`starting sync-storj app in ${this.cmd}`);
+    log.info(`starting ${this.cmd} in ${this.wd}`);
     this.proc = spawn(this.cmd, ["--sync-dir", `"${dir}"`], {
       cwd: this.wd,
       env: {
