@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,20 +39,27 @@ export default class Storj {
     log.debug(`new storj instance: cmd = ${this.cmd}, wd = ${this.wd}, java-home = ${this.javaHome}`);
   }
 
-  start(dir) {
+  start(dir, reset) {
 
     if (this.proc) {
       return;
     }
 
+    const args = ["--sync-dir", `"${dir}"`];
+    if (reset) {
+      args.push("--reset-db");
+    }
+
     log.info(`starting ${this.cmd} in ${this.wd}`);
-    this.proc = spawn(this.cmd, ["--sync-dir", `"${dir}"`], {
+    this.proc = spawn(this.cmd, args, {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,
       },
+      shell: true,
       windowsHide: true,
     });
+
     this.stdin = this.proc.stdin;
     this.stdout = readline.createInterface({input: this.proc.stdout});
     this.stderr = readline.createInterface({input: this.proc.stderr});

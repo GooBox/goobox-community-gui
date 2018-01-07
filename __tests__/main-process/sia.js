@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,11 +74,6 @@ describe("Sia class", () => {
         stdout: stdout,
         stderr: stderr,
       });
-      process.env.NODE_ENV = "production";
-    });
-
-    afterEach(() => {
-      process.env.NODE_ENV = "test";
     });
 
     it("spawns sync sia app", () => {
@@ -94,12 +89,10 @@ describe("Sia class", () => {
       });
     });
 
-    it("adds --reset-db flag when NODE_ENV != production", () => {
-      process.env.NODE_ENV = "test";
-
+    it("adds --reset-db flag when reset is true", () => {
       const dir = "/tmp";
       const sia = new Sia();
-      sia.start(dir);
+      sia.start(dir, true);
       expect(spawn).toBeCalledWith(sia.cmd, ["--sync-dir", `"${dir}"`, "--output-events", "--reset-db"], {
         cwd: sia.wd,
         env: {

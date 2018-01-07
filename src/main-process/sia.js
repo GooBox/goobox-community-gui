@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ export default class Sia {
     log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
-  start(dir) {
+  start(dir, reset) {
 
     if (this.proc) {
       return;
@@ -46,7 +46,7 @@ export default class Sia {
 
     log.info(`starting sync-sia app in ${this.cmd}`);
     const args = ["--sync-dir", `"${dir}"`, "--output-events"];
-    if ("production" !== process.env.NODE_ENV) {
+    if (reset) {
       args.push("--reset-db");
     }
     this.proc = spawn(this.cmd, args, {

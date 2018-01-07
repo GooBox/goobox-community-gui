@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ describe("main process of the installer", () => {
       login.mockRestore();
     });
 
-    it("starts Storj instance if not running", async () => {
+    it("starts Storj instance with reset option if not running", async () => {
       const dir = "/tmp";
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
@@ -167,7 +167,7 @@ describe("main process of the installer", () => {
       });
       expect(global.storj).toBeDefined();
       expect(getConfig).toHaveBeenCalled();
-      expect(start).toHaveBeenCalledWith(dir);
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
     });
@@ -233,7 +233,7 @@ describe("main process of the installer", () => {
       createAccount.mockRestore();
     });
 
-    it("starts Storj instance if not running", async () => {
+    it("starts Storj instance with reset option if not running", async () => {
       const dir = "/tmp";
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
@@ -245,7 +245,7 @@ describe("main process of the installer", () => {
       });
       expect(global.storj).toBeDefined();
       expect(getConfig).toHaveBeenCalled();
-      expect(start).toHaveBeenCalledWith(dir);
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
     });
@@ -322,7 +322,7 @@ describe("main process of the installer", () => {
       });
     });
 
-    it("starts the sync sia app", async () => {
+    it("starts the sync sia app with reset option", async () => {
       const dir = "/tmp";
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
@@ -330,7 +330,7 @@ describe("main process of the installer", () => {
 
       await handler(event);
       expect(getConfig).toHaveBeenCalled();
-      expect(start).toHaveBeenCalledWith(dir);
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(global.sia instanceof Sia).toBeTruthy();
 
     });

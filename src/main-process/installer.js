@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ function installer() {
     if (!global.storj) {
       const cfg = await getConfig();
       global.storj = new Storj();
-      global.storj.start(cfg.syncFolder);
+      global.storj.start(cfg.syncFolder, true);
     }
     try {
       await global.storj.login(args.email, args.password, args.encryptionKey);
@@ -135,7 +135,7 @@ function installer() {
     if (!global.storj) {
       const cfg = await getConfig();
       global.storj = new Storj();
-      global.storj.start(cfg.syncFolder);
+      global.storj.start(cfg.syncFolder, true);
     }
     try {
       const encryptionKey = await global.storj.createAccount(args.email, args.password);
@@ -159,7 +159,7 @@ function installer() {
       });
 
       const cfg = await getConfig();
-      global.sia.start(cfg.syncFolder);
+      global.sia.start(cfg.syncFolder, true);
 
     } catch (error) {
       log.error(error);
