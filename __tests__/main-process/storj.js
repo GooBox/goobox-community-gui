@@ -74,10 +74,11 @@ describe("Storj class", () => {
       });
     });
 
-    it("spawns sync sia app", () => {
+    it("spawns sync storj app", () => {
+      const dir = "/tmp";
       const storj = new Storj();
-      storj.start();
-      expect(spawn).toBeCalledWith(storj.cmd, {
+      storj.start(dir);
+      expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj.wd,
         env: {
           JAVA_HOME: storj.javaHome,

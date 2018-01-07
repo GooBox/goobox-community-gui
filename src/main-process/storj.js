@@ -39,14 +39,14 @@ export default class Storj {
     log.debug(`new storj instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
   }
 
-  start() {
+  start(dir) {
 
     if (this.proc) {
       return;
     }
 
     log.info(`starting sync-storj app in ${this.cmd}`);
-    this.proc = spawn(this.cmd, {
+    this.proc = spawn(this.cmd, ["--sync-dir", `"${dir}"`], {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,

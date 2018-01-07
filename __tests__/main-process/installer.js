@@ -51,6 +51,7 @@ describe("main process of the installer", () => {
     ipcMain.on.mockReset();
     // Do not reset those mocks because they have implementations.
     menubar.mockClear();
+    getConfig.mockReset();
   });
 
   afterEach(() => {
@@ -151,13 +152,19 @@ describe("main process of the installer", () => {
     });
 
     it("starts Storj instance if not running", async () => {
+      const dir = "/tmp";
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
+
       await handler(event, {
         email: email,
         password: password,
         encryptionKey: key,
       });
       expect(global.storj).toBeDefined();
-      expect(start).toHaveBeenCalled();
+      expect(getConfig).toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
     });
@@ -224,12 +231,18 @@ describe("main process of the installer", () => {
     });
 
     it("starts Storj instance if not running", async () => {
+      const dir = "/tmp";
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
+
       await handler(event, {
         email: email,
         password: password,
       });
       expect(global.storj).toBeDefined();
-      expect(start).toHaveBeenCalled();
+      expect(getConfig).toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir);
       expect(createAccount).toHaveBeenCalledWith(email, password);
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
     });
@@ -337,7 +350,6 @@ describe("main process of the installer", () => {
       onWindowAllClosed = app.on.mock.calls
         .filter(args => args[0] === "window-all-closed")
         .map(args => args[1])[0];
-      getConfig.mockReset();
       app.isReady.mockReset();
       app.on.mockReset();
       app.quit.mockReset();

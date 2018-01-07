@@ -109,8 +109,9 @@ function installer() {
   ipcMain.on(StorjLoginEvent, async (event, args) => {
     log.info(`logging in to Storj: ${args.email}`);
     if (!global.storj) {
+      const cfg = await getConfig();
       global.storj = new Storj();
-      global.storj.start();
+      global.storj.start(cfg.syncFolder);
     }
     try {
       await global.storj.login(args.email, args.password, args.encryptionKey);
@@ -125,8 +126,9 @@ function installer() {
   ipcMain.on(StorjRegisterationEvent, async (event, args) => {
     log.info(`creating a new Storj account: ${args.email}`);
     if (!global.storj) {
+      const cfg = await getConfig();
       global.storj = new Storj();
-      global.storj.start();
+      global.storj.start(cfg.syncFolder);
     }
     try {
       const encryptionKey = await global.storj.createAccount(args.email, args.password);
