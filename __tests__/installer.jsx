@@ -21,7 +21,10 @@ import {mount, shallow} from "enzyme";
 import path from "path";
 import React from "react";
 import {saveConfig} from "../src/config";
-import {JREInstallEvent, Sia, Storj, StorjLoginEvent, StorjRegisterationEvent} from "../src/constants";
+import {
+  JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "../src/constants";
 import {Hash, Installer} from "../src/installer.jsx";
 
 const app = remote.app;
@@ -90,6 +93,7 @@ describe("Installer component", () => {
 
     it("sets sia state true and moves to select folder screen when onSelectSia is called", () => {
       expect(wrapper.state("sia")).toBeFalsy();
+
       component.prop("onSelectSia")();
       expect(location.hash).toEqual(`#${Hash.SiaSelected}`);
       expect(wrapper.state("sia")).toBeTruthy();
@@ -113,6 +117,7 @@ describe("Installer component", () => {
     beforeEach(() => {
       location.hash = Hash.StorjSelected;
       wrapper = mount(<Installer/>);
+      wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
 
@@ -128,9 +133,14 @@ describe("Installer component", () => {
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
-    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      selector.prop("onClickBack")();
+    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", async () => {
+      await selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+    });
+
+    it("invokes _stopSyncApps when back button is clicked", async () => {
+      await selector.prop("onClickBack")();
+      expect(wrapper.instance()._stopSyncApps).toHaveBeenCalled();
     });
 
     it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
@@ -146,6 +156,7 @@ describe("Installer component", () => {
     beforeEach(() => {
       location.hash = Hash.SiaSelected;
       wrapper = mount(<Installer/>);
+      wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
 
@@ -161,9 +172,14 @@ describe("Installer component", () => {
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
-    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      selector.prop("onClickBack")();
+    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", async () => {
+      await selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+    });
+
+    it("invokes _stopSyncApps when back button is clicked", async () => {
+      await selector.prop("onClickBack")();
+      expect(wrapper.instance()._stopSyncApps).toHaveBeenCalled();
     });
 
     it("doesn't set the hash is ChooseCloudService when back button is clicked but requesting is true", () => {
@@ -186,6 +202,7 @@ describe("Installer component", () => {
     beforeEach(() => {
       location.hash = Hash.BothSelected;
       wrapper = mount(<Installer/>);
+      wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
 
@@ -201,9 +218,14 @@ describe("Installer component", () => {
       expect(wrapper.state("folder")).toEqual(selectedFolder);
     });
 
-    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", () => {
-      selector.prop("onClickBack")();
+    it("sets the hash is ChooseCloudService when back button is clicked in SelectFolder component", async () => {
+      await selector.prop("onClickBack")();
       expect(location.hash).toEqual(`#${Hash.ChooseCloudService}`);
+    });
+
+    it("invokes _stopSyncApps when back button is clicked", async () => {
+      await selector.prop("onClickBack")();
+      expect(wrapper.instance()._stopSyncApps).toHaveBeenCalled();
     });
 
     it("sets the hash is StorjLogin when the next button is clicked in SelectFolder component", () => {
@@ -771,8 +793,8 @@ describe("Installer component", () => {
 
     it("requests SIA wallet information", async () => {
       await instance._requestSiaWallet();
-      expect(ipcRenderer.once).toHaveBeenCalled();
-      expect(ipcRenderer.send).toHaveBeenCalled();
+      expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
       expect(wrapper.state("siaAccount")).toEqual(info);
     });
 
@@ -851,6 +873,47 @@ describe("Installer component", () => {
     //   const err = "expected error";
     //   saveConfig.mockReturnValue(Promise.reject(err));
     // });
+
+  });
+
+  describe("_stopSyncApps", () => {
+
+    let wrapper, instance;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      instance = wrapper.instance();
+    });
+
+    it("does nothing when requesting is true", async () => {
+      instance.requesting = true;
+      await instance._stopSyncApps();
+      expect(ipcRenderer.once).not.toHaveBeenCalled();
+      expect(ipcRenderer.send).not.toHaveBeenCalled();
+    });
+
+    it("sends StopSyncAppEvent", async () => {
+      await instance._stopSyncApps();
+      expect(ipcRenderer.once).toHaveBeenCalledWith(StopSyncAppsEvent, expect.any(Function));
+      expect(ipcRenderer.send).toHaveBeenCalledWith(StopSyncAppsEvent);
+    });
+
+    it("sets requesting and wait true while communicating to the main process", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(instance.requesting).toBeTruthy();
+        expect(wrapper.state("wait")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null);
+          }
+        });
+      });
+
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+      await instance._stopSyncApps();
+      expect(instance.requesting).toBeFalsy();
+      expect(wrapper.state("wait")).toBeFalsy();
+    });
 
   });
 

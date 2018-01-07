@@ -20,7 +20,10 @@ import log from "electron-log";
 import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
 import {saveConfig} from "./config";
-import {JREInstallEvent, Sia, SiaWalletEvent, Storj, StorjLoginEvent, StorjRegisterationEvent} from "./constants";
+import {
+  JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "./constants";
 import Finish from "./finish-all";
 import SelectFolder from "./select-folder";
 import ServiceSelector from "./service-selector";
@@ -80,6 +83,7 @@ export class Installer extends React.Component {
     this._storjRegister = this._storjRegister.bind(this);
     this._requestSiaWallet = this._requestSiaWallet.bind(this);
     this._saveConfig = this._saveConfig.bind(this);
+    this._stopSyncApps = this._stopSyncApps.bind(this);
   }
 
   async _checkJRE() {
@@ -143,6 +147,7 @@ export class Installer extends React.Component {
             });
           } else {
             // TODO: Show error msaage msg.
+            log.error(msg);
             this.setState({wait: false}, resolve);
           }
 
@@ -244,6 +249,28 @@ export class Installer extends React.Component {
 
   }
 
+  async _stopSyncApps() {
+
+    if (this.requesting) {
+      return;
+    }
+    this.requesting = true;
+    return new Promise(resolve => {
+
+      this.setState({wait: true}, () => {
+        ipcRenderer.once(StopSyncAppsEvent, (_, err) => {
+
+          log.debug(`StopSyncAppsEvent: err = ${err}`);
+          this.setState({wait: false}, resolve);
+
+        });
+        ipcRenderer.send(StopSyncAppsEvent);
+      });
+
+    }).then(() => this.requesting = false);
+
+  }
+
   render() {
     return (
       <div className={this.state.wait ? "wait" : ""}>
@@ -279,7 +306,10 @@ export class Installer extends React.Component {
                   service={Storj}
                   folder={this.state.folder}
                   onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={() => location.hash = Hash.ChooseCloudService}
+                  onClickBack={async () => {
+                    await this._stopSyncApps();
+                    location.hash = Hash.ChooseCloudService;
+                  }}
                   onClickNext={() => location.hash = Hash.StorjLogin}
                 />
               );
@@ -290,10 +320,12 @@ export class Installer extends React.Component {
                   service={Sia}
                   folder={this.state.folder}
                   onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={() => {
-                    if (!this.requesting) {
-                      location.hash = Hash.ChooseCloudService;
+                  onClickBack={async () => {
+                    if (this.requesting) {
+                      return
                     }
+                    await this._stopSyncApps();
+                    location.hash = Hash.ChooseCloudService;
                   }}
                   onClickNext={async () => this._requestSiaWallet()}
                 />
@@ -305,7 +337,10 @@ export class Installer extends React.Component {
                   service={`${Storj} and ${Sia}`}
                   folder={this.state.folder}
                   onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={() => location.hash = Hash.ChooseCloudService}
+                  onClickBack={async () => {
+                    await this._stopSyncApps();
+                    location.hash = Hash.ChooseCloudService;
+                  }}
                   onClickNext={() => location.hash = Hash.StorjLogin}
                 />
               );

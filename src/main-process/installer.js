@@ -20,7 +20,10 @@ import {app, BrowserWindow, dialog, ipcMain} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
-import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
+import {
+  ConfigFile, JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "../constants";
 import {getConfig} from "./config";
 import {installJRE} from "./jre";
 import Sia from "./sia";
@@ -165,6 +168,19 @@ function installer() {
       event.sender.send(SiaWalletEvent, null, error);
       delete global.sia;
     }
+  });
+
+  // StopSyncAppsEvent handler.
+  ipcMain.on(StopSyncAppsEvent, async (event) => {
+    if (global.storj) {
+      await global.storj.close();
+      delete global.storj;
+    }
+    if (global.sia) {
+      await global.sia.close();
+      delete global.sia;
+    }
+    event.sender.send(StopSyncAppsEvent);
   });
 
 }

@@ -23,7 +23,10 @@ import {app, BrowserWindow, ipcMain} from "electron";
 import fs from "fs";
 import menubar, {menuberMock} from "menubar";
 import path from "path";
-import {JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../../src/constants";
+import {
+  JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "../../src/constants";
 import {getConfig} from "../../src/main-process/config";
 import "../../src/main-process/installer";
 import {installJRE} from "../../src/main-process/jre";
@@ -292,7 +295,7 @@ describe("main process of the installer", () => {
     let wallet, start;
     beforeEach(() => {
       onReady();
-      handler = ipcMain.on.mock.calls.filter(args => args[0] === SiaWalletEvent).map(args => args[1])[0];
+      handler = getEventHandler(SiaWalletEvent);
       event.sender.send.mockClear();
       getConfig.mockReset();
 
@@ -338,6 +341,50 @@ describe("main process of the installer", () => {
       await handler(event);
       expect(start).not.toHaveBeenCalled();
       expect(event.sender.send).toHaveBeenCalledWith(SiaWalletEvent, null, error);
+    });
+
+  });
+
+  describe("StopSyncApps handler", () => {
+
+    let handler;
+    const event = {
+      sender: {
+        send: jest.fn()
+      }
+    };
+
+    beforeEach(() => {
+      onReady();
+      handler = getEventHandler(StopSyncAppsEvent);
+      event.sender.send.mockClear();
+    });
+
+    afterEach(() => {
+      delete global.stoj;
+      delete global.sia;
+    });
+
+    it("calls storj.close if it is running", async () => {
+      const close = jest.fn();
+      global.storj = {
+        close: close
+      };
+      await handler(event);
+      expect(close).toHaveBeenCalled();
+      expect(global.storj).not.toBeDefined();
+      expect(event.sender.send).toHaveBeenCalledWith(StopSyncAppsEvent);
+    });
+
+    it("calls sia.close if it is running", async () => {
+      const close = jest.fn();
+      global.sia = {
+        close: close
+      };
+      await handler(event);
+      expect(close).toHaveBeenCalled();
+      expect(global.sia).not.toBeDefined();
+      expect(event.sender.send).toHaveBeenCalledWith(StopSyncAppsEvent);
     });
 
   });

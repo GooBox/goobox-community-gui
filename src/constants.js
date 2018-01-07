@@ -29,5 +29,6 @@ export const JREInstallEvent = "jre-install";
 export const StorjLoginEvent = "storj-login";
 export const StorjRegisterationEvent = "storj-registration";
 export const SiaWalletEvent = "sia-wallet";
+export const StopSyncAppsEvent = "stop-sync-apps";
 
 export const ConfigFile = "config";
