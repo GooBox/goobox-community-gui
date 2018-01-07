@@ -16,7 +16,7 @@
  */
 
 "use strict";
-import {app, BrowserWindow, ipcMain} from "electron";
+import {app, BrowserWindow, dialog, ipcMain} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
@@ -101,6 +101,8 @@ function installer() {
       await installJRE();
       event.sender.send(JREInstallEvent, true);
     } catch (err) {
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to install JRE: ${err}`);
       event.sender.send(JREInstallEvent, false, err);
     }
   });
@@ -118,6 +120,8 @@ function installer() {
       event.sender.send(StorjLoginEvent, true);
     } catch (err) {
       log.error(err);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to log in to Storj: ${err}`);
       event.sender.send(StorjLoginEvent, false, err);
     }
   });
@@ -135,6 +139,8 @@ function installer() {
       event.sender.send(StorjRegisterationEvent, true, encryptionKey);
     } catch (err) {
       log.error(err);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to register a Storj account: ${err}`);
       event.sender.send(StorjRegisterationEvent, false, err);
     }
   });
@@ -154,6 +160,8 @@ function installer() {
 
     } catch (error) {
       log.error(error);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to obtain SIA wallet information: ${error}`);
       event.sender.send(SiaWalletEvent, null, error);
       delete global.sia;
     }
