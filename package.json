@@ -10,6 +10,7 @@
     "build:watch": "webpack -w",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "npm test -- --coverage",
     "dist": "run-s dist:pre dist:package dist:post",
     "dist:pre": "rm -rf dist",
     "dist:package": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=goobox-sync --ignore=.idea --ignore=__mocks__ --ignore=__tests__",
