@@ -2,7 +2,9 @@ language: node_js
 node_js:
 - node
 script:
-- npm test
+- npm run test:coverage
+after_success:
+- npm run coveralls
 before_deploy:
 - sudo add-apt-repository ppa:ubuntu-wine/ppa -y
 - sudo apt-get update -q
