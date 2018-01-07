@@ -177,6 +177,14 @@ input {
   text-align: center;
 }
 
+/*input.warn {*/
+/*border: 1px solid red;*/
+/*}*/
+
+input.warn::-webkit-input-placeholder {
+  color: red;
+}
+
 .up-and-down {
   animation: up-and-down 1s ease-in-out infinite alternate
 }

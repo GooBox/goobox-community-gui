@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const style = {
   main: {
@@ -72,12 +72,23 @@ export default class StorjRegistration extends React.Component {
     this.state = {
       email: "",
       password: "",
+      emailWarn: false,
+      passwordWarn: false,
     };
     this._onClickNext = this._onClickNext.bind(this);
   }
 
   _onClickNext() {
-    if (this.props.onClickNext) {
+    let warn = false;
+    if (!this.state.email) {
+      warn = true;
+      this.setState({emailWarn: true});
+    }
+    if (!this.state.password) {
+      warn = true;
+      this.setState({passwordWarn: true});
+    }
+    if (!warn) {
       this.props.onClickNext({
         email: this.state.email,
         password: this.state.password,
@@ -95,11 +106,13 @@ export default class StorjRegistration extends React.Component {
         </main>
         <main style={style.accountInfo}>
           <div>
-            <input id="email" placeholder="e-mail" value={this.state.email} style={style.input}
+            <input className={this.state.emailWarn ? "warn" : ""} id="email"
+                   placeholder="e-mail" value={this.state.email} style={style.input}
                    onChange={e => this.setState({email: e.target.value})}/>
           </div>
           <div>
-            <input id="password" type="password" placeholder="password" value={this.state.password} style={style.input}
+            <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
+                   placeholder="password" value={this.state.password} style={style.input}
                    onChange={e => this.setState({password: e.target.value})}/>
           </div>
         </main>
@@ -108,12 +121,12 @@ export default class StorjRegistration extends React.Component {
             Already have an account?
           </div>
           <button id="login-btn" style={style.button}
-                  onClick={() => this.props.onClickLogin && this.props.onClickLogin()}>
+                  onClick={this.props.onClickLogin}>
             Click here to login
           </button>
         </main>
         <footer>
-          <a className="back-btn" onClick={() => this.props.onClickBack && this.props.onClickBack()}>
+          <a className="back-btn" onClick={this.props.onClickBack}>
             <img className="arrow" src="../resources/left_arrow.svg"/> Back
           </a>
           <a className="next-btn" onClick={this._onClickNext}>
@@ -127,7 +140,7 @@ export default class StorjRegistration extends React.Component {
 }
 
 StorjRegistration.propTypes = {
-  onClickLogin: PropTypes.func,
-  onClickBack: PropTypes.func,
-  onClickNext: PropTypes.func,
+  onClickLogin: PropTypes.func.isRequired,
+  onClickBack: PropTypes.func.isRequired,
+  onClickNext: PropTypes.func.isRequired,
 };

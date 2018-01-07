@@ -81,26 +81,28 @@ export default class StorjLogin extends React.Component {
       email: "",
       password: "",
       key: "",
+      emailWarn: false,
+      passwordWarn: false,
+      keyWarn: false,
     };
-    this._onClickCreateAccount = this._onClickCreateAccount.bind(this);
-    this._onClickBack = this._onClickBack.bind(this);
     this._onClickFinish = this._onClickFinish.bind(this);
   }
 
-  _onClickCreateAccount() {
-    if (this.props.onClickCreateAccount) {
-      this.props.onClickCreateAccount();
-    }
-  }
-
-  _onClickBack() {
-    if (this.props.onClickBack) {
-      this.props.onClickBack();
-    }
-  }
-
   _onClickFinish() {
-    if (this.props.onClickFinish) {
+    let warn = false;
+    if (!this.state.email) {
+      warn = true;
+      this.setState({emailWarn: true});
+    }
+    if (!this.state.password) {
+      warn = true;
+      this.setState({passwordWarn: true});
+    }
+    if (!this.state.key) {
+      warn = true;
+      this.setState({keyWarn: true});
+    }
+    if (!warn) {
       this.props.onClickFinish({
         email: this.state.email,
         password: this.state.password,
@@ -120,15 +122,18 @@ export default class StorjLogin extends React.Component {
         </main>
         <main className="account-info" style={style.accountInfo}>
           <div>
-            <input id="email" placeholder="e-mail" value={this.state.email} style={style.input}
+            <input className={this.state.emailWarn ? "warn" : ""} id="email"
+                   placeholder="e-mail" value={this.state.email} style={style.input}
                    onChange={e => this.setState({email: e.target.value})}/>
           </div>
           <div>
-            <input id="password" type="password" placeholder="password" style={style.input}
+            <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
+                   placeholder="password" value={this.state.password} style={style.input}
                    onChange={e => this.setState({password: e.target.value})}/>
           </div>
           <div>
-            <input id="key" type="password" placeholder="encryption key" style={style.input}
+            <input className={this.state.keyWarn ? "warn" : ""} id="key" type="password"
+                   placeholder="encryption key" value={this.state.key} style={style.input}
                    onChange={e => this.setState({key: e.target.value})}/>
           </div>
         </main>
@@ -136,12 +141,12 @@ export default class StorjLogin extends React.Component {
           <div style={style.createAccountText}>
             Don't have an account?
           </div>
-          <button id="create-account-btn" style={style.createAccountButton} onClick={this._onClickCreateAccount}>
+          <button id="create-account-btn" style={style.createAccountButton} onClick={this.props.onClickCreateAccount}>
             click here to create
           </button>
         </main>
         <footer>
-          <a className="back-btn" onClick={this._onClickBack}>
+          <a className="back-btn" onClick={this.props.onClickBack}>
             <img className="arrow" src="../resources/left_arrow.svg"/> Back
           </a>
           <a className="next-btn" onClick={this._onClickFinish}>
@@ -155,7 +160,7 @@ export default class StorjLogin extends React.Component {
 }
 
 StorjLogin.propTypes = {
-  onClickCreateAccount: PropTypes.func,
-  onClickBack: PropTypes.func,
-  onClickFinish: PropTypes.func
+  onClickCreateAccount: PropTypes.func.isRequired,
+  onClickBack: PropTypes.func.isRequired,
+  onClickFinish: PropTypes.func.isRequired
 };
