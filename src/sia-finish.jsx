@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const style = {
   main: {
@@ -50,7 +50,7 @@ export default function SiaFinish(props) {
         <div className="f141">SIA installation.</div>
         <div className="f211">
           We're preparing your account...<br/>
-          It can take up to <span className="underlined bold">2 hours</span>.
+          We will notify you when we are done.
         </div>
       </main>
       <main style={style.additionalInfo}>
