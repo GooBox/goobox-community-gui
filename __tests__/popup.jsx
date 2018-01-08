@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,39 +28,38 @@ import Popup from "../src/popup.jsx";
 
 describe("Popup component", () => {
 
+  const timerID = 9999;
+  let wrapper;
   beforeEach(() => {
-    jest.clearAllTimers();
     setTimeout.mockReset();
+    setTimeout.mockReturnValue(timerID);
+    jest.clearAllTimers();
+    wrapper = shallow(<Popup/>);
   });
 
   it("has a Status component", () => {
-    const wrapper = shallow(<Popup/>);
     expect(wrapper.find("Status").exists()).toBeTruthy();
   });
 
   it("has a state state to remember the app is synchronizing or paused", () => {
     const state = "paused";
-    const wrapper = shallow(<Popup/>);
     wrapper.setState({state: state});
     expect(wrapper.find("Status").prop("state")).toEqual(state);
   });
 
   it("has state usedVolume and shows this value in Status component", () => {
     const usedVolume = 12345;
-    const wrapper = shallow(<Popup/>);
     wrapper.setState({usedVolume: usedVolume});
     expect(wrapper.find("Status").prop("usedVolume")).toEqual(usedVolume);
   });
 
   it("has state totalVolume and shows this value in Status component", () => {
     const totalVolume = 12345;
-    const wrapper = shallow(<Popup/>);
     wrapper.setState({totalVolume: totalVolume});
     expect(wrapper.find("Status").prop("totalVolume")).toEqual(totalVolume);
   });
 
   it("shows information window if onClickInfo is called", () => {
-    const wrapper = shallow(<Popup/>);
     wrapper.find("Status").prop("onClickInfo")();
 
     expect(openAboutWindow).toHaveBeenCalledWith({
@@ -80,7 +79,6 @@ describe("Popup component", () => {
     const onChangeState = jest.spyOn(Popup.prototype, "_onChangeState");
     const onClickSyncFolder = jest.spyOn(Popup.prototype, "_onClickSyncFolder");
     try {
-      const wrapper = shallow(<Popup/>);
       wrapper.setState({disabled: true});
       wrapper.find("Status").prop("onChangeState")();
       expect(onChangeState).not.toHaveBeenCalled();
@@ -90,6 +88,49 @@ describe("Popup component", () => {
       onChangeState.mockRestore();
       onClickSyncFolder.mockRestore();
     }
+  });
+
+  describe("componentDidMount", () => {
+
+    beforeEach(() => {
+      setTimeout.mockClear();
+    });
+
+    it("starts new timer when timeID is not set", () => {
+      wrapper.instance().timerID = null;
+      wrapper.instance().componentDidMount();
+      expect(wrapper.instance().timerID).toEqual(timerID);
+      expect(setTimeout).toHaveBeenCalled();
+    });
+
+    it("does nothing when timeID is already set", () => {
+      wrapper.instance().timerID = timerID;
+      wrapper.instance().componentDidMount();
+      expect(wrapper.instance().timerID).toEqual(timerID);
+      expect(setTimeout).not.toHaveBeenCalled();
+    });
+
+  });
+
+  describe("componentWillUnmount", () => {
+
+    beforeEach(() => {
+      clearTimeout.mockReset();
+    });
+
+    it("clears registered timeout events when timeID is set", () => {
+      wrapper.instance().timerID = timerID;
+      wrapper.instance().componentWillUnmount();
+      expect(wrapper.instance().timerID).toBeNull();
+      expect(clearTimeout).toHaveBeenCalledWith(timerID);
+    });
+
+    it("does nothing when timeID is not set", () => {
+      wrapper.instance().timerID = null;
+      wrapper.instance().componentWillUnmount();
+      expect(clearTimeout).not.toHaveBeenCalled();
+    });
+
   });
 
   describe("with IPC", () => {
@@ -107,7 +148,6 @@ describe("Popup component", () => {
     });
 
     it("requests pausing the app via ipc when the state is changed to paused", () => {
-      const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Paused);
 
       expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.any(Function));
@@ -115,7 +155,6 @@ describe("Popup component", () => {
     });
 
     it("requests restarting the app via ipc when the state is changed to synchronizing", () => {
-      const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onChangeState")(Synchronizing);
 
       expect(ipcRenderer.once).toHaveBeenCalledWith(ChangeStateEvent, expect.any(Function));
@@ -123,7 +162,6 @@ describe("Popup component", () => {
     });
 
     it("disables any buttons during processing ChangeStateEvent", () => {
-      const wrapper = shallow(<Popup/>);
       ipcRenderer.once.mockImplementation((listen, cb) => {
         expect(wrapper.state("disabled")).toBeTruthy();
         ipcRenderer.send.mockImplementation((method, arg) => {
@@ -136,8 +174,20 @@ describe("Popup component", () => {
       expect(wrapper.prop("disabled")).toBeFalsy();
     });
 
+    it("released disabled state even if ChangeStateEvent is declined", () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        expect(wrapper.state("disabled")).toBeTruthy();
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            cb(null, "not acceptable state");
+          }
+        });
+      });
+      wrapper.find("Status").prop("onChangeState")(Synchronizing);
+      expect(wrapper.prop("disabled")).toBeFalsy();
+    });
+
     it("requests opening sync folder via ipc when onClickSyncFolder is called", () => {
-      const wrapper = shallow(<Popup/>);
       wrapper.find("Status").prop("onClickSyncFolder")();
 
       expect(ipcRenderer.once).toHaveBeenCalledWith(OpenSyncFolderEvent, expect.anything());
@@ -145,9 +195,6 @@ describe("Popup component", () => {
     });
 
     it("requests total volume ", () => {
-      const timerID = 9999;
-      setTimeout.mockReturnValue(timerID);
-
       const volume = 334;
       ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method, arg) => {
@@ -157,7 +204,6 @@ describe("Popup component", () => {
         });
       });
 
-      const wrapper = shallow(<Popup/>);
       expect(setTimeout).toHaveBeenCalledTimes(1);
       expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 30000);
 
