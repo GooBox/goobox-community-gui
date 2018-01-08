@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ async function main() {
         global.sia.stdout.on("line", SiaEventHandler);
       }
       log.debug("Update the tray icon to the idle icon");
-      mb.tray.setImage(icons.getIdleIcon());
+      mb.tray.setImage(icons.getSyncIcon());
     } else {
       if (global.sia) {
         global.sia.stdout.removeListener("line", SiaEventHandler);

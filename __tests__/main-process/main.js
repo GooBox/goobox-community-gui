@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ describe("main process of the core app", () => {
 
     it("sets the idle icon when the state is Synchronizing", async () => {
       await handler(event, Synchronizing);
-      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
       expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
     });
 
