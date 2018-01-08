@@ -21,13 +21,20 @@ jest.mock("../../src/main-process/utils");
 import {app, dialog, ipcMain} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
-import {ChangeStateEvent, OpenSyncFolderEvent, Paused, Synchronizing, UsedVolumeEvent} from "../../src/constants";
+import {
+  ChangeStateEvent, OpenSyncFolderEvent, Paused, SynchronizedEvent, Synchronizing, SynchronizingEvent,
+  UsedVolumeEvent
+} from "../../src/constants";
 import {getConfig} from "../../src/main-process/config";
 import icons from "../../src/main-process/icons";
 import {installJRE} from "../../src/main-process/jre";
 import Sia from "../../src/main-process/sia";
 import Storj from "../../src/main-process/storj";
 import utils from "../../src/main-process/utils";
+
+function getEventHandler(event) {
+  return ipcMain.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];
+}
 
 describe("main process of the core app", () => {
 
@@ -168,7 +175,7 @@ describe("main process of the core app", () => {
     let event;
     beforeEach(async () => {
       await onReady();
-      handler = ipcMain.on.mock.calls.filter(args => args[0] === ChangeStateEvent).map(args => args[1])[0];
+      handler = getEventHandler(ChangeStateEvent);
       menuberMock.tray.setImage.mockClear();
       event = {
         sender: {
@@ -222,7 +229,7 @@ describe("main process of the core app", () => {
     let event;
     beforeEach(async () => {
       await onReady();
-      handler = ipcMain.on.mock.calls.filter(args => args[0] === OpenSyncFolderEvent).map(args => args[1])[0];
+      handler = getEventHandler(OpenSyncFolderEvent);
       menuberMock.tray.setImage.mockClear();
       event = {
         sender: {
@@ -252,7 +259,7 @@ describe("main process of the core app", () => {
     let event;
     beforeEach(async () => {
       await onReady();
-      handler = ipcMain.on.mock.calls.filter(args => args[0] === UsedVolumeEvent).map(args => args[1])[0];
+      handler = getEventHandler(UsedVolumeEvent);
       menuberMock.tray.setImage.mockClear();
       event = {
         sender: {
@@ -305,6 +312,52 @@ describe("main process of the core app", () => {
 
       await handler();
       expect(global.sia.close).toHaveBeenCalled();
+    });
+
+  });
+
+  describe("SiaEventHandler", () => {
+
+    let handler;
+    beforeEach(async () => {
+      getConfig.mockReturnValue(Promise.resolve({sia: true}));
+      global.sia = {
+        start: () => {
+        },
+        stdout: {
+          on: jest.fn()
+        }
+      };
+      await onReady();
+      handler = global.sia.stdout.on.mock.calls.filter(args => args[0] === "line").map(args => args[1])[0];
+      menuberMock.tray.setImage.mockReset();
+    });
+
+    afterEach(() => {
+      delete global.sia;
+    });
+
+    it("sets the synchronizing icon when receiving a Synchronizing event", () => {
+      handler(JSON.stringify({eventType: SynchronizingEvent}));
+      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+    });
+
+    it("sets the idle icon when receiving a Synchronized event", () => {
+      handler(JSON.stringify({eventType: SynchronizedEvent}));
+      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+    });
+
+    // TODO: It handles StartSynchronizationEvent and notifies sync sia app starts synchronizing.
+
+    it("should be equal to the handler registered to the initial Sia instance", async () => {
+      const changeStateEventHandler = getEventHandler(ChangeStateEvent);
+      await changeStateEventHandler({
+        sender: {
+          send: () => {
+          }
+        }
+      }, Synchronizing);
+      expect(global.sia.stdout.on).toHaveBeenLastCalledWith("line", handler);
     });
 
   });
