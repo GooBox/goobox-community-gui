@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +107,23 @@ describe("StorjRegistration component", () => {
   it("sets warn class if passwordWarn is true", () => {
     wrapper.setState({passwordWarn: true});
     expect(wrapper.find("#password").hasClass("warn")).toBeTruthy();
+  });
+
+  it("shows an info message when any warnings are not set", () => {
+    expect(wrapper.find(".info").exists()).toBeTruthy();
+    expect(wrapper.find(".warn").exists()).toBeFalsy();
+  });
+
+  it("shows a warn message when emailWarn is true", () => {
+    wrapper.setState({emailWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
+  });
+
+  it("shows a warn message when passwordWarn is true", () => {
+    wrapper.setState({passwordWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
   });
 
   it("sets emailWarn true if the next link is clicked but email is empty", () => {

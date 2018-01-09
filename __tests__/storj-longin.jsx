@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +136,29 @@ describe("StorjLogin component", () => {
   it("sets warn class if keyWarn state is true", () => {
     wrapper.setState({keyWarn: true});
     expect(wrapper.find("#key").hasClass("warn")).toBeTruthy();
+  });
+
+  it("shows am info message when any warning isn't set", () => {
+    expect(wrapper.find(".info").exists()).toBeTruthy();
+    expect(wrapper.find(".warn").exists()).toBeFalsy();
+  });
+
+  it("shows a warn message when emailWarn is true", () => {
+    wrapper.setState({emailWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
+  });
+
+  it("shows a warn message when passwordWarn is true", () => {
+    wrapper.setState({passwordWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
+  });
+
+  it("shows a warn message when keyWarn is true", () => {
+    wrapper.setState({keyWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
   });
 
   it("warns when the next button is clicked but email address is empty", () => {

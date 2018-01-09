@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,13 +97,27 @@ export default class StorjRegistration extends React.Component {
   }
 
   render() {
-    return (
-      <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
-        <main style={style.main}>
+    let msg;
+    if (this.state.emailWarn || this.state.passwordWarn) {
+      msg = (
+        <main className="warn" style={style.main}>
+          <div className="f141">Ooops.</div>
+          <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...</div>
+        </main>
+      );
+    } else {
+      msg = (
+        <main className="info" style={style.main}>
           <div className="f141">Storj new account.</div>
           <div className="f211">Please create your <span className="underlined bold">Storj account</span></div>
         </main>
+      );
+    }
+
+    return (
+      <div className="background-gradation">
+        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+        {msg}
         <main style={style.accountInfo}>
           <div>
             <input className={this.state.emailWarn ? "warn" : ""} id="email"
