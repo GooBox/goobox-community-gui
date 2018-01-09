@@ -50,7 +50,7 @@ export default function SiaFinish(props) {
         <div className="f141">SIA installation.</div>
         <div className="f211">
           We're preparing your account...<br/>
-          We will notify you when we are done.
+          We will notify you when <span className="underlined bold">we are done</span>.
         </div>
       </main>
       <main style={style.additionalInfo}>
