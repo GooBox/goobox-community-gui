@@ -75,19 +75,29 @@ export default class Storj {
 
     return Promise.race([
       new Promise(resolve => {
-        this.stdout.once("line", line => resolve(JSON.parse(line)));
-        this.stdin.write(JSON.stringify({
+
+        this.stdout.once("line", resolve);
+
+        const req = JSON.stringify({
           method: "login",
           args: {
             email: email,
             password: password,
             encryptionKey: encryptionKey,
           }
-        }));
-        this.stdin.write("\n");
+        }) + "\n";
+        log.debug(`sending a request to sync storj: ${req}`);
+        this.stdin.write(req);
+
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
-    ]).then(res => {
+    ]).then(line => {
+      try {
+        return JSON.parse(line);
+      } catch (err) {
+        return Promise.reject(`Cannot parse ${line}: ${err}`);
+      }
+    }).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
       }
@@ -103,18 +113,26 @@ export default class Storj {
 
     return Promise.race([
       new Promise(resolve => {
-        this.stdout.once("line", line => resolve(JSON.parse(line)));
-        this.stdin.write(JSON.stringify({
+        this.stdout.once("line", resolve);
+
+        const req = JSON.stringify({
           method: "createAccount",
           args: {
             email: email,
             password: password,
           }
-        }));
-        this.stdin.write("\n");
+        }) + "\n";
+        log.debug(`sending a request to sync storj: ${req}`);
+        this.stdin.write(req);
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
-    ]).then(res => {
+    ]).then(line => {
+      try {
+        return JSON.parse(line);
+      } catch (err) {
+        return Promise.reject(`Cannot parse ${line}: ${err}`);
+      }
+    }).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
       }
