@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
 import StorjRegistration from "../src/storj-registration.jsx";
 
 describe("StorjRegistration component", () => {
 
+  const sampleEmail = "test@example.com";
+  const samplePassword = "1234567";
+
+  let wrapper, login, back, next;
+  beforeEach(() => {
+    login = jest.fn();
+    back = jest.fn();
+    next = jest.fn();
+    wrapper = shallow(
+      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next}/>
+    );
+  });
+
   it("has background-gradation class", () => {
-    const wrapper = shallow(<StorjRegistration/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("has an input box for an email address and email state", () => {
-    const wrapper = shallow(<StorjRegistration/>);
     const email = wrapper.find("#email");
     expect(email.exists()).toBeTruthy();
+    expect(email.hasClass("warn")).toBeFalsy();
 
     const sampleEmail = "test@example.com";
     email.simulate("change", {
@@ -41,9 +53,9 @@ describe("StorjRegistration component", () => {
   });
 
   it("has an input box for a password", () => {
-    const wrapper = shallow(<StorjRegistration/>);
     const password = wrapper.find("#password");
     expect(password.exists()).toBeTruthy();
+    expect(password.hasClass("warn")).toBeFalsy();
 
     const samplePassword = "1234567";
     password.simulate("change", {
@@ -55,31 +67,22 @@ describe("StorjRegistration component", () => {
   });
 
   it("has a button to login", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<StorjRegistration onClickLogin={fn}/>);
     const btn = wrapper.find("#login-btn");
     expect(btn.exists()).toBeTruthy();
 
     btn.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(login).toHaveBeenCalledTimes(1);
   });
 
   it("has a back link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<StorjRegistration onClickBack={fn}/>);
-
     const link = wrapper.find(".back-btn");
     expect(link.exists()).toBeTruthy();
 
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("has a next link", () => {
-    const fn = jest.fn();
-    const sampleEmail = "test@example.com";
-    const samplePassword = "1234567";
-    const wrapper = shallow(<StorjRegistration onClickNext={fn}/>);
     wrapper.setState({
       email: sampleEmail,
       password: samplePassword,
@@ -89,11 +92,64 @@ describe("StorjRegistration component", () => {
     expect(link.exists()).toBeTruthy();
 
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
-    expect(fn).toHaveBeenCalledWith({
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith({
       email: sampleEmail,
       password: samplePassword,
     });
+  });
+
+  it("sets warn class if emailWarn is true", () => {
+    wrapper.setState({emailWarn: true});
+    expect(wrapper.find("#email").hasClass("warn")).toBeTruthy();
+  });
+
+  it("sets warn class if passwordWarn is true", () => {
+    wrapper.setState({passwordWarn: true});
+    expect(wrapper.find("#password").hasClass("warn")).toBeTruthy();
+  });
+
+  it("shows an info message when any warnings are not set", () => {
+    expect(wrapper.find(".info").exists()).toBeTruthy();
+    expect(wrapper.find(".warn").exists()).toBeFalsy();
+  });
+
+  it("shows a warn message when emailWarn is true", () => {
+    wrapper.setState({emailWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
+  });
+
+  it("shows a warn message when passwordWarn is true", () => {
+    wrapper.setState({passwordWarn: true});
+    expect(wrapper.find(".info").exists()).toBeFalsy();
+    expect(wrapper.find(".warn").exists()).toBeTruthy();
+  });
+
+  it("sets emailWarn true if the next link is clicked but email is empty", () => {
+    wrapper.setState({
+      password: samplePassword,
+    });
+
+    const link = wrapper.find(".next-btn");
+    expect(link.exists()).toBeTruthy();
+
+    link.simulate("click");
+    expect(next).not.toHaveBeenCalled();
+    expect(wrapper.state("emailWarn")).toBeTruthy();
+  });
+
+  it("sets passwordWarn true if the next link is clicked but password is empty", () => {
+    wrapper.setState({
+      email: sampleEmail,
+    });
+
+    const link = wrapper.find(".next-btn");
+    expect(link.exists()).toBeTruthy();
+
+    link.simulate("click");
+    expect(next).not.toHaveBeenCalled();
+    expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 
 });

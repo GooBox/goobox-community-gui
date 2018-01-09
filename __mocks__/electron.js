@@ -79,3 +79,6 @@ export const Menu = {
   buildFromTemplate: jest.fn()
 };
 
+export const dialog = {
+  showErrorBox: jest.fn()
+};

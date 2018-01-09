@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,27 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {shallow} from "enzyme";
-import React from "react";
-import Welcome from "../src/welcome.jsx";
+import storage from "electron-json-storage";
+import {ConfigFile} from "../constants";
 
-describe("Welcome component", () => {
-
-  let wrapper, next;
-  beforeEach(() => {
-    next = jest.fn();
-    wrapper = shallow(<Welcome onClickNext={next}/>);
+export async function getConfig() {
+  return new Promise((resolve, reject) => {
+    storage.get(ConfigFile, (err, cfg) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(cfg);
+      }
+    });
   });
+}
 
-  it("has background-gradation class", () => {
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
+export async function saveConfig(cfg) {
+  return new Promise((resolve, reject) => {
+    storage.set(ConfigFile, cfg, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
   });
-
-  it("has a link to move next screen", () => {
-    const link = wrapper.find("a");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(next).toHaveBeenCalledTimes(1);
-  });
-
-});
+}

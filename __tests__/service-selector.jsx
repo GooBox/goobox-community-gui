@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,48 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
 import ServiceSelector from "../src/service-selector.jsx";
 
-describe("ServiceSelector component", ()=>{
+describe("ServiceSelector component", () => {
 
-    it("doesn't have background-gradation class", () => {
-        const wrapper = shallow(<ServiceSelector/>);
-        expect(wrapper.hasClass("background-gradation")).toBeFalsy();
-    });
+  let wrapper, storj, sia, both;
+  beforeEach(() => {
+    storj = jest.fn();
+    sia = jest.fn();
+    both = jest.fn();
+    wrapper = shallow(<ServiceSelector onSelectStorj={storj} onSelectSia={sia} onSelectBoth={both}/>);
+  });
 
-    it("has a link to choose Storj", () => {
-        const fn = jest.fn();
-        const wrapper = shallow(<ServiceSelector onSelectStorj={fn}/>);
+  it("doesn't have background-gradation class", () => {
+    expect(wrapper.hasClass("background-gradation")).toBeFalsy();
+  });
 
-        const link = wrapper.find(".option-storj");
-        expect(link.exists()).toBeTruthy();
+  it("has a link to choose Storj", () => {
+    const link = wrapper.find(".option-storj");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(storj).toHaveBeenCalledTimes(1);
+  });
 
-        link.simulate("click");
-        expect(fn).toHaveBeenCalledTimes(1);
-    });
+  it("has a link to choose Sia", () => {
+    const link = wrapper.find(".option-sia");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(sia).toHaveBeenCalledTimes(1);
+  });
 
-    it("has a link to choose Sia", () => {
-        const fn = jest.fn();
-        const wrapper = shallow(<ServiceSelector onSelectSia={fn}/>);
-
-        const link = wrapper.find(".option-sia");
-        expect(link.exists()).toBeTruthy();
-
-        link.simulate("click");
-        expect(fn).toHaveBeenCalledTimes(1);
-    });
-
-    it("has a link to choose Storj", () => {
-        const fn = jest.fn();
-        const wrapper = shallow(<ServiceSelector onSelectBoth={fn}/>);
-
-        const link = wrapper.find(".option-both");
-        expect(link.exists()).toBeTruthy();
-
-        link.simulate("click");
-        expect(fn).toHaveBeenCalledTimes(1);
-    });
+  it("has a link to choose Storj", () => {
+    const link = wrapper.find(".option-both");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(both).toHaveBeenCalledTimes(1);
+  });
 
 });

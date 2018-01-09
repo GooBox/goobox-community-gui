@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,37 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
 import StorjEmailConfirmation from "../src/storj-email-confirmation.jsx";
 
 describe("StorjEmailConfirmation", () => {
 
+  let wrapper, back, next;
+  beforeEach(() => {
+    back = jest.fn();
+    next = jest.fn();
+    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickLogin={next}/>);
+  });
+
   it("has background-gradation class", () => {
-    const wrapper = shallow(<StorjEmailConfirmation/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("has a back link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<StorjEmailConfirmation onClickBack={fn}/>);
-
     const link = wrapper.find(".back-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("has a login link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<StorjEmailConfirmation onClickLogin={fn}/>);
-
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledTimes(1);
   });
 
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,15 +77,30 @@ describe("Sia class", () => {
     });
 
     it("spawns sync sia app", () => {
+      const dir = "/tmp";
       const sia = new Sia();
-      sia.start();
-      expect(spawn).toBeCalledWith(sia.cmd, {
+      sia.start(dir);
+      expect(spawn).toBeCalledWith(sia.cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
         cwd: sia.wd,
         env: {
           JAVA_HOME: sia.javaHome,
         },
         windowsHide: true,
       });
+    });
+
+    it("adds --reset-db flag when reset is true", () => {
+      const dir = "/tmp";
+      const sia = new Sia();
+      sia.start(dir, true);
+      expect(spawn).toBeCalledWith(sia.cmd, ["--sync-dir", `"${dir}"`, "--output-events", "--reset-db"], {
+        cwd: sia.wd,
+        env: {
+          JAVA_HOME: sia.javaHome,
+        },
+        windowsHide: true,
+      });
+
     });
 
     it("adds stdin field which is the spawned process's stdin", () => {

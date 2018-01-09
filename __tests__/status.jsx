@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,9 @@ import Status from "../src/status";
 
 
 describe("Status component", () => {
+
+  const used = 12.334;
+  const total = 30;
 
   it("has a synchronized icon and text when the state is synchronizing", () => {
     const wrapper = shallow(<Status state={Synchronizing}/>);
@@ -96,7 +99,6 @@ describe("Status component", () => {
   });
 
   it("has a usage text box", () => {
-    const used = 12.334;
     const wrapper = shallow(<Status usedVolume={used}/>);
     const usage = wrapper.find(".usage");
     expect(usage.exists()).toBeTruthy();
@@ -104,8 +106,6 @@ describe("Status component", () => {
   });
 
   it("has a usage percentage box", () => {
-    const used = 12;
-    const total = 48;
     const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
     const usage = wrapper.find(".usage-rate");
     expect(usage.exists()).toBeTruthy();
@@ -113,8 +113,6 @@ describe("Status component", () => {
   });
 
   it("has a usage bar", () => {
-    const used = 10;
-    const total = 30;
     const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
     const usageBar = wrapper.find(".bar");
     expect(usageBar.exists()).toBeTruthy();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,18 @@
  */
 
 "use strict";
-import {app, BrowserWindow, ipcMain} from "electron";
-import storage from "electron-json-storage";
+import {app, BrowserWindow, dialog, ipcMain} from "electron";
 import log from "electron-log";
 import fs from "fs";
-import jre from "node-jre";
 import path from "path";
-import {ConfigFile, JREInstallEvent, SiaWalletEvent, StorjLoginEvent, StorjRegisterationEvent} from "../constants";
+import {
+  ConfigFile, JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
+  StorjRegisterationEvent
+} from "../constants";
+import {getConfig} from "./config";
+import {installJRE} from "./jre";
 import Sia from "./sia";
+import Storj from "./storj";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -58,88 +62,125 @@ function installer() {
 
   app.on("window-all-closed", async () => {
 
-    return new Promise((resolve, reject) => {
-
-      log.info(`loading the config file ${ConfigFile}`);
-      storage.get(ConfigFile, (err, cfg) => {
-        if (err) {
-          log.error(`failed to read/write the config: ${err}`);
-          app.quit();
-          reject(err);
-        }
-
-        if (cfg && cfg.installed) {
-          // if the installation process is finished.
-          log.info("installation has been finished, now starting Goobox");
-          require("./main");
-          resolve();
-        } else {
-          // otherwise
-          log.info("installation has been canceled");
-          if (global.sia) {
-            global.sia.close().then(() => {
-              global.sia = null;
-              app.quit();
-              resolve();
-            });
-          } else {
-            app.quit();
-            resolve();
-          }
-        }
-
-      });
-
-    });
-
-  });
-
-  ipcMain.on(JREInstallEvent, (event) => {
-    log.verbose(`JRE path: ${jre.jreDir()}`);
-    let shouldInstall = false;
+    log.info(`loading the config file ${ConfigFile}`);
     try {
-      if (!fs.existsSync(jre.driver())) {
-        shouldInstall = true;
+
+      const cfg = await getConfig();
+      if (cfg && cfg.installed) {
+
+        // if the installation process is finished.
+        log.info("installation has been finished, now starting Goobox");
+        require("./main");
+
+      } else {
+
+        // otherwise
+        log.info("installation has been canceled");
+        if (global.storj) {
+          log.info("closing Storj instance");
+          await global.storj.close();
+          delete global.storj;
+        }
+        if (global.sia) {
+          log.info("closing SIA instance");
+          await global.sia.close();
+          delete global.sia;
+        }
+        app.quit();
+
       }
+
     } catch (err) {
-      log.debug(err);
-      shouldInstall = true;
+      log.error(`failed to read/write the config: ${err}`);
+      app.quit();
+      throw err;
     }
 
-    if (shouldInstall) {
-      log.info("JRE is not found and starts installation of a JRE");
-      jre.install((err) => {
-        log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
-        event.sender.send(JREInstallEvent, err);
-      });
-    } else {
-      event.sender.send(JREInstallEvent);
-    }
   });
 
-  ipcMain.on(StorjLoginEvent, (event, arg) => {
-    log.info("logging in to Storj");
-    event.sender.send(StorjLoginEvent, true);
-  });
-
-  ipcMain.on(StorjRegisterationEvent, (event, info) => {
-    log.info("creating a new Storj account");
-    event.sender.send(StorjRegisterationEvent, "xxx xxx xxxxxxx xxxx xxx xxxxx");
-  });
-
-  ipcMain.on(SiaWalletEvent, async (event) => {
-    const sia = new Sia();
+  // JREInstallEvent handler.
+  ipcMain.on(JREInstallEvent, async (event) => {
     try {
-      const res = await sia.wallet();
+      await installJRE();
+      event.sender.send(JREInstallEvent, true);
+    } catch (err) {
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to install JRE: ${err}`);
+      event.sender.send(JREInstallEvent, false, err);
+    }
+  });
+
+  // StorjLoginEvent handler.
+  ipcMain.on(StorjLoginEvent, async (event, args) => {
+    log.info(`logging in to Storj: ${args.email}`);
+    if (!global.storj) {
+      const cfg = await getConfig();
+      global.storj = new Storj();
+      global.storj.start(cfg.syncFolder, true);
+    }
+    try {
+      await global.storj.login(args.email, args.password, args.encryptionKey);
+      event.sender.send(StorjLoginEvent, true);
+    } catch (err) {
+      log.error(err);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to log in to Storj: ${err}`);
+      event.sender.send(StorjLoginEvent, false, err);
+    }
+  });
+
+  // StorjRegisterationEvent handler.
+  ipcMain.on(StorjRegisterationEvent, async (event, args) => {
+    log.info(`creating a new Storj account: ${args.email}`);
+    if (!global.storj) {
+      const cfg = await getConfig();
+      global.storj = new Storj();
+      global.storj.start(cfg.syncFolder, true);
+    }
+    try {
+      const encryptionKey = await global.storj.createAccount(args.email, args.password);
+      event.sender.send(StorjRegisterationEvent, true, encryptionKey);
+    } catch (err) {
+      log.error(err);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to register a Storj account: ${err}`);
+      event.sender.send(StorjRegisterationEvent, false, err);
+    }
+  });
+
+  // SiaWalletEvent handler.
+  ipcMain.on(SiaWalletEvent, async (event) => {
+    global.sia = new Sia();
+    try {
+      const res = await global.sia.wallet();
       event.sender.send(SiaWalletEvent, {
         address: res["wallet address"],
         seed: res["primary seed"],
       });
-      sia.start();
-      global.sia = sia;
+
+      const cfg = await getConfig();
+      global.sia.start(cfg.syncFolder, true);
+
     } catch (error) {
+      log.error(error);
+      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+      dialog.showErrorBox("Goobox", `Failed to obtain SIA wallet information: ${error}`);
       event.sender.send(SiaWalletEvent, null, error);
+      delete global.sia;
     }
+  });
+
+  // StopSyncAppsEvent handler.
+  ipcMain.on(StopSyncAppsEvent, async (event) => {
+    if (global.storj) {
+      await global.storj.close();
+      delete global.storj;
+    }
+    if (global.sia) {
+      await global.sia.close();
+      delete global.sia;
+    }
+    event.sender.send(StopSyncAppsEvent);
   });
 
 }

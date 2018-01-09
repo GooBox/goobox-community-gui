@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,21 @@ import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
-import {Readable} from "stream";
-import Sia from "../../src/main-process/sia";
+import {PassThrough, Readable} from "stream";
 import Storj from "../../src/main-process/storj";
 
 
 describe("Storj class", () => {
 
+  let storj;
+  beforeEach(() => {
+    storj = new Storj();
+  });
+
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
-      const storj = new Storj();
-      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin/goobox-sync-storj"));
+      let cmd = "goobox-sync-storj";
       if (process.platform === "win32") {
         cmd += ".bat";
       }
@@ -42,12 +45,10 @@ describe("Storj class", () => {
     });
 
     it("has wd which describes the directory containing the sync storj app", () => {
-      const storj = new Storj();
-      expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/bin")));
+      expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/")));
     });
 
     it("has javaHome where the home directory of a JRE", () => {
-      const storj = new Storj();
       expect(storj.javaHome).toEqual(path.join(jre.driver(), "../../"));
     });
 
@@ -55,6 +56,7 @@ describe("Storj class", () => {
 
   describe("start method", () => {
 
+    const dir = "/tmp";
     let stdin, stdout, stderr;
     beforeEach(() => {
       stdin = "standard input";
@@ -74,40 +76,48 @@ describe("Storj class", () => {
       });
     });
 
-    it("spawns sync sia app", () => {
-      const storj = new Storj();
-      storj.start();
-      expect(spawn).toBeCalledWith(storj.cmd, {
+    it("spawns sync storj app", () => {
+      storj.start(dir);
+      expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj.wd,
         env: {
           JAVA_HOME: storj.javaHome,
         },
+        shell: true,
+        windowsHide: true,
+      });
+    });
+
+    it("adds --reset-db flag when reset is true", () => {
+      storj.start(dir, true);
+      expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`, "--reset-db"], {
+        cwd: storj.wd,
+        env: {
+          JAVA_HOME: storj.javaHome,
+        },
+        shell: true,
         windowsHide: true,
       });
     });
 
     it("adds stdin field which is the spawned process's stdin", () => {
-      const storj = new Storj();
       storj.start();
       expect(storj.stdin).toEqual(stdin);
     });
 
     it("adds stdout field which is a readline interface of spawned process's stdout", () => {
-      const storj = new Storj();
       storj.start();
       expect(storj.stdout instanceof readline.Interface).toBeTruthy();
       expect(storj.stdout.input).toEqual(stdout);
     });
 
     it("adds stderr field which is a realine interface of spawned process's stderr", () => {
-      const storj = new Storj();
       storj.start();
       expect(storj.stderr instanceof readline.Interface).toBeTruthy();
       expect(storj.stderr.input).toEqual(stderr);
     });
 
     it("adds proc field which is the returned value of spawn", () => {
-      const storj = new Storj();
       storj.start();
       expect(storj.proc).toEqual({
         stdin: stdin,
@@ -117,7 +127,6 @@ describe("Storj class", () => {
     });
 
     it("doesn't start a new process if this.proc is not null", () => {
-      const storj = new Sia();
       storj.proc = "some-object";
       storj.start();
       expect(spawn).not.toHaveBeenCalled();
@@ -166,24 +175,26 @@ describe("Storj class", () => {
       stdout.push("\n");
       stdout.push(null);
 
-      storj.stdin = {
-        write: jest.fn()
-      };
+      storj.stdin = new PassThrough();
       storj.stdout = readline.createInterface({input: stdout});
       storj.proc = {
         stdin: storj.stdin,
         stdout: storj.stdout
       };
 
+      let res = null;
+      const reader = readline.createInterface({input: storj.stdin});
+      reader.on("line", line => res = JSON.parse(line));
+
       await expect(storj.login(email, password, key)).resolves.not.toBeDefined();
-      expect(storj.stdin.write).toHaveBeenCalledWith(JSON.stringify({
+      expect(res).toEqual({
         method: "login",
         args: {
           email: email,
           password: password,
           encryptionKey: key,
         }
-      }));
+      });
     });
 
     it("returns an error when no process is running", async () => {
@@ -240,7 +251,6 @@ describe("Storj class", () => {
     const key = "xxx xxx xxx";
 
     it("sends a create account request and receives an encryption key", async () => {
-      const storj = new Storj();
       const stdout = new Readable();
       stdout.push(JSON.stringify({
         status: "ok",
@@ -250,33 +260,33 @@ describe("Storj class", () => {
       stdout.push("\n");
       stdout.push(null);
 
-      storj.stdin = {
-        write: jest.fn()
-      };
+      storj.stdin = new PassThrough();
       storj.stdout = readline.createInterface({input: stdout});
       storj.proc = {
         stdin: storj.stdin,
         stdout: storj.stdout
       };
 
+      let res = null;
+      const reader = readline.createInterface({input: storj.stdin});
+      reader.on("line", line => res = JSON.parse(line));
+
       await expect(storj.createAccount(email, password)).resolves.toEqual(key);
-      expect(storj.stdin.write).toHaveBeenCalledWith(JSON.stringify({
+      expect(res).toEqual({
         method: "createAccount",
         args: {
           email: email,
           password: password,
         }
-      }));
+      });
     });
 
     it("returns a rejected promise when no storj process is running", async () => {
-      const storj = new Storj();
       await expect(storj.createAccount(email, password)).rejects.toEqual("sync storj app is not running");
     });
 
     it("returns a rejected promise when fails to create an account", async () => {
       const error = "failed to log in";
-      const storj = new Storj();
       const stdout = new Readable();
       stdout.push(JSON.stringify({
         status: "error",
@@ -297,7 +307,6 @@ describe("Storj class", () => {
     });
 
     it("returns a rejected promise when the request is time out", async () => {
-      const storj = new Storj();
       storj.stdin = {
         write: jest.fn()
       };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ let openDirectory, totalVolume;
 if (process.platform === "win32") {
 
   openDirectory = (dir) => {
-    spawnSync("cmd.exe", ["/c", `start "${dir}"`]);
+    spawnSync("explorer.exe", [dir]);
   };
 
   totalVolume = async (dir) => {

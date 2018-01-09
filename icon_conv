@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Convert an icon file in SVG to 3 sizes of PNG icon files.
+#
+# Usage:
+#   icon_conv [win|mac] <svg file path> <base name of outputted files>
+#
+# Example:
+#   The following command converts sync.svg and creates sync.png, sync@2x.png, and sync@3x.png for Windows:
+#     $ icon_conv win sync.svg sync
+#
+set -x
+MAC_BASE_SIZE=18
+WIN_BASE_SIZE=32
+BASE_SIZE=$MAC_BASE_SIZE
+
+if [[ $1 == "win" ]]; then
+    BASE_SIZE=$WIN_BASE_SIZE
+fi
+
+for size in 1 2 3; do
+    SUFFIX=""
+    if [[ $size -ne 1 ]]; then
+        SUFFIX=@${size}x
+    fi
+
+    rsvg-convert -h $((size * BASE_SIZE)) "$2" > $3${SUFFIX}.png
+done

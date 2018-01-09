@@ -35,6 +35,10 @@ button:hover {
   cursor: pointer;
 }
 
+button *:hover {
+  cursor: pointer;
+}
+
 input:hover {
   cursor: text;
 }
@@ -171,6 +175,14 @@ input {
   padding-right: 5px;
   margin-bottom: 9px;
   text-align: center;
+}
+
+/*input.warn {*/
+/*border: 1px solid red;*/
+/*}*/
+
+input.warn::-webkit-input-placeholder {
+  color: red;
 }
 
 .up-and-down {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,5 +29,10 @@ export const JREInstallEvent = "jre-install";
 export const StorjLoginEvent = "storj-login";
 export const StorjRegisterationEvent = "storj-registration";
 export const SiaWalletEvent = "sia-wallet";
+export const StopSyncAppsEvent = "stop-sync-apps";
 
 export const ConfigFile = "config";
+
+export const StartSynchronizationEvent = "StartSynchronization";
+export const SynchronizingEvent = "Synchronizing";
+export const SynchronizedEvent = "Synchronized";
