@@ -70,6 +70,6 @@ export default function SiaFinish(props) {
 }
 
 SiaFinish.propTypes = {
-  onClickBack: PropTypes.func,
-  onClickClose: PropTypes.func,
+  onClickBack: PropTypes.func.isRequired,
+  onClickClose: PropTypes.func.isRequired,
 };

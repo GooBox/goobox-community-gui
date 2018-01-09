@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,37 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import {shallow} from "enzyme";
+import React from "react";
 import Finish from "../src/finish-all.jsx";
 
 describe("Finish component", () => {
 
+  let wrapper, back, close;
+  beforeEach(() => {
+    back = jest.fn();
+    close = jest.fn();
+    wrapper = shallow(<Finish onClickBack={back} onClickClose={close}/>);
+  });
+
   it("has background-gradation class", () => {
-    const wrapper = shallow(<Finish/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("has a back link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<Finish onClickBack={fn}/>);
-
     const link = wrapper.find(".back-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("has a login link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<Finish onClickClose={fn}/>);
-
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledTimes(1);
   });
 
 });

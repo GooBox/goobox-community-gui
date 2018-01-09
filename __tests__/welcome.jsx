@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,27 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from "react";
-import {shallow} from "enzyme";
-import Welcome from "../src/welcome.jsx";
 
+import {shallow} from "enzyme";
+import React from "react";
+import Welcome from "../src/welcome.jsx";
 
 describe("Welcome component", () => {
 
+  let wrapper, next;
+  beforeEach(() => {
+    next = jest.fn();
+    wrapper = shallow(<Welcome onClickNext={next}/>);
+  });
+
   it("has background-gradation class", () => {
-    const wrapper = shallow(<Welcome/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("has a link to move next screen", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<Welcome onClickNext={fn}/>);
-
     const link = wrapper.find("a");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledTimes(1);
   });
 
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 const style = {
   main: {
@@ -56,6 +56,6 @@ export default function StorjEmailConfirmation(props) {
 }
 
 StorjEmailConfirmation.propTypes = {
-  onClickBack: PropTypes.func,
-  onClickLogin: PropTypes.func,
+  onClickBack: PropTypes.func.isRequired,
+  onClickLogin: PropTypes.func.isRequired,
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,130 +24,99 @@ const dialog = remote.dialog;
 
 describe("SelectFolder component", () => {
 
+  const service = "Storj or SIA";
+  const defaultDir = "/home/someone/Goobox";
+  let wrapper, back, next, selectFolder;
+  beforeEach(() => {
+    back = jest.fn();
+    next = jest.fn();
+    selectFolder = jest.fn();
+    wrapper = shallow(
+      <SelectFolder service={service} folder={defaultDir}
+                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+  });
+
   it("has background-gradation class", () => {
-    const wrapper = shallow(<SelectFolder/>);
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("takes a name of service and shows it", () => {
-    const service = "Storj or SIA";
-    const wrapper = shallow(<SelectFolder service={service}/>);
-
     const place = wrapper.find(".service-name");
     expect(place.exists()).toBeTruthy();
     expect(place.text()).toEqual(service);
   });
 
   it("shows current selected folder", () => {
-    const folder = "/tmp";
-    const wrapper = shallow(<SelectFolder folder={folder}/>);
-
     const c = wrapper.find(".folder");
     expect(c.exists()).toBeTruthy();
-    expect(c.text()).toEqual(folder);
-
+    expect(c.text()).toEqual(defaultDir);
   });
 
   it("has a back link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
-
     const link = wrapper.find(".back-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("disables the back link while a dialog is open", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
     wrapper.instance().selecting = true;
-
     const link = wrapper.find(".back-btn");
     link.simulate("click");
-    expect(fn).not.toHaveBeenCalled();
+    expect(back).not.toHaveBeenCalled();
   });
 
   it("disables other actions after the back link is clicked", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
     const link = wrapper.find(".back-btn");
     link.simulate("click");
     expect(wrapper.state("disabled")).toBeTruthy();
-    expect(fn).toHaveBeenCalled();
+    expect(back).toHaveBeenCalled();
   });
 
   it("disables the back link when the disabled state is true", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickBack={fn}/>);
     wrapper.setState({disabled: true});
-
     const link = wrapper.find(".back-btn");
     link.simulate("click");
-    expect(fn).not.toHaveBeenCalled();
+    expect(back).not.toHaveBeenCalled();
   });
 
   it("has a next link", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
-
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
-
     link.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledTimes(1);
   });
 
   it("disables the next link while a dialog is open", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
     wrapper.instance().selecting = true;
-
     const link = wrapper.find(".next-btn");
     link.simulate("click");
-    expect(fn).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("disables other actions after the next link is clicked", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
     const link = wrapper.find(".next-btn");
     link.simulate("click");
     expect(wrapper.state("disabled")).toBeTruthy();
-    expect(fn).toHaveBeenCalled();
+    expect(next).toHaveBeenCalled();
   });
 
   it("disables the nect link when disabled state is true", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<SelectFolder onClickNext={fn}/>);
     wrapper.setState({disabled: true});
     const link = wrapper.find(".next-btn");
     link.simulate("click");
-    expect(fn).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("has a button to open a dialog", () => {
-    const onClickBrowse = jest.spyOn(SelectFolder.prototype, "_onClickBrowse");
-    try {
-      onClickBrowse.mockReturnValue(Promise.resolve());
-      const wrapper = shallow(<SelectFolder/>);
-      wrapper.find("button").prop("onClick")();
-      expect(onClickBrowse).toHaveBeenCalled();
-    } finally {
-      onClickBrowse.mockRestore();
-    }
+    wrapper.instance()._onClickBrowse = jest.fn().mockReturnValue(Promise.resolve());
+    wrapper.find("button").prop("onClick")();
+    expect(wrapper.instance()._onClickBrowse).toHaveBeenCalled();
   });
 
-  it("disabled the open dialog button when disabled state is true", () => {
-    const wrapper = shallow(<SelectFolder/>);
+  it("disabled the open dialog button when disabled state is true", async () => {
     wrapper.setState({disabled: true});
-    let err;
-    return wrapper.instance()._onClickBrowse().catch((reason) => {
-      err = reason;
-    }).then(() => {
-      expect(err).toBeDefined();
-    });
+    await expect(wrapper.instance()._onClickBrowse()).rejects.toBeDefined();
   });
 
   describe("_onClickBrowse", () => {
@@ -156,87 +125,43 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockClear();
     });
 
-    it("shows a dialog with showOpenDialog and notifies chosen folder via onSelectFolder", () => {
-
-      const sampleDir = "/home/someone/Goobox";
-      dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
-        callback([sampleDir]);
-      });
-
-      const fn = jest.fn();
-      const wrapper = shallow(<SelectFolder onSelectFolder={fn}/>);
-
-      return wrapper.instance()._onClickBrowse().then(() => {
-        expect(fn).toHaveBeenCalledWith(sampleDir);
-        expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
-          properties: ["openDirectory", "createDirectory"]
-        }, expect.any(Function));
-      });
-
-    });
-
-    it("shows a dialog with a given default value", () => {
-
-      const defaultDir = "/home/someone/Goobox";
+    it("shows a dialog with showOpenDialog and notifies chosen folder via onSelectFolder", async () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([defaultDir]);
       });
-
-      const fn = jest.fn();
-      const wrapper = shallow(<SelectFolder folder={defaultDir} onSelectFolder={fn}/>);
-
-      return wrapper.instance()._onClickBrowse().then(() => {
-        expect(fn).toHaveBeenCalledWith(defaultDir);
-        expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
-          defaultPath: defaultDir,
-          properties: ["openDirectory", "createDirectory"]
-        }, expect.any(Function));
-      });
-
+      await wrapper.instance()._onClickBrowse();
+      expect(selectFolder).toHaveBeenCalledWith(defaultDir);
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+        defaultPath: defaultDir,
+        properties: ["openDirectory", "createDirectory"]
+      }, expect.any(Function));
     });
 
-    it("shows a dialog and does nothing if the dialog is canceled", () => {
-
+    it("shows a dialog and does nothing if the dialog is canceled", async () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback(undefined);
       });
-
-      const fn = jest.fn();
-      const wrapper = shallow(<SelectFolder onSelectFolder={fn}/>);
-
-      return wrapper.instance()._onClickBrowse().then(() => {
-        expect(fn).not.toHaveBeenCalled();
-        expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
-          properties: ["openDirectory", "createDirectory"]
-        }, expect.any(Function));
-      });
-
+      await wrapper.instance()._onClickBrowse();
+      expect(selectFolder).not.toHaveBeenCalled();
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+        defaultPath: defaultDir,
+        properties: ["openDirectory", "createDirectory"]
+      }, expect.any(Function));
     });
 
-    it("disables all buttons on the screen until the dialog is closed", () => {
-
-      const wrapper = shallow(<SelectFolder/>);
+    it("disables all buttons on the screen until the dialog is closed", async () => {
       dialog.showOpenDialog.mockImplementation((window, opts, cb) => {
         expect(wrapper.instance().selecting).toBeTruthy();
         cb(null);
       });
-
       expect(wrapper.instance().selecting).toBeFalsy();
-      return wrapper.instance()._onClickBrowse().then(() => {
-        expect(wrapper.instance().selecting).toBeFalsy();
-      })
-
+      await wrapper.instance()._onClickBrowse();
+      expect(wrapper.instance().selecting).toBeFalsy();
     });
 
-    it("is disabled if another dialog is already open", () => {
-
-      const wrapper = shallow(<SelectFolder/>);
+    it("is disabled if another dialog is already open", async () => {
       wrapper.instance().selecting = true;
-
-      return wrapper.instance()._onClickBrowse().catch((e) => {
-        expect(e).toBeDefined();
-      });
-
+      await expect(wrapper.instance()._onClickBrowse()).rejects.toBeDefined();
     });
 
   });

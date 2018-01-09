@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,14 +99,14 @@ export default class SelectFolder extends React.Component {
     }
   }
 
-  _onClickBrowse() {
+  async _onClickBrowse() {
 
     if (this.state.disabled) {
-      return Promise.reject("disabled");
+      throw "disabled";
     }
 
     if (this.selecting) {
-      return Promise.reject("already opened");
+      throw "already opened";
     }
 
     let err;
@@ -169,9 +169,9 @@ export default class SelectFolder extends React.Component {
 }
 
 SelectFolder.propsTypes = {
-  service: PropTypes.string,
-  folder: PropTypes.string,
-  onClickBack: PropTypes.func,
-  onClickNext: PropTypes.func,
-  onSelectFolder: PropTypes.func
+  service: PropTypes.string.isRequired,
+  folder: PropTypes.string.isRequired,
+  onClickBack: PropTypes.func.isRequired,
+  onClickNext: PropTypes.func.isRequired,
+  onSelectFolder: PropTypes.func.isRequired
 };
