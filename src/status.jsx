@@ -37,7 +37,7 @@ export default function Status(props) {
     );
     stateInfo = (
       <div>
-        <img className="state-icon" src="../resources/synchronized.svg" width="81px" height="81px"/>,
+        <img className="state-icon" src="../resources/synchronized.svg" width="81px" height="81px"/>
         <p className="state-text bold">Goobox is up to date.</p>
       </div>
     );
@@ -50,7 +50,7 @@ export default function Status(props) {
     );
     stateInfo = (
       <div>
-        <img className="state-icon" src="../resources/paused.svg" width="81px" height="81px"/>,
+        <img className="state-icon" src="../resources/paused.svg" width="81px" height="81px"/>
         <p className="state-text bold">File transfers paused.</p>
       </div>
     );
