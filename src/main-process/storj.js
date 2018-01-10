@@ -147,18 +147,24 @@ export default class Storj {
       return;
     }
 
+    const promise = Promise.all([
+      new Promise(resolve => {
+        this.proc.once("exit", () => {
+          log.info("the sync-storj app is exited");
+          this.proc = null;
+          resolve();
+        });
+      }),
+      new Promise(resolve => {
+        this.proc.once("close", () => {
+          log.info("the streams of sync-storj app is closed");
+          resolve();
+        });
+      })
+    ]);
     log.info("closing the sync-storj app");
-    return new Promise(resolve => {
-
-      this.proc.on("exit", () => {
-        log.info("the sync-storj app is closed");
-        this.proc = null;
-        resolve();
-      });
-
-      this.proc.kill("SIGTERM");
-
-    });
+    this.proc.kill("SIGTERM");
+    return promise;
 
   }
 

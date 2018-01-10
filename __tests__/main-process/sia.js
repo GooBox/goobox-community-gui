@@ -149,11 +149,17 @@ describe("Sia class", () => {
       sia.proc = {
         kill(signal) {
           expect(signal).toEqual("SIGTERM");
-          this.callback();
+          expect(this.onExit).toBeDefined();
+          this.onExit();
+          expect(this.onClose).toBeDefined();
+          this.onClose();
         },
-        on(event, callback) {
-          expect(event).toEqual("exit");
-          this.callback = callback;
+        once(event, callback) {
+          if (event === "exit") {
+            this.onExit = callback;
+          } else if (event === "close") {
+            this.onClose = callback;
+          }
         }
       };
       await sia.close();

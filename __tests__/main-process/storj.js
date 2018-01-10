@@ -141,11 +141,20 @@ describe("Storj class", () => {
       storj.proc = {
         kill(signal) {
           expect(signal).toEqual("SIGTERM");
-          this.callback();
+          expect(this.onExit).toBeDefined();
+          this.onExit();
+          expect(this.onClose).toBeDefined();
+          this.onClose();
         },
-        on(event, callback) {
-          expect(event).toEqual("exit");
-          this.callback = callback;
+        once(event, callback) {
+          switch (event) {
+            case "exit":
+              this.onExit = callback;
+              break;
+            case "close":
+              this.onClose = callback;
+              break;
+          }
         }
       };
       await storj.close();

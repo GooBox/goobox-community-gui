@@ -69,18 +69,25 @@ export default class Sia {
       return;
     }
 
+    const promise = Promise.all([
+      new Promise(resolve => {
+        // TODO: Exit handler takes code and signal argument.
+        this.proc.once("exit", () => {
+          log.info("the sync-sia app is exited");
+          this.proc = null;
+          resolve();
+        });
+      }),
+      new Promise(resolve => {
+        this.proc.once("close", () => {
+          log.info("the streams of sync-sia app is closed");
+          resolve();
+        });
+      }),
+    ]);
     log.info("closing the sync-sia app");
-    return new Promise(resolve => {
-
-      this.proc.on("exit", () => {
-        log.info("the sync-sia app is closed");
-        this.proc = null;
-        resolve();
-      });
-
-      this.proc.kill("SIGTERM");
-
-    });
+    this.proc.kill("SIGTERM");
+    return promise;
 
   }
 
