@@ -51,15 +51,6 @@ async function main() {
     showDockIcon: false,
   });
 
-  mb.app.on("quit", async () => {
-    if (global.storj) {
-      await global.storj.close();
-    }
-    if (global.sia) {
-      await global.sia.close();
-    }
-  });
-
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
     mb.showWindow();
@@ -75,7 +66,15 @@ async function main() {
 
   const ctxMenu = Menu.buildFromTemplate([{
     label: "exit",
-    click: app.quit
+    click: async () => {
+      if (global.storj) {
+        await global.storj.close();
+      }
+      if (global.sia) {
+        await global.sia.close();
+      }
+      app.quit();
+    }
   }]);
 
   const onClick = mb.tray.listeners("click")[0];
@@ -91,9 +90,10 @@ async function main() {
   });
 
   mb.tray.removeAllListeners("double-click");
-  mb.tray.on("double-click", () => {
+  mb.tray.on("double-click", async () => {
     singleClicked = false;
-    utils.openDirectory(DefaultSyncFolder);
+    const cfg = await getConfig();
+    utils.openDirectory(cfg.syncFolder);
   });
 
   mb.tray.on("right-click", () => {
