@@ -18,7 +18,7 @@
 "use strict";
 jest.mock("child_process");
 
-import {execFile, spawn} from "child_process";
+import {execFile, execSync, spawn} from "child_process";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
@@ -36,11 +36,26 @@ describe("Sia class", () => {
 
     it("has cmd which describes the path to the sync sia app", () => {
       const sia = new Sia();
-      let cmd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin/goobox-sync-sia"));
-      if (process.platform === "win32") {
-        cmd += ".bat";
-      }
+      const cmd = "goobox-sync-sia";
       expect(sia.cmd).toEqual(cmd);
+    });
+
+    it("has cmd which describes the path to the bat file of sync sia app in Windows", () => {
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "win32"
+        });
+
+        const sia = new Sia();
+        const cmd = "goobox-sync-sia.bat";
+        expect(sia.cmd).toEqual(cmd);
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("has wd which describes the directory containing the sync sia app", () => {
@@ -85,6 +100,7 @@ describe("Sia class", () => {
         env: {
           JAVA_HOME: sia.javaHome,
         },
+        shell: true,
         windowsHide: true,
       });
     });
@@ -98,6 +114,7 @@ describe("Sia class", () => {
         env: {
           JAVA_HOME: sia.javaHome,
         },
+        shell: true,
         windowsHide: true,
       });
 
@@ -144,6 +161,10 @@ describe("Sia class", () => {
 
   describe("close method", () => {
 
+    beforeEach(() => {
+      execSync.mockReset();
+    });
+
     it("sends SIGTERM and waits exit event is emitted", async () => {
       const sia = new Sia();
       sia.proc = {
@@ -164,6 +185,40 @@ describe("Sia class", () => {
       };
       await sia.close();
       expect(sia.proc).toBeNull();
+    });
+
+    it("executes taskkill and waits exit event is emitted in Windows", async () => {
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "win32"
+        });
+
+        const sia = new Sia();
+        let onExit, onClose;
+        sia.proc = {
+          once(event, callback) {
+            if (event === "exit") {
+              onExit = callback;
+            } else if (event === "close") {
+              onClose = callback;
+            }
+          }
+        };
+        execSync.mockImplementation(() => {
+          onExit();
+          onClose();
+        });
+
+        await sia.close();
+        expect(sia.proc).toBeNull();
+        expect(execSync).toHaveBeenCalled();
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("does nothing if proc is null", async () => {

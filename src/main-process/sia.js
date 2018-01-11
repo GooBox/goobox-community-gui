@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {execFile, spawn} from "child_process";
+import {execFile, execSync, spawn} from "child_process";
 import log from "electron-log";
 import yaml from "js-yaml";
 import jre from "node-jre";
@@ -27,7 +27,7 @@ export default class Sia {
 
   constructor() {
     this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"));
-    this.cmd = path.join(this.wd, "goobox-sync-sia");
+    this.cmd = "goobox-sync-sia";
     if (process.platform === "win32") {
       this.cmd += ".bat";
     }
@@ -54,6 +54,7 @@ export default class Sia {
       env: {
         JAVA_HOME: this.javaHome,
       },
+      shell: true,
       windowsHide: true,
     });
     this.stdin = this.proc.stdin;
@@ -85,8 +86,13 @@ export default class Sia {
         });
       }),
     ]);
+
     log.info("closing the sync-sia app");
-    this.proc.kill("SIGTERM");
+    if (process.platform === "win32") {
+      execSync(`taskkill /pid ${this.proc.pid} /T /F`);
+    } else {
+      this.proc.kill("SIGTERM");
+    }
     return promise;
 
   }

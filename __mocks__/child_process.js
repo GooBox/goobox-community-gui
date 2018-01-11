@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,3 +18,4 @@
 export const spawn = jest.fn();
 export const spawnSync = jest.fn();
 export const execFile = jest.fn();
+export const execSync = jest.fn();

@@ -19,7 +19,7 @@ jest.mock("child_process");
 jest.useFakeTimers();
 jest.setTimeout(5 * 60000);
 
-import {spawn} from "child_process";
+import {execSync, spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
@@ -37,12 +37,28 @@ describe("Storj class", () => {
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
-      let cmd = "goobox-sync-storj";
-      if (process.platform === "win32") {
-        cmd += ".bat";
-      }
+      const cmd = "goobox-sync-storj";
       expect(storj.cmd).toEqual(cmd);
     });
+
+    it("has cmd which describes the path to the bat file of sync storj app in Windows", () => {
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "win32"
+        });
+
+        const storj = new Storj();
+        const cmd = "goobox-sync-storj.bat";
+        expect(storj.cmd).toEqual(cmd);
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
+    });
+
 
     it("has wd which describes the directory containing the sync storj app", () => {
       expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/")));
@@ -137,7 +153,6 @@ describe("Storj class", () => {
   describe("close method", () => {
 
     it("sends SIGTERM and waits exit event is emitted", async () => {
-      const storj = new Storj();
       storj.proc = {
         kill(signal) {
           expect(signal).toEqual("SIGTERM");
@@ -159,6 +174,40 @@ describe("Storj class", () => {
       };
       await storj.close();
       expect(storj.proc).toBeNull();
+    });
+
+    it("executes taskkill and waits exit event is emitted in Windows", async () => {
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "win32"
+        });
+
+        const storj = new Storj();
+        let onExit, onClose;
+        storj.proc = {
+          once(event, callback) {
+            if (event === "exit") {
+              onExit = callback;
+            } else if (event === "close") {
+              onClose = callback;
+            }
+          }
+        };
+        execSync.mockImplementation(() => {
+          onExit();
+          onClose();
+        });
+
+        await storj.close();
+        expect(storj.proc).toBeNull();
+        expect(execSync).toHaveBeenCalled();
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("does nothing if proc is null", async () => {

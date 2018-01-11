@@ -16,7 +16,7 @@
  */
 
 "use strict";
-import {spawn} from "child_process";
+import {execSync, spawn} from "child_process";
 import log from "electron-log";
 import jre from "node-jre";
 import path from "path";
@@ -162,8 +162,13 @@ export default class Storj {
         });
       })
     ]);
+
     log.info("closing the sync-storj app");
-    this.proc.kill("SIGTERM");
+    if (process.platform === "win32") {
+      execSync(`taskkill /pid ${this.proc.pid} /T /F`);
+    } else {
+      this.proc.kill("SIGTERM");
+    }
     return promise;
 
   }
