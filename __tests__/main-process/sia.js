@@ -72,7 +72,7 @@ describe("Sia class", () => {
 
   describe("start method", () => {
 
-    let stdin, stdout, stderr;
+    let stdin, stdout, stderr, on, once;
     beforeEach(() => {
       stdin = "standard input";
       stdout = new Readable();
@@ -83,11 +83,15 @@ describe("Sia class", () => {
       stderr.push("standard\n");
       stderr.push("utput\n");
       stderr.push(null);
+      on = jest.fn();
+      once = jest.fn();
       spawn.mockClear();
       spawn.mockReturnValue({
         stdin: stdin,
         stdout: stdout,
         stderr: stderr,
+        on: on,
+        once: once,
       });
     });
 
@@ -147,6 +151,8 @@ describe("Sia class", () => {
         stdin: stdin,
         stdout: stdout,
         stderr: stderr,
+        on: expect.any(Function),
+        once: expect.any(Function),
       });
     });
 

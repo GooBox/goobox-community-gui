@@ -131,6 +131,7 @@ describe("main process of the installer", () => {
     const email = "abc@example.com";
     const password = "password";
     const key = "xxx xxx xxx";
+    const dir = "/tmp";
 
     beforeEach(() => {
       onReady();
@@ -154,8 +155,7 @@ describe("main process of the installer", () => {
       login.mockRestore();
     });
 
-    it("starts Storj instance with reset option if not running", async () => {
-      const dir = "/tmp";
+    it("starts Storj instance with reset option and sends a login request", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
       }));
@@ -172,22 +172,34 @@ describe("main process of the installer", () => {
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
     });
 
-    it("sends a login request", async () => {
+    it("closes a Storj instance if exists before starting a new Storj instance", async () => {
+      const close = jest.fn().mockReturnValue(Promise.resolve());
       global.storj = new Storj();
       global.storj.proc = {};
+      global.storj.close = close;
+
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
+
       await handler(event, {
         email: email,
         password: password,
         encryptionKey: key,
       });
-      expect(start).not.toHaveBeenCalled();
+      expect(close).toHaveBeenCalled();
+      expect(global.storj).toBeDefined();
+      expect(getConfig).toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
+
     });
 
     it("sends an error message if the login is failed", async () => {
-      global.storj = new Storj();
-      global.storj.proc = {};
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
 
       const err = "expected error";
       login.mockReturnValue(Promise.reject(err));
@@ -197,7 +209,7 @@ describe("main process of the installer", () => {
         password: password,
         encryptionKey: key,
       });
-      expect(start).not.toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err, expect.anything());
     });
@@ -210,6 +222,7 @@ describe("main process of the installer", () => {
     const email = "abc@example.com";
     const password = "password";
     const key = "xxx xxx xxx";
+    const dir = "/tmp";
 
     beforeEach(() => {
       onReady();
@@ -233,8 +246,7 @@ describe("main process of the installer", () => {
       createAccount.mockRestore();
     });
 
-    it("starts Storj instance with reset option if not running", async () => {
-      const dir = "/tmp";
+    it("starts Storj instance with reset option and sends a registration request", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
       }));
@@ -250,21 +262,37 @@ describe("main process of the installer", () => {
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
     });
 
-    it("sends a create account request", async () => {
+    it("closes a Storj instance if exists before starting a new Storj instance", async () => {
+      const close = jest.fn().mockReturnValue(Promise.resolve());
       global.storj = new Storj();
       global.storj.proc = {};
+      global.storj.close = close;
+
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
+
       await handler(event, {
         email: email,
         password: password,
       });
-      expect(start).not.toHaveBeenCalled();
+      expect(close).toHaveBeenCalled();
+      expect(global.storj).toBeDefined();
+      expect(getConfig).toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
     });
 
     it("sends an error message when creating an account is failed", async () => {
+      const close = jest.fn().mockReturnValue(Promise.resolve());
       global.storj = new Storj();
       global.storj.proc = {};
+      global.storj.close = close;
+
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
 
       const err = "expected error";
       createAccount.mockReturnValue(Promise.reject(err));
@@ -274,7 +302,7 @@ describe("main process of the installer", () => {
         password: password,
       });
 
-      expect(start).not.toHaveBeenCalled();
+      expect(start).toHaveBeenCalledWith(dir, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, false, err);
     });

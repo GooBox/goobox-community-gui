@@ -65,6 +65,13 @@ export default class Storj {
     this.stderr = readline.createInterface({input: this.proc.stderr});
     this.stderr.on("line", log.verbose);
 
+    this.proc.on("close", (code, signal) => {
+      if (this.proc) {
+        log.debug(`storj closed: code = ${code}, signal = ${signal}, killed = ${this.proc}`);
+        this.proc = null;
+      }
+    });
+
   }
 
   async login(email, password, encryptionKey) {
