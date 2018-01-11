@@ -90,7 +90,7 @@ export default class Storj {
         this.stdin.write(req);
 
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
+      new Promise((_, reject) => setTimeout(reject.bind(null, "Login request timed out"), DefaultTimeout))
     ]).then(line => {
       try {
         return JSON.parse(line);

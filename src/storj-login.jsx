@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import log from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -81,11 +82,19 @@ export default class StorjLogin extends React.Component {
       email: "",
       password: "",
       key: "",
-      emailWarn: false,
-      passwordWarn: false,
-      keyWarn: false,
+      emailWarn: props.emailWarn,
+      passwordWarn: props.passwordWarn,
+      keyWarn: props.keyWarn,
     };
     this._onClickFinish = this._onClickFinish.bind(this);
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      emailWarn: props.emailWarn,
+      passwordWarn: props.passwordWarn,
+      keyWarn: props.keyWarn,
+    });
   }
 
   _onClickFinish() {
@@ -112,14 +121,25 @@ export default class StorjLogin extends React.Component {
   }
 
   render() {
+    log.debug(`StorjLogin(emailWarn: ${this.state.emailWarn}, passwordWarn: ${this.state.passwordWarn}, keyWarn: ${this.state.keyWarn}`);
     let msg;
     if (this.state.emailWarn || this.state.passwordWarn || this.state.keyWarn) {
-      msg = (
-        <main className="warn" style={style.main}>
-          <div className="f141">Ooops.</div>
-          <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...</div>
-        </main>
-      );
+      if (this.props.warnMsg) {
+        msg = (
+          <main className="warnMsg" style={style.main}>
+            <div className="f141">Ooops.</div>
+            <div className="f211">{this.props.warnMsg}...</div>
+          </main>
+        );
+      } else {
+        msg = (
+          <main className="warnMsg" style={style.main}>
+            <div className="f141">Ooops.</div>
+            <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...
+            </div>
+          </main>
+        );
+      }
     } else {
       msg = (
         <main className="info" style={style.main}>
@@ -175,5 +195,9 @@ export default class StorjLogin extends React.Component {
 StorjLogin.propTypes = {
   onClickCreateAccount: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
-  onClickFinish: PropTypes.func.isRequired
+  onClickFinish: PropTypes.func.isRequired,
+  emailWarn: PropTypes.bool,
+  passwordWarn: PropTypes.bool,
+  keyWarn: PropTypes.bool,
+  warnMsg: PropTypes.string,
 };

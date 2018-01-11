@@ -140,25 +140,25 @@ describe("StorjLogin component", () => {
 
   it("shows am info message when any warning isn't set", () => {
     expect(wrapper.find(".info").exists()).toBeTruthy();
-    expect(wrapper.find(".warn").exists()).toBeFalsy();
+    expect(wrapper.find(".warnMsg").exists()).toBeFalsy();
   });
 
   it("shows a warn message when emailWarn is true", () => {
     wrapper.setState({emailWarn: true});
     expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warn").exists()).toBeTruthy();
+    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
   });
 
   it("shows a warn message when passwordWarn is true", () => {
     wrapper.setState({passwordWarn: true});
     expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warn").exists()).toBeTruthy();
+    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
   });
 
   it("shows a warn message when keyWarn is true", () => {
     wrapper.setState({keyWarn: true});
     expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warn").exists()).toBeTruthy();
+    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
   });
 
   it("warns when the next button is clicked but email address is empty", () => {
@@ -227,6 +227,50 @@ describe("StorjLogin component", () => {
     const btn = wrapper.find(".next-btn");
     btn.simulate("click");
     expect(finish).not.toHaveBeenCalled();
+    expect(wrapper.state("keyWarn")).toBeTruthy();
+  });
+
+  it("takes emailWarn prop and sets the given value to emailWarn state", () => {
+    wrapper = shallow(
+      <StorjLogin onClickBack={back} onClickFinish={finish} onClickCreateAccount={createAccount} emailWarn={true}/>
+    );
+    expect(wrapper.state("emailWarn")).toBeTruthy();
+  });
+
+  it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
+    wrapper = shallow(
+      <StorjLogin onClickBack={back} onClickFinish={finish} onClickCreateAccount={createAccount} passwordWarn={true}/>
+    );
+    expect(wrapper.state("passwordWarn")).toBeTruthy();
+  });
+
+  it("takes keyWarn prop and sets the given value to keyWarn state", () => {
+    wrapper = shallow(
+      <StorjLogin onClickBack={back} onClickFinish={finish} onClickCreateAccount={createAccount} keyWarn={true}/>
+    );
+    expect(wrapper.state("keyWarn")).toBeTruthy();
+  });
+
+  it("takes a warning message and uses it", () => {
+    const msg = "expected warning";
+    wrapper = shallow(
+      <StorjLogin onClickBack={back} onClickFinish={finish} onClickCreateAccount={createAccount}
+                  keyWarn={true} warnMsg={msg}/>
+    );
+    expect(wrapper.find(".warnMsg").html()).toContain(msg);
+  });
+
+  it("sets new given props to states by componentWillReceiveProps", () => {
+    expect(wrapper.state("emailWarn")).toBeFalsy();
+    expect(wrapper.state("passwordWarn")).toBeFalsy();
+    expect(wrapper.state("keyWarn")).toBeFalsy();
+    wrapper.instance().componentWillReceiveProps({
+      emailWarn: true,
+      passwordWarn: true,
+      keyWarn: true,
+    });
+    expect(wrapper.state("emailWarn")).toBeTruthy();
+    expect(wrapper.state("passwordWarn")).toBeTruthy();
     expect(wrapper.state("keyWarn")).toBeTruthy();
   });
 

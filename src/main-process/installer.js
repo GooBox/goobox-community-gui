@@ -123,9 +123,11 @@ function installer() {
       event.sender.send(StorjLoginEvent, true);
     } catch (err) {
       log.error(err);
-      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-      dialog.showErrorBox("Goobox", `Failed to log in to Storj: ${err}`);
-      event.sender.send(StorjLoginEvent, false, err);
+      event.sender.send(StorjLoginEvent, false, err, {
+        email: false,
+        password: false,
+        encryptionKey: false,
+      });
     }
   });
 

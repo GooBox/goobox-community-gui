@@ -19,6 +19,7 @@ import {ipcRenderer, remote} from "electron";
 import log from "electron-log";
 import React from "react";
 import {HashRouter, Route, Switch} from "react-router-dom";
+import util from "util";
 import {saveConfig} from "./config";
 import {
   JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
@@ -34,7 +35,6 @@ import StorjEncryptionKey from "./storj-encryption-key";
 import StorjLogin from "./storj-login";
 import StorjRegistration from "./storj-registration";
 import Welcome from "./welcome.jsx";
-
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -67,6 +67,10 @@ export class Installer extends React.Component {
         email: "",
         password: "",
         key: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
+        emailWarn: false,
+        passwordWarn: false,
+        keyWarn: false,
+        warnMsg: null,
       },
       // Sia account information.
       siaAccount: {
@@ -133,7 +137,7 @@ export class Installer extends React.Component {
     return new Promise(resolve => {
 
       this.setState({wait: true}, () => {
-        ipcRenderer.once(StorjLoginEvent, (_, succeeded, msg) => {
+        ipcRenderer.once(StorjLoginEvent, (_, succeeded, msg, validKeys) => {
 
           if (succeeded) {
             this.setState({storjAccount: info, wait: false}, async () => {
@@ -146,9 +150,24 @@ export class Installer extends React.Component {
               resolve();
             });
           } else {
-            // TODO: Show error msaage msg.
-            log.error(msg);
-            this.setState({wait: false}, resolve);
+            log.debug({
+                storjAccount: {
+                  emailWarn: !validKeys.email,
+                  passwordWarn: !validKeys.password,
+                  keyWarn: !validKeys.encryptionKey,
+                  warnMsg: msg,
+                }
+              }
+            );
+            this.setState({
+              wait: false,
+              storjAccount: {
+                emailWarn: !validKeys.email,
+                passwordWarn: !validKeys.password,
+                keyWarn: !validKeys.encryptionKey,
+                warnMsg: util.isString(msg) ? msg : null,
+              }
+            }, resolve);
           }
 
         });
@@ -272,6 +291,7 @@ export class Installer extends React.Component {
   }
 
   render() {
+    log.debug(`rendering a screen for ${location.hash}`);
     return (
       <div className={this.state.wait ? "wait" : ""}>
         <HashRouter hashType="noslash">
@@ -363,6 +383,10 @@ export class Installer extends React.Component {
                     }
                   }}
                   onClickFinish={async (info) => this._storjLogin(info)}
+                  emailWarn={this.state.storjAccount.emailWarn}
+                  passwordWarn={this.state.storjAccount.passwordWarn}
+                  keyWarn={this.state.storjAccount.keyWarn}
+                  warnMsg={this.state.storjAccount.warnMsg}
                 />
               );
             }}/>

@@ -296,6 +296,27 @@ describe("Installer component", () => {
       });
     });
 
+    it("sets emailWarn prop if emailWarn state is true", () => {
+      wrapper.setState({storjAccount: {emailWarn: true}});
+      expect(wrapper.find("StorjLogin").prop("emailWarn")).toBeTruthy();
+    });
+
+    it("sets passwordWarn prop if passwordWarn state is true", () => {
+      wrapper.setState({storjAccount: {passwordWarn: true}});
+      expect(wrapper.find("StorjLogin").prop("passwordWarn")).toBeTruthy();
+    });
+
+    it("sets keyWarn prop if keyWarn state is true", () => {
+      wrapper.setState({storjAccount: {keyWarn: true}});
+      expect(wrapper.find("StorjLogin").prop("keyWarn")).toBeTruthy();
+    });
+
+    it("sets warnMsg prop if warnMsg state is true", () => {
+      const msg = "expected warn message";
+      wrapper.setState({storjAccount: {warnMsg: msg}});
+      expect(wrapper.find("StorjLogin").prop("warnMsg")).toBe(msg);
+    });
+
   });
 
   describe(`hash is ${Hash.StorjRegistration}`, () => {
@@ -663,7 +684,11 @@ describe("Installer component", () => {
       ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method) => {
           if (listen === method) {
-            cb(null, false, err);
+            cb(null, false, err, {
+              email: false,
+              password: false,
+              encryptionKey: true,
+            });
           }
         });
       });
@@ -672,6 +697,10 @@ describe("Installer component", () => {
       expect(instance._saveConfig).not.toHaveBeenCalled();
       expect(instance.requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
+      expect(wrapper.state("storjAccount").emailWarn).toBeTruthy();
+      expect(wrapper.state("storjAccount").passwordWarn).toBeTruthy();
+      expect(wrapper.state("storjAccount").keyWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").warnMsg).toBe(err);
     });
 
   });

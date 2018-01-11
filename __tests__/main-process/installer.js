@@ -199,7 +199,7 @@ describe("main process of the installer", () => {
       });
       expect(start).not.toHaveBeenCalled();
       expect(login).toHaveBeenCalledWith(email, password, key);
-      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err, expect.anything());
     });
 
   });
