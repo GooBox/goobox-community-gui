@@ -203,8 +203,14 @@ export class Installer extends React.Component {
               resolve();
             });
           } else {
-            // TODO: Show error message args.
-            this.setState({wait: false}, resolve);
+            this.setState({
+              wait: false,
+              storjAccount: {
+                emailWarn: true,
+                passwordWarn: true,
+                warnMsg: util.isString(args) ? args : null,
+              }
+            }, resolve);
           }
 
         });
@@ -375,11 +381,20 @@ export class Installer extends React.Component {
                   }}
                   onClickBack={() => {
                     if (!this.requesting) {
-                      if (this.state.sia) {
-                        location.hash = Hash.BothSelected;
-                      } else {
-                        location.hash = Hash.StorjSelected;
-                      }
+                      this.setState({
+                        storjAccount: {
+                          emailWarn: false,
+                          passwordWarn: false,
+                          keyWarn: false,
+                          warnMsg: null,
+                        }
+                      }, () => {
+                        if (this.state.sia) {
+                          location.hash = Hash.BothSelected;
+                        } else {
+                          location.hash = Hash.StorjSelected;
+                        }
+                      });
                     }
                   }}
                   onClickFinish={async (info) => this._storjLogin(info)}
@@ -400,14 +415,25 @@ export class Installer extends React.Component {
                   }}
                   onClickBack={() => {
                     if (!this.requesting) {
-                      if (this.state.sia) {
-                        location.hash = Hash.BothSelected;
-                      } else {
-                        location.hash = Hash.StorjSelected;
-                      }
+                      this.setState({
+                        storjAccount: {
+                          emailWarn: false,
+                          passwordWarn: false,
+                          warnMsg: null,
+                        }
+                      }, () => {
+                        if (this.state.sia) {
+                          location.hash = Hash.BothSelected;
+                        } else {
+                          location.hash = Hash.StorjSelected;
+                        }
+                      });
                     }
                   }}
                   onClickNext={async (info) => this._storjRegister(info)}
+                  emailWarn={this.state.storjAccount.emailWarn}
+                  passwordWarn={this.state.storjAccount.passwordWarn}
+                  warnMsg={this.state.storjAccount.warnMsg}
                 />
               );
             }}/>

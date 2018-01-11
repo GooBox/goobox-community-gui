@@ -125,7 +125,7 @@ export default class Storj {
         log.debug(`sending a request to sync storj: ${req}`);
         this.stdin.write(req);
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "time out"), DefaultTimeout))
+      new Promise((_, reject) => setTimeout(reject.bind(null, "Registration timed out"), DefaultTimeout))
     ]).then(line => {
       try {
         return JSON.parse(line);

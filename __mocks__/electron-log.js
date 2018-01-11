@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,9 @@ export const verbose = () => {
 };
 export const error = () => {
 };
+export const silly = () => {
+
+};
 // export const log = (msg) => console.log(msg);
 // export const info = (msg) => console.log(`info: ${msg}`);
 // export const debug = (msg) => console.log(`debug: ${msg}`);
@@ -35,5 +38,6 @@ export default {
   info: info,
   debug: debug,
   verbose: verbose,
-  error: error
+  error: error,
+  silly: silly,
 };

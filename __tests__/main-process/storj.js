@@ -377,7 +377,7 @@ describe("Storj class", () => {
       };
 
       setTimeout.mockImplementationOnce(cb => cb());
-      await expect(storj.createAccount(email, password)).rejects.toEqual("time out");
+      await expect(storj.createAccount(email, password)).rejects.toEqual("Registration timed out");
     });
 
   });

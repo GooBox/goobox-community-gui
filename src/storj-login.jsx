@@ -121,7 +121,7 @@ export default class StorjLogin extends React.Component {
   }
 
   render() {
-    log.debug(`StorjLogin(emailWarn: ${this.state.emailWarn}, passwordWarn: ${this.state.passwordWarn}, keyWarn: ${this.state.keyWarn}`);
+    log.silly(`StorjLogin(emailWarn: ${this.state.emailWarn}, passwordWarn: ${this.state.passwordWarn}, keyWarn: ${this.state.keyWarn})`);
     let msg;
     if (this.state.emailWarn || this.state.passwordWarn || this.state.keyWarn) {
       if (this.props.warnMsg) {

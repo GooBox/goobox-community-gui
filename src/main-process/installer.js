@@ -144,8 +144,6 @@ function installer() {
       event.sender.send(StorjRegisterationEvent, true, encryptionKey);
     } catch (err) {
       log.error(err);
-      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-      dialog.showErrorBox("Goobox", `Failed to register a Storj account: ${err}`);
       event.sender.send(StorjRegisterationEvent, false, err);
     }
   });

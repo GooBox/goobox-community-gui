@@ -72,10 +72,17 @@ export default class StorjRegistration extends React.Component {
     this.state = {
       email: "",
       password: "",
-      emailWarn: false,
-      passwordWarn: false,
+      emailWarn: props.emailWarn,
+      passwordWarn: props.passwordWarn,
     };
     this._onClickNext = this._onClickNext.bind(this);
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      emailWarn: props.emailWarn,
+      passwordWarn: props.passwordWarn,
+    });
   }
 
   _onClickNext() {
@@ -99,12 +106,22 @@ export default class StorjRegistration extends React.Component {
   render() {
     let msg;
     if (this.state.emailWarn || this.state.passwordWarn) {
-      msg = (
-        <main className="warn" style={style.main}>
-          <div className="f141">Ooops.</div>
-          <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...</div>
-        </main>
-      );
+      if (this.props.warnMsg) {
+        msg = (
+          <main className="warnMsg" style={style.main}>
+            <div className="f141">Ooops.</div>
+            <div className="f211">{this.props.warnMsg}...</div>
+          </main>
+        );
+      } else {
+        msg = (
+          <main className="warnMsg" style={style.main}>
+            <div className="f141">Ooops.</div>
+            <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...
+            </div>
+          </main>
+        );
+      }
     } else {
       msg = (
         <main className="info" style={style.main}>
@@ -157,4 +174,7 @@ StorjRegistration.propTypes = {
   onClickLogin: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
+  emailWarn: PropTypes.bool,
+  passwordWarn: PropTypes.bool,
+  warnMsg: PropTypes.string,
 };

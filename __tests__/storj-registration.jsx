@@ -111,19 +111,19 @@ describe("StorjRegistration component", () => {
 
   it("shows an info message when any warnings are not set", () => {
     expect(wrapper.find(".info").exists()).toBeTruthy();
-    expect(wrapper.find(".warn").exists()).toBeFalsy();
+    expect(wrapper.find(".warnMsg").exists()).toBeFalsy();
   });
 
   it("shows a warn message when emailWarn is true", () => {
     wrapper.setState({emailWarn: true});
     expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warn").exists()).toBeTruthy();
+    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
   });
 
   it("shows a warn message when passwordWarn is true", () => {
     wrapper.setState({passwordWarn: true});
     expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warn").exists()).toBeTruthy();
+    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
   });
 
   it("sets emailWarn true if the next link is clicked but email is empty", () => {
@@ -149,6 +149,39 @@ describe("StorjRegistration component", () => {
 
     link.simulate("click");
     expect(next).not.toHaveBeenCalled();
+    expect(wrapper.state("passwordWarn")).toBeTruthy();
+  });
+
+  it("takes emailWarn prop and sets the given value to emailWarn state", () => {
+    wrapper = shallow(
+      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next} emailWarn={true}/>
+    );
+    expect(wrapper.state("emailWarn")).toBeTruthy();
+  });
+
+  it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
+    wrapper = shallow(
+      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next} passwordWarn={true}/>
+    );
+    expect(wrapper.state("passwordWarn")).toBeTruthy();
+  });
+
+  it("takes a warning message and uses it", () => {
+    const msg = "expected warning";
+    wrapper = shallow(
+      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next} passwordWarn={true} warnMsg={msg}/>
+    );
+    expect(wrapper.find(".warnMsg").html()).toContain(msg);
+  });
+
+  it("sets new given props to states by componentWillReceiveProps", () => {
+    expect(wrapper.state("emailWarn")).toBeFalsy();
+    expect(wrapper.state("passwordWarn")).toBeFalsy();
+    wrapper.instance().componentWillReceiveProps({
+      emailWarn: true,
+      passwordWarn: true,
+    });
+    expect(wrapper.state("emailWarn")).toBeTruthy();
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 

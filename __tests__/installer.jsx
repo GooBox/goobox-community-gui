@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,6 +278,23 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.StorjLogin}`);
     });
 
+    it("resets warnings when onClickBack is called", () => {
+      const msg = "expected warning message";
+      wrapper.setState({
+        storjAccount: {
+          emailWarn: true,
+          passwordWarn: true,
+          keyWarn: true,
+          warnMsg: msg,
+        }
+      });
+      login.prop("onClickBack")();
+      expect(wrapper.state("storjAccount").emailWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").passwordWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").keyWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").warnMsg).toBeFalsy();
+    });
+
     it("invokes _storjLogin when onClickFinish is called with an account information", async () => {
       wrapper.instance()._storjLogin = jest.fn().mockReturnValue(Promise.resolve());
 
@@ -355,6 +372,21 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.BothSelected}`);
     });
 
+    it("resets warnings when onClickBack is called", () => {
+      const msg = "expected warning message";
+      wrapper.setState({
+        storjAccount: {
+          emailWarn: true,
+          passwordWarn: true,
+          warnMsg: msg,
+        }
+      });
+      registration.prop("onClickBack")();
+      expect(wrapper.state("storjAccount").emailWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").passwordWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").warnMsg).toBeFalsy();
+    });
+
     it("doesn't update the hash when onClickBack is called but requesting is true", () => {
       wrapper.instance().requesting = true;
       wrapper.setState({sia: true});
@@ -373,6 +405,22 @@ describe("Installer component", () => {
       };
       await registration.prop("onClickNext")(info);
       expect(wrapper.instance()._storjRegister).toHaveBeenCalledWith(info)
+    });
+
+    it("sets emailWarn prop if emailWarn state is true", () => {
+      wrapper.setState({storjAccount: {emailWarn: true}});
+      expect(wrapper.find("StorjRegistration").prop("emailWarn")).toBeTruthy();
+    });
+
+    it("sets passwordWarn prop if passwordWarn state is true", () => {
+      wrapper.setState({storjAccount: {passwordWarn: true}});
+      expect(wrapper.find("StorjRegistration").prop("passwordWarn")).toBeTruthy();
+    });
+
+    it("sets warnMsg prop if warnMsg state is true", () => {
+      const msg = "expected warn message";
+      wrapper.setState({storjAccount: {warnMsg: msg}});
+      expect(wrapper.find("StorjRegistration").prop("warnMsg")).toBe(msg);
     });
 
   });
@@ -678,7 +726,6 @@ describe("Installer component", () => {
       expect(location.hash).toEqual(`#${Hash.FinishAll}`);
     });
 
-    // TODO: Update this test after error notification template is decided.
     it("neither call _requestSiaWallet nor move FinishAll when receives an error", async () => {
       const err = "expected error";
       ipcRenderer.once.mockImplementation((listen, cb) => {
@@ -776,7 +823,10 @@ describe("Installer component", () => {
       ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method) => {
           if (listen === method) {
-            cb(null, false, err);
+            cb(null, false, err, {
+              email: false,
+              password: false,
+            });
           }
         });
       });
@@ -784,6 +834,10 @@ describe("Installer component", () => {
       await instance._storjRegister(info);
       expect(instance.requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
+      expect(wrapper.state("storjAccount").emailWarn).toBeTruthy();
+      expect(wrapper.state("storjAccount").passwordWarn).toBeTruthy();
+      expect(wrapper.state("storjAccount").keyWarn).toBeFalsy();
+      expect(wrapper.state("storjAccount").warnMsg).toBe(err);
       expect(location.hash).toEqual(current);
     });
 
