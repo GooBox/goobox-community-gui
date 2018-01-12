@@ -319,14 +319,6 @@ export class Installer extends React.Component {
 
   }
 
-//   return (
-// <Preparation progress={10}>
-// Getting some tools.<br/>
-// <span class="bold">Please wait.</span>
-// </Preparation>
-// );
-
-
   render() {
     log.debug(`rendering a screen for ${this.state.screen || "the initial screen"}`);
     let screen;
