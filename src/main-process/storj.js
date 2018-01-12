@@ -48,6 +48,7 @@ export default class Storj {
     const args = ["--sync-dir", `"${dir}"`];
     if (reset) {
       args.push("--reset-db");
+      args.push("--reset-auth-file");
     }
 
     log.info(`starting ${this.cmd} in ${this.wd}`);
