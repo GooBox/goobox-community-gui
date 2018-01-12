@@ -75,7 +75,14 @@ export default class Storj {
 
   }
 
-  async login(email, password, encryptionKey) {
+  /**
+   * Send a given request to the Storj instance.
+   *
+   * @param name of this request, used in error massages,
+   * @param request object to be sent
+   * @returns {Promise<any>}
+   */
+  async _sendRequest(name, request) {
 
     if (!this.proc) {
       throw "sync storj app is not running";
@@ -85,20 +92,12 @@ export default class Storj {
       new Promise(resolve => {
 
         this.stdout.once("line", resolve);
-
-        const req = JSON.stringify({
-          method: "login",
-          args: {
-            email: email,
-            password: password,
-            encryptionKey: encryptionKey,
-          }
-        }) + "\n";
+        const req = `${JSON.stringify(request)}\n`;
         log.debug(`sending a request to sync storj: ${req}`);
         this.stdin.write(req);
 
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "Login request timed out"), DefaultTimeout))
+      new Promise((_, reject) => setTimeout(reject.bind(null, `${name} request timed out`), DefaultTimeout))
     ]).then(line => {
       try {
         return JSON.parse(line);
@@ -108,6 +107,20 @@ export default class Storj {
     }).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
+      }
+      return res;
+    });
+
+  }
+
+  async login(email, password, encryptionKey) {
+
+    await this._sendRequest("Login", {
+      method: "login",
+      args: {
+        email: email,
+        password: password,
+        encryptionKey: encryptionKey,
       }
     });
 
@@ -115,36 +128,24 @@ export default class Storj {
 
   async createAccount(email, password) {
 
-    if (!this.proc) {
-      throw "sync storj app is not running";
-    }
-
-    return Promise.race([
-      new Promise(resolve => {
-        this.stdout.once("line", resolve);
-
-        const req = JSON.stringify({
-          method: "createAccount",
-          args: {
-            email: email,
-            password: password,
-          }
-        }) + "\n";
-        log.debug(`sending a request to sync storj: ${req}`);
-        this.stdin.write(req);
-      }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, "Registration timed out"), DefaultTimeout))
-    ]).then(line => {
-      try {
-        return JSON.parse(line);
-      } catch (err) {
-        return Promise.reject(`Cannot parse ${line}: ${err}`);
+    const res = await this._sendRequest("Registration", {
+      method: "createAccount",
+      args: {
+        email: email,
+        password: password,
       }
-    }).then(res => {
-      if ("ok" !== res.status) {
-        return Promise.reject(res.message);
+    });
+    return res.encryptionKey;
+
+  }
+
+  async checkMnemonic(encryptionKey) {
+
+    await this._sendRequest("Validate the encryption key", {
+      method: "checkMnemonic",
+      args: {
+        encryptionKey: encryptionKey,
       }
-      return res.encryptionKey;
     });
 
   }

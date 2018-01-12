@@ -32,6 +32,7 @@ describe("Storj class", () => {
   let storj;
   beforeEach(() => {
     storj = new Storj();
+    setTimeout.mockReset();
   });
 
   describe("instance fields", () => {
@@ -236,19 +237,16 @@ describe("Storj class", () => {
 
   });
 
-  describe("login method", () => {
+  describe("_sendRequest method", () => {
 
-    const email = "abc@example.com";
-    const password = "password";
-    const key = "xxx xxx xxx";
-
-    it("requests logging in", async () => {
-      const storj = new Storj();
-      const stdout = new Readable();
-      stdout.push(JSON.stringify({
+    it("sends a given request as a JSON formatted string", async () => {
+      const res = {
         status: "ok",
         message: "",
-      }));
+      };
+
+      const stdout = new Readable();
+      stdout.push(JSON.stringify(res));
       stdout.push("\n");
       stdout.push(null);
 
@@ -259,29 +257,20 @@ describe("Storj class", () => {
         stdout: storj.stdout
       };
 
-      let res = null;
-      const reader = readline.createInterface({input: storj.stdin});
-      reader.on("line", line => res = JSON.parse(line));
-
-      await expect(storj.login(email, password, key)).resolves.not.toBeDefined();
-      expect(res).toEqual({
-        method: "login",
+      const req = {
+        method: "some method",
         args: {
-          email: email,
-          password: password,
-          encryptionKey: key,
+          a: 1,
+          b: 2,
         }
-      });
+      };
+      const reader = readline.createInterface({input: storj.stdin});
+      reader.on("line", line => expect(JSON.parse(line)).toEqual(req));
+      await expect(storj._sendRequest("test", req)).resolves.toEqual(res);
     });
 
-    it("returns an error when no process is running", async () => {
-      const storj = new Storj();
-      await expect(storj.login(email, password, key)).rejects.toEqual("sync storj app is not running");
-    });
-
-    it("returns a rejected promise when failed to log in", async () => {
-      const error = "failed to log in";
-      const storj = new Storj();
+    it("returns a rejected promise when the request fails", async () => {
+      const error = "failed";
       const stdout = new Readable();
       stdout.push(JSON.stringify({
         status: "error",
@@ -299,11 +288,14 @@ describe("Storj class", () => {
         stdout: storj.stdout
       };
 
-      await expect(storj.login(email, password, key)).rejects.toEqual(error);
+      await expect(storj._sendRequest("test", null)).rejects.toEqual(error);
     });
 
-    it("returns a rejected promise when no response is returned", async () => {
-      const storj = new Storj();
+    it("returns an error when no process is running", async () => {
+      await expect(storj._sendRequest()).rejects.toEqual("sync storj app is not running");
+    });
+
+    it("times out and returns a rejected promise", async () => {
       storj.stdin = {
         write: jest.fn()
       };
@@ -315,8 +307,36 @@ describe("Storj class", () => {
         stdout: storj.stdout
       };
 
-      setTimeout.mockImplementationOnce(cb => cb());
-      await expect(storj.login(email, password, key)).rejects.toEqual("Login request timed out");
+      setTimeout.mockImplementation(cb => cb());
+      const name = "test";
+      await expect(storj._sendRequest(name)).rejects.toEqual(`${name} request timed out`);
+    });
+
+  });
+
+  describe("login method", () => {
+
+    const email = "abc@example.com";
+    const password = "password";
+    const key = "xxx xxx xxx";
+
+    it("sends a login request", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve());
+      await expect(storj.login(email, password, key)).resolves.not.toBeDefined();
+      expect(storj._sendRequest).toHaveBeenCalledWith("Login", {
+        method: "login",
+        args: {
+          email: email,
+          password: password,
+          encryptionKey: key,
+        }
+      });
+    });
+
+    it("returns a rejected promise when failed to log in", async () => {
+      const error = "failed to log in";
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.reject(error));
+      await expect(storj.login(email, password, key)).rejects.toEqual(error);
     });
 
   });
@@ -328,28 +348,11 @@ describe("Storj class", () => {
     const key = "xxx xxx xxx";
 
     it("sends a create account request and receives an encryption key", async () => {
-      const stdout = new Readable();
-      stdout.push(JSON.stringify({
-        status: "ok",
-        message: "",
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve({
         encryptionKey: key,
       }));
-      stdout.push("\n");
-      stdout.push(null);
-
-      storj.stdin = new PassThrough();
-      storj.stdout = readline.createInterface({input: stdout});
-      storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
-      };
-
-      let res = null;
-      const reader = readline.createInterface({input: storj.stdin});
-      reader.on("line", line => res = JSON.parse(line));
-
       await expect(storj.createAccount(email, password)).resolves.toEqual(key);
-      expect(res).toEqual({
+      expect(storj._sendRequest).toHaveBeenCalledWith("Registration", {
         method: "createAccount",
         args: {
           email: email,
@@ -363,40 +366,32 @@ describe("Storj class", () => {
     });
 
     it("returns a rejected promise when fails to create an account", async () => {
-      const error = "failed to log in";
-      const stdout = new Readable();
-      stdout.push(JSON.stringify({
-        status: "error",
-        message: error,
-      }));
-      stdout.push("\n");
-      stdout.push(null);
-
-      storj.stdin = {
-        write: jest.fn()
-      };
-      storj.stdout = readline.createInterface({input: stdout});
-      storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
-      };
+      const error = "failed to create an account";
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.reject(error));
       await expect(storj.createAccount(email, password)).rejects.toEqual(error);
     });
 
-    it("returns a rejected promise when the request is time out", async () => {
-      storj.stdin = {
-        write: jest.fn()
-      };
-      storj.stdout = {
-        once: jest.fn()
-      };
-      storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
-      };
+  });
 
-      setTimeout.mockImplementationOnce(cb => cb());
-      await expect(storj.createAccount(email, password)).rejects.toEqual("Registration timed out");
+  describe("checkMnemonic method", () => {
+
+    const key = "xxx xxx xxx";
+
+    it("sends a check mnemonic request", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve());
+      await expect(storj.checkMnemonic(key)).resolves.not.toBeDefined();
+      expect(storj._sendRequest).toHaveBeenCalledWith("Validate the encryption key", {
+        method: "checkMnemonic",
+        args: {
+          encryptionKey: key,
+        }
+      });
+    });
+
+    it("returns a rejected promise when fails to create an account", async () => {
+      const error = "invalid encryption key";
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.reject(error));
+      await expect(storj.checkMnemonic(key)).rejects.toEqual(error);
     });
 
   });
