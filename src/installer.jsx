@@ -128,7 +128,7 @@ export class Installer extends React.Component {
           if (current < 95) {
             this.setState({progress: current + 1})
           }
-        }, 200);
+        }, 500);
 
         log.debug("requesting JRE installation");
         ipcRenderer.send(JREInstallEvent);
