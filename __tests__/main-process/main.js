@@ -344,6 +344,30 @@ describe("main process of the core app", () => {
         expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Paused);
       });
 
+      it("restart the Storj instance if exists when the new state is Synchronizing", async () => {
+        global.storj = {
+          start: jest.fn(),
+          stdout: {
+            on: jest.fn()
+          }
+        };
+        await handler(event, Synchronizing);
+        expect(global.storj.start).toHaveBeenCalled();
+        // expect(global.storj.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
+      });
+
+      it("closes the Storj instance if exists when the new state is Paused", async () => {
+        global.storj = {
+          close: jest.fn(),
+          stdout: {
+            removeListener: jest.fn(),
+          }
+        };
+        await handler(event, Paused);
+        expect(global.storj.close).toHaveBeenCalled();
+        // expect(global.sia.storj.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
+      });
+
       it("restart the SIA instance if exists when the new state is Synchronizing", async () => {
         global.sia = {
           start: jest.fn(),

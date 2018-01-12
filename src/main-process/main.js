@@ -123,6 +123,9 @@ async function main() {
   // Register event handlers.
   ipcMain.on(ChangeStateEvent, async (event, arg) => {
     if (arg === Synchronizing) {
+      if (global.storj) {
+        global.storj.start();
+      }
       if (global.sia) {
         global.sia.start();
         global.sia.stdout.on("line", SiaEventHandler);
@@ -130,6 +133,9 @@ async function main() {
       log.debug("Update the tray icon to the idle icon");
       mb.tray.setImage(icons.getSyncIcon());
     } else {
+      if (global.storj) {
+        await global.storj.close();
+      }
       if (global.sia) {
         global.sia.stdout.removeListener("line", SiaEventHandler);
         await global.sia.close();
