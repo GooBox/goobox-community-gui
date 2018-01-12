@@ -25,6 +25,7 @@ import {
   StorjRegisterationEvent
 } from "./constants";
 import Finish from "./finish-all";
+import Preparation from "./preparation";
 import SelectFolder from "./select-folder";
 import ServiceSelector from "./service-selector";
 import SiaFinish from "./sia-finish";
@@ -35,7 +36,7 @@ import StorjLogin from "./storj-login";
 import StorjRegistration from "./storj-registration";
 import Welcome from "./welcome";
 
-export const Hash = {
+export const Screen = {
   ChooseCloudService: "choose-cloud-service",
   StorjSelected: "storj-selected",
   SiaSelected: "sia-selected",
@@ -47,6 +48,7 @@ export const Hash = {
   SiaWallet: "sia-wallet",
   SiaFinish: "sia-finish",
   FinishAll: "finish-all",
+  JREPreparation: "jre-preparation",
 };
 
 
@@ -80,10 +82,12 @@ export class Installer extends React.Component {
       },
       // true if the background process is working.
       wait: false,
+      // used to show current progress in a progress bar.
+      progress: 0,
     };
 
     this.requesting = false;
-    this._checkJRE = this._checkJRE.bind(this);
+    this._prepareJRE = this._prepareJRE.bind(this);
     this._storjLogin = this._storjLogin.bind(this);
     this._storjRegister = this._storjRegister.bind(this);
     this._requestSiaWallet = this._requestSiaWallet.bind(this);
@@ -91,7 +95,7 @@ export class Installer extends React.Component {
     this._stopSyncApps = this._stopSyncApps.bind(this);
   }
 
-  async _checkJRE() {
+  async _prepareJRE() {
 
     if (this.requesting) {
       return;
@@ -100,13 +104,17 @@ export class Installer extends React.Component {
     this.requesting = true;
     return new Promise(resolve => {
 
+      let timerID;
       log.debug("set the wait mouse cursor");
-      this.setState({wait: true}, () => {
+      this.setState({wait: true, screen: Screen.JREPreparation, progress: 0}, () => {
         ipcRenderer.once(JREInstallEvent, (_, succeeded, msg) => {
 
+          if (timerID) {
+            clearInterval(timerID);
+          }
           if (succeeded) {
             log.debug("JRE installation ends, reset the mouse cursor, and move to the next screen");
-            this.setState({wait: false, screen: Hash.ChooseCloudService}, resolve);
+            this.setState({wait: false, progress: 100, screen: Screen.ChooseCloudService}, resolve);
           } else {
             log.debug(`JRE installation fails: ${msg}`);
             this.setState({wait: false}, resolve);
@@ -114,8 +122,16 @@ export class Installer extends React.Component {
 
         });
 
+        timerID = setInterval(() => {
+          const current = this.state.progress;
+          if (current < 95) {
+            this.setState({progress: current + 1})
+          }
+        }, 200);
+
         log.debug("requesting JRE installation");
         ipcRenderer.send(JREInstallEvent);
+
       });
 
     }).then(() => this.requesting = false);
@@ -141,7 +157,7 @@ export class Installer extends React.Component {
                 resolve();
               } else {
                 await this._saveConfig();
-                this.setState({screen: Hash.FinishAll}, resolve);
+                this.setState({screen: Screen.FinishAll}, resolve);
               }
             });
           } else {
@@ -171,7 +187,8 @@ export class Installer extends React.Component {
 
     }).then(() => this.requesting = false);
 
-  };
+  }
+  ;
 
   async _storjRegister(info) {
 
@@ -193,7 +210,7 @@ export class Installer extends React.Component {
                 encryptionKey: args,
               },
               wait: false,
-              screen: Hash.StorjEncryptionKey
+              screen: Screen.StorjEncryptionKey
             }, resolve);
           } else {
             this.setState({
@@ -221,7 +238,7 @@ export class Installer extends React.Component {
     }
 
     if (this.state.siaAccount.address) {
-      return new Promise(resolve => this.setState({screen: Hash.SiaWallet}, resolve));
+      return new Promise(resolve => this.setState({screen: Screen.SiaWallet}, resolve));
     }
 
     this.requesting = true;
@@ -236,7 +253,7 @@ export class Installer extends React.Component {
             log.error(err);
             this.setState({wait: false}, resolve);
           } else {
-            this.setState({siaAccount: info, wait: false, screen: Hash.SiaWallet}, resolve);
+            this.setState({siaAccount: info, wait: false, screen: Screen.SiaWallet}, resolve);
           }
 
         });
@@ -250,12 +267,13 @@ export class Installer extends React.Component {
   async _saveConfig() {
 
     try {
-      await saveConfig({
-        syncFolder: this.state.folder,
-        installed: true,
-        storj: this.state.storj,
-        sia: this.state.sia,
-      });
+      await
+        saveConfig({
+          syncFolder: this.state.folder,
+          installed: true,
+          storj: this.state.storj,
+          sia: this.state.sia,
+        });
     } catch (err) {
       // TODO: Show this error message.
       log.error(err);
@@ -297,34 +315,34 @@ export class Installer extends React.Component {
     log.debug(`rendering a screen for ${this.state.screen || "the initial screen"}`);
     let screen;
     switch (this.state.screen) {
-      case Hash.ChooseCloudService:
+      case Screen.ChooseCloudService:
         screen = <ServiceSelector
           onSelectStorj={() => {
-            this.setState({storj: true, sia: false, screen: Hash.StorjSelected});
+            this.setState({storj: true, sia: false, screen: Screen.StorjSelected});
           }}
           onSelectSia={() => {
-            this.setState({storj: false, sia: true, screen: Hash.SiaSelected});
+            this.setState({storj: false, sia: true, screen: Screen.SiaSelected});
           }}
           onSelectBoth={() => {
-            this.setState({storj: true, sia: true, screen: Hash.BothSelected});
+            this.setState({storj: true, sia: true, screen: Screen.BothSelected});
           }}
         />;
         break;
 
-      case Hash.StorjSelected:
+      case Screen.StorjSelected:
         screen = <SelectFolder
           service={Storj}
           folder={this.state.folder}
           onSelectFolder={folder => this.setState({folder: folder})}
           onClickBack={async () => {
             await this._stopSyncApps();
-            return new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+            return new Promise(resolve => this.setState({screen: Screen.ChooseCloudService}, resolve));
           }}
-          onClickNext={() => this.setState({screen: Hash.StorjLogin})}
+          onClickNext={() => this.setState({screen: Screen.StorjLogin})}
         />;
         break;
 
-      case Hash.SiaSelected:
+      case Screen.SiaSelected:
         screen = <SelectFolder
           service={Sia}
           folder={this.state.folder}
@@ -334,30 +352,30 @@ export class Installer extends React.Component {
               return
             }
             await this._stopSyncApps();
-            new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+            new Promise(resolve => this.setState({screen: Screen.ChooseCloudService}, resolve));
           }}
           onClickNext={async () => this._requestSiaWallet()}
         />;
         break;
 
-      case Hash.BothSelected:
+      case Screen.BothSelected:
         screen = <SelectFolder
           service={`${Storj} and ${Sia}`}
           folder={this.state.folder}
           onSelectFolder={folder => this.setState({folder: folder})}
           onClickBack={async () => {
             await this._stopSyncApps();
-            return new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+            return new Promise(resolve => this.setState({screen: Screen.ChooseCloudService}, resolve));
           }}
-          onClickNext={() => this.setState({screen: Hash.StorjLogin})}
+          onClickNext={() => this.setState({screen: Screen.StorjLogin})}
         />;
         break;
 
-      case Hash.StorjLogin:
+      case Screen.StorjLogin:
         screen = <StorjLogin
           onClickCreateAccount={() => {
             if (!this.requesting) {
-              this.setState({screen: Hash.StorjRegistration});
+              this.setState({screen: Screen.StorjRegistration});
             }
           }}
           onClickBack={() => {
@@ -369,7 +387,7 @@ export class Installer extends React.Component {
                   keyWarn: false,
                   warnMsg: null,
                 },
-                screen: this.state.sia ? Hash.BothSelected : Hash.StorjSelected
+                screen: this.state.sia ? Screen.BothSelected : Screen.StorjSelected
               });
             }
           }}
@@ -381,11 +399,11 @@ export class Installer extends React.Component {
         />;
         break;
 
-      case Hash.StorjRegistration:
+      case Screen.StorjRegistration:
         screen = <StorjRegistration
           onClickLogin={() => {
             if (!this.requesting) {
-              this.setState({screen: Hash.StorjLogin});
+              this.setState({screen: Screen.StorjLogin});
             }
           }}
           onClickBack={() => {
@@ -396,7 +414,7 @@ export class Installer extends React.Component {
                   passwordWarn: false,
                   warnMsg: null,
                 },
-                screen: this.state.sia ? Hash.BothSelected : Hash.StorjSelected,
+                screen: this.state.sia ? Screen.BothSelected : Screen.StorjSelected,
               });
             }
           }}
@@ -407,51 +425,60 @@ export class Installer extends React.Component {
         />;
         break;
 
-      case Hash.StorjEncryptionKey:
+      case Screen.StorjEncryptionKey:
         screen = <StorjEncryptionKey
           encryptionKey={this.state.storjAccount.key || ""}
-          onClickBack={() => this.setState({screen: Hash.StorjRegistration})}
-          onClickNext={() => this.setState({screen: Hash.StorjEmailConfirmation})}
+          onClickBack={() => this.setState({screen: Screen.StorjRegistration})}
+          onClickNext={() => this.setState({screen: Screen.StorjEmailConfirmation})}
         />;
         break;
 
-      case Hash.StorjEmailConfirmation:
+      case Screen.StorjEmailConfirmation:
         screen = <StorjEmailConfirmation
-          onClickBack={() => this.setState({screen: Hash.StorjEncryptionKey})}
-          onClickLogin={() => this.setState({screen: Hash.StorjLogin})}
+          onClickBack={() => this.setState({screen: Screen.StorjEncryptionKey})}
+          onClickLogin={() => this.setState({screen: Screen.StorjLogin})}
         />;
         break;
 
-      case Hash.SiaWallet:
+      case Screen.SiaWallet:
         screen = <SiaWallet
           address={this.state.siaAccount === null || this.state.siaAccount.address}
           seed={this.state.siaAccount === null || this.state.siaAccount.seed}
           onClickBack={() => {
-            this.setState({screen: this.state.storj ? Hash.StorjLogin : Hash.SiaSelected})
+            this.setState({screen: this.state.storj ? Screen.StorjLogin : Screen.SiaSelected})
           }}
           onClickNext={async () => {
             await this._saveConfig();
-            return new Promise(resolve => this.setState({screen: Hash.SiaFinish}, resolve));
+            return new Promise(resolve => this.setState({screen: Screen.SiaFinish}, resolve));
           }}
         />;
         break;
 
-      case Hash.SiaFinish:
+      case Screen.SiaFinish:
         screen = <SiaFinish
-          onClickBack={() => this.setState({screen: Hash.SiaWallet})}
+          onClickBack={() => this.setState({screen: Screen.SiaWallet})}
           onClickClose={() => remote.getCurrentWindow().close()}
         />;
         break;
 
-      case Hash.FinishAll:
+      case Screen.FinishAll:
         screen = <Finish
-          onClickBack={() => this.setState({screen: Hash.StorjLogin})}
+          onClickBack={() => this.setState({screen: Screen.StorjLogin})}
           onClickClose={() => remote.getCurrentWindow().close()}
         />;
+        break;
+
+      case Screen.JREPreparation:
+        screen = (
+          <Preparation progress={this.state.progress}>
+            Getting some tools.<br/>
+            <span className="bold">Please wait.</span>
+          </Preparation>
+        );
         break;
 
       default:
-        screen = <Welcome onClickNext={async () => this._checkJRE()}/>;
+        screen = <Welcome onClickNext={async () => this._prepareJRE()}/>;
         break;
 
     }

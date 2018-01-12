@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 jest.mock("../src/config");
+jest.useFakeTimers();
 
 import {ipcRenderer, remote} from "electron";
 import {shallow} from "enzyme";
@@ -25,7 +26,7 @@ import {
   JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
   StorjRegisterationEvent
 } from "../src/constants";
-import {Hash, Installer} from "../src/installer.jsx";
+import {Installer, Screen} from "../src/installer.jsx";
 
 const app = remote.app;
 
@@ -62,9 +63,9 @@ describe("Installer component", () => {
     });
 
     it("invokes _checkJRE when next button in the welcome screen is clicked", async () => {
-      wrapper.instance()._checkJRE = jest.fn().mockReturnValue(Promise.resolve());
+      wrapper.instance()._prepareJRE = jest.fn().mockReturnValue(Promise.resolve());
       await welcome.prop("onClickNext")();
-      expect(wrapper.instance()._checkJRE).toHaveBeenCalled();
+      expect(wrapper.instance()._prepareJRE).toHaveBeenCalled();
     });
 
   });
@@ -74,7 +75,7 @@ describe("Installer component", () => {
     let wrapper, component;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.ChooseCloudService});
+      wrapper.setState({screen: Screen.ChooseCloudService});
       component = wrapper.find("ServiceSelector");
     });
 
@@ -86,7 +87,7 @@ describe("Installer component", () => {
       expect(wrapper.state("storj")).toBeFalsy();
 
       component.prop("onSelectStorj")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjSelected);
       expect(wrapper.state("storj")).toBeTruthy();
     });
 
@@ -94,7 +95,7 @@ describe("Installer component", () => {
       expect(wrapper.state("sia")).toBeFalsy();
 
       component.prop("onSelectSia")();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaSelected);
       expect(wrapper.state("sia")).toBeTruthy();
     });
 
@@ -103,7 +104,7 @@ describe("Installer component", () => {
       expect(wrapper.state("sia")).toBeFalsy();
 
       component.prop("onSelectBoth")();
-      expect(wrapper.state("screen")).toEqual(Hash.BothSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.BothSelected);
       expect(wrapper.state("storj")).toBeTruthy();
       expect(wrapper.state("sia")).toBeTruthy();
     });
@@ -115,7 +116,7 @@ describe("Installer component", () => {
     let wrapper, selector;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.StorjSelected});
+      wrapper.setState({screen: Screen.StorjSelected});
       wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
@@ -134,7 +135,7 @@ describe("Installer component", () => {
 
     it("moves to Choose Cloud Service screen when back button is clicked in SelectFolder component", async () => {
       await selector.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.ChooseCloudService);
+      expect(wrapper.state("screen")).toEqual(Screen.ChooseCloudService);
     });
 
     it("invokes _stopSyncApps when back button is clicked", async () => {
@@ -144,7 +145,7 @@ describe("Installer component", () => {
 
     it("moves to the Storj Login screen when the next button is clicked in SelectFolder component", () => {
       selector.prop("onClickNext")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
   });
@@ -154,7 +155,7 @@ describe("Installer component", () => {
     let wrapper, selector;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.SiaSelected});
+      wrapper.setState({screen: Screen.SiaSelected});
       wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
@@ -173,7 +174,7 @@ describe("Installer component", () => {
 
     it("moves to the choose cloud service screen when back button is clicked in SelectFolder component", async () => {
       await selector.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.ChooseCloudService);
+      expect(wrapper.state("screen")).toEqual(Screen.ChooseCloudService);
     });
 
     it("invokes _stopSyncApps when back button is clicked", async () => {
@@ -184,7 +185,7 @@ describe("Installer component", () => {
     it("doesn't move to the choose cloud service screen when back button is clicked but requesting is true", () => {
       wrapper.instance().requesting = true;
       selector.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaSelected);
     });
 
     it("invokes _requestSiaWallet when onClickNext is called", async () => {
@@ -200,7 +201,7 @@ describe("Installer component", () => {
     let wrapper, selector;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.BothSelected});
+      wrapper.setState({screen: Screen.BothSelected});
       wrapper.instance()._stopSyncApps = jest.fn().mockReturnValue(Promise.resolve());
       selector = wrapper.find("SelectFolder");
     });
@@ -219,7 +220,7 @@ describe("Installer component", () => {
 
     it("moves to the choose cloud service screen when back button is clicked in SelectFolder component", async () => {
       await selector.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.ChooseCloudService);
+      expect(wrapper.state("screen")).toEqual(Screen.ChooseCloudService);
     });
 
     it("invokes _stopSyncApps when back button is clicked", async () => {
@@ -229,7 +230,7 @@ describe("Installer component", () => {
 
     it("moves to the storj login screen when the next button is clicked in SelectFolder component", () => {
       selector.prop("onClickNext")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
   });
@@ -239,7 +240,7 @@ describe("Installer component", () => {
     let wrapper, login;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.StorjLogin});
+      wrapper.setState({screen: Screen.StorjLogin});
       login = wrapper.find("StorjLogin");
     });
 
@@ -249,32 +250,32 @@ describe("Installer component", () => {
 
     it("moves to the storj registration screen when onClickCreateAccount is called", () => {
       login.prop("onClickCreateAccount")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjRegistration);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjRegistration);
     });
 
     it("doesn't change the screen when onClickCreateAccount is called but requesting is true", () => {
       wrapper.instance().requesting = true;
       login.prop("onClickCreateAccount")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
     it("moves to the storj selected screen when onClickBack is called and sia state is false", () => {
       wrapper.setState({sia: false});
       login.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjSelected);
     });
 
     it("moves to the both selected screen when onClickBack is called and sia state is true", () => {
       wrapper.setState({sia: true});
       login.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.BothSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.BothSelected);
     });
 
     it("doesn't move to the screen when onClickBack is called but requesting is true", () => {
       wrapper.instance().requesting = true;
       wrapper.setState({sia: true});
       login.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
     it("resets warnings when onClickBack is called", () => {
@@ -340,7 +341,7 @@ describe("Installer component", () => {
     let wrapper, registration;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.StorjRegistration});
+      wrapper.setState({screen: Screen.StorjRegistration});
       registration = wrapper.find("StorjRegistration");
     });
 
@@ -350,25 +351,25 @@ describe("Installer component", () => {
 
     it("moves to the storj login screen when onClickLogin is called", () => {
       registration.prop("onClickLogin")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
     it("doesn't change the screen when onClickLogin is called but requesting is true", () => {
       wrapper.instance().requesting = true;
       registration.prop("onClickLogin")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjRegistration);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjRegistration);
     });
 
     it("moves to the storj selected screen when onClickBack is called and sia state is false", () => {
       wrapper.setState({sia: false});
       registration.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjSelected);
     });
 
     it("moves to the both selected screen when onClickBack is called and sia state is true", () => {
       wrapper.setState({sia: true});
       registration.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.BothSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.BothSelected);
     });
 
     it("resets warnings when onClickBack is called", () => {
@@ -390,7 +391,7 @@ describe("Installer component", () => {
       wrapper.instance().requesting = true;
       wrapper.setState({sia: true});
       registration.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjRegistration);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjRegistration);
     });
 
     it("invokes _storjRegister when onClickNext is called", async () => {
@@ -429,7 +430,7 @@ describe("Installer component", () => {
     let wrapper, key;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.StorjEncryptionKey});
+      wrapper.setState({screen: Screen.StorjEncryptionKey});
       key = wrapper.find("StorjEncryptionKey");
     });
 
@@ -444,12 +445,12 @@ describe("Installer component", () => {
 
     it("moves to the storj registration screen when onClickBack is called", () => {
       key.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjRegistration);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjRegistration);
     });
 
     it("moves to the storj eamil confirmation screen when onClickNext is called", () => {
       key.prop("onClickNext")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjEmailConfirmation);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjEmailConfirmation);
     });
 
   });
@@ -459,7 +460,7 @@ describe("Installer component", () => {
     let wrapper, comp;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.StorjEmailConfirmation});
+      wrapper.setState({screen: Screen.StorjEmailConfirmation});
       comp = wrapper.find("StorjEmailConfirmation");
     });
 
@@ -469,12 +470,12 @@ describe("Installer component", () => {
 
     it("moves to the storj encryption key screen when onClickBack is called", () => {
       comp.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjEncryptionKey);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjEncryptionKey);
     });
 
     it("moves to the storj login screen when onClickLogin is called", () => {
       comp.prop("onClickLogin")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
   });
@@ -488,7 +489,7 @@ describe("Installer component", () => {
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
       wrapper.setState({
-        screen: Hash.SiaWallet,
+        screen: Screen.SiaWallet,
         siaAccount: {
           address: address,
           seed: seed,
@@ -506,20 +507,20 @@ describe("Installer component", () => {
     it("moves to the sia selected screen when onClickBack is called and storj state is false", () => {
       wrapper.setState({storj: false});
       wallet.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaSelected);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaSelected);
     });
 
     it("moves to the storj login screen when onClickBack is called and storj state is true", () => {
       wrapper.setState({storj: true});
       wallet.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
     it("invokes _saveConfig and updates the hash to SiaFinish when onClickNext is called", async () => {
       wrapper.instance()._saveConfig = jest.fn().mockReturnValue(Promise.resolve());
       await wallet.prop("onClickNext")();
       expect(wrapper.instance()._saveConfig).toHaveBeenCalled();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaFinish);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaFinish);
     });
 
   });
@@ -529,7 +530,7 @@ describe("Installer component", () => {
     let wrapper, finish;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.SiaFinish});
+      wrapper.setState({screen: Screen.SiaFinish});
       finish = wrapper.find("SiaFinish");
     });
 
@@ -539,7 +540,7 @@ describe("Installer component", () => {
 
     it("moves to the sia wallet screen when onClickBack is called", () => {
       finish.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaWallet);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaWallet);
     });
 
     it("closes the window when onClickClose is called", () => {
@@ -560,7 +561,7 @@ describe("Installer component", () => {
     let wrapper, finish;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Hash.FinishAll});
+      wrapper.setState({screen: Screen.FinishAll});
       finish = wrapper.find("Finish");
     });
 
@@ -570,7 +571,7 @@ describe("Installer component", () => {
 
     it("moves to the storj login screen when onClickBack is called", () => {
       finish.prop("onClickBack")();
-      expect(wrapper.state("screen")).toEqual(Hash.StorjLogin);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjLogin);
     });
 
     it("closes the window when onClickClose is called", () => {
@@ -586,24 +587,46 @@ describe("Installer component", () => {
 
   });
 
-  describe("_checkJRE", () => {
+  describe("JRE preparation screen", () => {
+
+    const progress = 12;
+    let wrapper, preparation;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      wrapper.setState({screen: Screen.JREPreparation, progress: progress});
+      preparation = wrapper.find("Preparation");
+    });
+
+    it("has messages", () => {
+      expect(preparation.html()).toContain("Getting some tools");
+      expect(preparation.html()).toContain("Please wait");
+    });
+
+    it("is given a progress value", () => {
+      expect(preparation.prop("progress")).toEqual(progress);
+    });
+
+  });
+
+  describe("_preoareJRE method", () => {
 
     let wrapper, instance;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
       instance = wrapper.instance();
+      setInterval.mockReset();
     });
 
     it("does nothing when requesting is true", async () => {
       instance.requesting = true;
-      await instance._checkJRE();
+      await instance._prepareJRE();
 
       expect(ipcRenderer.once).not.toHaveBeenCalled();
       expect(ipcRenderer.send).not.toHaveBeenCalled();
     });
 
     it("sends JRE install request", async () => {
-      await instance._checkJRE();
+      await instance._prepareJRE();
 
       expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.any(Function));
       expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
@@ -622,14 +645,14 @@ describe("Installer component", () => {
 
       expect(instance.requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
-      await instance._checkJRE();
+      await instance._prepareJRE();
       expect(instance.requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
     });
 
     it("moves to the choose cloud service screen", async () => {
-      await instance._checkJRE();
-      expect(wrapper.state("screen")).toEqual(Hash.ChooseCloudService);
+      await instance._prepareJRE();
+      expect(wrapper.state("screen")).toEqual(Screen.ChooseCloudService);
     });
 
     // TODO: Update this test after error notification template is decided.
@@ -642,10 +665,63 @@ describe("Installer component", () => {
           }
         });
       });
-      await instance._checkJRE();
-      expect(wrapper.state("screen")).toEqual("");
+      await instance._prepareJRE();
+      expect(wrapper.state("screen")).toEqual(Screen.JREPreparation);
       expect(instance.requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+    it("moves to the JRE preparation screen while installing JRE", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(wrapper.state("screen")).toEqual(Screen.JREPreparation);
+            cb(null, true);
+          }
+        });
+      });
+      await instance._prepareJRE();
+    });
+
+    it("sets progress state to 0", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(wrapper.state("progress")).toEqual(0);
+            cb(null, true);
+          }
+        });
+      });
+
+      wrapper.setState({progress: 100});
+      await instance._prepareJRE();
+      expect(wrapper.state("progress")).toEqual(100);
+    });
+
+    it("starts timer to increment the progress bar, and stop it when the installation finishes", async () => {
+      const timerID = 111;
+      setInterval.mockReturnValue(timerID);
+
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(setInterval).toHaveBeenCalled();
+            expect(wrapper.state("progress")).toEqual(0);
+            // jest.runOnlyPendingTimers();
+            setInterval.mock.calls[0][0]();
+            expect(wrapper.state("progress")).toEqual(1);
+            // jest.runOnlyPendingTimers();
+            setInterval.mock.calls[0][0]();
+            expect(wrapper.state("progress")).toEqual(2);
+            cb(null, true);
+          }
+        });
+      });
+
+      wrapper.setState({progress: 100});
+      await instance._prepareJRE();
+      expect(clearInterval).toHaveBeenCalledWith(timerID);
+      expect(wrapper.state("progress")).toEqual(100);
     });
 
   });
@@ -721,7 +797,7 @@ describe("Installer component", () => {
       await instance._storjLogin(info);
       expect(instance._requestSiaWallet).not.toHaveBeenCalled();
       expect(instance._saveConfig).toHaveBeenCalled();
-      expect(wrapper.state("screen")).toEqual(Hash.FinishAll);
+      expect(wrapper.state("screen")).toEqual(Screen.FinishAll);
     });
 
     it("neither call _requestSiaWallet nor move FinishAll when receives an error", async () => {
@@ -812,7 +888,7 @@ describe("Installer component", () => {
 
     it("moves to StorjEncryptionKey", async () => {
       await instance._storjRegister(info);
-      expect(wrapper.state("screen")).toEqual(Hash.StorjEncryptionKey);
+      expect(wrapper.state("screen")).toEqual(Screen.StorjEncryptionKey);
     });
 
     // TODO: Update this test after error notification template is decided.
@@ -904,7 +980,7 @@ describe("Installer component", () => {
 
     it("moves to the sia wallet screen if address and seed was received", async () => {
       await instance._requestSiaWallet();
-      expect(wrapper.state("screen")).toEqual(Hash.SiaWallet);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaWallet);
     });
 
     // TODO: Update this test after error notification template is decided.

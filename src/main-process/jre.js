@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import fs from "fs";
 import log from "electron-log";
+import fs from "fs";
 import jre from "node-jre";
 
 export async function installJRE() {
