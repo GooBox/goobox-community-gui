@@ -608,6 +608,27 @@ describe("Installer component", () => {
 
   });
 
+  describe("SIA preparation screen", () => {
+
+    const progress = 12;
+    let wrapper, preparation;
+    beforeEach(() => {
+      wrapper = shallow(<Installer/>);
+      wrapper.setState({screen: Screen.SIAPreparation, progress: progress});
+      preparation = wrapper.find("Preparation");
+    });
+
+    it("has messages", () => {
+      expect(preparation.html()).toContain("Setting up your");
+      expect(preparation.html()).toContain("SIA wallet");
+    });
+
+    it("is given a progress value", () => {
+      expect(preparation.prop("progress")).toEqual(progress);
+    });
+
+  });
+
   describe("_preoareJRE method", () => {
 
     let wrapper, instance;
@@ -937,6 +958,7 @@ describe("Installer component", () => {
           }
         });
       });
+      setInterval.mockReset();
     });
 
     it("does nothing when requesting is true", async () => {
@@ -995,9 +1017,62 @@ describe("Installer component", () => {
       });
 
       await instance._requestSiaWallet();
-      expect(wrapper.state("screen")).toEqual("");
+      expect(wrapper.state("screen")).toEqual(Screen.SIAPreparation);
       expect(wrapper.instance().requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
+    });
+
+    it("moves to the SIA preparation screen while installing JRE", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(wrapper.state("screen")).toEqual(Screen.SIAPreparation);
+            cb(null, true);
+          }
+        });
+      });
+      await instance._requestSiaWallet();
+    });
+
+    it("sets progress state to 0", async () => {
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(wrapper.state("progress")).toEqual(0);
+            cb(null, true);
+          }
+        });
+      });
+
+      wrapper.setState({progress: 100});
+      await instance._requestSiaWallet();
+      expect(wrapper.state("progress")).toEqual(100);
+    });
+
+    it("starts timer to increment the progress bar, and stop it when the installation finishes", async () => {
+      const timerID = 111;
+      setInterval.mockReturnValue(timerID);
+
+      ipcRenderer.once.mockImplementation((listen, cb) => {
+        ipcRenderer.send.mockImplementation((method) => {
+          if (listen === method) {
+            expect(setInterval).toHaveBeenCalled();
+            expect(wrapper.state("progress")).toEqual(0);
+            // jest.runOnlyPendingTimers();
+            setInterval.mock.calls[0][0]();
+            expect(wrapper.state("progress")).toEqual(1);
+            // jest.runOnlyPendingTimers();
+            setInterval.mock.calls[0][0]();
+            expect(wrapper.state("progress")).toEqual(2);
+            cb(null, true);
+          }
+        });
+      });
+
+      wrapper.setState({progress: 100});
+      await instance._requestSiaWallet();
+      expect(clearInterval).toHaveBeenCalledWith(timerID);
+      expect(wrapper.state("progress")).toEqual(100);
     });
 
   });

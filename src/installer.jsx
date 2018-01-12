@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ export const Screen = {
   SiaFinish: "sia-finish",
   FinishAll: "finish-all",
   JREPreparation: "jre-preparation",
+  SIAPreparation: "sia-preparation",
 };
 
 
@@ -244,19 +245,34 @@ export class Installer extends React.Component {
     this.requesting = true;
     return new Promise(resolve => {
 
-      this.setState({wait: true}, () => {
+      this.setState({wait: true, progress: 0, screen: Screen.SIAPreparation}, () => {
+
+        let timerID;
         ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
 
           log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
+          if (timerID) {
+            clearInterval(timerID);
+          }
+
           if (err) {
             // TODO: Show this error.
             log.error(err);
             this.setState({wait: false}, resolve);
           } else {
-            this.setState({siaAccount: info, wait: false, screen: Screen.SiaWallet}, resolve);
+            this.setState({siaAccount: info, wait: false, progress: 100, screen: Screen.SiaWallet}, resolve);
           }
 
         });
+
+        timerID = setInterval(() => {
+          const current = this.state.progress;
+          if (current < 95) {
+            this.setState({progress: current + 1})
+          }
+        }, 200);
+
+        log.info("requesting SIA wallet information")
         ipcRenderer.send(SiaWalletEvent);
       });
 
@@ -442,8 +458,8 @@ export class Installer extends React.Component {
 
       case Screen.SiaWallet:
         screen = <SiaWallet
-          address={this.state.siaAccount === null || this.state.siaAccount.address}
-          seed={this.state.siaAccount === null || this.state.siaAccount.seed}
+          address={this.state.siaAccount.address || ""}
+          seed={this.state.siaAccount.seed || ""}
           onClickBack={() => {
             this.setState({screen: this.state.storj ? Screen.StorjLogin : Screen.SiaSelected})
           }}
@@ -473,6 +489,14 @@ export class Installer extends React.Component {
           <Preparation progress={this.state.progress}>
             Getting some tools.<br/>
             <span className="bold">Please wait.</span>
+          </Preparation>
+        );
+        break;
+
+      case Screen.SIAPreparation:
+        screen = (
+          <Preparation progress={this.state.progress}>
+            Setting up your <span className="bold">SIA wallet</span>.
           </Preparation>
         );
         break;
