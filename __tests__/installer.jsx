@@ -608,19 +608,19 @@ describe("Installer component", () => {
 
   });
 
-  describe("SIA preparation screen", () => {
+  describe("Sia preparation screen", () => {
 
     const progress = 12;
     let wrapper, preparation;
     beforeEach(() => {
       wrapper = shallow(<Installer/>);
-      wrapper.setState({screen: Screen.SIAPreparation, progress: progress});
+      wrapper.setState({screen: Screen.SiaPreparation, progress: progress});
       preparation = wrapper.find("Preparation");
     });
 
     it("has messages", () => {
       expect(preparation.html()).toContain("Setting up your");
-      expect(preparation.html()).toContain("SIA wallet");
+      expect(preparation.html()).toContain("sia wallet");
     });
 
     it("is given a progress value", () => {
@@ -968,14 +968,14 @@ describe("Installer component", () => {
       expect(ipcRenderer.send).not.toHaveBeenCalled();
     });
 
-    it("requests SIA wallet information", async () => {
+    it("requests sia wallet information", async () => {
       await instance._requestSiaWallet();
       expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.any(Function));
       expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
       expect(wrapper.state("siaAccount")).toEqual(info);
     });
 
-    it("doesn't request SIA wallet information when siaAccount state has the information already", async () => {
+    it("doesn't request sia wallet information when siaAccount state has the information already", async () => {
       wrapper.setState({siaAccount: info});
       await instance._requestSiaWallet();
       expect(ipcRenderer.once).not.toHaveBeenCalled();
@@ -1017,16 +1017,16 @@ describe("Installer component", () => {
       });
 
       await instance._requestSiaWallet();
-      expect(wrapper.state("screen")).toEqual(Screen.SIAPreparation);
+      expect(wrapper.state("screen")).toEqual(Screen.SiaPreparation);
       expect(wrapper.instance().requesting).toBeFalsy();
       expect(wrapper.state("wait")).toBeFalsy();
     });
 
-    it("moves to the SIA preparation screen while installing JRE", async () => {
+    it("moves to the sia preparation screen while installing JRE", async () => {
       ipcRenderer.once.mockImplementation((listen, cb) => {
         ipcRenderer.send.mockImplementation((method) => {
           if (listen === method) {
-            expect(wrapper.state("screen")).toEqual(Screen.SIAPreparation);
+            expect(wrapper.state("screen")).toEqual(Screen.SiaPreparation);
             cb(null, true);
           }
         });

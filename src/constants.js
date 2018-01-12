@@ -23,7 +23,7 @@ export const Synchronizing = "synchronizing";
 export const Paused = "paused";
 
 export const Storj = "Storj";
-export const Sia = "SIA";
+export const Sia = "Sia";
 
 export const JREInstallEvent = "jre-install";
 export const StorjLoginEvent = "storj-login";

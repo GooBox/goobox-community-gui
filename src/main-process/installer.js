@@ -77,12 +77,12 @@ function installer() {
         // otherwise
         log.info("installation has been canceled");
         if (global.storj) {
-          log.info("closing Storj instance");
+          log.info("closing the storj instance");
           await global.storj.close();
           delete global.storj;
         }
         if (global.sia) {
-          log.info("closing SIA instance");
+          log.info("closing the sia instance");
           await global.sia.close();
           delete global.sia;
         }
@@ -166,7 +166,7 @@ function installer() {
     } catch (error) {
       log.error(error);
       // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-      dialog.showErrorBox("Goobox", `Failed to obtain SIA wallet information: ${error}`);
+      dialog.showErrorBox("Goobox", `Failed to obtain sia wallet information: ${error}`);
       event.sender.send(SiaWalletEvent, null, error);
       delete global.sia;
     }

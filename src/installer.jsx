@@ -49,7 +49,7 @@ export const Screen = {
   SiaFinish: "sia-finish",
   FinishAll: "finish-all",
   JREPreparation: "jre-preparation",
-  SIAPreparation: "sia-preparation",
+  SiaPreparation: "sia-preparation",
 };
 
 
@@ -62,7 +62,7 @@ export class Installer extends React.Component {
       screen: "",
       // true if the user chooses Storj.
       storj: false,
-      // true if the user chooses SIA.
+      // true if the user chooses Sia.
       sia: false,
       // default sync folder: <home>/<app-name>
       folder: process.env.DEFAULT_SYNC_FOLDER,
@@ -245,7 +245,7 @@ export class Installer extends React.Component {
     this.requesting = true;
     return new Promise(resolve => {
 
-      this.setState({wait: true, progress: 0, screen: Screen.SIAPreparation}, () => {
+      this.setState({wait: true, progress: 0, screen: Screen.SiaPreparation}, () => {
 
         let timerID;
         ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
@@ -272,7 +272,7 @@ export class Installer extends React.Component {
           }
         }, 200);
 
-        log.info("requesting SIA wallet information")
+        log.info("requesting sia wallet information")
         ipcRenderer.send(SiaWalletEvent);
       });
 
@@ -485,10 +485,10 @@ export class Installer extends React.Component {
         );
         break;
 
-      case Screen.SIAPreparation:
+      case Screen.SiaPreparation:
         screen = (
           <Preparation progress={this.state.progress}>
-            Setting up your <span className="bold">SIA wallet</span>.
+            Setting up your <span className="bold">sia wallet</span>.
           </Preparation>
         );
         break;

@@ -107,7 +107,7 @@ async function main() {
   // Define event handlers.
   const SiaEventHandler = line => {
     const e = JSON.parse(line);
-    log.debug(`Received a SIA event: ${e.eventType}`);
+    log.debug(`Received a sia event: ${e.eventType}`);
     switch (e.eventType) {
       case "Synchronizing":
         log.debug("Update the tray icon to the synchronizing icon");

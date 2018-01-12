@@ -24,7 +24,7 @@ const dialog = remote.dialog;
 
 describe("SelectFolder component", () => {
 
-  const service = "Storj or SIA";
+  const service = "Storj or Sia";
   const defaultDir = "/home/someone/Goobox";
   let wrapper, back, next, selectFolder;
   beforeEach(() => {

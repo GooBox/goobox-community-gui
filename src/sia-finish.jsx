@@ -47,7 +47,7 @@ export default function SiaFinish(props) {
     <div className="background-gradation">
       <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
       <main style={style.main}>
-        <div className="f141">SIA installation.</div>
+        <div className="f141">Sia installation.</div>
         <div className="f211">
           We're preparing your account...<br/>
           We will notify you when <span className="underlined bold">we are done</span>.

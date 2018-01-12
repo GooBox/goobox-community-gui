@@ -64,15 +64,15 @@ export default function SiaWallet(props) {
     <div className="background-gradation">
       <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
       <main className="left address" style={style.address}>
-        <div className="f141">SIA installation.</div>
+        <div className="f141">Sia installation.</div>
         <div className="f211">
-          Please save your <span className="underlined bold">SIA wallet address</span>.
+          Please save your <span className="underlined bold">Sia wallet address</span>.
         </div>
         <input id="wallet" type="text" readOnly="readonly" value={props.address} style={style.wallet}/>
       </main>
       <main className="seed" style={style.seed}>
         <div className="f211">
-          And your <span className="underlined bold">SIA seed</span>.
+          And your <span className="underlined bold">Sia seed</span>.
         </div>
         <p id="seed" className="text" style={style.seedValue}>{props.seed}</p>
       </main>

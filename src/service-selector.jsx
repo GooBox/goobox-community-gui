@@ -41,7 +41,7 @@ const style = {
     justifyContent: "center"
   },
   //
-  // The following configurations will be enabled when Goobox supports Storj & SIA.
+  // The following configurations will be enabled when Goobox supports Storj & Sia.
   //
   // optionStorj: {
   //   width: "25%",
@@ -59,7 +59,7 @@ const style = {
   //   background: "none"
   // }
   //
-  // Currently, Goobox only supports Storj or SIA.
+  // Currently, Goobox only supports Storj or Sia.
   //
   optionStorj: {
     width: "30%",

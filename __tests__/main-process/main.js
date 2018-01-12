@@ -368,7 +368,7 @@ describe("main process of the core app", () => {
         // expect(global.sia.storj.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
       });
 
-      it("restart the SIA instance if exists when the new state is Synchronizing", async () => {
+      it("restart the Sia instance if exists when the new state is Synchronizing", async () => {
         global.sia = {
           start: jest.fn(),
           stdout: {
@@ -380,7 +380,7 @@ describe("main process of the core app", () => {
         expect(global.sia.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
       });
 
-      it("closes the SIA instance if exists when the new state is Paused", async () => {
+      it("closes the Sia instance if exists when the new state is Paused", async () => {
         global.sia = {
           close: jest.fn(),
           stdout: {
