@@ -37,8 +37,21 @@ describe("Storj class", () => {
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
-      const cmd = "goobox-sync-storj";
-      expect(storj.cmd).toEqual(cmd);
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "darwin"
+        });
+
+        const storj = new Storj();
+        const cmd = "goobox-sync-storj";
+        expect(storj.cmd).toEqual(cmd);
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("has cmd which describes the path to the bat file of sync storj app in Windows", () => {

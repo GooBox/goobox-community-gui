@@ -35,9 +35,21 @@ describe("Sia class", () => {
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync sia app", () => {
-      const sia = new Sia();
-      const cmd = "goobox-sync-sia";
-      expect(sia.cmd).toEqual(cmd);
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "darwin"
+        });
+
+        const sia = new Sia();
+        const cmd = "goobox-sync-sia";
+        expect(sia.cmd).toEqual(cmd);
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("has cmd which describes the path to the bat file of sync sia app in Windows", () => {
