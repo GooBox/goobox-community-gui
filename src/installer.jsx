@@ -18,7 +18,6 @@
 import {ipcRenderer, remote} from "electron";
 import log from "electron-log";
 import React from "react";
-import {HashRouter, Route, Switch} from "react-router-dom";
 import util from "util";
 import {saveConfig} from "./config";
 import {
@@ -34,7 +33,7 @@ import StorjEmailConfirmation from "./storj-email-confirmation";
 import StorjEncryptionKey from "./storj-encryption-key";
 import StorjLogin from "./storj-login";
 import StorjRegistration from "./storj-registration";
-import Welcome from "./welcome.jsx";
+import Welcome from "./welcome";
 
 export const Hash = {
   ChooseCloudService: "choose-cloud-service",
@@ -56,6 +55,8 @@ export class Installer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // current screen.
+      screen: "",
       // true if the user chooses Storj.
       storj: false,
       // true if the user chooses SIA.
@@ -104,14 +105,8 @@ export class Installer extends React.Component {
         ipcRenderer.once(JREInstallEvent, (_, succeeded, msg) => {
 
           if (succeeded) {
-
-            log.debug("JRE installation ends, reset the mouse cursor");
-            this.setState({wait: false}, () => {
-              log.debug("moving to the next screen");
-              location.hash = Hash.ChooseCloudService;
-              resolve();
-            });
-
+            log.debug("JRE installation ends, reset the mouse cursor, and move to the next screen");
+            this.setState({wait: false, screen: Hash.ChooseCloudService}, resolve);
           } else {
             log.debug(`JRE installation fails: ${msg}`);
             this.setState({wait: false}, resolve);
@@ -143,11 +138,11 @@ export class Installer extends React.Component {
             this.setState({storjAccount: info, wait: false}, async () => {
               if (this.state.sia) {
                 await this._requestSiaWallet();
+                resolve();
               } else {
                 await this._saveConfig();
-                location.hash = Hash.FinishAll;
+                this.setState({screen: Hash.FinishAll}, resolve);
               }
-              resolve();
             });
           } else {
             log.debug({
@@ -197,11 +192,9 @@ export class Installer extends React.Component {
                 password: info.password,
                 encryptionKey: args,
               },
-              wait: false
-            }, () => {
-              location.hash = Hash.StorjEncryptionKey;
-              resolve();
-            });
+              wait: false,
+              screen: Hash.StorjEncryptionKey
+            }, resolve);
           } else {
             this.setState({
               wait: false,
@@ -228,8 +221,7 @@ export class Installer extends React.Component {
     }
 
     if (this.state.siaAccount.address) {
-      location.hash = Hash.SiaWallet;
-      return;
+      return new Promise(resolve => this.setState({screen: Hash.SiaWallet}, resolve));
     }
 
     this.requesting = true;
@@ -244,10 +236,7 @@ export class Installer extends React.Component {
             log.error(err);
             this.setState({wait: false}, resolve);
           } else {
-            this.setState({siaAccount: info, wait: false}, () => {
-              location.hash = Hash.SiaWallet;
-              resolve();
-            });
+            this.setState({siaAccount: info, wait: false, screen: Hash.SiaWallet}, resolve);
           }
 
         });
@@ -296,201 +285,180 @@ export class Installer extends React.Component {
 
   }
 
+//   return (
+// <Preparation progress={10}>
+// Getting some tools.<br/>
+// <span class="bold">Please wait.</span>
+// </Preparation>
+// );
+
+
   render() {
-    log.debug(`rendering a screen for ${location.hash}`);
+    log.debug(`rendering a screen for ${this.state.screen || "the initial screen"}`);
+    let screen;
+    switch (this.state.screen) {
+      case Hash.ChooseCloudService:
+        screen = <ServiceSelector
+          onSelectStorj={() => {
+            this.setState({storj: true, sia: false, screen: Hash.StorjSelected});
+          }}
+          onSelectSia={() => {
+            this.setState({storj: false, sia: true, screen: Hash.SiaSelected});
+          }}
+          onSelectBoth={() => {
+            this.setState({storj: true, sia: true, screen: Hash.BothSelected});
+          }}
+        />;
+        break;
+
+      case Hash.StorjSelected:
+        screen = <SelectFolder
+          service={Storj}
+          folder={this.state.folder}
+          onSelectFolder={folder => this.setState({folder: folder})}
+          onClickBack={async () => {
+            await this._stopSyncApps();
+            return new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+          }}
+          onClickNext={() => this.setState({screen: Hash.StorjLogin})}
+        />;
+        break;
+
+      case Hash.SiaSelected:
+        screen = <SelectFolder
+          service={Sia}
+          folder={this.state.folder}
+          onSelectFolder={folder => this.setState({folder: folder})}
+          onClickBack={async () => {
+            if (this.requesting) {
+              return
+            }
+            await this._stopSyncApps();
+            new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+          }}
+          onClickNext={async () => this._requestSiaWallet()}
+        />;
+        break;
+
+      case Hash.BothSelected:
+        screen = <SelectFolder
+          service={`${Storj} and ${Sia}`}
+          folder={this.state.folder}
+          onSelectFolder={folder => this.setState({folder: folder})}
+          onClickBack={async () => {
+            await this._stopSyncApps();
+            return new Promise(resolve => this.setState({screen: Hash.ChooseCloudService}, resolve));
+          }}
+          onClickNext={() => this.setState({screen: Hash.StorjLogin})}
+        />;
+        break;
+
+      case Hash.StorjLogin:
+        screen = <StorjLogin
+          onClickCreateAccount={() => {
+            if (!this.requesting) {
+              this.setState({screen: Hash.StorjRegistration});
+            }
+          }}
+          onClickBack={() => {
+            if (!this.requesting) {
+              this.setState({
+                storjAccount: {
+                  emailWarn: false,
+                  passwordWarn: false,
+                  keyWarn: false,
+                  warnMsg: null,
+                },
+                screen: this.state.sia ? Hash.BothSelected : Hash.StorjSelected
+              });
+            }
+          }}
+          onClickFinish={async (info) => this._storjLogin(info)}
+          emailWarn={this.state.storjAccount.emailWarn}
+          passwordWarn={this.state.storjAccount.passwordWarn}
+          keyWarn={this.state.storjAccount.keyWarn}
+          warnMsg={this.state.storjAccount.warnMsg}
+        />;
+        break;
+
+      case Hash.StorjRegistration:
+        screen = <StorjRegistration
+          onClickLogin={() => {
+            if (!this.requesting) {
+              this.setState({screen: Hash.StorjLogin});
+            }
+          }}
+          onClickBack={() => {
+            if (!this.requesting) {
+              this.setState({
+                storjAccount: {
+                  emailWarn: false,
+                  passwordWarn: false,
+                  warnMsg: null,
+                },
+                screen: this.state.sia ? Hash.BothSelected : Hash.StorjSelected,
+              });
+            }
+          }}
+          onClickNext={async (info) => this._storjRegister(info)}
+          emailWarn={this.state.storjAccount.emailWarn}
+          passwordWarn={this.state.storjAccount.passwordWarn}
+          warnMsg={this.state.storjAccount.warnMsg}
+        />;
+        break;
+
+      case Hash.StorjEncryptionKey:
+        screen = <StorjEncryptionKey
+          encryptionKey={this.state.storjAccount.key || ""}
+          onClickBack={() => this.setState({screen: Hash.StorjRegistration})}
+          onClickNext={() => this.setState({screen: Hash.StorjEmailConfirmation})}
+        />;
+        break;
+
+      case Hash.StorjEmailConfirmation:
+        screen = <StorjEmailConfirmation
+          onClickBack={() => this.setState({screen: Hash.StorjEncryptionKey})}
+          onClickLogin={() => this.setState({screen: Hash.StorjLogin})}
+        />;
+        break;
+
+      case Hash.SiaWallet:
+        screen = <SiaWallet
+          address={this.state.siaAccount === null || this.state.siaAccount.address}
+          seed={this.state.siaAccount === null || this.state.siaAccount.seed}
+          onClickBack={() => {
+            this.setState({screen: this.state.storj ? Hash.StorjLogin : Hash.SiaSelected})
+          }}
+          onClickNext={async () => {
+            await this._saveConfig();
+            return new Promise(resolve => this.setState({screen: Hash.SiaFinish}, resolve));
+          }}
+        />;
+        break;
+
+      case Hash.SiaFinish:
+        screen = <SiaFinish
+          onClickBack={() => this.setState({screen: Hash.SiaWallet})}
+          onClickClose={() => remote.getCurrentWindow().close()}
+        />;
+        break;
+
+      case Hash.FinishAll:
+        screen = <Finish
+          onClickBack={() => this.setState({screen: Hash.StorjLogin})}
+          onClickClose={() => remote.getCurrentWindow().close()}
+        />;
+        break;
+
+      default:
+        screen = <Welcome onClickNext={async () => this._checkJRE()}/>;
+        break;
+
+    }
+
     return (
       <div className={this.state.wait ? "wait" : ""}>
-        <HashRouter hashType="noslash">
-          <Switch>
-            <Route exact path="/" render={() => {
-              return (
-                <Welcome onClickNext={async () => this._checkJRE()}/>
-              );
-            }}/>
-            <Route path={`/${Hash.ChooseCloudService}`} render={() => {
-              log.debug("Rendering the choose cloud service screen");
-              return (
-                <ServiceSelector
-                  onSelectStorj={() => {
-                    this.setState({storj: true, sia: false});
-                    location.hash = Hash.StorjSelected;
-                  }}
-                  onSelectSia={() => {
-                    this.setState({storj: false, sia: true});
-                    location.hash = Hash.SiaSelected;
-                  }}
-                  onSelectBoth={() => {
-                    this.setState({storj: true, sia: true});
-                    location.hash = Hash.BothSelected;
-                  }}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.StorjSelected}`} render={() => {
-              return (
-                <SelectFolder
-                  service={Storj}
-                  folder={this.state.folder}
-                  onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={async () => {
-                    await this._stopSyncApps();
-                    location.hash = Hash.ChooseCloudService;
-                  }}
-                  onClickNext={() => location.hash = Hash.StorjLogin}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.SiaSelected}`} render={() => {
-              return (
-                <SelectFolder
-                  service={Sia}
-                  folder={this.state.folder}
-                  onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={async () => {
-                    if (this.requesting) {
-                      return
-                    }
-                    await this._stopSyncApps();
-                    location.hash = Hash.ChooseCloudService;
-                  }}
-                  onClickNext={async () => this._requestSiaWallet()}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.BothSelected}`} render={() => {
-              return (
-                <SelectFolder
-                  service={`${Storj} and ${Sia}`}
-                  folder={this.state.folder}
-                  onSelectFolder={folder => this.setState({folder: folder})}
-                  onClickBack={async () => {
-                    await this._stopSyncApps();
-                    location.hash = Hash.ChooseCloudService;
-                  }}
-                  onClickNext={() => location.hash = Hash.StorjLogin}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.StorjLogin}`} render={() => {
-              return (
-                <StorjLogin
-                  onClickCreateAccount={() => {
-                    if (!this.requesting) {
-                      location.hash = Hash.StorjRegistration;
-                    }
-                  }}
-                  onClickBack={() => {
-                    if (!this.requesting) {
-                      this.setState({
-                        storjAccount: {
-                          emailWarn: false,
-                          passwordWarn: false,
-                          keyWarn: false,
-                          warnMsg: null,
-                        }
-                      }, () => {
-                        if (this.state.sia) {
-                          location.hash = Hash.BothSelected;
-                        } else {
-                          location.hash = Hash.StorjSelected;
-                        }
-                      });
-                    }
-                  }}
-                  onClickFinish={async (info) => this._storjLogin(info)}
-                  emailWarn={this.state.storjAccount.emailWarn}
-                  passwordWarn={this.state.storjAccount.passwordWarn}
-                  keyWarn={this.state.storjAccount.keyWarn}
-                  warnMsg={this.state.storjAccount.warnMsg}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.StorjRegistration}`} render={() => {
-              return (
-                <StorjRegistration
-                  onClickLogin={() => {
-                    if (!this.requesting) {
-                      location.hash = Hash.StorjLogin
-                    }
-                  }}
-                  onClickBack={() => {
-                    if (!this.requesting) {
-                      this.setState({
-                        storjAccount: {
-                          emailWarn: false,
-                          passwordWarn: false,
-                          warnMsg: null,
-                        }
-                      }, () => {
-                        if (this.state.sia) {
-                          location.hash = Hash.BothSelected;
-                        } else {
-                          location.hash = Hash.StorjSelected;
-                        }
-                      });
-                    }
-                  }}
-                  onClickNext={async (info) => this._storjRegister(info)}
-                  emailWarn={this.state.storjAccount.emailWarn}
-                  passwordWarn={this.state.storjAccount.passwordWarn}
-                  warnMsg={this.state.storjAccount.warnMsg}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.StorjEncryptionKey}`} render={() => {
-              return (
-                <StorjEncryptionKey
-                  encryptionKey={this.state.storjAccount.key}
-                  onClickBack={() => location.hash = Hash.StorjRegistration}
-                  onClickNext={() => location.hash = Hash.StorjEmailConfirmation}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.StorjEmailConfirmation}`} render={() => {
-              return (
-                <StorjEmailConfirmation
-                  onClickBack={() => location.hash = Hash.StorjEncryptionKey}
-                  onClickLogin={() => location.hash = Hash.StorjLogin}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.SiaWallet}`} render={() => {
-              return (
-                <SiaWallet
-                  address={this.state.siaAccount === null || this.state.siaAccount.address}
-                  seed={this.state.siaAccount === null || this.state.siaAccount.seed}
-                  onClickBack={() => {
-                    if (this.state.storj) {
-                      location.hash = Hash.StorjLogin;
-                    } else {
-                      location.hash = Hash.SiaSelected;
-                    }
-                  }}
-                  onClickNext={async () => {
-                    await this._saveConfig();
-                    location.hash = Hash.SiaFinish;
-                  }}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.SiaFinish}`} render={() => {
-              return (
-                <SiaFinish
-                  onClickBack={() => location.hash = Hash.SiaWallet}
-                  onClickClose={() => remote.getCurrentWindow().close()}
-                />
-              );
-            }}/>
-            <Route path={`/${Hash.FinishAll}`} render={() => {
-              return (
-                <Finish
-                  onClickBack={() => location.hash = Hash.StorjLogin}
-                  onClickClose={() => remote.getCurrentWindow().close()}
-                />
-              );
-            }}/>
-          </Switch>
-        </HashRouter>
+        {screen}
       </div>
     );
   }
