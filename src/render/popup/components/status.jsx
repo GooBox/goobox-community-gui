@@ -17,7 +17,17 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import {Paused, Synchronizing} from "./constants";
+import folderImage from "../assets/folder.svg";
+import importDriveImage from "../assets/import_drive.svg";
+import infoImage from "../assets/info.svg";
+import pauseSyncImage from "../assets/pause_sync.svg";
+import pausedImage from "../assets/paused.svg";
+import settingsImage from "../assets/settings.svg";
+import syncAgainImage from "../assets/sync_again.svg";
+import {Paused, Synchronizing} from "../../../constants";
+import leftWhiteIcon from "../assets/left_white_icon.svg";
+import synchronizedImage from "../assets/synchronized.svg";
+import titleImage from "../assets/title.svg";
 
 export default function Status(props) {
 
@@ -32,12 +42,12 @@ export default function Status(props) {
     pauseRestartBtn = (
       <a className="pause-sync-btn"
          onClick={() => props.onChangeState && props.onChangeState(Paused)}>
-        <img src="../resources/pause_sync.svg" width="23px" height="23px"/>
+        <img src={pauseSyncImage} width={23} height={23}/>
       </a>
     );
     stateInfo = (
       <div>
-        <img className="state-icon" src="../resources/synchronized.svg" width="81px" height="81px"/>
+        <img className="state-icon" src={synchronizedImage} width={81} height={81}/>
         <p className="state-text bold">Goobox is up to date.</p>
       </div>
     );
@@ -45,12 +55,12 @@ export default function Status(props) {
     pauseRestartBtn = (
       <a className="sync-again-btn"
          onClick={() => props.onChangeState && props.onChangeState(Synchronizing)}>
-        <img src="../resources/sync_again.svg" width="23px" height="23px"/>
+        <img src={syncAgainImage} width={23} height={23}/>
       </a>
     );
     stateInfo = (
       <div>
-        <img className="state-icon" src="../resources/paused.svg" width="81px" height="81px"/>
+        <img className="state-icon" src={pausedImage} width={81} height={81}/>
         <p className="state-text bold">File transfers paused.</p>
       </div>
     );
@@ -59,15 +69,15 @@ export default function Status(props) {
   return (
     <div style={props.style}>
       <nav className="background-gradation">
-        <img src="../resources/left_white_icon.svg" width="41px" height="40px"/>
+        <img src={leftWhiteIcon} width={41} height={40}/>
         {pauseRestartBtn}
         <a className="settings-btn" onClick={() => props.onClickSettings && props.onClickSettings()}>
-          <img src="../resources/settings.svg" width="23px" height="23px"/>
+          <img src={settingsImage} width={23} height={23}/>
         </a>
         <a className="info-btn" onClick={() => props.onClickInfo && props.onClickInfo()}>
-          <img src="../resources/info.svg" width="23px" height="23px"/>
+          <img src={infoImage} width={23} height={23}/>
         </a>
-        <img className="title" src="../resources/title.svg" width="43px" height="11px"/>
+        <img className="title" src={titleImage} width={43} height={11}/>
       </nav>
       <main>
         {stateInfo}
@@ -80,13 +90,13 @@ export default function Status(props) {
         </div>
         <div className="links">
           <a className="sync-folder" onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
-            <img src="../resources/folder.svg" width="25px" height="19px"/>
+            <img src={folderImage} width={25} height={19}/>
             <br/>
             <span className="bold">Sync folder</span>
           </a>
           <a className="import-drive"
              onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>
-            <img src="../resources/import_drive.svg" height="22px"/>
+            <img src={importDriveImage} height={22}/>
             <br/>
             <span className="bold">Import drive</span>
           </a>

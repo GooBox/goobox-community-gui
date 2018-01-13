@@ -56,7 +56,7 @@ module.exports = [
       __filename: false
     },
     entry: {
-      "main": "./src/main.jsx",
+      "main": "./src/render/popup/index.js",
       "installer-main": "./src/installer-main.jsx",
     },
     resolve: {
@@ -67,7 +67,21 @@ module.exports = [
     }],
     module: {
       loaders: [
-        {exclude: /node_modules/, test: /\.jsx?$/, loader: "babel-loader"}
+        {
+          exclude: /node_modules/,
+          test: /\.jsx?$/,
+          loader: "babel-loader"
+        },
+        {
+          exclude: /node_modules/,
+          test: /\.svg$/,
+          use: {
+            loader: 'svg-url-loader',
+            options: {
+              noquotes: true
+            }
+          }
+        }
       ]
     },
     output: {
