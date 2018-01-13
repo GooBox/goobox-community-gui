@@ -18,6 +18,9 @@
 import log from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
+import leftArrowImage from "../assets/left_arrow.svg";
+import leftWhiteIcon from "../assets/left_white_icon.svg";
+import rightArrowImage from "../assets/right_arrow.svg";
 
 const style = {
   main: {
@@ -151,7 +154,7 @@ export default class StorjLogin extends React.Component {
 
     return (
       <div className="background-gradation">
-        <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
+        <header><img className="icon" src={leftWhiteIcon}/></header>
         {msg}
         <main className="account-info" style={style.accountInfo}>
           <div>
@@ -180,10 +183,10 @@ export default class StorjLogin extends React.Component {
         </main>
         <footer>
           <a className="back-btn" onClick={this.props.onClickBack}>
-            <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
+            <img className="arrow" src={leftArrowImage}/> Back
           </a>
           <a className="next-btn" onClick={this._onClickFinish}>
-            Finish <img className="arrow" src="../../../../resources/right_arrow.svg"/>
+            Finish <img className="arrow" src={rightArrowImage}/>
           </a>
         </footer>
       </div>

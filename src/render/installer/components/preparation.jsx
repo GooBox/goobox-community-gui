@@ -17,6 +17,8 @@
 
 import PropTypes from "prop-types"
 import React from "react";
+import strokeColorImage from "../assets/stroke_color.svg";
+import symbolColorImage from "../assets/symbol_color.svg";
 
 const style = {
 
@@ -71,8 +73,8 @@ export default function Preparation(props) {
       </div>
       <main style={style.main}>
         <div style={style.component}>
-          <img style={style.iconBackground} src="../../../../resources/stroke_color.svg" width="66px" height="66px"/>
-          <img style={style.icon} src="../../../../resources/symbol_color.svg" width="36px" height="36px"/>
+          <img style={style.iconBackground} src={strokeColorImage} width={66} height={66}/>
+          <img style={style.icon} src={symbolColorImage} width={36} height={36}/>
         </div>
         <div className="meter" style={style.component}>
           <span className="bar" style={barStyle}/>

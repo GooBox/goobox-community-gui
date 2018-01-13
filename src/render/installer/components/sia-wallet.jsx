@@ -17,6 +17,9 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import leftArrowImage from "../assets/left_arrow.svg";
+import leftWhiteIcon from "../assets/left_white_icon.svg";
+import rightArrowImage from "../assets/right_arrow.svg";
 
 const style = {
   wallet: {
@@ -62,7 +65,7 @@ export default function SiaWallet(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src={leftWhiteIcon}/></header>
       <main className="left address" style={style.address}>
         <div className="f141">Sia installation.</div>
         <div className="f211">
@@ -78,10 +81,10 @@ export default function SiaWallet(props) {
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
+          <img className="arrow" src={leftArrowImage}/> Back
         </a>
         <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
-          Next <img className="arrow" src="../../../../resources/right_arrow.svg"/>
+          Next <img className="arrow" src={rightArrowImage}/>
         </a>
       </footer>
     </div>

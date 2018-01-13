@@ -17,6 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import leftArrowImage from "../assets/left_arrow.svg";
+import leftWhiteIcon from "../assets/left_white_icon.svg";
 
 const style = {
   main: {
@@ -45,7 +47,7 @@ export default function SiaFinish(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src={leftWhiteIcon}/></header>
       <main style={style.main}>
         <div className="f141">Sia installation.</div>
         <div className="f211">
@@ -58,7 +60,7 @@ export default function SiaFinish(props) {
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
+          <img className="arrow" src={leftArrowImage}/> Back
         </a>
         <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
           Close
