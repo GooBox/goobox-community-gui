@@ -14,28 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import {shallow} from "enzyme";
 import React from "react";
-import Welcome from "../src/welcome.jsx";
+import Preparation from "../../../../src/render/installer/components/preparation.jsx";
 
-describe("Welcome component", () => {
+describe("Preparation component", () => {
 
-  let wrapper, next;
+  const progress = 39;
+  const children = (
+    <div>
+      <span>abc</span>
+      <span>123</span>
+    </div>
+  );
+  let wrapper;
   beforeEach(() => {
-    next = jest.fn();
-    wrapper = shallow(<Welcome onClickNext={next}/>);
+    wrapper = shallow(<Preparation progress={progress}>{children}</Preparation>);
   });
 
-  it("has background-gradation class", () => {
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
+  it("takes children and renders them as a message", () => {
+    expect(wrapper.find(".msg").contains(children)).toBeTruthy();
   });
 
-  it("has a link to move next screen", () => {
-    const link = wrapper.find("a");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(next).toHaveBeenCalledTimes(1);
+  it("takes progress prop and shows a progress bar", () => {
+    expect(wrapper.find(".bar").prop("style").width).toEqual(`${progress}%`);
   });
 
 });

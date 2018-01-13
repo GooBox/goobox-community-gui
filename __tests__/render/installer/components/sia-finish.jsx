@@ -17,15 +17,15 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjEmailConfirmation from "../src/storj-email-confirmation.jsx";
+import SiaFinish from "../../../../src/render/installer/components/sia-finish.jsx";
 
-describe("StorjEmailConfirmation", () => {
+describe("SiaFinish component", () => {
 
   let wrapper, back, next;
   beforeEach(() => {
     back = jest.fn();
     next = jest.fn();
-    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickLogin={next}/>);
+    wrapper = shallow(<SiaFinish onClickBack={back} onClickClose={next}/>);
   });
 
   it("has background-gradation class", () => {

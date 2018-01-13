@@ -22,43 +22,26 @@ const style = {
   main: {
     color: "white",
     position: "absolute",
-    top: "146px",
+    top: "176px",
     fontSize: "30px",
     textAlign: "left",
     width: "600px",
     paddingLeft: "158px",
   },
-  additionalInfo: {
-    position: "absolute",
-    top: "273px",
-    paddingRight: "159px",
-    fontSize: "9px",
-    color: "white",
-    textAlign: "center",
-    width: "600px",
-    paddingLeft: "158px",
-  },
 };
 
-
-export default function SiaFinish(props) {
+export default function Finish(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
       <main style={style.main}>
-        <div className="f141">Sia installation.</div>
-        <div className="f211">
-          We're preparing your account...<br/>
-          We will notify you when <span className="underlined bold">we are done</span>.
-        </div>
-      </main>
-      <main style={style.additionalInfo}>
-        You can close this window.
+        <div className="f141">You're ready to go!</div>
+        <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
         </a>
         <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
           Close
@@ -69,7 +52,7 @@ export default function SiaFinish(props) {
 
 }
 
-SiaFinish.propTypes = {
+Finish.propTypes = {
   onClickBack: PropTypes.func.isRequired,
   onClickClose: PropTypes.func.isRequired,
 };

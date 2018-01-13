@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import log from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -26,66 +27,77 @@ const style = {
     fontSize: "30px",
     textAlign: "left",
     width: "600px",
-    paddingLeft: "140px",
+    paddingLeft: "140px"
   },
   button: {
     width: "123px",
+    height: "31px",
+    fontSize: "11px",
     backgroundColor: "white",
     borderRadius: "5px",
     borderStyle: "none",
-    fontSize: "9px",
-    height: "15px"
   },
   input: {
     width: "198px",
     height: "27px",
+    marginBottom: 0,
   },
   accountInfo: {
-    color: "white",
+    position: "absolute",
+    top: "187px",
+    paddingRight: "140px",
     fontSize: "30px",
     textAlign: "center",
     width: "600px",
-    paddingLeft: "140px",
-    position: "absolute",
-    top: "201px",
-    paddingRight: "140px",
+    paddingLeft: "140px"
   },
-  storjLogin: {
-    color: "white",
-    textAlign: "center",
-    width: "600px",
-    paddingLeft: "140px",
+  createAccount: {
     position: "absolute",
-    top: "309px",
+    top: "320px",
     fontSize: "11px",
     paddingRight: "140px",
+    textAlign: "center",
+    width: "600px",
+    paddingLeft: "140px"
   },
-  storjLoginText: {
+  createAccountText: {
     paddingBottom: "9px",
+    color: "white",
+  },
+  createAccountButton: {
+    fontSize: "9px",
+    height: "15px",
+    width: "90px",
+    backgroundColor: "white",
+    borderRadius: "5px",
+    borderStyle: "none",
   },
 };
 
-export default class StorjRegistration extends React.Component {
+export default class StorjLogin extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       email: "",
       password: "",
+      key: "",
       emailWarn: props.emailWarn,
       passwordWarn: props.passwordWarn,
+      keyWarn: props.keyWarn,
     };
-    this._onClickNext = this._onClickNext.bind(this);
+    this._onClickFinish = this._onClickFinish.bind(this);
   }
 
   componentWillReceiveProps(props) {
     this.setState({
       emailWarn: props.emailWarn,
       passwordWarn: props.passwordWarn,
+      keyWarn: props.keyWarn,
     });
   }
 
-  _onClickNext() {
+  _onClickFinish() {
     let warn = false;
     if (!this.state.email) {
       warn = true;
@@ -95,17 +107,23 @@ export default class StorjRegistration extends React.Component {
       warn = true;
       this.setState({passwordWarn: true});
     }
+    if (!this.state.key) {
+      warn = true;
+      this.setState({keyWarn: true});
+    }
     if (!warn) {
-      this.props.onClickNext({
+      this.props.onClickFinish({
         email: this.state.email,
         password: this.state.password,
+        encryptionKey: this.state.key,
       });
     }
   }
 
   render() {
+    log.silly(`StorjLogin(emailWarn: ${this.state.emailWarn}, passwordWarn: ${this.state.passwordWarn}, keyWarn: ${this.state.keyWarn})`);
     let msg;
-    if (this.state.emailWarn || this.state.passwordWarn) {
+    if (this.state.emailWarn || this.state.passwordWarn || this.state.keyWarn) {
       if (this.props.warnMsg) {
         msg = (
           <main className="warnMsg" style={style.main}>
@@ -125,17 +143,17 @@ export default class StorjRegistration extends React.Component {
     } else {
       msg = (
         <main className="info" style={style.main}>
-          <div className="f141">Storj new account.</div>
-          <div className="f211">Please create your <span className="underlined bold">Storj account</span></div>
+          <div className="f141">One last thing.</div>
+          <div className="f211">Please login to your <span className="underlined bold">Storj account</span></div>
         </main>
-      );
+      )
     }
 
     return (
       <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+        <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
         {msg}
-        <main style={style.accountInfo}>
+        <main className="account-info" style={style.accountInfo}>
           <div>
             <input className={this.state.emailWarn ? "warn" : ""} id="email"
                    placeholder="e-mail" value={this.state.email} style={style.input}
@@ -146,22 +164,26 @@ export default class StorjRegistration extends React.Component {
                    placeholder="password" value={this.state.password} style={style.input}
                    onChange={e => this.setState({password: e.target.value})}/>
           </div>
-        </main>
-        <main style={style.storjLogin}>
-          <div style={style.storjLoginText}>
-            Already have an account?
+          <div>
+            <input className={this.state.keyWarn ? "warn" : ""} id="key" type="password"
+                   placeholder="encryption key" value={this.state.key} style={style.input}
+                   onChange={e => this.setState({key: e.target.value})}/>
           </div>
-          <button id="login-btn" style={style.button}
-                  onClick={this.props.onClickLogin}>
-            Click here to login
+        </main>
+        <main className="create-account" style={style.createAccount}>
+          <div style={style.createAccountText}>
+            Don't have an account?
+          </div>
+          <button id="create-account-btn" style={style.createAccountButton} onClick={this.props.onClickCreateAccount}>
+            click here to create
           </button>
         </main>
         <footer>
           <a className="back-btn" onClick={this.props.onClickBack}>
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
+            <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
           </a>
-          <a className="next-btn" onClick={this._onClickNext}>
-            Next <img className="arrow" src="../resources/right_arrow.svg"/>
+          <a className="next-btn" onClick={this._onClickFinish}>
+            Finish <img className="arrow" src="../../../../resources/right_arrow.svg"/>
           </a>
         </footer>
       </div>
@@ -170,11 +192,12 @@ export default class StorjRegistration extends React.Component {
 
 }
 
-StorjRegistration.propTypes = {
-  onClickLogin: PropTypes.func.isRequired,
+StorjLogin.propTypes = {
+  onClickCreateAccount: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
-  onClickNext: PropTypes.func.isRequired,
+  onClickFinish: PropTypes.func.isRequired,
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
+  keyWarn: PropTypes.bool,
   warnMsg: PropTypes.string,
 };

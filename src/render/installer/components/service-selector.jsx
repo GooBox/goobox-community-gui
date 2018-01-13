@@ -80,25 +80,25 @@ export default function ServiceSelector(props) {
 
   return (
     <div>
-      <header><img className="icon" src="../resources/left_color_icon.svg"/></header>
+      <header><img className="icon" src="../../../../resources/left_color_icon.svg"/></header>
       <main style={style.main}>
         <span>Please choose your</span> <span className="underlined bold">cloud service</span>
       </main>
       <section style={style.downArrow}>
-        <img className="up-and-down" src="../resources/down_arrow.svg" width="15px" height="24px"/>
+        <img className="up-and-down" src="../../../../resources/down_arrow.svg" width="15px" height="24px"/>
       </section>
       <section style={style.options}>
         <button className="option-storj" style={style.optionStorj}
                 onClick={() => props.onSelectStorj && props.onSelectStorj()}>
-          <img src="../resources/storj_logo.svg" width="56px" height="83px"/>
+          <img src="../../../../resources/storj_logo.svg" width="56px" height="83px"/>
         </button>
         <button className="option-sia" style={style.optionSia}
                 onClick={() => props.onSelectSia && props.onSelectSia()}>
-          <img src="../resources/sia_logo.svg" width="78px" height="47px"/>
+          <img src="../../../../resources/sia_logo.svg" width="78px" height="47px"/>
         </button>
         <button className="option-both" style={style.optionBoth}
                 onClick={() => props.onSelectBoth && props.onSelectBoth()}>
-          <img src="../resources/storj_and_sia_logo.svg" width="140px" height="68px"/>
+          <img src="../../../../resources/storj_and_sia_logo.svg" width="140px" height="68px"/>
         </button>
       </section>
     </div>

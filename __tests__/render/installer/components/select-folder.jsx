@@ -18,7 +18,7 @@
 import {remote} from "electron";
 import {shallow} from "enzyme";
 import React from "react";
-import SelectFolder from "../src/select-folder.jsx";
+import SelectFolder from "../../../../src/render/installer/components/select-folder.jsx";
 
 const dialog = remote.dialog;
 

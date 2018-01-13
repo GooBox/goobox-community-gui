@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import ServiceSelector from "../src/service-selector.jsx";
+import ServiceSelector from "../../../../src/render/installer/components/service-selector.jsx";
 
 describe("ServiceSelector component", () => {
 

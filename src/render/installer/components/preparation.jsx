@@ -71,8 +71,8 @@ export default function Preparation(props) {
       </div>
       <main style={style.main}>
         <div style={style.component}>
-          <img style={style.iconBackground} src="../resources/stroke_color.svg" width="66px" height="66px"/>
-          <img style={style.icon} src="../resources/symbol_color.svg" width="36px" height="36px"/>
+          <img style={style.iconBackground} src="../../../../resources/stroke_color.svg" width="66px" height="66px"/>
+          <img style={style.icon} src="../../../../resources/symbol_color.svg" width="36px" height="36px"/>
         </div>
         <div className="meter" style={style.component}>
           <span className="bar" style={barStyle}/>

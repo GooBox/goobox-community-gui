@@ -138,7 +138,7 @@ export default class SelectFolder extends React.Component {
   render() {
     return (
       <div className="background-gradation">
-        <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+        <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
         <main className="left" style={style.main}>
           <div className="f141">You chose <span className="bold service-name">{this.props.service}</span>.</div>
           <div className="f211 bold">
@@ -146,7 +146,7 @@ export default class SelectFolder extends React.Component {
           </div>
         </main>
         <main style={style.downArrow}>
-          <img className="up-and-down" src="../resources/down_arrow_white.svg" width="17px" height="29px"/>
+          <img className="up-and-down" src="../../../../resources/down_arrow_white.svg" width="17px" height="29px"/>
         </main>
         <main style={style.browseBtn}>
           <button style={style.button} onClick={() => this._onClickBrowse().catch(console.debug)}>Browse...
@@ -156,10 +156,10 @@ export default class SelectFolder extends React.Component {
         </main>
         <footer>
           <a className="back-btn" onClick={this._onClickBack} role="button">
-            <img className="arrow" src="../resources/left_arrow.svg"/> Back
+            <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
           </a>
           <a className="next-btn" onClick={this._onClickNext} role="button">
-            Next <img className="arrow" src="../resources/right_arrow.svg"/>
+            Next <img className="arrow" src="../../../../resources/right_arrow.svg"/>
           </a>
         </footer>
       </div>

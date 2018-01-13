@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjRegistration from "../src/storj-registration.jsx";
+import StorjRegistration from "../../../../src/render/installer/components/storj-registration.jsx";
 
 describe("StorjRegistration component", () => {
 

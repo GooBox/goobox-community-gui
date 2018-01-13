@@ -22,29 +22,32 @@ const style = {
   main: {
     color: "white",
     position: "absolute",
-    top: "176px",
+    top: "146px",
     fontSize: "30px",
     textAlign: "left",
     width: "600px",
-    paddingLeft: "158px",
-  },
+    paddingLeft: "81px",
+  }
 };
 
-export default function Finish(props) {
+export default function StorjEmailConfirmation(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
       <main style={style.main}>
-        <div className="f141">You're ready to go!</div>
-        <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
+        <div className="f141">Storj new account.</div>
+        <div className="f211">
+          Please confirm your <span className="underlined bold">Storj account <span
+          className="light">in your email</span></span>
+        </div>
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
-          Close
+        <a className="next-btn" onClick={() => props.onClickLogin && props.onClickLogin()}>
+          Login <img className="arrow" src="../../../../resources/right_arrow.svg"/>
         </a>
       </footer>
     </div>
@@ -52,7 +55,7 @@ export default function Finish(props) {
 
 }
 
-Finish.propTypes = {
+StorjEmailConfirmation.propTypes = {
   onClickBack: PropTypes.func.isRequired,
-  onClickClose: PropTypes.func.isRequired,
+  onClickLogin: PropTypes.func.isRequired,
 };

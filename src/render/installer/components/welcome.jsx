@@ -33,13 +33,13 @@ export default function Welcome(props) {
 
   return (
     <div className="background-gradation">
-      <header><img src="../resources/left_white_icon.svg" width="41px" height="40px"/></header>
+      <header><img src="../../../../resources/left_white_icon.svg" width="41px" height="40px"/></header>
       <main style={style.main}>
         <span>Welcome to</span> <span className="underlined bold">Goobox</span>
       </main>
       <footer>
         <a className="next-btn" onClick={props.onClickNext}>
-          Next <img className="arrow" src="../resources/right_arrow.svg"/>
+          Next <img className="arrow" src="../../../../resources/right_arrow.svg"/>
         </a>
       </footer>
     </div>

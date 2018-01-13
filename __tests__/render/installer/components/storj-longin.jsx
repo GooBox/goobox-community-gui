@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjLogin from "../src/storj-login.jsx";
+import StorjLogin from "../../../../src/render/installer/components/storj-login.jsx";
 
 describe("StorjLogin component", () => {
 

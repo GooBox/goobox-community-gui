@@ -26,45 +26,42 @@ const style = {
     fontSize: "30px",
     textAlign: "left",
     width: "600px",
-    paddingLeft: "120px",
+    paddingLeft: "158px",
   },
-  input: {
-    width: "346px",
-    height: "27px",
-  },
-  accountInfo: {
+  additionalInfo: {
+    position: "absolute",
+    top: "273px",
+    paddingRight: "159px",
+    fontSize: "9px",
     color: "white",
-    fontSize: "30px",
     textAlign: "center",
     width: "600px",
-    paddingLeft: "120px",
-    position: "absolute",
-    top: "230px",
-    paddingRight: "120px",
-  }
+    paddingLeft: "158px",
+  },
 };
 
-export default function StorjEncryptionKey(props) {
+
+export default function SiaFinish(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
       <main style={style.main}>
-        <div className="f141">Storj new account.</div>
-        <div className="f211">Please save your <span className="underlined bold">Storj encryption key</span></div>
-      </main>
-      <main style={style.accountInfo}>
-        <div>
-          <input id="encryption-key" placeholder="encryption key" readOnly="readonly" style={style.input}
-                 value={props.encryptionKey}/>
+        <div className="f141">Sia installation.</div>
+        <div className="f211">
+          We're preparing your account...<br/>
+          We will notify you when <span className="underlined bold">we are done</span>.
         </div>
+      </main>
+      <main style={style.additionalInfo}>
+        You can close this window.
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
-          Next <img className="arrow" src="../resources/right_arrow.svg"/>
+        <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
+          Close
         </a>
       </footer>
     </div>
@@ -72,8 +69,7 @@ export default function StorjEncryptionKey(props) {
 
 }
 
-StorjEncryptionKey.propTypes = {
-  encryptionKey: PropTypes.string.isRequired,
+SiaFinish.propTypes = {
   onClickBack: PropTypes.func.isRequired,
-  onClickNext: PropTypes.func.isRequired,
+  onClickClose: PropTypes.func.isRequired,
 };

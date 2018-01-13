@@ -17,29 +17,24 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import SiaWallet from "../src/sia-wallet.jsx";
+import StorjEncryptionKey from "../../../../src/render/installer/components/storj-encryption-key.jsx";
 
-describe("SiaWallet component", () => {
+describe("StorjEncryptionKey component", () => {
 
-  const wallet = "12345678901234567890";
-  const seed = "12345678901234567890";
+  const encryptionKey = "1234567890abcdefghijklmn";
   let wrapper, back, next;
   beforeEach(() => {
     back = jest.fn();
     next = jest.fn();
-    wrapper = shallow(<SiaWallet address={wallet} seed={seed} onClickBack={back} onClickNext={next}/>);
+    wrapper = shallow(<StorjEncryptionKey encryptionKey={encryptionKey} onClickBack={back} onClickNext={next}/>);
   });
 
   it("has background-gradation class", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
-  it("shows a wallet address given via wallet prop", () => {
-    expect(wrapper.find("#wallet").prop("value")).toEqual(wallet);
-  });
-
-  it("shows a seed given via seed prop", () => {
-    expect(wrapper.find("#seed").text()).toEqual(seed);
+  it("shows an encryption key given via key property", () => {
+    expect(wrapper.find("#encryption-key").prop("value")).toEqual(encryptionKey);
   });
 
   it("has a back link", () => {
@@ -49,7 +44,7 @@ describe("SiaWallet component", () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
-  it("has a login link", () => {
+  it("has a next link", () => {
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");

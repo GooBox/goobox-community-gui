@@ -19,11 +19,11 @@ import {ipcRenderer, remote} from "electron";
 import log from "electron-log";
 import React from "react";
 import util from "util";
-import {saveConfig} from "./config";
+import {saveConfig} from "../../../config";
 import {
   JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
   StorjRegisterationEvent
-} from "./constants";
+} from "../../../constants";
 import Finish from "./finish-all";
 import Preparation from "./preparation";
 import SelectFolder from "./select-folder";

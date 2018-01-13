@@ -17,19 +17,29 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import SiaFinish from "../src/sia-finish.jsx";
+import SiaWallet from "../../../../src/render/installer/components/sia-wallet.jsx";
 
-describe("SiaFinish component", () => {
+describe("SiaWallet component", () => {
 
+  const wallet = "12345678901234567890";
+  const seed = "12345678901234567890";
   let wrapper, back, next;
   beforeEach(() => {
     back = jest.fn();
     next = jest.fn();
-    wrapper = shallow(<SiaFinish onClickBack={back} onClickClose={next}/>);
+    wrapper = shallow(<SiaWallet address={wallet} seed={seed} onClickBack={back} onClickNext={next}/>);
   });
 
   it("has background-gradation class", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
+  });
+
+  it("shows a wallet address given via wallet prop", () => {
+    expect(wrapper.find("#wallet").prop("value")).toEqual(wallet);
+  });
+
+  it("shows a seed given via seed prop", () => {
+    expect(wrapper.find("#seed").text()).toEqual(seed);
   });
 
   it("has a back link", () => {

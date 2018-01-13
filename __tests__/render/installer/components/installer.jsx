@@ -21,12 +21,12 @@ import {ipcRenderer, remote} from "electron";
 import {shallow} from "enzyme";
 import path from "path";
 import React from "react";
-import {saveConfig} from "../src/config";
+import {saveConfig} from "../../../../src/config";
 import {
   JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
   StorjRegisterationEvent
-} from "../src/constants";
-import {Installer, Screen} from "../src/installer.jsx";
+} from "../../../../src/constants";
+import {Installer, Screen} from "../../../../src/render/installer/components/installer.jsx";
 
 const app = remote.app;
 

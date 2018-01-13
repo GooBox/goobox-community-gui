@@ -17,24 +17,19 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjEncryptionKey from "../src/storj-encryption-key.jsx";
+import StorjEmailConfirmation from "../../../../src/render/installer/components/storj-email-confirmation.jsx";
 
-describe("StorjEncryptionKey component", () => {
+describe("StorjEmailConfirmation", () => {
 
-  const encryptionKey = "1234567890abcdefghijklmn";
   let wrapper, back, next;
   beforeEach(() => {
     back = jest.fn();
     next = jest.fn();
-    wrapper = shallow(<StorjEncryptionKey encryptionKey={encryptionKey} onClickBack={back} onClickNext={next}/>);
+    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickLogin={next}/>);
   });
 
   it("has background-gradation class", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
-  });
-
-  it("shows an encryption key given via key property", () => {
-    expect(wrapper.find("#encryption-key").prop("value")).toEqual(encryptionKey);
   });
 
   it("has a back link", () => {
@@ -44,7 +39,7 @@ describe("StorjEncryptionKey component", () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
-  it("has a next link", () => {
+  it("has a login link", () => {
     const link = wrapper.find(".next-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");

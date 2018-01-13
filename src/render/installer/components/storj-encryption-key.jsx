@@ -26,28 +26,45 @@ const style = {
     fontSize: "30px",
     textAlign: "left",
     width: "600px",
-    paddingLeft: "81px",
+    paddingLeft: "120px",
+  },
+  input: {
+    width: "346px",
+    height: "27px",
+  },
+  accountInfo: {
+    color: "white",
+    fontSize: "30px",
+    textAlign: "center",
+    width: "600px",
+    paddingLeft: "120px",
+    position: "absolute",
+    top: "230px",
+    paddingRight: "120px",
   }
 };
 
-export default function StorjEmailConfirmation(props) {
+export default function StorjEncryptionKey(props) {
 
   return (
     <div className="background-gradation">
-      <header><img className="icon" src="../resources/left_white_icon.svg"/></header>
+      <header><img className="icon" src="../../../../resources/left_white_icon.svg"/></header>
       <main style={style.main}>
         <div className="f141">Storj new account.</div>
-        <div className="f211">
-          Please confirm your <span className="underlined bold">Storj account <span
-          className="light">in your email</span></span>
+        <div className="f211">Please save your <span className="underlined bold">Storj encryption key</span></div>
+      </main>
+      <main style={style.accountInfo}>
+        <div>
+          <input id="encryption-key" placeholder="encryption key" readOnly="readonly" style={style.input}
+                 value={props.encryptionKey}/>
         </div>
       </main>
       <footer>
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src="../resources/left_arrow.svg"/> Back
+          <img className="arrow" src="../../../../resources/left_arrow.svg"/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickLogin && props.onClickLogin()}>
-          Login <img className="arrow" src="../resources/right_arrow.svg"/>
+        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
+          Next <img className="arrow" src="../../../../resources/right_arrow.svg"/>
         </a>
       </footer>
     </div>
@@ -55,7 +72,8 @@ export default function StorjEmailConfirmation(props) {
 
 }
 
-StorjEmailConfirmation.propTypes = {
+StorjEncryptionKey.propTypes = {
+  encryptionKey: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
-  onClickLogin: PropTypes.func.isRequired,
+  onClickNext: PropTypes.func.isRequired,
 };
