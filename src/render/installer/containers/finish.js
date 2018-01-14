@@ -16,17 +16,18 @@
  */
 
 import {connect} from "react-redux";
+import {push} from "react-router-redux";
 import * as actions from "../actions";
 import Finish from "../components/finish";
+import {screens} from "../constants";
 
-export const mapStateToProps = () => {
-};
+export const mapStateToProps = () => ({});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: () => dispatch(push(screens.StorjLogin)),
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickClose: () => dispatch(actions.close()),
 
 });
 

@@ -16,34 +16,28 @@
  */
 
 import {connect} from "react-redux";
-import {Sia, Storj} from "../../../constants";
+import {push} from "react-router-redux";
 import * as actions from "../actions";
 import SelectFolder from "../components/select-folder";
+import {screens} from "../constants";
 
-export const mapStateToProps = (state) => {
-
-  let service;
-  if (state.storj) {
-    if (state.sia) {
-      service = `${Storj} & ${Sia}`;
-    } else {
-      service = Storj;
-    }
-  } else {
-    service = Sia;
-  }
-
-  return {
-    service: service,
-    folder: state.folder,
-  }
-};
+export const mapStateToProps = (state) => ({
+  storj: state.main.storj,
+  sia: state.main.sia,
+  folder: state.main.folder,
+});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: () => dispatch(push(screens.ChooseCloudService)),
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickNext: (service) => {
+    if (service.storj) {
+      dispatch(push(screens.StorjLogin));
+    } else {
+      dispatch(push(screens.SiaWallet));
+    }
+  },
 
   onSelectFolder: () => dispatch(actions.openSelectFolder()),
 

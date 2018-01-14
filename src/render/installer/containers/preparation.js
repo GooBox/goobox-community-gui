@@ -19,7 +19,7 @@ import {connect} from "react-redux";
 import Preparation from "../components/preparation";
 
 export const mapStateToProps = (state) => ({
-  progress: state.progress,
+  progress: state.main.progress,
 });
 
 export default connect(mapStateToProps)(Preparation);

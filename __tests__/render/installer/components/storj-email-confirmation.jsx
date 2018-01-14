@@ -25,7 +25,7 @@ describe("StorjEmailConfirmation", () => {
   beforeEach(() => {
     back = jest.fn();
     next = jest.fn();
-    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickLogin={next}/>);
+    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickNext={next}/>);
   });
 
   it("has background-gradation class", () => {

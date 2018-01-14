@@ -18,6 +18,7 @@
 import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
+import {Sia, Storj} from "../../../constants";
 import downArrowWhiteImage from "../assets/down_arrow_white.svg";
 import leftArrowImage from "../assets/left_arrow.svg";
 import leftWhiteIcon from "../assets/left_white_icon.svg";
@@ -99,7 +100,10 @@ export default class SelectFolder extends React.Component {
       return;
     }
     if (this.props.onClickNext && !this.selecting) {
-      this.setState({disabled: true}, this.props.onClickNext);
+      this.setState({disabled: true}, this.props.onClickNext.bind(null, {
+        storj: this.props.storj,
+        sia: this.props.sia
+      }));
     }
   }
 
@@ -140,11 +144,22 @@ export default class SelectFolder extends React.Component {
   }
 
   render() {
+    let service;
+    if (this.props.storj) {
+      if (this.props.sia) {
+        service = `${Storj} & ${Sia}`;
+      } else {
+        service = Storj;
+      }
+    } else {
+      service = Sia;
+    }
+
     return (
       <div className="background-gradation">
         <header><img className="icon" src={leftWhiteIcon}/></header>
         <main className="left" style={style.main}>
-          <div className="f141">You chose <span className="bold service-name">{this.props.service}</span>.</div>
+          <div className="f141">You chose <span className="bold service-name">{service}</span>.</div>
           <div className="f211 bold">
             Now, choose the location of your <span className="underlined bold">sync folder</span>.
           </div>
@@ -173,7 +188,8 @@ export default class SelectFolder extends React.Component {
 }
 
 SelectFolder.propsTypes = {
-  service: PropTypes.string.isRequired,
+  storj: PropTypes.bool.isRequired,
+  sia: PropTypes.bool.isRequired,
   folder: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,

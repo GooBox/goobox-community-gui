@@ -80,10 +80,10 @@ export default function SiaWallet(props) {
         <p id="seed" className="text" style={style.seedValue}>{props.seed}</p>
       </main>
       <footer>
-        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+        <a className="back-btn" onClick={() => props.onClickBack(props.service)}>
           <img className="arrow" src={leftArrowImage}/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
+        <a className="next-btn" onClick={props.onClickNext}>
           Next <img className="arrow" src={rightArrowImage}/>
         </a>
       </footer>
@@ -93,6 +93,7 @@ export default function SiaWallet(props) {
 }
 
 SiaWallet.propTypes = {
+  service: PropTypes.object,
   address: PropTypes.string.isRequired,
   seed: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,

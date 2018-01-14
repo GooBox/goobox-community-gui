@@ -18,13 +18,13 @@
 import {remote} from "electron";
 import {shallow} from "enzyme";
 import React from "react";
+import {Sia, Storj} from "../../../../src/constants";
 import SelectFolder from "../../../../src/render/installer/components/select-folder.jsx";
 
 const dialog = remote.dialog;
 
 describe("SelectFolder component", () => {
 
-  const service = "Storj or Sia";
   const defaultDir = "/home/someone/Goobox";
   let wrapper, back, next, selectFolder;
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe("SelectFolder component", () => {
     next = jest.fn();
     selectFolder = jest.fn();
     wrapper = shallow(
-      <SelectFolder service={service} folder={defaultDir}
+      <SelectFolder storj={true} sia={false} folder={defaultDir}
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
   });
 
@@ -40,11 +40,23 @@ describe("SelectFolder component", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
-  it("takes a name of service and shows it", () => {
-    const place = wrapper.find(".service-name");
-    expect(place.exists()).toBeTruthy();
-    expect(place.text()).toEqual(service);
+  it("takes flegs of used services and shows the name of them", () => {
+    wrapper = shallow(
+      <SelectFolder storj={true} sia={false} folder={defaultDir}
+                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+    expect(wrapper.find(".service-name").text()).toEqual(Storj);
+
+    wrapper = shallow(
+      <SelectFolder storj={false} sia={true} folder={defaultDir}
+                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+    expect(wrapper.find(".service-name").text()).toEqual(Sia);
+
+    wrapper = shallow(
+      <SelectFolder storj={true} sia={true} folder={defaultDir}
+                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+    expect(wrapper.find(".service-name").text()).toEqual(`${Storj} & ${Sia}`);
   });
+
 
   it("shows current selected folder", () => {
     const c = wrapper.find(".folder");

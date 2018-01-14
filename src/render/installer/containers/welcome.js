@@ -16,15 +16,15 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
+import {push} from "react-router-redux";
 import Welcome from "../components/welcome";
+import {screens} from "../constants";
 
-export const mapStateToProps = () => {
-};
+export const mapStateToProps = () => ({});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickNext: () => dispatch(push(screens.ChooseCloudService)),
 
 });
 

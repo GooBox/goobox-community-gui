@@ -16,18 +16,19 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
+import {push} from "react-router-redux";
 import StorjEncryptionKey from "../components/storj-encryption-key";
+import {screens} from "../constants";
 
 export const mapStateToProps = (state) => ({
-  enctyprionKey: state.storjAccount.key,
+  enctyprionKey: state.main.storjAccount.key,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: () => dispatch(push(screens.StorjRegistration)),
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickNext: () => dispatch(push(screens.StorjEmailConfirmation)),
 
 });
 

@@ -16,17 +16,17 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
+import {push} from "react-router-redux";
 import StorjEmailConfirmation from "../components/storj-email-confirmation";
+import {screens} from "../constants";
 
-export const mapStateToProps = (state) => {
-};
+export const mapStateToProps = () => ({});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: () => dispatch(push(screens.StorjEncryptionKey)),
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickNext: () => dispatch(push(screens.StorjLogin)),
 
 });
 

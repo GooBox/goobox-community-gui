@@ -16,19 +16,30 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
+import {push} from "react-router-redux";
 import SiaWallet from "../components/sia-wallet";
+import {screens} from "../constants";
 
 export const mapStateToProps = (state) => ({
-  address: state.siaAccount.address,
-  seed: state.siaAccount.seed,
+  service: {
+    storj: state.main.storj,
+    sia: state.main.sia,
+  },
+  address: state.main.siaAccount.address,
+  seed: state.main.siaAccount.seed,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: (service) => {
+    if (service.storj) {
+      dispatch(push(screens.StorjLogin));
+    } else {
+      dispatch(push(screens.SelectFolder));
+    }
+  },
 
-  onClickNext: () => dispatch(actions.next()),
+  onClickNext: () => dispatch(push(screens.SiaFinish)),
 
 });
 

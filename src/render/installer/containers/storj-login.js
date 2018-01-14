@@ -17,25 +17,23 @@
 
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
-import * as actions from "../actions";
 import StorjLogin from "../components/storj-login";
-import * as constants from "../constants";
-
+import {screens} from "../constants";
 
 export const mapStateToProps = (state) => ({
-  emailWarn: state.storjAccount.emailWarn,
-  passwordWarn: state.storjAccount.passwordWarn,
-  keyWarn: state.storjAccount.keyWarn,
-  warnMsg: state.storjAccount.warnMsg,
+  emailWarn: state.main.storjAccount.emailWarn,
+  passwordWarn: state.main.storjAccount.passwordWarn,
+  keyWarn: state.main.storjAccount.keyWarn,
+  warnMsg: state.main.storjAccount.warnMsg,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(actions.back()),
+  onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickFinish: () => dispatch(actions.next()),
+  onClickFinish: () => dispatch(push(screens.FinishAll)),
 
-  onClickCreateAccount: () => dispatch(push(constants.StorjCreataAccount)),
+  onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
 
 });
 
