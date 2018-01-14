@@ -15,18 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const NextPage = "NextPage";
-export const BackPage = "BackPage";
-export const CloseApp = "CloseApp";
-export const OpenSelectFolder = "OpenSelectFolder";
-export const SelectStorj = "SelectStorj";
-export const SelectSia = "SelectSia";
-export const SelectBoth = "SelectBoth";
-
-export const StorjLogin = "StorjLogin";
-export const StorjCreataAccount = "StorjCreateAccount";
-
-
 export const ChooseCloudService = "/choose-cloud-service";
 export const StorjSelected = "/storj-selected";
 export const SiaSelected = "/sia-selected";

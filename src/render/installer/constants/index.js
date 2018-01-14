@@ -15,14 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {actionTypes} from "../constants";
+import * as _actionTypes from "./action-types";
+import * as _screens from "./screens";
 
-export const close = () => ({type: actionTypes.CloseApp});
-
-export const openSelectFolder = () => ({type: actionTypes.OpenSelectFolder});
-export const selectStorj = () => ({type: actionTypes.SelectStorj});
-export const selectSia = () => ({type: actionTypes.SelectSia});
-export const selectBoth = () => ({type: actionTypes.SelectBoth});
-
-export const storjLogin = (args) => ({type: actionTypes.StorjLogin, value: args});
-export const storjCreateAccount = () => ({type: actionTypes.StorjCreataAccount});
+export const actionTypes = _actionTypes;
+export const screens = _screens;

@@ -15,14 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {actionTypes} from "../constants";
+export const CloseApp = "@@main/CloseApp";
+export const OpenSelectFolder = "@@main/OpenSelectFolder";
+export const SelectStorj = "@@main/SelectStorj";
+export const SelectSia = "@@main/SelectSia";
+export const SelectBoth = "@@main/SelectBoth";
 
-export const close = () => ({type: actionTypes.CloseApp});
-
-export const openSelectFolder = () => ({type: actionTypes.OpenSelectFolder});
-export const selectStorj = () => ({type: actionTypes.SelectStorj});
-export const selectSia = () => ({type: actionTypes.SelectSia});
-export const selectBoth = () => ({type: actionTypes.SelectBoth});
-
-export const storjLogin = (args) => ({type: actionTypes.StorjLogin, value: args});
-export const storjCreateAccount = () => ({type: actionTypes.StorjCreataAccount});
+export const StorjLogin = "@@main/StorjLogin";
+export const StorjCreataAccount = "@@main/StorjCreateAccount";
