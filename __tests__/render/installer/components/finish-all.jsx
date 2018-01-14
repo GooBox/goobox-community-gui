@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Finish from "../../../../src/render/installer/components/finish-all.jsx";
+import Finish from "../../../../src/render/installer/components/finish.jsx";
 
 describe("Finish component", () => {
 

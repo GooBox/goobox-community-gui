@@ -24,7 +24,7 @@ import {
   JREInstallEvent, Sia, SiaWalletEvent, StopSyncAppsEvent, Storj, StorjLoginEvent,
   StorjRegisterationEvent
 } from "../../../constants";
-import Finish from "./finish-all";
+import Finish from "./finish";
 import Preparation from "./preparation";
 import SelectFolder from "./select-folder";
 import ServiceSelector from "./service-selector";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
-import ReactDOM from "react-dom";
-import {webFrame} from "electron";
-import Installer from "./installer.jsx";
+import {connect} from "react-redux";
+import * as actions from "../actions";
+import SiaWallet from "../components/sia-wallet";
 
-webFrame.setZoomLevelLimits(1, 1);
-ReactDOM.render(
-  <Installer/>,
-  document.getElementById("app"))
-;
+export const mapStateToProps = (state) => ({
+  address: state.siaAccount.address,
+  seed: state.siaAccount.seed,
+});
+
+export const mapDispatchToProps = (dispatch) => ({
+
+  onClickBack: () => dispatch(actions.back()),
+
+  onClickNext: () => dispatch(actions.next()),
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SiaWallet);
+

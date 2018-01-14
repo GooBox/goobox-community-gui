@@ -49,8 +49,8 @@ export default function StorjEmailConfirmation(props) {
         <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
           <img className="arrow" src={leftArrowImage}/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickLogin && props.onClickLogin()}>
-          Login <img className="arrow" src={rightArrowImage}/>
+        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
+          Next <img className="arrow" src={rightArrowImage}/>
         </a>
       </footer>
     </div>
@@ -60,5 +60,5 @@ export default function StorjEmailConfirmation(props) {
 
 StorjEmailConfirmation.propTypes = {
   onClickBack: PropTypes.func.isRequired,
-  onClickLogin: PropTypes.func.isRequired,
+  onClickNext: PropTypes.func.isRequired,
 };
