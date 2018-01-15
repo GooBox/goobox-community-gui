@@ -106,6 +106,7 @@ export default class Sia {
     log.info(`requesting the wallet info to ${this.cmd}`);
     return new Promise((resolve, reject) => {
 
+      // TODO: use spawn to output logs.
       execFile(this.cmd, ["wallet"], {
         cwd: this.wd,
         env: {

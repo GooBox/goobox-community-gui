@@ -149,6 +149,7 @@ async function main() {
   ipcMain.on(OpenSyncFolderEvent, async (event) => {
     try {
       const cfg = await getConfig();
+      log.info(`Open sync folder ${cfg.syncFolder}`);
       utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
     } catch (err) {
       log.error(err);
@@ -161,6 +162,7 @@ async function main() {
     try {
       const cfg = await getConfig();
       volume = await utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder);
+      log.info(`Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
     } catch (err) {
       log.error(err);
     }

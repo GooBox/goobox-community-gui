@@ -46,8 +46,12 @@ function installer() {
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 
+  let width = 600;
+  if ("development" === process.env.NODE_ENV) {
+    width *= 2;
+  }
   const mainWindow = new BrowserWindow({
-    width: 600,
+    width: width,
     height: 400,
     useContentSize: true,
     resizable: false,
@@ -124,6 +128,7 @@ function installer() {
       event.sender.send(StorjLoginEvent, true);
     } catch (err) {
       log.error(err);
+      // TODO: Redesign this protocol.
       event.sender.send(StorjLoginEvent, false, err, {
         email: false,
         password: false,
@@ -143,6 +148,7 @@ function installer() {
     global.storj.start(cfg.syncFolder, true);
     try {
       const encryptionKey = await global.storj.createAccount(args.email, args.password);
+      // TODO: Redesign this protocol.
       event.sender.send(StorjRegisterationEvent, true, encryptionKey);
     } catch (err) {
       log.error(err);

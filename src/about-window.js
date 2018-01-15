@@ -16,9 +16,11 @@
  */
 
 import openAboutWindow from "about-window";
+import log from "electron-log";
 import path from "path";
 
 export default async function showInfoWindowAsync() {
+  log.debug("opening the info window");
   return new Promise(resolve => {
     // noinspection SpellCheckingInspection
     const about = openAboutWindow({

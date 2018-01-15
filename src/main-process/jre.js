@@ -40,7 +40,7 @@ export async function installJRE() {
       jre.install((err) => {
 
         log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
-        if (err && err !== "Smoketest failed.") {
+        if (err && err !== "Smoke test failed.") {
           reject(err);
         } else {
           resolve();
