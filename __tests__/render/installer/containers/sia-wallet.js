@@ -88,9 +88,12 @@ describe("mergeProps", () => {
       ...dispatchProps,
       ...ownProps,
       onClickBack: expect.any(Function),
+      onClickNext: expect.any(Function),
     });
     res.onClickBack();
     expect(dispatchProps.onClickBack).toHaveBeenCalledWith(main);
+    res.onClickNext();
+    expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main);
   });
 
 });

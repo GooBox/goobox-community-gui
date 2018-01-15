@@ -27,6 +27,7 @@ import {
 import * as actions from "../../../src/render/installer/actions";
 import * as actionTypes from "../../../src/render/installer/constants/action-types";
 import * as screens from "../../../src/render/installer/constants/screens";
+import {InitialState} from "../../../src/render/installer/reducers";
 import rootSaga from "../../../src/render/installer/sagas";
 import closeWindow from "../../../src/render/installer/sagas/close-window";
 import incrementProgress from "../../../src/render/installer/sagas/increment-progress";
@@ -57,11 +58,9 @@ describe("closeWindow", () => {
 
   it("yields close method of the current window", () => {
     const close = jest.fn();
-    remote.getCurrentWindow.mockReturnValue({
-      cancel: close,
-    });
+    remote.getCurrentWindow.mockReturnValue({close: close});
     const saga = closeWindow();
-    expect(saga.next().value).toEqual(call(remote.getCurrentWindow().cancel));
+    expect(saga.next().value).toEqual(call(remote.getCurrentWindow().close));
     expect(saga.next().done).toBeTruthy();
   });
 
@@ -226,10 +225,15 @@ describe("saveConfig", () => {
 
   it("forks saveConfigAsync with given action's payload", () => {
     const action = {
-      payload: "sample payload"
+      payload: InitialState
     };
     const saga = saveConfig(action);
-    expect(saga.next().value).toEqual(fork(saveConfigAsync, action.payload));
+    expect(saga.next().value).toEqual(call(saveConfigAsync, {
+      syncFolder: InitialState.folder,
+      installed: true,
+      storj: InitialState.storj,
+      sia: InitialState.sia,
+    }));
     expect(saga.next().done);
   });
 
@@ -481,7 +485,7 @@ describe("storjLogin", () => {
     expect(saga.next().value).toEqual(put(actions.processingStart()));
     expect(saga.next().value).toEqual(call(storjLoginAsync, action.payload.storjAccount));
     expect(saga.next(res).value).toEqual(put(actions.storjLoginSuccess(res)));
-    expect(saga.next().value).toEqual(call(saveConfig));
+    expect(saga.next().value).toEqual(put(actions.saveConfig(action.payload)));
     expect(saga.next().value).toEqual(put(push(screens.FinishAll)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });

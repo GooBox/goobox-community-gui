@@ -22,7 +22,6 @@ import util from "util";
 import {StorjLoginEvent} from "../../../constants";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
-import saveConfig from "./save-config";
 
 export const storjLoginAsync = async (info) => {
 
@@ -59,7 +58,7 @@ export default function* storjLogin(action) {
     if (mainState.sia) {
       yield put(actions.requestSiaWalletInfo());
     } else {
-      yield call(saveConfig);
+      yield put(actions.saveConfig(mainState));
       yield put(push(screens.FinishAll));
     }
 

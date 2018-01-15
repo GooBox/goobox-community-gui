@@ -37,8 +37,8 @@ export const mapDispatchToProps = (dispatch) => ({
     }
   },
 
-  onClickNext: () => {
-    dispatch(actions.saveConfig());
+  onClickNext: (mainState) => {
+    dispatch(actions.saveConfig(mainState));
     dispatch(push(screens.SiaFinish));
   }
 
@@ -49,6 +49,7 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
   onClickBack: dispatchProps.onClickBack.bind(null, stateProps.mainState),
+  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
   mainState: undefined,
 });
 

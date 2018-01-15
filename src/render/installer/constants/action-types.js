@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const CloseWindow = "CloseApp";
+export const CloseWindow = "CloseWindow";
 export const SelectFolder = "SelectFolder";
 export const SelectStorj = "SelectStorj";
 export const SelectSia = "SelectSia";

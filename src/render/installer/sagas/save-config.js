@@ -16,12 +16,18 @@
  */
 
 import log from "electron-log";
-import {fork} from "redux-saga/effects";
+import {call} from "redux-saga/effects";
 import {saveConfig as saveConfigAsync} from "../../../config";
 
 export default function* saveConfig(action) {
+  const mainState = action.payload;
   try {
-    yield fork(saveConfigAsync, action.payload);
+    yield call(saveConfigAsync, {
+      syncFolder: mainState.folder,
+      installed: true,
+      storj: mainState.storj,
+      sia: mainState.sia,
+    });
   } catch (err) {
     // TODO: Show this error message.
     log.error(err);

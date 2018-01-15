@@ -19,5 +19,5 @@ import {remote} from "electron";
 import {call} from "redux-saga/effects";
 
 export default function* closeWindow() {
-  yield call(remote.getCurrentWindow().cancel);
+  yield call(remote.getCurrentWindow().close);
 }
