@@ -18,10 +18,10 @@
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import StorjEncryptionKey from "../components/storj-encryption-key";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = (state) => ({
-  enctyprionKey: state.main.storjAccount.key,
+  encryptionKey: state.main.storjAccount.key,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

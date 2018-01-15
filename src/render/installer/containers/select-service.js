@@ -18,10 +18,12 @@
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import * as actions from "../actions";
-import ServiceSelector from "../components/service-selector";
-import {screens} from "../constants";
+import ServiceSelector from "../components/select-service";
+import * as screens from "../constants/screens";
 
-export const mapStateToProps = () => ({});
+export const mapStateToProps = (state) => ({
+  processing: state.main.processing
+});
 
 export const mapDispatchToProps = (dispatch) => ({
 
@@ -35,7 +37,10 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(push(screens.SiaSelected));
   },
 
-  onSelectBoth: () => dispatch(actions.selectBoth()),
+  onSelectBoth: () => {
+    dispatch(actions.selectBoth());
+    dispatch(push(screens.StorjSelected));
+  }
 
 });
 

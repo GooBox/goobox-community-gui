@@ -19,9 +19,10 @@ import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import * as actions from "../actions";
 import StorjRegistration from "../components/storj-registration";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = (state) => ({
+  processing: state.main.processing,
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
   warnMsg: state.main.storjAccount.warnMsg,

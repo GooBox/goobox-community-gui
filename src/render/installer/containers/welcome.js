@@ -17,14 +17,18 @@
 
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
+import * as actions from "../actions";
 import Welcome from "../components/welcome";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickNext: () => dispatch(push(screens.ChooseCloudService)),
+  onClickNext: () => {
+    dispatch(push(screens.JREPreparation));
+    dispatch(actions.prepareJRE());
+  }
 
 });
 

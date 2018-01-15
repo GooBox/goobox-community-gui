@@ -15,8 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as _actionTypes from "./action-types";
-import * as _screens from "./screens";
+import {mapStateToProps} from "../../../../src/render/installer/containers/preparation";
 
-export const actionTypes = _actionTypes;
-export const screens = _screens;
+describe("mapStateToProps", () => {
+
+  it("maps progress state", () => {
+    const progress = 11;
+    expect(mapStateToProps({
+      main: {
+        progress: progress,
+      }
+    })).toEqual({
+      progress: progress
+    });
+  });
+
+});
+

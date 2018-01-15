@@ -18,7 +18,7 @@
 import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import StorjEmailConfirmation from "../components/storj-email-confirmation";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
 

@@ -19,29 +19,44 @@ import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import * as actions from "../actions";
 import SelectFolder from "../components/select-folder";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = (state) => ({
   storj: state.main.storj,
   sia: state.main.sia,
   folder: state.main.folder,
+  mainState: state.main,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(push(screens.ChooseCloudService)),
+  onClickBack: () => {
+    dispatch(actions.stopSyncApps());
+    dispatch(push(screens.ChooseCloudService));
+  },
 
-  onClickNext: (service) => {
-    if (service.storj) {
+  onClickNext: (mainState) => {
+    if (mainState.storj) {
       dispatch(push(screens.StorjLogin));
-    } else {
+    } else if (mainState.siaAccount.address) {
       dispatch(push(screens.SiaWallet));
+    } else {
+      dispatch(push(screens.SiaPreparation));
+      dispatch(actions.requestSiaWalletInfo());
     }
   },
 
-  onSelectFolder: () => dispatch(actions.openSelectFolder()),
+  onSelectFolder: (folder) => dispatch(actions.selectFolder(folder)),
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectFolder);
+export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...ownProps,
+  ...stateProps,
+  ...dispatchProps,
+  onClickNext: () => dispatchProps.onClickNext(stateProps.mainState),
+  mainState: undefined,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SelectFolder);
 

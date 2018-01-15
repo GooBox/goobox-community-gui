@@ -20,7 +20,7 @@ import * as actionTypes from "../constants/action-types";
 
 export const closeWindow = createAction(actionTypes.CloseWindow);
 
-export const openSelectFolder = createAction(actionTypes.OpenSelectFolder);
+export const selectFolder = createAction(actionTypes.SelectFolder);
 export const selectStorj = createAction(actionTypes.SelectStorj);
 export const selectSia = createAction(actionTypes.SelectSia);
 export const selectBoth = createAction(actionTypes.SelectBoth);

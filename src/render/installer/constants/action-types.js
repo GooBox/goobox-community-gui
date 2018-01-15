@@ -16,7 +16,7 @@
  */
 
 export const CloseWindow = "CloseApp";
-export const OpenSelectFolder = "OpenSelectFolder";
+export const SelectFolder = "SelectFolder";
 export const SelectStorj = "SelectStorj";
 export const SelectSia = "SelectSia";
 export const SelectBoth = "SelectBoth";

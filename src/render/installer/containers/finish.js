@@ -19,7 +19,7 @@ import {connect} from "react-redux";
 import {push} from "react-router-redux";
 import * as actions from "../actions";
 import Finish from "../components/finish";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
 
@@ -27,7 +27,7 @@ export const mapDispatchToProps = (dispatch) => ({
 
   onClickBack: () => dispatch(push(screens.StorjLogin)),
 
-  onClickClose: () => dispatch(actions.close()),
+  onClickClose: () => dispatch(actions.closeWindow()),
 
 });
 
