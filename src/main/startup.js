@@ -19,7 +19,7 @@ import storage from "electron-json-storage";
 import log from "electron-log";
 import {ConfigFile} from "../constants";
 
-if ("production" !== process.env.NODE_ENV && (process.argv[3] === "--dev" || process.argv[2] === "--dev")) {
+if ("production" !== process.env.NODE_ENV && process.argv.find(v => v === "--dev")) {
   process.env.NODE_ENV = "development";
 }
 
@@ -33,7 +33,7 @@ if ("test" === process.env.NODE_ENV) {
   log.transports.console.level = "warn";
 }
 
-if (process.argv[2] === "installer" || process.argv[1] === "installer") {
+if (process.argv.find(v => v === "installer")) {
   require("./installer.js");
 } else {
   storage.get(ConfigFile, (err, cfg) => {
