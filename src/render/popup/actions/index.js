@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import {createAction} from "redux-actions";
 import * as constants from "../constants";
 
-export const changeState = state => ({type: constants.ChangeState, value: state});
-export const pause = () => ({type: constants.Pause});
-export const restart = () => ({type: constants.Restart});
-export const setVolumeSize = volume => ({type: constants.SetVolumeSize, value: volume});
-export const openSyncFolder = () => ({type: constants.OpenSyncFolder});
-export const openAboutWindow = () => ({type: constants.OpenAboutWindow});
-export const enable = () => ({type: constants.Enable});
-export const disable = () => ({type: constants.Disable});
+export const changeState = createAction(constants.ChangeState);
+export const pause = createAction(constants.Pause);
+export const restart = createAction(constants.Restart);
+export const setVolumeSize = createAction(constants.SetVolumeSize);
+export const openSyncFolder = createAction(constants.OpenSyncFolder);
+export const openAboutWindow = createAction(constants.OpenAboutWindow);
+export const enable = createAction(constants.Enable);
+export const disable = createAction(constants.Disable);

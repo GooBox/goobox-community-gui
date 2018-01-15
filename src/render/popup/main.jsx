@@ -16,36 +16,26 @@
  */
 
 import React from "react";
-import {Provider} from 'react-redux'
-import {applyMiddleware, createStore} from 'redux'
-import createSagaMiddleware from 'redux-saga';
-import {Synchronizing} from "../../constants";
+import {Provider} from "react-redux";
+import {applyMiddleware, createStore} from "redux";
+import createSagaMiddleware from "redux-saga";
 import Status from "./containers/status";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
-export const InitialState = {
-  state: Synchronizing,
-  usedVolume: 0,
-  totalVolume: 50,
-  disabled: false,
-};
-
-export function configureStore(initialState) {
+const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
   const store = createStore(
     reducer,
-    initialState,
     applyMiddleware(sagaMiddleware)
   );
   sagaMiddleware.run(rootSaga);
   return store;
-}
-
+};
 
 export default function initPopup() {
 
-  const store = configureStore(InitialState);
+  const store = configureStore();
   return (
     <Provider store={store}>
       <Status/>

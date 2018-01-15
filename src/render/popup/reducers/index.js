@@ -15,24 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {handleActions} from "redux-actions";
 import {Paused, Synchronizing} from "../../../constants";
 import * as constants from "../constants";
 
-export default (state, action) => {
-  switch (action.type) {
-    case constants.Pause:
-      return {...state, state: Paused};
-
-    case constants.Restart:
-      return {...state, state: Synchronizing};
-
-    case constants.Enable:
-      return {...state, disabled: false};
-
-    case constants.Disable:
-      return {...state, disabled: true};
-
-    default:
-      return state;
-  }
+export const InitialState = {
+  state: Synchronizing,
+  usedVolume: 0,
+  totalVolume: 50,
+  disabled: false,
 };
+
+export default handleActions({
+
+  [constants.Pause]: (state) => ({
+    ...state,
+    state: Paused
+  }),
+  [constants.Restart]: (state) => ({
+    ...state,
+    state: Synchronizing
+  }),
+  [constants.Enable]: (state) => ({
+    ...state,
+    disabled: false
+  }),
+  [constants.Disable]: (state) => ({
+    ...state,
+    disabled: true
+  }),
+  [constants.SetVolumeSize]: (state, action) => ({
+    ...state,
+    usedVolume: action.payload,
+  })
+
+}, InitialState);

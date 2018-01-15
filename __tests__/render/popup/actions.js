@@ -24,7 +24,7 @@ describe("actions of popup module", () => {
     const state = "sample state";
     expect(actions.changeState(state)).toEqual({
       type: constants.ChangeState,
-      value: state,
+      payload: state,
     });
   });
 
@@ -44,7 +44,7 @@ describe("actions of popup module", () => {
     const size = 12345;
     expect(actions.setVolumeSize(size)).toEqual({
       type: constants.SetVolumeSize,
-      value: size,
+      payload: size,
     });
   });
 

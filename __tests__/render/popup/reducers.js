@@ -17,8 +17,27 @@
 
 import {Paused, Synchronizing} from "../../../src/constants";
 import * as actions from "../../../src/render/popup/actions";
-import {InitialState} from "../../../src/render/popup/main";
-import reducer from "../../../src/render/popup/reducers";
+import reducer, {InitialState} from "../../../src/render/popup/reducers";
+
+describe("InitialState", () => {
+
+  it("sets synchronizing as the state", () => {
+    expect(InitialState.state).toEqual(Synchronizing);
+  });
+
+  it("sets 0 as the used volume size", () => {
+    expect(InitialState.usedVolume).toEqual(0);
+  });
+
+  it("sets 50 as the total volume size", () => {
+    expect(InitialState.totalVolume).toEqual(50);
+  });
+
+  it("sets false as the disabled state", () => {
+    expect(InitialState.disabled).toEqual(false);
+  });
+
+});
 
 describe("reducer", () => {
 
@@ -40,6 +59,14 @@ describe("reducer", () => {
 
   it("passes throw a given state if other actions received", () => {
     expect(reducer(InitialState, {type: "some action"})).toEqual(InitialState);
+  });
+
+  it("sets new used volume size by SetVolumeSize action", () => {
+    const value = 112;
+    expect(reducer(InitialState, actions.setVolumeSize(value))).toEqual({
+      ...InitialState,
+      usedVolume: value
+    });
   });
 
 });
