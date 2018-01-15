@@ -352,16 +352,14 @@ describe("storjCreateAccountAsync", () => {
 describe("storjCreateAccount", () => {
 
   const action = {
-    payload: {
-      storjAccount: "sample account information"
-    }
+    payload: "sample account information"
   };
 
   it("calls storjCreateAccountAsync and puts storjCreateAccountSuccess if the call successes", () => {
     const info = "succeeded result";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload.storjAccount));
+    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload));
     expect(saga.next(info).value).toEqual(put(actions.storjCreateAccountSuccess(info)));
     expect(saga.next().value).toEqual(put(push(screens.StorjEncryptionKey)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
@@ -372,7 +370,7 @@ describe("storjCreateAccount", () => {
     const err = "expected error";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload.storjAccount));
+    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload));
     expect(saga.throw(err).value).toEqual(put(actions.storjCreateAccountFailure(err)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();

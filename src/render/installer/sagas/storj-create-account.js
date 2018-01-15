@@ -52,11 +52,11 @@ export const storjCreateAccountAsync = async (info) => {
 
 export default function* storjCreateAccount(action) {
 
-  const mainState = action.payload;
+  const accountInfo = action.payload;
   yield put(actions.processingStart());
   try {
 
-    const info = yield call(storjCreateAccountAsync, mainState.storjAccount);
+    const info = yield call(storjCreateAccountAsync, accountInfo);
     yield put(actions.storjCreateAccountSuccess(info));
     yield put(push(screens.StorjEncryptionKey));
 

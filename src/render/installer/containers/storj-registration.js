@@ -32,7 +32,7 @@ export const mapDispatchToProps = (dispatch) => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (args) => dispatch(actions.storjCreateAccount(args)),
+  onClickNext: (accountInfo) => dispatch(actions.storjCreateAccount(accountInfo)),
 
   onClickLogin: () => dispatch(push(screens.StorjLogin)),
 

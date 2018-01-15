@@ -19,6 +19,7 @@ import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {mapDispatchToProps, mapStateToProps, mergeProps} from "../../../../src/render/installer/containers/storj-login";
+import {InitialState} from "../../../../src/render/installer/reducers";
 
 describe("mapStateToProps", () => {
 
@@ -54,9 +55,16 @@ describe("mapDispatchToProps", () => {
   });
 
   it("maps onClickNext to storjLogin action with the given main state", () => {
-    const main = "dummy main state";
-    mapDispatchToProps(dispatch).onClickNext(main);
-    expect(dispatch).toHaveBeenCalledWith(actions.storjLogin(main));
+    const info = {
+      email: "another@email.com",
+      password: "another password",
+      key: "yyy yyy yyy"
+    };
+    mapDispatchToProps(dispatch).onClickNext(InitialState, info);
+    expect(dispatch).toHaveBeenCalledWith(actions.storjLogin({
+      ...InitialState,
+      storjAccount: info,
+    }));
   });
 
   it("maps onClickCreateAccount to push StorjRegistration", () => {

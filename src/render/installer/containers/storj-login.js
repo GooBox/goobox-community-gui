@@ -34,7 +34,12 @@ export const mapDispatchToProps = (dispatch) => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (mainState) => dispatch(actions.storjLogin(mainState)),
+  onClickNext: (mainState, accountInfo) => {
+    dispatch(actions.storjLogin({
+      ...mainState,
+      storjAccount: accountInfo,
+    }));
+  },
 
   onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
 
