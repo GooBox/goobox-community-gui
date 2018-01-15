@@ -56,6 +56,7 @@ export default class Storj {
       cwd: this.wd,
       env: {
         JAVA_HOME: this.javaHome,
+        PATH: `${this.javaHome}/bin/`
       },
       shell: true,
       windowsHide: true,

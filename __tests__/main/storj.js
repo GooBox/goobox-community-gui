@@ -116,6 +116,7 @@ describe("Storj class", () => {
         cwd: storj.wd,
         env: {
           JAVA_HOME: storj.javaHome,
+          PATH: `${storj.javaHome}/bin/`
         },
         shell: true,
         windowsHide: true,
@@ -128,6 +129,7 @@ describe("Storj class", () => {
         cwd: storj.wd,
         env: {
           JAVA_HOME: storj.javaHome,
+          PATH: `${storj.javaHome}/bin/`
         },
         shell: true,
         windowsHide: true,
