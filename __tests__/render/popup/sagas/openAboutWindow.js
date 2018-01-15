@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+import {fork} from "redux-saga/effects";
+import showInfoWindowAsync from "../../../../src/about-window";
+import openAboutWindow from "../../../../src/render/popup/sagas/openAboutWindow";
+
+describe("openAboutWindow", () => {
+
+  it("forks showInfoWindowAsycs", () => {
+    const iter = openAboutWindow();
+    expect(iter.next().value).toEqual(fork(showInfoWindowAsync));
+    expect(iter.next().done);
+  });
+
+});
+
+

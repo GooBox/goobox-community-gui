@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+
+import {ipcRenderer} from "electron";
+import {call} from "redux-saga/effects";
+import {OpenSyncFolderEvent} from "../../../constants";
+
+export const openSyncFolderAsync = async () => {
+  return new Promise(resolve => {
+    ipcRenderer.once(OpenSyncFolderEvent, resolve);
+    ipcRenderer.send(OpenSyncFolderEvent);
+  });
+};
+
+
+export default function* openSyncFolder() {
+  yield call(openSyncFolderAsync);
+}

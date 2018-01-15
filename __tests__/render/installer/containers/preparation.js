@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+import {mapStateToProps} from "../../../../src/render/installer/containers/preparation";
+
+describe("mapStateToProps", () => {
+
+  it("maps progress state", () => {
+    const progress = 11;
+    expect(mapStateToProps({
+      main: {
+        progress: progress,
+      }
+    })).toEqual({
+      progress: progress
+    });
+  });
+
+});
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+import {connect} from "react-redux";
+import Preparation from "../components/preparation";
+
+export const mapStateToProps = (state) => ({
+  progress: state.main.progress,
+});
+
+export default connect(mapStateToProps)(Preparation);

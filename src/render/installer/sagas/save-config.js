@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+import log from "electron-log";
+import {call} from "redux-saga/effects";
+import {saveConfig as saveConfigAsync} from "../../../config";
+
+export default function* saveConfig(action) {
+  const mainState = action.payload;
+  try {
+    yield call(saveConfigAsync, {
+      syncFolder: mainState.folder,
+      installed: true,
+      storj: mainState.storj,
+      sia: mainState.sia,
+    });
+  } catch (err) {
+    // TODO: Show this error message.
+    log.error(err);
+  }
+}
+

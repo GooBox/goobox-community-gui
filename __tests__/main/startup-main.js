@@ -15,4 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main/startup");
+import storage from "electron-json-storage";
+import {ConfigFile} from "../../src/constants";
+
+import {app} from "electron";
+
+describe("startup script", () => {
+  
+  it("loads the main script for the core app when already installed", () => {
+    storage.get.mockImplementationOnce((key, callback) => {
+      if (key === ConfigFile) {
+        callback(null, {installed: true});
+      }
+    });
+    require("../../src/main/startup");
+    expect(app.on.mock.calls[0][1].name).toEqual("main");
+  });
+
+});
