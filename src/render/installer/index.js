@@ -23,5 +23,5 @@ import initInstaller from "./main";
 webFrame.setZoomLevelLimits(1, 1);
 ReactDOM.render(
   initInstaller(),
-  document.getElementById("app"))
-;
+  document.getElementById("app")
+);
