@@ -19,7 +19,7 @@ import {ipcRenderer} from "electron";
 import log from "electron-log";
 import {call, put} from "redux-saga/effects";
 import {StopSyncAppsEvent} from "../../../constants";
-import * as actions from "../constants/action-types";
+import * as actions from "../actions";
 
 
 export const stopSyncAppsAsync = () => {
@@ -39,11 +39,11 @@ export const stopSyncAppsAsync = () => {
 };
 
 export default function* stopSyncApps() {
-  yield put(actions.ProcessingStart());
+  yield put(actions.processingStart());
   try {
     yield call(stopSyncAppsAsync);
   } catch (err) {
 
   }
-  yield put(actions.ProcessingEnd());
+  yield put(actions.processingEnd());
 };

@@ -22,7 +22,7 @@ import {delay} from "redux-saga";
 import {call, fork, put} from "redux-saga/effects";
 import {SiaWalletEvent} from "../../../constants";
 import * as actions from "../actions";
-import {screens} from "../constants";
+import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
 
 export async function requestSiaWalletAsync() {
