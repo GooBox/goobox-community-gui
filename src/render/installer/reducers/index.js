@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {actionTypes} from "../constants";
+import {handleActions} from "redux-actions";
+import * as actionTypes from "../constants/action-types";
 
 export const InitialState = {
   // current screen.
@@ -43,22 +44,53 @@ export const InitialState = {
   },
   // true if the background process is working.
   wait: false,
+  processing: false,
   // used to show current progress in a progress bar.
   progress: 0,
 };
 
-export default (state = InitialState, action) => {
-  switch (action.type) {
-    case actionTypes.SelectStorj:
-      return {...state, storj: true, sia: false};
+export default handleActions({
 
-    case actionTypes.SelectSia:
-      return {...state, storj: false, sia: true};
+  [actionTypes.SelectStorj]: (state) => ({
+    ...state,
+    storj: true,
+    sia: false,
+  }),
+  [actionTypes.SelectSia]: (state) => ({
+    ...state,
+    storj: false,
+    sia: true,
+  }),
+  [actionTypes.SelectBoth]: (state) => ({
+    ...state,
+    storj: true,
+    sia: true,
+  }),
+  [actionTypes.SetProgressValue]: (state, action) => ({
+    ...state,
+    progress: action.payload,
+  }),
+  [actionTypes.StorjLoginSuccess]: (state, action) => ({
+    ...state,
+    storjAccount: action.payload,
+  }),
+  [actionTypes.StorjLoginFailure]: (state, action) => ({
+    ...state,
+    storjAccount: action.payload,
+  }),
+  [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
+    ...state,
+    siaAccount: action.payload,
+  }),
+  [actionTypes.ProcessingStart]: (state) => ({
+    ...state,
+    processing: true,
+  }),
+  [actionTypes.ProcessingEnd]: (state) => ({
+    ...state,
+    processing: false,
+  })
 
-    case actionTypes.SelectBoth:
-      return {...state, storj: true, sia: true};
+}, InitialState);
 
-    default:
-      return state;
-  }
-};
+

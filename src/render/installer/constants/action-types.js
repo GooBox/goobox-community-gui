@@ -15,11 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const CloseApp = "@@main/CloseApp";
-export const OpenSelectFolder = "@@main/OpenSelectFolder";
-export const SelectStorj = "@@main/SelectStorj";
-export const SelectSia = "@@main/SelectSia";
-export const SelectBoth = "@@main/SelectBoth";
+export const CloseWindow = "CloseApp";
+export const OpenSelectFolder = "OpenSelectFolder";
+export const SelectStorj = "SelectStorj";
+export const SelectSia = "SelectSia";
+export const SelectBoth = "SelectBoth";
 
-export const StorjLogin = "@@main/StorjLogin";
-export const StorjCreataAccount = "@@main/StorjCreateAccount";
+export const StorjLogin = "StorjLogin";
+export const StorjLoginSuccess = "StorjLoginSuccess";
+export const StorjLoginFailure = "StorjLoginFailure";
+export const StorjCreateAccount = "StorjCreateAccount";
+export const StorjCreateAccountSuccess = "StorjCreateAccountSuccess";
+export const StorjCreateAccountFailure = "StorjCreateAccountFailure";
+
+export const RequestSiaWalletInfo = "RequestSiaWalletInfo";
+export const RequestSiaWalletInfoSuccess = "RequestSiaWalletInfoSuccess";
+export const RequestSiaWalletInfoFailure = "RequestSiaWalletInfoFailure";
+
+export const SetProgressValue = "SetProgressValue";
+
+export const PrepareJRE = "PrepareJRE";
+
+export const ProcessingStart = "ProcessingStart";
+export const ProcessingEnd = "ProcessingEnd";
+
+export const SaveConfig = "SaveConfig";
+export const StopSyncApps = "StopSyncApps";

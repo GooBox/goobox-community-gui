@@ -15,14 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {actionTypes} from "../constants";
+import {createAction} from "redux-actions";
+import * as actionTypes from "../constants/action-types";
 
-export const close = () => ({type: actionTypes.CloseApp});
+export const closeWindow = createAction(actionTypes.CloseWindow);
 
-export const openSelectFolder = () => ({type: actionTypes.OpenSelectFolder});
-export const selectStorj = () => ({type: actionTypes.SelectStorj});
-export const selectSia = () => ({type: actionTypes.SelectSia});
-export const selectBoth = () => ({type: actionTypes.SelectBoth});
+export const openSelectFolder = createAction(actionTypes.OpenSelectFolder);
+export const selectStorj = createAction(actionTypes.SelectStorj);
+export const selectSia = createAction(actionTypes.SelectSia);
+export const selectBoth = createAction(actionTypes.SelectBoth);
 
-export const storjLogin = (args) => ({type: actionTypes.StorjLogin, value: args});
-export const storjCreateAccount = () => ({type: actionTypes.StorjCreataAccount});
+export const storjLogin = createAction(actionTypes.StorjLogin);
+export const storjLoginSuccess = createAction(actionTypes.StorjLoginSuccess);
+export const storjLoginFailure = createAction(actionTypes.StorjLoginFailure);
+export const storjCreateAccount = createAction(actionTypes.StorjCreateAccount);
+export const storjCreateAccountSuccess = createAction(actionTypes.StorjCreateAccountSuccess);
+export const storjCreateAccountFailure = createAction(actionTypes.StorjCreateAccountFailure);
+
+export const requestSiaWalletInfo = createAction(actionTypes.RequestSiaWalletInfo);
+export const requestSiaWalletInfoSuccess = createAction(actionTypes.RequestSiaWalletInfoSuccess);
+export const requestSiaWalletInfoFailure = createAction(actionTypes.RequestSiaWalletInfoFailure);
+
+export const setProgressValue = createAction(actionTypes.SetProgressValue);
+export const prepareJRE = createAction(actionTypes.PrepareJRE);
+
+export const processingStart = createAction(actionTypes.ProcessingStart);
+export const processingEnd = createAction(actionTypes.ProcessingEnd);
+
+export const saveConfig = createAction(actionTypes.SaveConfig);
+export const stopSyncApps = createAction(actionTypes.StopSyncApps);
