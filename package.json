@@ -34,22 +34,26 @@
   "dependencies": {
     "about-window": "^1.8.0",
     "electron-json-storage": "^4.0.2",
-    "node-jre": "jkawamoto/node-jre#fix-8"
+    "node-jre": "jkawamoto/node-jre#fix-8",
+    "redux-actions": "^2.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.36",
-    "@babel/preset-env": "^7.0.0-beta.36",
-    "@babel/preset-react": "^7.0.0-beta.36",
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
+    "@babel/preset-env": "^7.0.0-beta.37",
+    "@babel/preset-react": "^7.0.0-beta.37",
     "babel-core": "^7.0.0-0",
-    "babel-jest": "^22.0.4",
+    "babel-jest": "^22.0.6",
     "babel-loader": "^8.0.0-beta.0",
+    "classnames": "^2.2.5",
     "coveralls": "^3.0.0",
     "electron": "1.7.10",
-    "electron-log": "^2.2.13",
+    "electron-log": "^2.2.14",
     "electron-packager": "^10.1.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "jest": "^22.0.4",
+    "history": "^4.7.2",
+    "jest": "^22.0.6",
     "js-yaml": "^3.10.0",
     "menubar": "^5.2.3",
     "npm-check-updates": "^2.14.0",
@@ -57,7 +61,15 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-router-redux": "^5.0.0-alpha.9",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-mock-store": "^1.4.0",
+    "redux-saga": "^0.16.0",
     "semver": "^5.4.1",
+    "svg-url-loader": "^2.3.1",
     "webpack": "^3.10.0"
   },
   "babel": {
@@ -74,6 +86,9 @@
         }
       ],
       "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
     ]
   },
   "jest": {
@@ -86,6 +101,9 @@
     ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
     }
   }
 }

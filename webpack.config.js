@@ -57,7 +57,7 @@ module.exports = [
     },
     entry: {
       "main": "./src/render/popup/index.js",
-      "installer-main": "./src/installer-main.jsx",
+      "installer": "./src/render/installer/index.js",
     },
     resolve: {
       extensions: [".js", ".jsx"]
