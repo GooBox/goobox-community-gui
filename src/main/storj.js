@@ -16,7 +16,7 @@
  */
 
 "use strict";
-import {execSync, spawn} from "child_process";
+import {spawn} from "child_process";
 import log from "electron-log";
 import jre from "node-jre";
 import path from "path";
@@ -69,7 +69,7 @@ export default class Storj {
 
     this.proc.on("close", (code, signal) => {
       if (this.proc) {
-        log.debug(`storj closed: code = ${code}, signal = ${signal}, killed = ${this.proc}`);
+        log.debug(`storj closed: code = ${code}, signal = ${signal}, killed = ${JSON.stringify(this.proc)}`);
         this.proc = null;
       }
     });
@@ -157,29 +157,18 @@ export default class Storj {
       return;
     }
 
-    const promise = Promise.all([
-      new Promise(resolve => {
-        this.proc.once("exit", () => {
-          log.info("the sync-storj app is exited");
-          this.proc = null;
-          resolve();
-        });
+    log.info("closing the sync-storj app");
+    return Promise.race([
+      this._sendRequest("Quit", {
+        method: "quit",
       }),
       new Promise(resolve => {
         this.proc.once("close", () => {
-          log.info("the streams of sync-storj app is closed");
+          log.info("streams of sync-storj are closed");
           resolve();
         });
       })
     ]);
-
-    log.info("closing the sync-storj app");
-    if (process.platform === "win32") {
-      execSync(`taskkill /pid ${this.proc.pid} /T /F`);
-    } else {
-      this.proc.kill("SIGTERM");
-    }
-    return promise;
 
   }
 

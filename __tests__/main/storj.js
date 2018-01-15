@@ -19,7 +19,7 @@ jest.mock("child_process");
 jest.useFakeTimers();
 jest.setTimeout(5 * 60000);
 
-import {execSync, spawn} from "child_process";
+import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
@@ -172,73 +172,6 @@ describe("Storj class", () => {
 
   });
 
-  describe("close method", () => {
-
-    it("sends SIGTERM and waits exit event is emitted", async () => {
-      storj.proc = {
-        kill(signal) {
-          expect(signal).toEqual("SIGTERM");
-          expect(this.onExit).toBeDefined();
-          this.onExit();
-          expect(this.onClose).toBeDefined();
-          this.onClose();
-        },
-        once(event, callback) {
-          switch (event) {
-            case "exit":
-              this.onExit = callback;
-              break;
-            case "close":
-              this.onClose = callback;
-              break;
-          }
-        }
-      };
-      await storj.close();
-      expect(storj.proc).toBeNull();
-    });
-
-    it("executes taskkill and waits exit event is emitted in Windows", async () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "win32"
-        });
-
-        const storj = new Storj();
-        let onExit, onClose;
-        storj.proc = {
-          once(event, callback) {
-            if (event === "exit") {
-              onExit = callback;
-            } else if (event === "close") {
-              onClose = callback;
-            }
-          }
-        };
-        execSync.mockImplementation(() => {
-          onExit();
-          onClose();
-        });
-
-        await storj.close();
-        expect(storj.proc).toBeNull();
-        expect(execSync).toHaveBeenCalled();
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
-    });
-
-    it("does nothing if proc is null", async () => {
-      const storj = new Storj();
-      await storj.close();
-    });
-
-  });
-
   describe("_sendRequest method", () => {
 
     it("sends a given request as a JSON formatted string", async () => {
@@ -312,6 +245,43 @@ describe("Storj class", () => {
       setTimeout.mockImplementation(cb => cb());
       const name = "test";
       await expect(storj._sendRequest(name)).rejects.toEqual(`${name} request timed out`);
+    });
+
+  });
+
+  describe("close method", () => {
+
+    beforeEach(() => {
+      storj.proc = {
+        once: jest.fn(),
+      };
+    });
+
+    it("sends quit request via _sendRequest", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve());
+      await expect(storj.close()).resolves.not.toBeDefined();
+      expect(storj._sendRequest).toHaveBeenCalledWith("Quit", {
+        method: "quit",
+      });
+    });
+
+    it("sends quit request and also waits a close event emitted", async () => {
+      // After callback is registered to close event, it is called soon.
+      storj.proc.once.mockImplementation((event, cb) => {
+        cb();
+      });
+      // _sendRequest returns a promise never resolved.
+      storj._sendRequest = jest.fn().mockReturnValue(new Promise(() => {
+      }));
+      await expect(storj.close()).resolves.not.toBeDefined();
+      expect(storj._sendRequest).toHaveBeenCalledWith("Quit", {
+        method: "quit",
+      });
+    });
+
+    it("does nothing if proc is null", async () => {
+      const storj = new Storj();
+      await storj.close();
     });
 
   });
