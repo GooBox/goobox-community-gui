@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import classNames from "classnames";
 import log from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
@@ -89,7 +90,7 @@ export default class StorjLogin extends React.Component {
       passwordWarn: props.passwordWarn,
       keyWarn: props.keyWarn,
     };
-    this._onClickFinish = this._onClickFinish.bind(this);
+    this._onClickNext = this._onClickNext.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -100,7 +101,11 @@ export default class StorjLogin extends React.Component {
     });
   }
 
-  _onClickFinish() {
+  _onClickNext() {
+    if (this.props.processing) {
+      return
+    }
+
     let warn = false;
     if (!this.state.email) {
       warn = true;
@@ -115,7 +120,7 @@ export default class StorjLogin extends React.Component {
       this.setState({keyWarn: true});
     }
     if (!warn) {
-      this.props.onClickFinish({
+      this.props.onClickNext({
         email: this.state.email,
         password: this.state.password,
         encryptionKey: this.state.key,
@@ -153,39 +158,40 @@ export default class StorjLogin extends React.Component {
     }
 
     return (
-      <div className="background-gradation">
+      <div className={classNames("background-gradation", this.props.processing ? "wait" : "")}>
         <header><img className="icon" src={leftWhiteIcon}/></header>
         {msg}
         <main className="account-info" style={style.accountInfo}>
           <div>
             <input className={this.state.emailWarn ? "warn" : ""} id="email"
                    placeholder="e-mail" value={this.state.email} style={style.input}
-                   onChange={e => this.setState({email: e.target.value})}/>
+                   onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
           </div>
           <div>
             <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
                    placeholder="password" value={this.state.password} style={style.input}
-                   onChange={e => this.setState({password: e.target.value})}/>
+                   onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
           </div>
           <div>
             <input className={this.state.keyWarn ? "warn" : ""} id="key" type="password"
                    placeholder="encryption key" value={this.state.key} style={style.input}
-                   onChange={e => this.setState({key: e.target.value})}/>
+                   onChange={e => this.props.processing || this.setState({key: e.target.value})}/>
           </div>
         </main>
         <main className="create-account" style={style.createAccount}>
           <div style={style.createAccountText}>
             Don't have an account?
           </div>
-          <button id="create-account-btn" style={style.createAccountButton} onClick={this.props.onClickCreateAccount}>
+          <button id="create-account-btn" style={style.createAccountButton}
+                  onClick={() => this.props.processing || this.props.onClickCreateAccount()}>
             click here to create
           </button>
         </main>
         <footer>
-          <a className="back-btn" onClick={this.props.onClickBack}>
+          <a className="back-btn" onClick={() => this.props.processing || this.props.onClickBack()}>
             <img className="arrow" src={leftArrowImage}/> Back
           </a>
-          <a className="next-btn" onClick={this._onClickFinish}>
+          <a className="next-btn" onClick={this._onClickNext}>
             Finish <img className="arrow" src={rightArrowImage}/>
           </a>
         </footer>
@@ -196,9 +202,11 @@ export default class StorjLogin extends React.Component {
 }
 
 StorjLogin.propTypes = {
+  // If true, showing wait mouse cursor and preventing all actions.
+  processing: PropTypes.bool.isRequired,
   onClickCreateAccount: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
-  onClickFinish: PropTypes.func.isRequired,
+  onClickNext: PropTypes.func.isRequired,
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
   keyWarn: PropTypes.bool,

@@ -42,10 +42,10 @@ export default function Finish(props) {
         <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
       </main>
       <footer>
-        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
+        <a className="back-btn" onClick={props.onClickBack}>
           <img className="arrow" src={leftArrowImage}/> Back
         </a>
-        <a className="next-btn" onClick={() => props.onClickClose && props.onClickClose()}>
+        <a className="next-btn" onClick={props.onClickClose}>
           Close
         </a>
       </footer>

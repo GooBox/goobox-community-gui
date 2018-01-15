@@ -89,6 +89,10 @@ export default class StorjRegistration extends React.Component {
   }
 
   _onClickNext() {
+    if (this.props.processing) {
+      return;
+    }
+
     let warn = false;
     if (!this.state.email) {
       warn = true;
@@ -142,12 +146,12 @@ export default class StorjRegistration extends React.Component {
           <div>
             <input className={this.state.emailWarn ? "warn" : ""} id="email"
                    placeholder="e-mail" value={this.state.email} style={style.input}
-                   onChange={e => this.setState({email: e.target.value})}/>
+                   onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
           </div>
           <div>
             <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
                    placeholder="password" value={this.state.password} style={style.input}
-                   onChange={e => this.setState({password: e.target.value})}/>
+                   onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
           </div>
         </main>
         <main style={style.storjLogin}>
@@ -155,12 +159,12 @@ export default class StorjRegistration extends React.Component {
             Already have an account?
           </div>
           <button id="login-btn" style={style.button}
-                  onClick={this.props.onClickLogin}>
+                  onClick={() => this.props.processing || this.props.onClickLogin()}>
             Click here to login
           </button>
         </main>
         <footer>
-          <a className="back-btn" onClick={this.props.onClickBack}>
+          <a className="back-btn" onClick={() => this.props.processing || this.props.onClickBack()}>
             <img className="arrow" src={leftArrowImage}/> Back
           </a>
           <a className="next-btn" onClick={this._onClickNext}>
@@ -174,6 +178,8 @@ export default class StorjRegistration extends React.Component {
 }
 
 StorjRegistration.propTypes = {
+  // If true, showing wait mouse cursor and preventing all actions.
+  processing: PropTypes.bool.isRequired,
   onClickLogin: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,

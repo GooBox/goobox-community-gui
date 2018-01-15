@@ -40,7 +40,7 @@ describe("SelectFolder component", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
-  it("takes flegs of used services and shows the name of them", () => {
+  it("takes flags of used services and shows the name of them", () => {
     wrapper = shallow(
       <SelectFolder storj={true} sia={false} folder={defaultDir}
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
@@ -56,7 +56,6 @@ describe("SelectFolder component", () => {
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
     expect(wrapper.find(".service-name").text()).toEqual(`${Storj} & ${Sia}`);
   });
-
 
   it("shows current selected folder", () => {
     const c = wrapper.find(".folder");

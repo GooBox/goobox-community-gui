@@ -100,10 +100,7 @@ export default class SelectFolder extends React.Component {
       return;
     }
     if (this.props.onClickNext && !this.selecting) {
-      this.setState({disabled: true}, this.props.onClickNext.bind(null, {
-        storj: this.props.storj,
-        sia: this.props.sia
-      }));
+      this.setState({disabled: true}, this.props.onClickNext);
     }
   }
 

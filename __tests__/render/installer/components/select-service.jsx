@@ -17,16 +17,16 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import ServiceSelector from "../../../../src/render/installer/components/service-selector.jsx";
+import SelectService from "../../../../src/render/installer/components/select-service.jsx";
 
-describe("ServiceSelector component", () => {
+describe("SelectService component", () => {
 
   let wrapper, storj, sia, both;
   beforeEach(() => {
     storj = jest.fn();
     sia = jest.fn();
     both = jest.fn();
-    wrapper = shallow(<ServiceSelector onSelectStorj={storj} onSelectSia={sia} onSelectBoth={both}/>);
+    wrapper = shallow(<SelectService onSelectStorj={storj} onSelectSia={sia} onSelectBoth={both} processing={false}/>);
   });
 
   it("doesn't have background-gradation class", () => {
@@ -37,21 +37,45 @@ describe("ServiceSelector component", () => {
     const link = wrapper.find(".option-storj");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
-    expect(storj).toHaveBeenCalledTimes(1);
+    expect(storj).toHaveBeenCalled();
   });
 
-  it("has a link to choose Sia", () => {
+  it("prevents the storj button when processing is true", () => {
+    wrapper.setProps({processing: true});
+    const link = wrapper.find(".option-storj");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(storj).not.toHaveBeenCalled();
+  });
+
+  it("has a link to choose sia", () => {
     const link = wrapper.find(".option-sia");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
-    expect(sia).toHaveBeenCalledTimes(1);
+    expect(sia).toHaveBeenCalled();
   });
 
-  it("has a link to choose Storj", () => {
+  it("presents the sia button when processing is true", () => {
+    wrapper.setProps({processing: true});
+    const link = wrapper.find(".option-sia");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(sia).not.toHaveBeenCalled();
+  });
+
+  it("has a link to choose both storj and sia", () => {
     const link = wrapper.find(".option-both");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
-    expect(both).toHaveBeenCalledTimes(1);
+    expect(both).toHaveBeenCalled();
+  });
+
+  it("prevents the storj and sia button when processing is true", () => {
+    wrapper.setProps({processing: true});
+    const link = wrapper.find(".option-both");
+    expect(link.exists()).toBeTruthy();
+    link.simulate("click");
+    expect(both).not.toHaveBeenCalled();
   });
 
 });

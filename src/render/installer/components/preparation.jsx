@@ -68,7 +68,7 @@ export default function Preparation(props) {
     width: `${props.progress}%`
   };
   return (
-    <div>
+    <div className="wait">
       <div style={style.background}>
       </div>
       <main style={style.main}>

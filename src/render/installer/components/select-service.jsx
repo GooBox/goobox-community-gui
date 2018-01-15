@@ -81,7 +81,7 @@ const style = {
   }
 };
 
-export default function ServiceSelector(props) {
+export default function SelectService(props) {
 
   return (
     <div>
@@ -94,15 +94,15 @@ export default function ServiceSelector(props) {
       </section>
       <section style={style.options}>
         <button className="option-storj" style={style.optionStorj}
-                onClick={() => props.onSelectStorj && props.onSelectStorj()}>
+                onClick={() => props.processing || props.onSelectStorj()}>
           <img src={storjLogo} width={56} height={83}/>
         </button>
         <button className="option-sia" style={style.optionSia}
-                onClick={() => props.onSelectSia && props.onSelectSia()}>
+                onClick={() => props.processing || props.onSelectSia()}>
           <img src={siaLogo} width={78} height={47}/>
         </button>
         <button className="option-both" style={style.optionBoth}
-                onClick={() => props.onSelectBoth && props.onSelectBoth()}>
+                onClick={() => props.processing || props.onSelectBoth()}>
           <img src={storjAndSiaLogo} width={140} height={68}/>
         </button>
       </section>
@@ -111,7 +111,9 @@ export default function ServiceSelector(props) {
 
 }
 
-ServiceSelector.propTypes = {
+SelectService.propTypes = {
+  // If true, showing wait mouse cursor and preventing all actions.
+  processing: PropTypes.bool.isRequired,
   onSelectStorj: PropTypes.func.isRequired,
   onSelectSia: PropTypes.func.isRequired,
   onSelectBoth: PropTypes.func.isRequired
