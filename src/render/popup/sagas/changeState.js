@@ -29,7 +29,7 @@ export const changeStateAsync = async (state) => {
 
 export default function* changeState(action) {
   yield put(actions.disable());
-  const res = yield call(changeStateAsync, action.value);
+  const res = yield call(changeStateAsync, action.payload);
   if (res === Synchronizing) {
     yield put(actions.restart());
   } else {

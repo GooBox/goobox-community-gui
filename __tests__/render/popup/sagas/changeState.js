@@ -53,7 +53,7 @@ describe("changeState", () => {
 
   it("yields disable, changeStateAsync, restart, and enable actions if changeStateAsync returns Synchronizing", () => {
     const value = "some value";
-    const iter = changeState({value: value});
+    const iter = changeState(actions.changeState(value));
     expect(iter.next().value).toEqual(put(actions.disable()));
     expect(iter.next().value).toEqual(call(changeStateAsync, value));
     expect(iter.next(Synchronizing).value).toEqual(put(actions.restart()));
@@ -63,7 +63,7 @@ describe("changeState", () => {
 
   it("yields disable, changeStateAsync, pause, and enable actions if changeStateAsync returns Paused", () => {
     const value = "some value";
-    const iter = changeState({value: value});
+    const iter = changeState(actions.changeState(value));
     expect(iter.next().value).toEqual(put(actions.disable()));
     expect(iter.next().value).toEqual(call(changeStateAsync, value));
     expect(iter.next(Paused).value).toEqual(put(actions.pause()));
