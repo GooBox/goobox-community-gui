@@ -35,7 +35,7 @@ export const InitialState = {
     emailWarn: false,
     passwordWarn: false,
     keyWarn: false,
-    warnMsg: null,
+    warnMsg: "",
   },
   // Sia account information.
   siaAccount: {
@@ -43,7 +43,6 @@ export const InitialState = {
     seed: "",
   },
   // true if the background process is working.
-  wait: false,
   processing: false,
   // used to show current progress in a progress bar.
   progress: 0,
@@ -51,6 +50,10 @@ export const InitialState = {
 
 export default handleActions({
 
+  [actionTypes.SelectFolder]: (state, action) => ({
+    ...state,
+    folder: action.payload
+  }),
   [actionTypes.SelectStorj]: (state) => ({
     ...state,
     storj: true,
