@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("../../src/main-process/jre");
-jest.mock("../../src/main-process/config");
-jest.mock("../../src/main-process/utils");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/config");
+jest.mock("../../src/main/utils");
 jest.useFakeTimers();
 
 import {app, dialog, ipcMain, Menu} from "electron";
@@ -26,12 +26,12 @@ import {
   ChangeStateEvent, OpenSyncFolderEvent, Paused, SynchronizedEvent, Synchronizing, SynchronizingEvent,
   UsedVolumeEvent
 } from "../../src/constants";
-import {getConfig} from "../../src/main-process/config";
-import icons from "../../src/main-process/icons";
-import {installJRE} from "../../src/main-process/jre";
-import Sia from "../../src/main-process/sia";
-import Storj from "../../src/main-process/storj";
-import utils from "../../src/main-process/utils";
+import {getConfig} from "../../src/main/config";
+import icons from "../../src/main/icons";
+import {installJRE} from "../../src/main/jre";
+import Sia from "../../src/main/sia";
+import Storj from "../../src/main/storj";
+import utils from "../../src/main/utils";
 
 function getEventHandler(emitter, event) {
   return emitter.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];
@@ -48,7 +48,7 @@ describe("main process of the core app", () => {
     });
 
     app.isReady.mockReturnValue(false);
-    require("../../src/main-process/main");
+    require("../../src/main/main");
     onReady = app.on.mock.calls
       .filter(args => args[0] === "ready")
       .map(args => args[1])[0];

@@ -24,7 +24,7 @@ import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 import {PassThrough, Readable} from "stream";
-import Storj from "../../src/main-process/storj";
+import Storj from "../../src/main/storj";
 
 
 describe("Storj class", () => {

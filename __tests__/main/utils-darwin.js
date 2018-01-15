@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+jest.mock("child_process");
 
-import path from "path";
+import {execFile, spawnSync} from "child_process";
 
-describe("icons module in Mac", () => {
+describe("utils module for mac", () => {
 
   let originalPlatform;
+  let utils;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
       value: "darwin"
     });
+    utils = require("../../src/main/utils").default;
   });
 
   afterAll(() => {
@@ -33,12 +36,35 @@ describe("icons module in Mac", () => {
     });
   });
 
-  it("returns white icons", () => {
-    const icons = require("../../src/main-process/icons").default;
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/error.png"));
+  beforeEach(() => {
+    spawnSync.mockReset();
+    execFile.mockReset();
+  });
+
+  describe("openDirectory", () => {
+
+    it("open a given directory with Finder", () => {
+      const dir = "/tmp/some-dir";
+      utils.openDirectory(dir);
+      expect(spawnSync).toHaveBeenCalledWith("open", [dir]);
+    });
+
+  });
+
+  describe("totalVolume", () => {
+
+    it("calculate total volume of a given directory with du", async () => {
+      const size = 12345;
+      const dir = "/tmp/some-dir";
+      execFile.mockImplementation((cmd, args, cb) => {
+        cb(null, `${size}\t${dir}`);
+      });
+
+      await expect(utils.totalVolume(dir)).resolves.toEqual(size);
+      expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
+    });
+
   });
 
 });
+

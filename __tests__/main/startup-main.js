@@ -21,25 +21,15 @@ import {ConfigFile} from "../../src/constants";
 import {app} from "electron";
 
 describe("startup script", () => {
-
-  it("loads the main script for the installer when there are no config file", () => {
+  
+  it("loads the main script for the core app when already installed", () => {
     storage.get.mockImplementationOnce((key, callback) => {
       if (key === ConfigFile) {
-        callback("not found", null);
+        callback(null, {installed: true});
       }
     });
-    require("../../src/main-process/startup");
-    expect(app.on.mock.calls[0][1].name).toEqual("installer");
-  });
-
-  it("loads the main script for the installer when not installed yet", () => {
-    storage.get.mockImplementationOnce((key, callback) => {
-      if (key === ConfigFile) {
-        callback(null, {installed: false});
-      }
-    });
-    require("../../src/main-process/startup");
-    expect(app.on.mock.calls[0][1].name).toEqual("installer");
+    require("../../src/main/startup");
+    expect(app.on.mock.calls[0][1].name).toEqual("main");
   });
 
 });

@@ -17,7 +17,7 @@
 
 import storage from "electron-json-storage";
 import {ConfigFile} from "../../src/constants";
-import {getConfig, saveConfig} from "../../src/main-process/config";
+import {getConfig, saveConfig} from "../../src/main/config";
 
 describe("config module", () => {
 

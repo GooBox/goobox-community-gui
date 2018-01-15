@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,20 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 jest.mock("child_process");
 
-import {execFile, spawnSync} from "child_process";
+import {spawnSync} from "child_process";
 
-describe("utils module for mac", () => {
+describe("utils module in Windows", () => {
 
   let originalPlatform;
   let utils;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "darwin"
+      value: "win32"
     });
-    utils = require("../../src/main-process/utils").default;
+    utils = require("../../src/main/utils").default;
   });
 
   afterAll(() => {
@@ -38,33 +39,27 @@ describe("utils module for mac", () => {
 
   beforeEach(() => {
     spawnSync.mockReset();
-    execFile.mockReset();
   });
 
   describe("openDirectory", () => {
 
-    it("open a given directory with Finder", () => {
+    it("open a given directory with explorer", () => {
       const dir = "/tmp/some-dir";
       utils.openDirectory(dir);
-      expect(spawnSync).toHaveBeenCalledWith("open", [dir]);
+      expect(spawnSync).toHaveBeenCalledWith("explorer.exe", [dir]);
     });
 
   });
 
-  describe("totalVolume", () => {
+  // describe("totalVolume", () => {
+  //
+  //   it("calculate total volume of a given directory with du", () => {
+  //     const size = 12345;
+  //     const dir = "/tmp/some-dir";
+  //     // (dir -literalpath c:\work -recurse -force | measure-object Length -sum).Sum
+  //   });
+  //
+  // });
 
-    it("calculate total volume of a given directory with du", async () => {
-      const size = 12345;
-      const dir = "/tmp/some-dir";
-      execFile.mockImplementation((cmd, args, cb) => {
-        cb(null, `${size}\t${dir}`);
-      });
-
-      await expect(utils.totalVolume(dir)).resolves.toEqual(size);
-      expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
-    });
-
-  });
 
 });
-

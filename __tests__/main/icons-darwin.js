@@ -17,13 +17,13 @@
 
 import path from "path";
 
-describe("icons module in Windows 8+", () => {
+describe("icons module in Mac", () => {
 
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "win32"
+      value: "darwin"
     });
   });
 
@@ -34,11 +34,11 @@ describe("icons module in Windows 8+", () => {
   });
 
   it("returns white icons", () => {
-    const icons = require("../../src/main-process/icons").default;
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/win/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win/error.png"));
+    const icons = require("../../src/main/icons").default;
+    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/idle.png"));
+    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/sync.png"));
+    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/paused.png"));
+    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/error.png"));
   });
 
 });

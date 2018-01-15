@@ -24,7 +24,7 @@ import jre from "node-jre";
 import path from "path";
 import readline from "readline";
 import {Readable} from "stream";
-import Sia from "../../src/main-process/sia";
+import Sia from "../../src/main/sia";
 
 describe("Sia class", () => {
 

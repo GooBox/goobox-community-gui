@@ -30,7 +30,7 @@ describe("main process of the core app invoked by the installer", () => {
     storage.get.mockReset();
     storage.get.mockImplementation(() => {
     });
-    require("../../src/main-process/main");
+    require("../../src/main/main");
   });
 
   it("starts the initialization process immediately", () => {

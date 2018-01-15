@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("child_process");
+import path from "path";
 
-import {spawnSync} from "child_process";
-
-describe("utils module in Windows", () => {
+describe("icons module in Windows 8+", () => {
 
   let originalPlatform;
-  let utils;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
       value: "win32"
     });
-    utils = require("../../src/main-process/utils").default;
   });
 
   afterAll(() => {
@@ -37,29 +33,12 @@ describe("utils module in Windows", () => {
     });
   });
 
-  beforeEach(() => {
-    spawnSync.mockReset();
+  it("returns white icons", () => {
+    const icons = require("../../src/main/icons").default;
+    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/win/idle.png"));
+    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win/sync.png"));
+    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win/paused.png"));
+    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win/error.png"));
   });
-
-  describe("openDirectory", () => {
-
-    it("open a given directory with explorer", () => {
-      const dir = "/tmp/some-dir";
-      utils.openDirectory(dir);
-      expect(spawnSync).toHaveBeenCalledWith("explorer.exe", [dir]);
-    });
-
-  });
-
-  // describe("totalVolume", () => {
-  //
-  //   it("calculate total volume of a given directory with du", () => {
-  //     const size = 12345;
-  //     const dir = "/tmp/some-dir";
-  //     // (dir -literalpath c:\work -recurse -force | measure-object Length -sum).Sum
-  //   });
-  //
-  // });
-
 
 });

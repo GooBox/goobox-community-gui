@@ -27,7 +27,7 @@ module.exports = [
       __filename: false
     },
     entry: {
-      "main-process/startup": "./src/main-process/startup.js",
+      "main/startup": "./src/main/startup.js",
     },
     resolve: {
       extensions: [".js"]
@@ -56,8 +56,8 @@ module.exports = [
       __filename: false
     },
     entry: {
-      "main": "./src/render/popup/index.js",
-      "installer": "./src/render/installer/index.js",
+      "render/main": "./src/render/popup/index.js",
+      "render/installer": "./src/render/installer/index.js",
     },
     resolve: {
       extensions: [".js", ".jsx"]

@@ -16,8 +16,8 @@
  */
 
 jest.mock("fs");
-jest.mock("../../src/main-process/jre");
-jest.mock("../../src/main-process/config");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/config");
 
 import {app, BrowserWindow, ipcMain} from "electron";
 import fs from "fs";
@@ -27,11 +27,11 @@ import {
   JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
   StorjRegisterationEvent
 } from "../../src/constants";
-import {getConfig} from "../../src/main-process/config";
-import "../../src/main-process/installer";
-import {installJRE} from "../../src/main-process/jre";
-import Sia from "../../src/main-process/sia";
-import Storj from "../../src/main-process/storj";
+import {getConfig} from "../../src/main/config";
+import "../../src/main/installer";
+import {installJRE} from "../../src/main/jre";
+import Sia from "../../src/main/sia";
+import Storj from "../../src/main/storj";
 
 function getEventHandler(event) {
   return ipcMain.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];

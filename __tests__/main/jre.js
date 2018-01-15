@@ -19,7 +19,7 @@ jest.mock("fs");
 import fs from "fs";
 import jre from "node-jre";
 import path from "path";
-import {installJRE} from "../../src/main-process/jre";
+import {installJRE} from "../../src/main/jre";
 
 describe("installJRE function", () => {
 
