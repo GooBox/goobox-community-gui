@@ -226,17 +226,22 @@ describe("main process of the core app", () => {
       await onReady();
       expect(getConfig).toHaveBeenCalled();
       expect(startStorj).toHaveBeenCalled();
+      expect(app.quit).not.toHaveBeenCalled();
     });
 
     it("doesn't start the storj backend if it is already running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         storj: true,
       }));
-      global.storj = {};
+      global.storj = {
+        close: () => {
+        },
+      };
 
       await onReady();
       expect(getConfig).toHaveBeenCalled();
       expect(startStorj).not.toHaveBeenCalled();
+      expect(app.quit).not.toHaveBeenCalled();
     });
 
     it("starts the sia backend if sia conf is true but not running", async () => {
@@ -247,6 +252,7 @@ describe("main process of the core app", () => {
       await onReady();
       expect(getConfig).toHaveBeenCalled();
       expect(startSia).toHaveBeenCalled();
+      expect(app.quit).not.toHaveBeenCalled();
     });
 
     it("doesn't start the sia backend if it is already running", async () => {
@@ -258,12 +264,67 @@ describe("main process of the core app", () => {
       await onReady();
       expect(getConfig).toHaveBeenCalled();
       expect(startSia).not.toHaveBeenCalled();
+      expect(app.quit).not.toHaveBeenCalled();
     });
 
     it("closes the process if another process is already running", async () => {
       app.makeSingleInstance.mockReturnValueOnce(true);
       await onReady();
       expect(app.quit).toHaveBeenCalled();
+    });
+
+    describe("StorjEventHandler", () => {
+
+      let handler;
+      beforeEach(async () => {
+        getConfig.mockReturnValue(Promise.resolve({sia: true}));
+        global.storj = {
+          start: () => {
+          },
+          stdout: {
+            on: jest.fn()
+          }
+        };
+        await onReady();
+        handler = getEventHandler(global.storj.stdout, "line");
+        menuberMock.tray.setImage.mockReset();
+      });
+
+      afterEach(() => {
+        delete global.storj;
+      });
+
+      it("sets the synchronizing icon when receiving a synchronizing event", () => {
+        handler(JSON.stringify({
+          method: "syncState",
+          args: {
+            newState: "synchronizing"
+          }
+        }));
+        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+      });
+
+      it("sets the idle icon when receiving an idle event", () => {
+        handler(JSON.stringify({
+          method: "syncState",
+          args: {
+            newState: "idle"
+          }
+        }));
+        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      });
+
+      it("should be equal to the handler registered to the initial storj instance", async () => {
+        const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
+        await changeStateEventHandler({
+          sender: {
+            send: () => {
+            }
+          }
+        }, Synchronizing);
+        expect(global.storj.stdout.on).toHaveBeenLastCalledWith("line", handler);
+      });
+
     });
 
     describe("SiaEventHandler", () => {

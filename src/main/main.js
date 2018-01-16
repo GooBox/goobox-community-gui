@@ -40,12 +40,17 @@ if (app.isReady()) {
 
 async function main() {
 
+  let width = 518;
+  if ("development" === process.env.NODE_ENV) {
+    width *= 2;
+  }
+
   const mb = menubar({
     index: "file://" + path.join(__dirname, "../../static/popup.html"),
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
-    width: 518,
+    width: width,
     height: 400,
     alwaysOnTop: true,
     showDockIcon: false,
@@ -105,6 +110,23 @@ async function main() {
   });
 
   // Define event handlers.
+  const StorjEventHandler = line => {
+    const e = JSON.parse(line);
+    log.debug(`Received a storj event: ${e.method}`);
+    if ("syncState" === e.method) {
+      switch (e.args.newState) {
+        case "synchronizing":
+          log.debug("Update the tray icon to the synchronizing one");
+          mb.tray.setImage(icons.getSyncIcon());
+          break;
+        case "idle":
+          log.debug("Update the tray icon to the idle one");
+          mb.tray.setImage(icons.getIdleIcon());
+          break;
+      }
+    }
+  };
+
   const SiaEventHandler = line => {
     const e = JSON.parse(line);
     log.debug(`Received a sia event: ${e.eventType}`);
@@ -122,26 +144,32 @@ async function main() {
 
   // Register event handlers.
   ipcMain.on(ChangeStateEvent, async (event, arg) => {
-    if (arg === Synchronizing) {
-      if (global.storj) {
-        global.storj.start();
+    try {
+      if (arg === Synchronizing) {
+        if (global.storj) {
+          global.storj.start();
+          global.storj.stdout.on("line", StorjEventHandler);
+        }
+        if (global.sia) {
+          global.sia.start();
+          global.sia.stdout.on("line", SiaEventHandler);
+        }
+        log.debug("Update the tray icon to the idle icon");
+        mb.tray.setImage(icons.getSyncIcon());
+      } else {
+        if (global.storj) {
+          global.storj.stdout.removeListener("line", StorjEventHandler);
+          await global.storj.close();
+        }
+        if (global.sia) {
+          global.sia.stdout.removeListener("line", SiaEventHandler);
+          await global.sia.close();
+        }
+        log.debug("Update the tray icon to the paused icon");
+        mb.tray.setImage(icons.getPausedIcon());
       }
-      if (global.sia) {
-        global.sia.start();
-        global.sia.stdout.on("line", SiaEventHandler);
-      }
-      log.debug("Update the tray icon to the idle icon");
-      mb.tray.setImage(icons.getSyncIcon());
-    } else {
-      if (global.storj) {
-        await global.storj.close();
-      }
-      if (global.sia) {
-        global.sia.stdout.removeListener("line", SiaEventHandler);
-        await global.sia.close();
-      }
-      log.debug("Update the tray icon to the paused icon");
-      mb.tray.setImage(icons.getPausedIcon());
+    } catch (err) {
+      log.error(err);
     }
     event.sender.send(ChangeStateEvent, arg);
   });
@@ -181,6 +209,9 @@ async function main() {
       global.storj = new Storj();
       global.storj.start();
     }
+    if (global.storj && global.storj.stdout) {
+      global.storj.stdout.on("line", StorjEventHandler);
+    }
 
     // Start sync-sia app.
     if (cfg.sia && !global.sia) {
@@ -194,6 +225,12 @@ async function main() {
   } catch (err) {
     log.error(err);
     dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
+    if (global.storj) {
+      await global.storj.close();
+    }
+    if (global.sia) {
+      await global.sia.close();
+    }
     app.quit();
   }
 
