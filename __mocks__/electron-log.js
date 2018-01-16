@@ -26,7 +26,6 @@ export const verbose = () => {
 export const error = () => {
 };
 export const silly = () => {
-
 };
 // export const log = (msg) => console.log(msg);
 // export const info = (msg) => console.log(`info: ${msg}`);

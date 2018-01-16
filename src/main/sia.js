@@ -63,7 +63,7 @@ export default class Sia {
     this.stderr.on("line", log.verbose);
 
     this.proc.on("close", (code, signal) => {
-      log.debug(`sia closed: code = ${code}, signal = ${signal}, killed = ${this.proc}`);
+      log.debug(`sia closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
     });
 
   }

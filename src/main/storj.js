@@ -69,7 +69,7 @@ export default class Storj {
 
     this.proc.on("close", (code, signal) => {
       if (this.proc) {
-        log.debug(`storj closed: code = ${code}, signal = ${signal}, killed = ${JSON.stringify(this.proc)}`);
+        log.debug(`storj closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
         this.proc = null;
       }
     });
