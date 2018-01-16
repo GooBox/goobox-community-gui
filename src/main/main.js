@@ -16,20 +16,22 @@
  */
 
 "use strict";
-import {app, dialog, ipcMain, Menu} from "electron";
+import {app, dialog, Menu} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
-import {ChangeStateEvent, OpenSyncFolderEvent, Synchronizing, UsedVolumeEvent} from "../constants";
+import {Synchronizing} from "../constants";
+// TODO: make constants folder.
+import * as ipcActionTypes from "../ipc/constants";
+import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
+
+import {calculateUsedVolumeHandler, changeStateHandler, openSyncFolderHandler} from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
 import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
-
-const DefaultSyncFolder = path.join(app.getPath("home"), app.getName());
-
 
 if (app.isReady()) {
   log.info("the app is already ready");
@@ -143,59 +145,9 @@ async function main() {
   };
 
   // Register event handlers.
-  ipcMain.on(ChangeStateEvent, async (event, arg) => {
-    try {
-      if (arg === Synchronizing) {
-        if (global.storj) {
-          global.storj.start();
-          global.storj.stdout.on("line", StorjEventHandler);
-        }
-        if (global.sia) {
-          global.sia.start();
-          global.sia.stdout.on("line", SiaEventHandler);
-        }
-        log.debug("Update the tray icon to the idle icon");
-        mb.tray.setImage(icons.getSyncIcon());
-      } else {
-        if (global.storj) {
-          global.storj.stdout.removeListener("line", StorjEventHandler);
-          await global.storj.close();
-        }
-        if (global.sia) {
-          global.sia.stdout.removeListener("line", SiaEventHandler);
-          await global.sia.close();
-        }
-        log.debug("Update the tray icon to the paused icon");
-        mb.tray.setImage(icons.getPausedIcon());
-      }
-    } catch (err) {
-      log.error(err);
-    }
-    event.sender.send(ChangeStateEvent, arg);
-  });
-
-  ipcMain.on(OpenSyncFolderEvent, async (event) => {
-    try {
-      const cfg = await getConfig();
-      log.info(`Open sync folder ${cfg.syncFolder}`);
-      utils.openDirectory(cfg ? cfg.syncFolder : DefaultSyncFolder);
-    } catch (err) {
-      log.error(err);
-    }
-    event.sender.send(OpenSyncFolderEvent);
-  });
-
-  ipcMain.on(UsedVolumeEvent, async (event) => {
-    let volume = 0;
-    try {
-      const cfg = await getConfig();
-      volume = await utils.totalVolume(cfg ? cfg.syncFolder : DefaultSyncFolder);
-      log.info(`Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
-    } catch (err) {
-      log.error(err);
-    }
-    event.sender.send(UsedVolumeEvent, volume / 1024 / 1024);
-  });
+  addListener(ipcActionTypes.ChangeState, changeStateHandler(mb, StorjEventHandler, SiaEventHandler));
+  addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
+  addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
 
   // Start back ends.
   log.info("Loading the config file.");

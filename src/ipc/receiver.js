@@ -15,16 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ipcMain} from "electron";
 import log from "electron-log";
-import {call} from "redux-saga/effects";
-import * as ipcActions from "../../../ipc/actions";
-import sendAsync from "../../../ipc/send";
 
-export default function* openSyncFolder() {
-  try {
-    yield call(sendAsync, ipcActions.openSyncFolder());
-  } catch (err) {
-    // TODO: error handling.
-    log.error(`openSyncFolder saga catches an error: ${err}`);
-  }
+export default function addListener(actionType, asyncCallback) {
+
+  ipcMain.on(actionType, async (event, payload, error, meta) => {
+    log.debug(`Received a ${actionType} request: ${payload}`);
+    try {
+      const res = await asyncCallback(payload, error, meta);
+      log.debug(`Sending a successful response for ${actionType} request: ${payload}`);
+      event.sender.send(actionType, res);
+    } catch (error) {
+      log.debug(`Sending an error response for ${actionType} request: ${error}`);
+      event.sender.send(actionType, error, true);
+    }
+  });
+
 }

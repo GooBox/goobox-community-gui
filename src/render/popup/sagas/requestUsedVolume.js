@@ -15,24 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
+import log from "electron-log";
 import {delay} from "redux-saga";
 import {call, put} from "redux-saga/effects";
-import {UsedVolumeEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import {setVolumeSize} from "../actions";
-
-export const requestUsedVolume = async () => {
-  return new Promise(resolve => {
-    ipcRenderer.once(UsedVolumeEvent, (event, volume) => resolve(volume || 0));
-    ipcRenderer.send(UsedVolumeEvent);
-  });
-};
 
 export default function* requestUsedVolumeTimer() {
   while (true) {
     // noinspection JSCheckFunctionSignatures
     yield call(delay, 30000);
-    const volume = yield call(requestUsedVolume);
-    yield put(setVolumeSize(volume));
+    try {
+      const volume = yield call(sendAsync, ipcActions.calculateUsedVolume());
+      yield put(setVolumeSize(volume || 0));
+    } catch (err) {
+      // TODO: error handling.
+      log.error(`requestUsedVolumeTimer saga catches an error: ${err}`);
+    }
   }
 }

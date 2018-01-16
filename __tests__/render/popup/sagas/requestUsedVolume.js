@@ -15,35 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import {delay} from "redux-saga";
 import {call, put} from "redux-saga/effects";
-import {UsedVolumeEvent} from "../../../../src/constants";
+import * as ipcActions from "../../../../src/ipc/actions";
+import sendAsync from "../../../../src/ipc/send";
 import {setVolumeSize} from "../../../../src/render/popup/actions";
-import requestUsedVolumeTimer, {requestUsedVolume} from "../../../../src/render/popup/sagas/requestUsedVolume";
-
-describe("requestUsedVolume", () => {
-
-  const volume = 334;
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, volume);
-        }
-      });
-    });
-  });
-
-  it("requests total volume ", async () => {
-    await expect(requestUsedVolume()).resolves.toEqual(volume);
-    expect(ipcRenderer.once).toHaveBeenCalledWith(UsedVolumeEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(UsedVolumeEvent);
-  });
-
-});
+import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUsedVolume";
 
 describe("requestUsedVolumeTimer", () => {
 
@@ -52,11 +29,13 @@ describe("requestUsedVolumeTimer", () => {
     const saga = requestUsedVolumeTimer();
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 30000));
-    expect(saga.next().value).toEqual(call(requestUsedVolume));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.calculateUsedVolume()));
     expect(saga.next(volume).value).toEqual(put(setVolumeSize(volume)));
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 30000));
   });
+
+  // TODO: Test throwing exceptions.
 
 });
 

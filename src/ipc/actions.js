@@ -15,16 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import log from "electron-log";
-import {call} from "redux-saga/effects";
-import * as ipcActions from "../../../ipc/actions";
-import sendAsync from "../../../ipc/send";
+import {createAction} from "redux-actions";
+import * as actionTypes from "./constants";
 
-export default function* openSyncFolder() {
-  try {
-    yield call(sendAsync, ipcActions.openSyncFolder());
-  } catch (err) {
-    // TODO: error handling.
-    log.error(`openSyncFolder saga catches an error: ${err}`);
-  }
-}
+export const changeState = createAction(actionTypes.ChangeState);
+export const openSyncFolder = createAction(actionTypes.OpenSyncFolder);
+export const calculateUsedVolume = createAction(actionTypes.CalculateUsedVolume);
+// export const InstallJRE = "@IPC/InstallJRE";
+// export const StorjLogin = "@IPC/StorjLogin";
+// export const StorjCreateAccount = "@IPC/StorjCreateAccount";
+// export const SiaRequestWalletInfo = "@IPC/SiaRequestWalletInfo";
+// export const StopSyncAppsEvent = "＠IPC/StopSyncApps";

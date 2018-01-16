@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
+import log from "electron-log";
 import {call, put} from 'redux-saga/effects';
-import {ChangeStateEvent, Synchronizing} from "../../../constants";
+import {Synchronizing} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
-
-export const changeStateAsync = async (state) => {
-  return new Promise(resolve => {
-    ipcRenderer.once(ChangeStateEvent, (event, nextState) => resolve(nextState));
-    ipcRenderer.send(ChangeStateEvent, state);
-  });
-};
 
 export default function* changeState(action) {
   yield put(actions.disable());
-  const res = yield call(changeStateAsync, action.payload);
-  if (res === Synchronizing) {
-    yield put(actions.restart());
-  } else {
-    yield put(actions.pause());
+  try {
+    const res = yield call(sendAsync, ipcActions.changeState(action.payload));
+    if (res === Synchronizing) {
+      yield put(actions.restart());
+    } else {
+      yield put(actions.pause());
+    }
+  } catch (err) {
+    // TODO: error handling.
+    log.error(`changeState saga catches an error: ${err}`);
   }
   yield put(actions.enable());
 }

@@ -22,10 +22,7 @@ jest.useFakeTimers();
 import {app, dialog, ipcMain, Menu} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
-import {
-  ChangeStateEvent, OpenSyncFolderEvent, Paused, SynchronizedEvent, Synchronizing, SynchronizingEvent,
-  UsedVolumeEvent
-} from "../../src/constants";
+import {SynchronizedEvent, SynchronizingEvent} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
@@ -314,16 +311,16 @@ describe("main process of the core app", () => {
         expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
       });
 
-      it("should be equal to the handler registered to the initial storj instance", async () => {
-        const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
-        await changeStateEventHandler({
-          sender: {
-            send: () => {
-            }
-          }
-        }, Synchronizing);
-        expect(global.storj.stdout.on).toHaveBeenLastCalledWith("line", handler);
-      });
+      // it("should be equal to the handler registered to the initial storj instance", async () => {
+      //   const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
+      //   await changeStateEventHandler({
+      //     sender: {
+      //       send: () => {
+      //       }
+      //     }
+      //   }, Synchronizing);
+      //   expect(global.storj.stdout.on).toHaveBeenLastCalledWith("line", handler);
+      // });
 
     });
 
@@ -359,162 +356,16 @@ describe("main process of the core app", () => {
       });
 
       // TODO: It handles StartSynchronizationEvent and notifies sync sia app starts synchronizing.
-      it("should be equal to the handler registered to the initial Sia instance", async () => {
-        const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
-        await changeStateEventHandler({
-          sender: {
-            send: () => {
-            }
-          }
-        }, Synchronizing);
-        expect(global.sia.stdout.on).toHaveBeenLastCalledWith("line", handler);
-      });
-
-    });
-
-  });
-
-  describe("IPC handlers", () => {
-
-    const getIPCEventHandler = (event) => getEventHandler(ipcMain, event);
-    describe("ChangeStateEvent handler", () => {
-
-      let handler;
-      let event;
-      beforeEach(async () => {
-        await onReady();
-        handler = getIPCEventHandler(ChangeStateEvent);
-        menuberMock.tray.setImage.mockClear();
-        event = {
-          sender: {
-            send: jest.fn()
-          }
-        };
-        delete global.sia;
-      });
-
-      it("sets the idle icon when the state is Synchronizing", async () => {
-        await handler(event, Synchronizing);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
-        expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Synchronizing);
-      });
-
-      it("sets the paused icon when the state is Paused", async () => {
-        await handler(event, Paused);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
-        expect(event.sender.send).toHaveBeenCalledWith(ChangeStateEvent, Paused);
-      });
-
-      it("restart the Storj instance if exists when the new state is Synchronizing", async () => {
-        global.storj = {
-          start: jest.fn(),
-          stdout: {
-            on: jest.fn()
-          }
-        };
-        await handler(event, Synchronizing);
-        expect(global.storj.start).toHaveBeenCalled();
-        // expect(global.storj.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
-      });
-
-      it("closes the Storj instance if exists when the new state is Paused", async () => {
-        global.storj = {
-          close: jest.fn(),
-          stdout: {
-            removeListener: jest.fn(),
-          }
-        };
-        await handler(event, Paused);
-        expect(global.storj.close).toHaveBeenCalled();
-        // expect(global.sia.storj.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
-      });
-
-      it("restart the Sia instance if exists when the new state is Synchronizing", async () => {
-        global.sia = {
-          start: jest.fn(),
-          stdout: {
-            on: jest.fn()
-          }
-        };
-        await handler(event, Synchronizing);
-        expect(global.sia.start).toHaveBeenCalled();
-        expect(global.sia.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
-      });
-
-      it("closes the Sia instance if exists when the new state is Paused", async () => {
-        global.sia = {
-          close: jest.fn(),
-          stdout: {
-            removeListener: jest.fn(),
-          }
-        };
-        await handler(event, Paused);
-        expect(global.sia.close).toHaveBeenCalled();
-        expect(global.sia.stdout.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
-      });
-
-    });
-
-    describe("OpenSyncFolderEvent handler", () => {
-
-      let handler;
-      let event;
-      beforeEach(async () => {
-        await onReady();
-        handler = getIPCEventHandler(OpenSyncFolderEvent);
-        menuberMock.tray.setImage.mockClear();
-        event = {
-          sender: {
-            send: jest.fn()
-          }
-        };
-        utils.openDirectory.mockReset();
-      });
-
-      it("opens the sync folder", async () => {
-        const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: syncFolder,
-        }));
-
-        await handler(event);
-        expect(getConfig).toHaveBeenCalled();
-        expect(utils.openDirectory).toHaveBeenCalledWith(syncFolder);
-        expect(event.sender.send).toHaveBeenCalledWith(OpenSyncFolderEvent);
-      });
-
-    });
-
-    describe("UsedVolumeEvent handler", () => {
-
-      let handler;
-      let event;
-      beforeEach(async () => {
-        await onReady();
-        handler = getIPCEventHandler(UsedVolumeEvent);
-        menuberMock.tray.setImage.mockClear();
-        event = {
-          sender: {
-            send: jest.fn()
-          }
-        };
-        utils.totalVolume.mockReset();
-      });
-
-      it("calculate the volume of the sync folder", async () => {
-        const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: syncFolder,
-        }));
-
-        const volume = 1234567;
-        utils.totalVolume.mockReturnValue(Promise.resolve(volume));
-
-        await handler(event);
-        expect(getConfig).toHaveBeenCalled();
-        expect(utils.totalVolume).toHaveBeenCalledWith(syncFolder);
-        expect(event.sender.send).toHaveBeenCalledWith(UsedVolumeEvent, volume / 1024 / 1024);
-      });
+      // it("should be equal to the handler registered to the initial Sia instance", async () => {
+      //   const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
+      //   await changeStateEventHandler({
+      //     sender: {
+      //       send: () => {
+      //       }
+      //     }
+      //   }, Synchronizing);
+      //   expect(global.sia.stdout.on).toHaveBeenLastCalledWith("line", handler);
+      // });
 
     });
 
