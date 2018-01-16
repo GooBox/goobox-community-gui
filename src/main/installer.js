@@ -116,6 +116,7 @@ function installer() {
 
   // StorjLoginEvent handler.
   ipcMain.on(StorjLoginEvent, async (event, args) => {
+
     log.info(`logging in to Storj: ${args.email}`);
     if (global.storj && global.storj.proc) {
       await global.storj.close();
@@ -123,6 +124,20 @@ function installer() {
     const cfg = await getConfig();
     global.storj = new Storj();
     global.storj.start(cfg.syncFolder, true);
+
+    try {
+      await global.storj.checkMnemonic(args.encryptionKey);
+    } catch (err) {
+      log.error(err);
+      // TODO: Redesign this protocol.
+      event.sender.send(StorjLoginEvent, false, err, {
+        email: true,
+        password: true,
+        encryptionKey: false,
+      });
+      return;
+    }
+
     try {
       await global.storj.login(args.email, args.password, args.encryptionKey);
       event.sender.send(StorjLoginEvent, true);
@@ -132,9 +147,10 @@ function installer() {
       event.sender.send(StorjLoginEvent, false, err, {
         email: false,
         password: false,
-        encryptionKey: false,
+        encryptionKey: true,
       });
     }
+
   });
 
   // StorjRegisterationEvent handler.

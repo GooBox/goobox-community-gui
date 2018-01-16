@@ -127,7 +127,7 @@ describe("main process of the installer", () => {
 
   describe("StorjLoginEvent handler", () => {
 
-    let handler, event, start, login;
+    let handler, event, start, checkMnemonic, login;
     const email = "abc@example.com";
     const password = "password";
     const key = "xxx xxx xxx";
@@ -147,11 +147,13 @@ describe("main process of the installer", () => {
           global.storj.proc = "a dummy storj instance";
         }
       });
+      checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockReturnValue(Promise.resolve());
       login = jest.spyOn(Storj.prototype, "login").mockReturnValue(Promise.resolve());
     });
 
     afterEach(() => {
       start.mockRestore();
+      checkMnemonic.mockRestore();
       login.mockRestore();
     });
 
@@ -168,6 +170,7 @@ describe("main process of the installer", () => {
       expect(global.storj).toBeDefined();
       expect(getConfig).toHaveBeenCalled();
       expect(start).toHaveBeenCalledWith(dir, true);
+      expect(checkMnemonic).toHaveBeenCalledWith(key);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
     });
@@ -191,12 +194,36 @@ describe("main process of the installer", () => {
       expect(global.storj).toBeDefined();
       expect(getConfig).toHaveBeenCalled();
       expect(start).toHaveBeenCalledWith(dir, true);
+      expect(checkMnemonic).toHaveBeenCalledWith(key);
       expect(login).toHaveBeenCalledWith(email, password, key);
       expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, true);
-
     });
 
-    it("sends an error message if the login is failed", async () => {
+    it("sends an error message if checkMnemonic fails", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
+        syncFolder: dir
+      }));
+
+      const err = "expected error";
+      checkMnemonic.mockReturnValue(Promise.reject(err));
+
+      await handler(event, {
+        email: email,
+        password: password,
+        encryptionKey: key,
+      });
+      expect(start).toHaveBeenCalledWith(dir, true);
+      expect(checkMnemonic).toHaveBeenCalledWith(key);
+      expect(login).not.toHaveBeenCalledWith(email, password, key);
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err, {
+        email: true,
+        password: true,
+        encryptionKey: false,
+      });
+    });
+
+
+    it("sends an error message if login fails", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         syncFolder: dir
       }));
@@ -210,8 +237,13 @@ describe("main process of the installer", () => {
         encryptionKey: key,
       });
       expect(start).toHaveBeenCalledWith(dir, true);
+      expect(checkMnemonic).toHaveBeenCalledWith(key);
       expect(login).toHaveBeenCalledWith(email, password, key);
-      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err, expect.anything());
+      expect(event.sender.send).toHaveBeenCalledWith(StorjLoginEvent, false, err, {
+        email: false,
+        password: false,
+        encryptionKey: true,
+      });
     });
 
   });
@@ -284,7 +316,7 @@ describe("main process of the installer", () => {
       expect(event.sender.send).toHaveBeenCalledWith(StorjRegisterationEvent, true, key);
     });
 
-    it("sends an error message when creating an account is failed", async () => {
+    it("sends an error message when creating an account fails", async () => {
       const close = jest.fn().mockReturnValue(Promise.resolve());
       global.storj = new Storj();
       global.storj.proc = {};
