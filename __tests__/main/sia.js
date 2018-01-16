@@ -184,25 +184,37 @@ describe("Sia class", () => {
     });
 
     it("sends SIGTERM and waits exit event is emitted", async () => {
-      const sia = new Sia();
-      sia.proc = {
-        kill(signal) {
-          expect(signal).toEqual("SIGTERM");
-          expect(this.onExit).toBeDefined();
-          this.onExit();
-          expect(this.onClose).toBeDefined();
-          this.onClose();
-        },
-        once(event, callback) {
-          if (event === "exit") {
-            this.onExit = callback;
-          } else if (event === "close") {
-            this.onClose = callback;
+      const oldPlatform = process.platform;
+      try {
+        Object.defineProperty(process, "platform", {
+          value: "darwin"
+        });
+
+        const sia = new Sia();
+        sia.proc = {
+          kill(signal) {
+            expect(signal).toEqual("SIGTERM");
+            expect(this.onExit).toBeDefined();
+            this.onExit();
+            expect(this.onClose).toBeDefined();
+            this.onClose();
+          },
+          once(event, callback) {
+            if (event === "exit") {
+              this.onExit = callback;
+            } else if (event === "close") {
+              this.onClose = callback;
+            }
           }
-        }
-      };
-      await sia.close();
-      expect(sia.proc).toBeNull();
+        };
+        await sia.close();
+        expect(sia.proc).toBeNull();
+
+      } finally {
+        Object.defineProperty(process, "platform", {
+          value: oldPlatform
+        });
+      }
     });
 
     it("executes taskkill and waits exit event is emitted in Windows", async () => {
@@ -271,8 +283,8 @@ describe("Sia class", () => {
           env: {
             JAVA_HOME: sia.javaHome,
           },
-        shell: true,
-        timeout: 5 * 60 * 1000,
+          shell: true,
+          timeout: 5 * 60 * 1000,
           windowsHide: true,
         }, expect.any(Function)
       );
