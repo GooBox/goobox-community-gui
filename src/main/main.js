@@ -57,6 +57,7 @@ async function main() {
     alwaysOnTop: true,
     showDockIcon: false,
   });
+  mb.window.setSkipTaskbar(true);
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
@@ -85,12 +86,20 @@ async function main() {
   }]);
 
   const onClick = mb.tray.listeners("click")[0];
+  let visible = false;
   let singleClicked = false;
   mb.tray.removeAllListeners("click");
   mb.tray.on("click", (e, bounds) => {
     singleClicked = true;
     setTimeout(() => {
       if (singleClicked) {
+        // After enabling skipTaskbar, window.isVisible always returns false.
+        // To close the window when users clock the tray icon, here is some hack.
+        // If altKey is true, onClick hides the window, so we use it when the window is visible.
+        if (visible) {
+          e.altKey = true;
+        }
+        visible = !visible;
         onClick(e, bounds);
       }
     }, 250);

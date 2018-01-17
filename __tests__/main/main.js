@@ -19,7 +19,7 @@ jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.useFakeTimers();
 
-import {app, dialog, ipcMain, Menu} from "electron";
+import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
 import {SynchronizedEvent, SynchronizingEvent} from "../../src/constants";
@@ -72,17 +72,23 @@ describe("main process of the core app", () => {
   });
 
   it("create a menubar instance", async () => {
-    await onReady();
-    expect(menubar).toHaveBeenCalledWith({
-      index: "file://" + path.join(__dirname, "../../static/popup.html"),
-      icon: expect.anything(),
-      tooltip: app.getName(),
-      preloadWindow: true,
-      width: 518,
-      height: 400,
-      alwaysOnTop: true,
-      showDockIcon: false,
-    });
+    const setSkipTaskbar = jest.spyOn(BrowserWindow.prototype, "setSkipTaskbar");
+    try {
+      await onReady();
+      expect(menubar).toHaveBeenCalledWith({
+        index: "file://" + path.join(__dirname, "../../static/popup.html"),
+        icon: expect.anything(),
+        tooltip: app.getName(),
+        preloadWindow: true,
+        width: 518,
+        height: 400,
+        alwaysOnTop: true,
+        showDockIcon: false,
+      });
+      expect(setSkipTaskbar).toHaveBeenCalledWith(true);
+    } finally {
+      setSkipTaskbar.mockRestore();
+    }
   });
 
   describe("system tray event handlers", () => {
