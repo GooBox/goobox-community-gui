@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+jest.mock("about-window");
+
 import openAboutWindow from "about-window";
 import path from "path";
 import showInfoWindowAsync from "../src/about-window";
