@@ -22,4 +22,4 @@ export const InstallJRE = "@IPC/InstallJRE";
 export const StorjLogin = "@IPC/StorjLogin";
 export const StorjCreateAccount = "@IPC/StorjCreateAccount";
 export const SiaRequestWalletInfo = "@IPC/SiaRequestWalletInfo";
-export const StopSyncAppsEvent = "＠IPC/StopSyncApps";
+export const StopSyncApps = "＠IPC/StopSyncApps";

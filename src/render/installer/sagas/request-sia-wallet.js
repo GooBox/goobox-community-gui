@@ -15,50 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import log from "electron-log";
 import {push} from "react-router-redux";
 import {delay} from "redux-saga";
 import {call, fork, put} from "redux-saga/effects";
-import {SiaWalletEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
-
-export async function requestSiaWalletAsync() {
-
-  return new Promise((resolve, reject) => {
-
-    ipcRenderer.once(SiaWalletEvent, (_, info, err) => {
-      log.debug(`SiaWalletEvent: info = ${info}, err = ${err}`);
-      if (err) {
-        log.error(err);
-        reject(err);
-      } else {
-        resolve(info);
-      }
-    });
-
-    log.info("requesting sia wallet information");
-    ipcRenderer.send(SiaWalletEvent);
-
-  });
-
-}
 
 export default function* requestSiaWallet() {
 
   const inc = yield fork(incrementProgress);
   try {
-    const info = yield call(requestSiaWalletAsync);
+
+    log.info("requesting sia wallet information");
+    const info = yield call(sendAsync, ipcActions.siaRequestWalletInfo());
+    inc.cancel();
+
+    log.debug(`received the wallet information: ${info}`);
     yield put(actions.requestSiaWalletInfoSuccess(info));
+    yield put(actions.setProgressValue(100));
+    // noinspection JSCheckFunctionSignatures
+    yield call(delay, 500);
+
   } catch (err) {
+
+    inc.cancel();
+    log.debug(`fails to received the wallet information: ${err}`);
     yield put(actions.requestSiaWalletInfoFailure(err));
+
   }
-  inc.cancel();
-  yield put(actions.setProgressValue(100));
-  // noinspection JSCheckFunctionSignatures
-  yield call(delay, 500);
+
   yield put(push(screens.SiaWallet));
   yield put(actions.setProgressValue(0));
 

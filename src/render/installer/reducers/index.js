@@ -81,6 +81,14 @@ export default handleActions({
     ...state,
     storjAccount: action.payload,
   }),
+  [actionTypes.StorjCreateAccountSuccess]: (state, action) => ({
+    ...state,
+    storjAccount: action.payload,
+  }),
+  [actionTypes.StorjCreateAccountFailure]: (state, action) => ({
+    ...state,
+    storjAccount: action.payload,
+  }),
   [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
     ...state,
     siaAccount: action.payload,

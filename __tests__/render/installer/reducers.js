@@ -143,6 +143,22 @@ describe("reducer", () => {
     });
   });
 
+  it("updates storjAccount by StorjCreateAccountSuccess", () => {
+    const info = "dummy account info";
+    expect(reducer(state, actions.storjCreateAccountSuccess(info))).toEqual({
+      ...state,
+      storjAccount: info,
+    });
+  });
+
+  it("updates storjAccount by StorjCreateAccountFailure", () => {
+    const info = "dummy account info";
+    expect(reducer(state, actions.storjCreateAccountFailure(info))).toEqual({
+      ...state,
+      storjAccount: info,
+    });
+  });
+
   it("update siaAccount by RequestSiaWalletInfoSuccess action", () => {
     const info = "dummy sia info";
     expect(reducer(state, actions.requestSiaWalletInfoSuccess(info))).toEqual({
@@ -150,6 +166,8 @@ describe("reducer", () => {
       siaAccount: info,
     });
   });
+
+  // TODO: RequestSiaWalletInfoFailure.
 
   it("sets processing true by ProcessingStart action", () => {
     expect(reducer(state, actions.processingStart())).toEqual({

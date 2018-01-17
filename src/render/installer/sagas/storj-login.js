@@ -20,6 +20,8 @@ import {push} from "react-router-redux";
 import {call, put} from "redux-saga/effects";
 import util from "util";
 import {StorjLoginEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
 
@@ -52,8 +54,12 @@ export default function* storjLogin(action) {
   yield put(actions.processingStart());
   try {
 
-    const info = yield call(storjLoginAsync, mainState.storjAccount);
-    yield put(actions.storjLoginSuccess(info));
+    yield call(sendAsync, ipcActions.storjLogin({
+      email: mainState.storjAccount.email,
+      password: mainState.storjAccount.password,
+      encryptionKey: mainState.storjAccount.key,
+    }));
+    yield put(actions.storjLoginSuccess(mainState.storjAccount));
 
     if (mainState.sia) {
       yield put(actions.requestSiaWalletInfo());
@@ -63,7 +69,13 @@ export default function* storjLogin(action) {
     }
 
   } catch (err) {
-    yield put(actions.storjLoginFailure(err));
+    yield put(actions.storjLoginFailure({
+      ...mainState.storjAccount,
+      warnMsg: util.isString(err.error) ? err.error : null,
+      emailWarn: err.email,
+      passwordWarn: err.password,
+      keyWarn: err.encryptionKey,
+    }));
   }
   yield put(actions.processingEnd());
 

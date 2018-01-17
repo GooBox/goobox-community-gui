@@ -15,7 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {calculateUsedVolume, changeState, openSyncFolder} from "../../src/ipc/actions";
+import {
+  calculateUsedVolume,
+  changeState,
+  installJRE,
+  openSyncFolder,
+  siaRequestWalletInfo,
+  stopSyncApps,
+  storjCreateAccount,
+  storjLogin
+} from "../../src/ipc/actions";
 import * as actionTypes from "../../src/ipc/constants";
 
 describe("action creators for IPC", () => {
@@ -39,6 +48,41 @@ describe("action creators for IPC", () => {
   it("has calculateUsedVolume", () => {
     expect(calculateUsedVolume(dummyPayload)).toEqual({
       type: actionTypes.CalculateUsedVolume,
+      payload: dummyPayload,
+    })
+  });
+
+  it("has installJRE", () => {
+    expect(installJRE(dummyPayload)).toEqual({
+      type: actionTypes.InstallJRE,
+      payload: dummyPayload,
+    })
+  });
+
+  it("has storjLogin", () => {
+    expect(storjLogin(dummyPayload)).toEqual({
+      type: actionTypes.StorjLogin,
+      payload: dummyPayload,
+    })
+  });
+
+  it("has storjCreateAccount", () => {
+    expect(storjCreateAccount(dummyPayload)).toEqual({
+      type: actionTypes.StorjCreateAccount,
+      payload: dummyPayload,
+    })
+  });
+
+  it("has siaRequestWalletInfo", () => {
+    expect(siaRequestWalletInfo(dummyPayload)).toEqual({
+      type: actionTypes.SiaRequestWalletInfo,
+      payload: dummyPayload,
+    })
+  });
+
+  it("has stopSyncAppsEvent", () => {
+    expect(stopSyncApps(dummyPayload)).toEqual({
+      type: actionTypes.StopSyncApps,
       payload: dummyPayload,
     })
   });

@@ -16,18 +16,21 @@
  */
 
 "use strict";
-import {app, BrowserWindow, dialog, ipcMain} from "electron";
+import {app, BrowserWindow} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
-import {
-  ConfigFile, JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
-  StorjRegisterationEvent
-} from "../constants";
+import {ConfigFile} from "../constants";
+import * as actionTypes from "../ipc/constants";
+import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
-import {installJRE} from "./jre";
-import Sia from "./sia";
-import Storj from "./storj";
+import {
+  installJREHandler,
+  siaRequestWalletInfoHandler,
+  stopSyncAppsHandler,
+  storjCreateAccountHandler,
+  storjLoginHandler
+} from "./handlers";
 
 if (!process.env.DEFAULT_SYNC_FOLDER) {
   process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
@@ -102,110 +105,12 @@ function installer() {
 
   });
 
-  // JREInstallEvent handler.
-  ipcMain.on(JREInstallEvent, async (event) => {
-    try {
-      await installJRE();
-      event.sender.send(JREInstallEvent, true);
-    } catch (err) {
-      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-      dialog.showErrorBox("Goobox", `Failed to install JRE: ${err}`);
-      event.sender.send(JREInstallEvent, false, err);
-    }
-  });
-
-  // StorjLoginEvent handler.
-  ipcMain.on(StorjLoginEvent, async (event, args) => {
-
-    log.info(`logging in to Storj: ${args.email}`);
-    if (global.storj && global.storj.proc) {
-      await global.storj.close();
-    }
-    const cfg = await getConfig();
-    global.storj = new Storj();
-    global.storj.start(cfg.syncFolder, true);
-
-    try {
-      await global.storj.checkMnemonic(args.encryptionKey);
-    } catch (err) {
-      log.error(err);
-      // TODO: Redesign this protocol.
-      event.sender.send(StorjLoginEvent, false, err, {
-        email: true,
-        password: true,
-        encryptionKey: false,
-      });
-      return;
-    }
-
-    try {
-      await global.storj.login(args.email, args.password, args.encryptionKey);
-      event.sender.send(StorjLoginEvent, true);
-    } catch (err) {
-      log.error(err);
-      // TODO: Redesign this protocol.
-      event.sender.send(StorjLoginEvent, false, err, {
-        email: false,
-        password: false,
-        encryptionKey: true,
-      });
-    }
-
-  });
-
-  // StorjRegisterationEvent handler.
-  ipcMain.on(StorjRegisterationEvent, async (event, args) => {
-    log.info(`creating a new Storj account: ${args.email}`);
-    if (global.storj && global.storj.proc) {
-      await global.storj.close();
-    }
-    const cfg = await getConfig();
-    global.storj = new Storj();
-    global.storj.start(cfg.syncFolder, true);
-    try {
-      const encryptionKey = await global.storj.createAccount(args.email, args.password);
-      // TODO: Redesign this protocol.
-      event.sender.send(StorjRegisterationEvent, true, encryptionKey);
-    } catch (err) {
-      log.error(err);
-      event.sender.send(StorjRegisterationEvent, false, err);
-    }
-  });
-
-  // SiaWalletEvent handler.
-  ipcMain.on(SiaWalletEvent, async (event) => {
-    global.sia = new Sia();
-    try {
-      const res = await global.sia.wallet();
-      event.sender.send(SiaWalletEvent, {
-        address: res["wallet address"],
-        seed: res["primary seed"],
-      });
-
-      const cfg = await getConfig();
-      global.sia.start(cfg.syncFolder, true);
-
-    } catch (error) {
-      log.error(error);
-      // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-      dialog.showErrorBox("Goobox", `Failed to obtain sia wallet information: ${error}`);
-      event.sender.send(SiaWalletEvent, null, error);
-      delete global.sia;
-    }
-  });
-
-  // StopSyncAppsEvent handler.
-  ipcMain.on(StopSyncAppsEvent, async (event) => {
-    if (global.storj) {
-      await global.storj.close();
-      delete global.storj;
-    }
-    if (global.sia) {
-      await global.sia.close();
-      delete global.sia;
-    }
-    event.sender.send(StopSyncAppsEvent);
-  });
+  // Register event handlers.
+  addListener(actionTypes.InstallJRE, installJREHandler());
+  addListener(actionTypes.StorjLogin, storjLoginHandler());
+  addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
+  addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
+  addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
 
 }
 

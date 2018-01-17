@@ -15,50 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import log from "electron-log";
 import {push} from "react-router-redux";
 import {delay} from "redux-saga";
 import {call, fork, put} from "redux-saga/effects";
-import {JREInstallEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
-
-export const prepareJREAsync = async () => {
-
-  return new Promise((resolve, reject) => {
-
-    ipcRenderer.once(JREInstallEvent, (_, succeeded, msg) => {
-      if (succeeded) {
-        log.debug("JRE installation ends, reset the mouse cursor, and move to the next screen");
-        resolve(msg);
-      } else {
-        log.debug(`JRE installation fails: ${msg}`);
-        reject(msg);
-      }
-    });
-    log.debug("requesting JRE installation");
-    ipcRenderer.send(JREInstallEvent);
-
-  });
-
-};
 
 export default function* prepareJRE() {
 
   const inc = yield fork(incrementProgress);
   try {
-    yield call(prepareJREAsync);
+    log.debug("requesting JRE installation");
+    const installed = yield call(sendAsync, ipcActions.installJRE());
+    inc.cancel();
+    if (installed) {
+      log.debug("JRE installation succeeds");
+      yield put(actions.setProgressValue(100));
+      // noinspection JSCheckFunctionSignatures
+      yield call(delay, 500);
+    } else {
+      log.debug("JRE installation is skipped");
+    }
+    yield put(push(screens.ChooseCloudService));
+    yield put(actions.setProgressValue(0));
   } catch (err) {
-
+    log.debug(`JRE installation fails: ${err}`);
+    inc.cancel();
+    // TODO: show the error message.
   }
-  inc.cancel();
-  yield put(actions.setProgressValue(100));
-  // noinspection JSCheckFunctionSignatures
-  yield call(delay, 500);
-  yield put(push(screens.ChooseCloudService));
-  yield put(actions.setProgressValue(0));
 
 }
 

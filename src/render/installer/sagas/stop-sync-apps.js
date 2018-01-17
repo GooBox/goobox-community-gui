@@ -15,35 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import log from "electron-log";
 import {call, put} from "redux-saga/effects";
-import {StopSyncAppsEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
-
-
-export const stopSyncAppsAsync = () => {
-
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once(StopSyncAppsEvent, (_, err) => {
-      log.debug(`StopSyncAppsEvent: err = ${err}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-    ipcRenderer.send(StopSyncAppsEvent);
-  });
-
-};
 
 export default function* stopSyncApps() {
   yield put(actions.processingStart());
   try {
-    yield call(stopSyncAppsAsync);
+    log.debug("closing sync apps if running");
+    yield call(sendAsync, ipcActions.stopSyncApps());
   } catch (err) {
-
+    log.debug(`fails to stop sync apps: ${err}`);
+    // TODO: error handling.
   }
   yield put(actions.processingEnd());
 };

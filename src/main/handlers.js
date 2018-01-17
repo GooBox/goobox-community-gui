@@ -16,12 +16,17 @@
  */
 
 
+import {dialog} from "electron";
 import log from "electron-log";
 import {Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import icons from "./icons";
+import {installJRE} from "./jre";
+import Sia from "./sia";
+import Storj from "./storj";
 import utils from "./utils";
 
+// Handlers for the main app.
 export const changeStateHandler = (mb, storjEventHandler, siaEventHandler) => async payload => {
   if (payload === Synchronizing) {
     if (global.storj) {
@@ -61,3 +66,92 @@ export const calculateUsedVolumeHandler = () => async () => {
   log.info(`Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
   return volume / 1024 / 1024;
 };
+
+// Handlers for the installer.
+export const installJREHandler = () => async () => {
+  return await installJRE();
+};
+
+export const siaRequestWalletInfoHandler = () => async () => {
+
+  if (!global.sia) {
+    global.sia = new Sia();
+  }
+  try {
+    const res = await global.sia.wallet();
+    const cfg = await getConfig();
+    global.sia.start(cfg.syncFolder, true);
+    return {
+      address: res["wallet address"],
+      seed: res["primary seed"],
+    };
+
+  } catch (error) {
+    log.error(error);
+    // TODO: Disable showing the dialog box after implementing error message in the installation screen.
+    dialog.showErrorBox("Goobox", `Failed to obtain sia wallet information: ${error}`);
+    delete global.sia;
+    throw error;
+  }
+
+};
+
+export const stopSyncAppsHandler = () => async () => {
+  if (global.storj) {
+    await global.storj.close();
+    delete global.storj;
+  }
+  if (global.sia) {
+    await global.sia.close();
+    delete global.sia;
+  }
+};
+
+
+export const storjLoginHandler = () => async payload => {
+
+  log.info(`logging in to Storj: ${payload.email}`);
+  if (global.storj && global.storj.proc) {
+    await global.storj.close();
+  }
+  const cfg = await getConfig();
+  global.storj = new Storj();
+  global.storj.start(cfg.syncFolder, true);
+
+  try {
+    await global.storj.checkMnemonic(payload.encryptionKey);
+  } catch (err) {
+    log.error(err);
+    throw {
+      error: err,
+      email: false,
+      password: false,
+      encryptionKey: true,
+    };
+  }
+
+  try {
+    await global.storj.login(payload.email, payload.password, payload.encryptionKey);
+  } catch (err) {
+    log.error(err);
+    throw {
+      error: err,
+      email: true,
+      password: true,
+      encryptionKey: false,
+    };
+  }
+
+};
+
+export const storjCreateAccountHandler = () => async payload => {
+  log.info(`creating a new Storj account for ${payload.email}`);
+  if (global.storj && global.storj.proc) {
+    await global.storj.close();
+  }
+  const cfg = await getConfig();
+  global.storj = new Storj();
+  global.storj.start(cfg.syncFolder, true);
+  return await global.storj.createAccount(payload.email, payload.password);
+};
+

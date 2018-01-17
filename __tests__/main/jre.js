@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 jest.mock("fs");
 
 import fs from "fs";
@@ -35,30 +36,30 @@ describe("installJRE function", () => {
     jre.install.mockClear();
   });
 
-  it("checks JRE is installed and if exists, does nothing", async () => {
+  it("checks JRE is installed and if exists, does nothing and returns false", async () => {
     fs.existsSync.mockReturnValue(true);
 
-    await installJRE();
+    await expect(installJRE()).resolves.toBeFalsy();
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
     expect(jre.install).not.toHaveBeenCalled();
   });
 
-  it("checks JRE is installed and if not exists, installs a JRE", async () => {
+  it("checks JRE is installed and if not exists, installs a JRE and returns true", async () => {
     fs.existsSync.mockReturnValue(false);
 
-    await installJRE();
+    await expect(installJRE()).resolves.toBeTruthy();
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
     expect(jre.install).toHaveBeenCalled();
   });
 
-  it("checks JRE is installed and if an error is raised, installs a JRE", async () => {
+  it("checks JRE is installed and if an error is raised, installs a JRE and returns true", async () => {
     jre.driver.mockImplementation(() => {
       throw "expected jre.driver error";
     });
 
-    await installJRE();
+    await expect(installJRE()).resolves.toBeTruthy();
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).not.toHaveBeenCalledWith();
     expect(jre.install).toHaveBeenCalled();

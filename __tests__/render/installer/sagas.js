@@ -15,15 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer, remote} from "electron";
+import {remote} from "electron";
 import {push} from "react-router-redux";
 import {delay} from "redux-saga";
 import {call, fork, put, takeEvery} from "redux-saga/effects";
 import {saveConfig as saveConfigAsync} from "../../../src/config";
-import {
-  JREInstallEvent, SiaWalletEvent, StopSyncAppsEvent, StorjLoginEvent,
-  StorjRegisterationEvent
-} from "../../../src/constants";
+import * as ipcActions from "../../../src/ipc/actions";
+import sendAsync from "../../../src/ipc/send";
 import * as actions from "../../../src/render/installer/actions";
 import * as actionTypes from "../../../src/render/installer/constants/action-types";
 import * as screens from "../../../src/render/installer/constants/screens";
@@ -36,7 +34,7 @@ import requestSiaWallet, {requestSiaWalletAsync} from "../../../src/render/insta
 import saveConfig from "../../../src/render/installer/sagas/save-config";
 import stopSyncApps, {stopSyncAppsAsync} from "../../../src/render/installer/sagas/stop-sync-apps";
 import storjCreateAccount, {storjCreateAccountAsync} from "../../../src/render/installer/sagas/storj-create-account";
-import storjLogin, {storjLoginAsync} from "../../../src/render/installer/sagas/storj-login";
+import storjLogin from "../../../src/render/installer/sagas/storj-login";
 
 describe("rootSaga", () => {
 
@@ -79,51 +77,33 @@ describe("incrementProgress", () => {
 
 });
 
-describe("prepareJREAsync", () => {
-
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-  });
-
-  it("sends JRE install request", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, true);
-        }
-      });
-    });
-    await expect(prepareJREAsync()).resolves.not.toBeDefined();
-    expect(ipcRenderer.once).toHaveBeenCalledWith(JREInstallEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(JREInstallEvent);
-  });
-
-  it("returns a rejected promise with the error when the request fails", async () => {
-    const err = "expected error";
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, false, err);
-        }
-      });
-    });
-    await expect(prepareJREAsync()).rejects.toEqual(err);
-  });
-
-});
-
 describe("prepareJRE", () => {
 
-  it("yields increment progress and prepareJREAsync", () => {
+  it("yields increment progress and sendAsync with installJRE ipc action", () => {
     const saga = prepareJRE();
     const inc = {
       cancel: jest.fn()
     };
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(prepareJREAsync));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
     expect(inc.cancel).not.toHaveBeenCalled();
-    expect(saga.next().value).toEqual(put(actions.setProgressValue(100)));
+    // returns false which means the installation of JRE was skipped.
+    expect(saga.next(false).value).toEqual(put(push(screens.ChooseCloudService)));
+    expect(inc.cancel).toHaveBeenCalled();
+    expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
+    expect(saga.next().done).toBeTruthy();
+  });
+
+  it("increases the progress bar to 100% and waits a second if installJRE returns true", () => {
+    const saga = prepareJRE();
+    const inc = {
+      cancel: jest.fn()
+    };
+    expect(saga.next().value).toEqual(fork(incrementProgress));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
+    expect(inc.cancel).not.toHaveBeenCalled();
+    // returns true which means a new JRE was installed.
+    expect(saga.next(true).value).toEqual(put(actions.setProgressValue(100)));
     expect(inc.cancel).toHaveBeenCalled();
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 500));
@@ -134,62 +114,20 @@ describe("prepareJRE", () => {
 
 });
 
-describe("requestSiaWalletAsync", () => {
-
-  const address = "1234567890";
-  const seed = "xxx xxx xxx xxx";
-  const info = {
-    address: address,
-    seed: seed
-  };
-
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-  });
-
-  it("requests sia wallet information", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, info);
-        }
-      });
-    });
-    await expect(requestSiaWalletAsync()).resolves.toEqual(info);
-    expect(ipcRenderer.once).toHaveBeenCalledWith(SiaWalletEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(SiaWalletEvent);
-  });
-
-  it("returns a rejected promise with the error when the IPC request fails", async () => {
-    const error = "expected error";
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, null, error);
-        }
-      });
-    });
-    await expect(requestSiaWalletAsync()).rejects.toEqual(error);
-  });
-
-});
-
 describe("requestSiaWallet", () => {
 
-  it("yields incrementProgress and requestSiaWalletAsync", () => {
+  it("yields incrementProgress and sendAsync with a siaRequestWalletInfo ipc action", () => {
     const info = "wallet information";
     const inc = {
       cancel: jest.fn()
     };
     const saga = requestSiaWallet();
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(requestSiaWalletAsync));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo()));
     expect(inc.cancel).not.toHaveBeenCalled();
     expect(saga.next(info).value).toEqual(put(actions.requestSiaWalletInfoSuccess(info)));
-    expect(inc.cancel).not.toHaveBeenCalled();
-    expect(saga.next().value).toEqual(put(actions.setProgressValue(100)));
     expect(inc.cancel).toHaveBeenCalled();
+    expect(saga.next().value).toEqual(put(actions.setProgressValue(100)));
 
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 500));
@@ -198,22 +136,17 @@ describe("requestSiaWallet", () => {
     expect(saga.next().done);
   });
 
-  it("yields incrementProgress and requestSiaWalletAsync, and handle errors", () => {
+  it("yields incrementProgress and sendAsync, and handle errors", () => {
     const err = "expected error";
     const inc = {
       cancel: jest.fn()
     };
     const saga = requestSiaWallet();
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(requestSiaWalletAsync));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo()));
     expect(inc.cancel).not.toHaveBeenCalled();
     expect(saga.throw(err).value).toEqual(put(actions.requestSiaWalletInfoFailure(err)));
-    expect(inc.cancel).not.toHaveBeenCalled();
-    expect(saga.next().value).toEqual(put(actions.setProgressValue(100)));
     expect(inc.cancel).toHaveBeenCalled();
-
-    // noinspection JSCheckFunctionSignatures
-    expect(saga.next().value).toEqual(call(delay, 500));
     expect(saga.next().value).toEqual(put(push(screens.SiaWallet)));
     expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
     expect(saga.next().done);
@@ -239,112 +172,14 @@ describe("saveConfig", () => {
 
 });
 
-describe("stopSyncAppsAsync", () => {
-
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-  });
-
-  it("sends a stop sync apps request and returns a resolved promise if the request succeeds", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null);
-        }
-      });
-    });
-    await expect(stopSyncAppsAsync()).resolves.not.toBeDefined();
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StopSyncAppsEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StopSyncAppsEvent);
-  });
-
-  it("sends a stop sync apps request and returns a rejected promise if the request fails", async () => {
-    const err = "expected error";
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, err);
-        }
-      });
-    });
-    await expect(stopSyncAppsAsync()).rejects.toEqual(err);
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StopSyncAppsEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StopSyncAppsEvent);
-  });
-
-});
-
 describe("stopSyncApp", () => {
 
-  it("puts ProcessingStart, calls stopSyncAppsAsync, and then ProcessingEnd", () => {
+  it("puts ProcessingStart, calls sendAsync with stopSyncApps ipc actions, and then ProcessingEnd", () => {
     const saga = stopSyncApps();
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(stopSyncAppsAsync));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.stopSyncApps()));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done);
-  });
-
-});
-
-
-describe("storjCreateAccountAsync", () => {
-
-  const info = {
-    email: "sample@email.com",
-    password: "01234567"
-  };
-  const key = "xxx xxx xxx";
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-  });
-
-  it("takes account info, sends StorjRegistrationEvent request and returns the account info if successes", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, true, key);
-        }
-      });
-    });
-    await expect(storjCreateAccountAsync(info)).resolves.toEqual({
-      ...info,
-      encryptionKey: key
-    });
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StorjRegisterationEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StorjRegisterationEvent, info);
-  });
-
-  it("returns a rejected promise with an error message if the request fails", async () => {
-    const err = "expected error";
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, false, err);
-        }
-      });
-    });
-    await expect(storjCreateAccountAsync(info)).rejects.toEqual({
-      emailWarn: true,
-      passwordWarn: true,
-      warnMsg: err
-    });
-  });
-
-  it("returns a rejected promise without error messages if not given", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, false);
-        }
-      });
-    });
-    await expect(storjCreateAccountAsync(info)).rejects.toEqual({
-      emailWarn: true,
-      passwordWarn: true,
-      warnMsg: null,
-    });
   });
 
 });
@@ -352,148 +187,128 @@ describe("storjCreateAccountAsync", () => {
 describe("storjCreateAccount", () => {
 
   const action = {
-    payload: "sample account information"
+    payload: {
+      email: "test@example.com",
+      password: "abcdefg",
+      key: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
+      emailWarn: false,
+      passwordWarn: false,
+      keyWarn: false,
+      warnMsg: "",
+    }
   };
 
-  it("calls storjCreateAccountAsync and puts storjCreateAccountSuccess if the call successes", () => {
-    const info = "succeeded result";
+  it("calls sendAsync with storjCreateAccount action and puts storjCreateAccountSuccess if the call successes", () => {
+    const encryptionKey = "yyy yyy yyy yyy";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload));
-    expect(saga.next(info).value).toEqual(put(actions.storjCreateAccountSuccess(info)));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
+      email: action.payload.email,
+      password: action.payload.password,
+    })));
+    expect(saga.next(encryptionKey).value).toEqual(put(actions.storjCreateAccountSuccess({
+      ...action.payload,
+      key: encryptionKey,
+    })));
     expect(saga.next().value).toEqual(put(push(screens.StorjEncryptionKey)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();
   });
 
-  it("calls storjCreateAccountAsync and puts storjCreateAccountFailure if the call fails", () => {
+  it("calls sendAsync and puts storjCreateAccountFailure if the call fails", () => {
     const err = "expected error";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjCreateAccountAsync, action.payload));
-    expect(saga.throw(err).value).toEqual(put(actions.storjCreateAccountFailure(err)));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
+      email: action.payload.email,
+      password: action.payload.password,
+    })));
+    expect(saga.throw(err).value).toEqual(put(actions.storjCreateAccountFailure({
+      ...action.payload,
+      emailWarn: true,
+      passwordWarn: true,
+      warnMsg: err,
+    })));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();
-  });
-
-});
-
-describe("storjLoginAsync", () => {
-
-  const info = {
-    email: "test@sample.com",
-    password: "01234",
-    key: "xxx xxx xxx",
-  };
-  beforeEach(() => {
-    ipcRenderer.once.mockReset();
-    ipcRenderer.send.mockReset();
-  });
-
-  it("sends a StorjLoginEvent request with given account information, and returns the information if successes", async () => {
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, true);
-        }
-      });
-    });
-    await expect(storjLoginAsync(info)).resolves.toEqual(info);
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, info);
-  });
-
-  it("returns account information and validation result if the request fails", async () => {
-    const err = "expected error";
-    const validation = {
-      email: true,
-      password: false,
-      encryptionKey: true,
-    };
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, false, err, validation);
-        }
-      });
-    });
-    await expect(storjLoginAsync(info)).rejects.toEqual({
-      ...info,
-      emailWarn: !validation.email,
-      passwordWarn: !validation.password,
-      keyWarn: !validation.encryptionKey,
-      warnMsg: err,
-    });
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, info);
-  });
-
-  it("returns account information and validation result without error message if not given", async () => {
-    const validation = {
-      email: true,
-      password: false,
-      encryptionKey: true,
-    };
-    ipcRenderer.once.mockImplementation((listen, cb) => {
-      ipcRenderer.send.mockImplementation((method) => {
-        if (listen === method) {
-          cb(null, false, null, validation);
-        }
-      });
-    });
-    await expect(storjLoginAsync(info)).rejects.toEqual({
-      ...info,
-      emailWarn: !validation.email,
-      passwordWarn: !validation.password,
-      keyWarn: !validation.encryptionKey,
-      warnMsg: null,
-    });
-    expect(ipcRenderer.once).toHaveBeenCalledWith(StorjLoginEvent, expect.any(Function));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(StorjLoginEvent, info);
   });
 
 });
 
 describe("storjLogin", () => {
 
+  const storjAccount = {
+    email: "test@example.com",
+    password: "abcdefg",
+    key: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
+    emailWarn: false,
+    passwordWarn: false,
+    keyWarn: false,
+    warnMsg: "",
+  };
   let action;
   beforeEach(() => {
     action = {
       payload: {
-        storjAccount: "sample storj account info",
+        storjAccount: storjAccount,
         sia: true,
       }
     };
   });
 
-  it("calls storjLoginAsync and puts storjLoginSuccess if the call successes, then puts requestSiaWalletInfo", () => {
-    const res = "successful result";
+  it("calls sendAsync and puts storjLoginSuccess if successes, then puts requestSiaWalletInfo if sia = true", () => {
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjLoginAsync, action.payload.storjAccount));
-    expect(saga.next(res).value).toEqual(put(actions.storjLoginSuccess(res)));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
+      email: storjAccount.email,
+      password: storjAccount.password,
+      encryptionKey: storjAccount.key
+    })));
+    expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
+      ...storjAccount
+    })));
     expect(saga.next().value).toEqual(put(actions.requestSiaWalletInfo()));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });
 
-  it("calls storjLoginAsync and puts storjLoginSuccess if the call successes, then puts FinishAll if sia = false", () => {
-    const res = "successful result";
+  it("calls sendAsync and puts storjLoginSuccess if successes, then puts FinishAll if sia = false", () => {
     action.payload.sia = false;
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjLoginAsync, action.payload.storjAccount));
-    expect(saga.next(res).value).toEqual(put(actions.storjLoginSuccess(res)));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
+      email: storjAccount.email,
+      password: storjAccount.password,
+      encryptionKey: storjAccount.key
+    })));
+    expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
+      ...storjAccount
+    })));
     expect(saga.next().value).toEqual(put(actions.saveConfig(action.payload)));
     expect(saga.next().value).toEqual(put(push(screens.FinishAll)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });
 
-  it("calls storjLoginAsync and puts storjLoginFailure if the call fails", () => {
-    const err = "expected error";
+  it("calls sendAsync and puts storjLoginFailure if fails", () => {
+    const err = {
+      error: "expected error",
+      email: false,
+      password: false,
+      encryptionKey: true,
+    };
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(storjLoginAsync, action.payload.storjAccount));
-    expect(saga.throw(err).value).toEqual(put(actions.storjLoginFailure(err)));
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
+      email: storjAccount.email,
+      password: storjAccount.password,
+      encryptionKey: storjAccount.key
+    })));
+    expect(saga.throw(err).value).toEqual(put(actions.storjLoginFailure({
+      ...storjAccount,
+      emailWarn: err.email,
+      passwordWarn: err.password,
+      keyWarn: err.encryptionKey,
+      warnMsg: err.error,
+    })));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });
 

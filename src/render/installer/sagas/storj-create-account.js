@@ -15,53 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import {push} from "react-router-redux";
 import {call, put} from "redux-saga/effects";
 import util from "util";
-import {StorjRegisterationEvent} from "../../../constants";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
-
-export const storjCreateAccountAsync = async (info) => {
-
-  return new Promise((resolve, reject) => {
-
-    ipcRenderer.once(StorjRegisterationEvent, (_, succeeded, args) => {
-
-      if (succeeded) {
-        resolve({
-          email: info.email,
-          password: info.password,
-          encryptionKey: args,
-        });
-      } else {
-        reject({
-          emailWarn: true,
-          passwordWarn: true,
-          warnMsg: util.isString(args) ? args : null,
-        });
-      }
-
-    });
-    ipcRenderer.send(StorjRegisterationEvent, info);
-
-  });
-
-};
 
 export default function* storjCreateAccount(action) {
 
   const accountInfo = action.payload;
   yield put(actions.processingStart());
   try {
-
-    const info = yield call(storjCreateAccountAsync, accountInfo);
-    yield put(actions.storjCreateAccountSuccess(info));
+    const encryptionKey = yield call(sendAsync, ipcActions.storjCreateAccount({
+      email: accountInfo.email,
+      password: accountInfo.password,
+    }));
+    yield put(actions.storjCreateAccountSuccess({
+      ...accountInfo,
+      key: encryptionKey,
+    }));
     yield put(push(screens.StorjEncryptionKey));
 
   } catch (err) {
-    yield put(actions.storjCreateAccountFailure(err));
+    yield put(actions.storjCreateAccountFailure({
+      ...accountInfo,
+      emailWarn: true,
+      passwordWarn: true,
+      warnMsg: util.isString(err) ? err : null,
+    }));
   }
   yield put(actions.processingEnd());
 
