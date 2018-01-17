@@ -58,6 +58,7 @@ async function main() {
     showDockIcon: false,
   });
   mb.window.setSkipTaskbar(true);
+  mb.app.on("quit", (_, code) => log.info(`Goobox is closed: status code = ${code}`));
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
