@@ -124,7 +124,7 @@ export default class StorjRegistration extends React.Component {
         msg = (
           <main className="warnMsg" style={style.main}>
             <div className="f141">Ooops.</div>
-            <div className="f211">It looks your <span className="underlined bold">information is incorrect</span>...
+            <div className="f211">Invalid email or password. <span className="underlined bold">Please try again.</span>...
             </div>
           </main>
         );
