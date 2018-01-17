@@ -39,10 +39,10 @@ if (process.platform === 'darwin') {
 
   if (semver.satisfies(version, '<6.2')) {
     // windows7 or older.
-    idleIcon = path.join(__dirname, "../../resources/win/idle.png");
-    syncIcon = path.join(__dirname, "../../resources/win/sync.png");
-    pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
-    errorIcon = path.join(__dirname, "../../resources/win/error.png");
+    idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
+    syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
+    pausedIcon = path.join(__dirname, "../../resources/win7/paused.png");
+    errorIcon = path.join(__dirname, "../../resources/win7/error.png");
   } else {
     // windows8 or later.
     idleIcon = path.join(__dirname, "../../resources/win/idle.png");
