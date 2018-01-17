@@ -184,7 +184,7 @@ describe("StorjLogin component", () => {
     expect(finish).toHaveBeenCalledWith({
       email: sampleEmail,
       password: samplePassword,
-      encryptionKey: sampleKey
+      key: sampleKey
     });
   });
 

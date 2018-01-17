@@ -123,7 +123,7 @@ export default class StorjLogin extends React.Component {
       this.props.onClickNext({
         email: this.state.email,
         password: this.state.password,
-        encryptionKey: this.state.key,
+        key: this.state.key,
       });
     }
   }

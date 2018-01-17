@@ -31,7 +31,7 @@ export const InitialState = {
   storjAccount: {
     email: "",
     password: "",
-    key: "xxxx xxxx xxxx xxxx xxxxx xxxxxx xxxxxx xxxx",
+    key: "",
     emailWarn: false,
     passwordWarn: false,
     keyWarn: false,
