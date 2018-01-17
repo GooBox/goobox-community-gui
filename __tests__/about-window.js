@@ -18,8 +18,9 @@
 jest.mock("about-window");
 
 import openAboutWindow from "about-window";
-import path from "path";
 import showInfoWindowAsync from "../src/about-window";
+import icon from "../src/assets/goobox.svg";
+
 
 describe("showInfoWindowAsync function", () => {
 
@@ -42,8 +43,12 @@ describe("showInfoWindowAsync function", () => {
     await expect(showInfoWindowAsync()).resolves.not.toBeDefined();
     // noinspection SpellCheckingInspection
     expect(openAboutWindow).toHaveBeenCalledWith({
-      icon_path: path.join(__dirname, "../resources/goobox.svg"),
-      package_json_dir: path.join(__dirname, ".."),
+      icon_path: icon,
+      bug_report_url: expect.any(String),
+      copyright: expect.any(String),
+      homepage: expect.any(String),
+      description: expect.any(String),
+      license: expect.any(String),
       win_options: {
         resizable: false,
         fullscreenable: false,

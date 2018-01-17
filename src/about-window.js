@@ -17,15 +17,19 @@
 
 import openAboutWindow from "about-window";
 import log from "electron-log";
-import path from "path";
+import icon from "./assets/goobox.svg";
 
 export default async function showInfoWindowAsync() {
   log.debug("opening the info window");
   return new Promise(resolve => {
     // noinspection SpellCheckingInspection
     const about = openAboutWindow({
-      icon_path: path.join(__dirname, "../resources/goobox.svg"),
-      package_json_dir: path.join(__dirname, ".."),
+      icon_path: icon,
+      bug_report_url: "https://github.com/GooBox/goobox-community-gui/issues",
+      copyright: "Goobox",
+      homepage: "http://goobox.io/",
+      description: "Goobox community edition sync app for sia and storj 🎉🚀",
+      license: "GPL-v3",
       win_options: {
         resizable: false,
         fullscreenable: false,
