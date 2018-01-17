@@ -46,6 +46,9 @@ export class BrowserWindow {
   toggleDevTools() {
   }
 
+  setSkipTaskbar() {
+  }
+
 }
 
 export const ipcMain = {

@@ -6,6 +6,10 @@
   font-weight: 300;
 }
 
+html, body {
+  overflow: hidden;
+}
+
 ::selection {
   background: transparent;
 }
@@ -198,12 +202,21 @@ input.warn::-webkit-input-placeholder {
   }
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .f141 {
-  font-size: 14.1px;
+  font-size: 14px;
 }
 
 .f211 {
-  font-size: 21.1px;
+  font-size: 21px;
 }
 
 .wait {
@@ -212,4 +225,21 @@ input.warn::-webkit-input-placeholder {
 
 .wait *:hover {
   cursor: progress;
+}
+
+.meter {
+  display: block;
+  border: #F7F7F7 1px solid;
+  clear: both;
+  width: auto;
+  height: 12px;
+  margin-top: 20px;
+  border-radius: 50px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(to right, #7A55DE, #00AFB1);
+  border-radius: 50px;
 }

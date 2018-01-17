@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1930.53 1930.53">
+    <defs>
+        <style>.cls-1{fill:url(#linear-gradient);}.cls-2{fill:url(#New_Gradient_Swatch_1);}</style>
+        <linearGradient id="linear-gradient" x1="482.55" y1="129.18" x2="1447.98" y2="1801.35"
+                        gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset="1" stop-color="#f5f5f5"/>
+        </linearGradient>
+        <linearGradient id="New_Gradient_Swatch_1" x1="282.72" y1="282.72" x2="1647.81" y2="1647.81"
+                        gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#00ba97"/>
+            <stop offset="1" stop-color="#885ede"/>
+        </linearGradient>
+    </defs>
+    <title>stroke colorAsset 5</title>
+    <g id="Layer_2" data-name="Layer 2">
+        <g id="Layer_1-2" data-name="Layer 1">
+            <g id="_Group_" data-name="&lt;Group&gt;">
+                <path class="cls-1"
+                      d="M965.26,0C432.16,0,0,432.16,0,965.26s432.16,965.27,965.26,965.27,965.27-432.17,965.27-965.27S1498.36,0,965.26,0Z"/>
+                <path class="cls-2"
+                      d="M965.26,80a891.91,891.91,0,0,1,178.5,18,880.25,880.25,0,0,1,316.41,133.15A888,888,0,0,1,1781,620.7a880.24,880.24,0,0,1,51.55,166.07,894.5,894.5,0,0,1,0,357,880.25,880.25,0,0,1-133.15,316.41A887.94,887.94,0,0,1,1309.82,1781a880.14,880.14,0,0,1-166.06,51.55,894.5,894.5,0,0,1-357,0,880.05,880.05,0,0,1-316.41-133.15,887.94,887.94,0,0,1-320.82-389.57A879.41,879.41,0,0,1,98,1143.76a894.5,894.5,0,0,1,0-357A880.05,880.05,0,0,1,231.14,470.36,888,888,0,0,1,620.7,149.54,879.51,879.51,0,0,1,786.77,98,891.81,891.81,0,0,1,965.26,80m0-80C432.16,0,0,432.16,0,965.26s432.16,965.27,965.26,965.27,965.27-432.17,965.27-965.27S1498.36,0,965.26,0Z"/>
+            </g>
+        </g>
+    </g>
+</svg>
