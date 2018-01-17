@@ -15,12 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {execFile, execSync, spawn} from "child_process";
+import {execSync, spawn} from "child_process";
 import log from "electron-log";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
 import readline from "readline";
+import toString from "stream-to-string";
 
 
 export default class Sia {
@@ -106,8 +107,7 @@ export default class Sia {
     log.info(`requesting the wallet info to ${this.cmd}`);
     return new Promise((resolve, reject) => {
 
-      // TODO: use spawn to output logs.
-      execFile(this.cmd, ["wallet"], {
+      const proc = spawn(this.cmd, ["wallet"], {
         cwd: this.wd,
         env: {
           JAVA_HOME: this.javaHome,
@@ -115,25 +115,25 @@ export default class Sia {
         timeout: 5 * 60 * 1000,
         shell: true,
         windowsHide: true,
-      }, (err, stdout, stderr) => {
+      });
 
-        if (err) {
-          log.error(err);
-          reject(err);
-          return;
-        }
-        log.debug(stderr);
+      const stderr = readline.createInterface({input: proc.stderr});
+      stderr.on("line", log.verbose);
 
-        const info = yaml.safeLoad(stdout);
+      proc.on("error", (err) => {
+        log.error(err);
+        reject(err);
+      });
+
+      toString(proc.stdout).then(res => {
+        const info = yaml.safeLoad(res);
         if (!info || !info["wallet address"]) {
-
           log.error(`failed to obtain the wallet information: ${info}`);
           reject("failed to obtain the wallet information");
-          return;
+        } else {
+          log.info(`the wallet info is received: ${info["wallet address"]}`);
+          resolve(info);
         }
-
-        log.info(`the wallet info is received: ${info["wallet address"]}`);
-        resolve(info);
       });
 
     });
@@ -141,3 +141,4 @@ export default class Sia {
   }
 
 }
+

@@ -18,7 +18,7 @@
 "use strict";
 jest.mock("child_process");
 
-import {execFile, execSync, spawn} from "child_process";
+import {execSync, spawn} from "child_process";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
@@ -262,52 +262,70 @@ describe("Sia class", () => {
 
     const address = "0x01234567890";
     const seed = "hello world";
+    let stdout, stderr, on;
     beforeEach(() => {
-      execFile.mockClear();
+      stdout = new Readable();
+      stdout.push(yaml.dump({
+        "wallet address": address,
+        "primary seed": seed
+      }));
+      stdout.push(null);
+      stderr = new Readable();
+      stderr.push(null);
+      on = jest.fn();
+      spawn.mockReset();
+      spawn.mockReturnValue({
+        stdout: stdout,
+        stderr: stderr,
+        on: on,
+      });
     });
 
-    it("executes wallet command of sync sia app and returns the result via Promise", async () => {
-      execFile.mockImplementation((file, args, opts, callback) => {
-        callback(null, yaml.dump({
-          "wallet address": address,
-          "primary seed": seed
-        }));
-      });
-
+    it("spawns the wallet command and returns a promise with the result", async () => {
       const sia = new Sia();
-      const res = await sia.wallet();
-      expect(res["wallet address"]).toEqual(address);
-      expect(res["primary seed"]).toEqual(seed);
-      expect(execFile).toHaveBeenCalledWith(sia.cmd, ["wallet"], {
-          cwd: sia.wd,
-          env: {
-            JAVA_HOME: sia.javaHome,
-          },
-          shell: true,
-          timeout: 5 * 60 * 1000,
-          windowsHide: true,
-        }, expect.any(Function)
-      );
+      await expect(sia.wallet()).resolves.toEqual({
+        "wallet address": address,
+        "primary seed": seed,
+      });
+      expect(spawn).toHaveBeenCalledWith(sia.cmd, ["wallet"], {
+        cwd: sia.wd,
+        env: {
+          JAVA_HOME: sia.javaHome,
+        },
+        shell: true,
+        timeout: 5 * 60 * 1000,
+        windowsHide: true,
+      });
     });
 
-    it("returns a rejected promise when execFile returns an error", async () => {
+    it("returns a rejected promise when an error event is emitted", async () => {
       const msg = "expected error";
-      execFile.mockImplementation((file, args, opts, callback) => {
-        callback(msg, null);
+      on.mockImplementation((event, callback) => {
+        if (event === "error") {
+          callback(msg);
+        }
       });
-
       const sia = new Sia();
       await expect(sia.wallet()).rejects.toEqual(msg);
     });
 
     it("returns a rejected promise when the output of wallet command doesn't have enough information", async () => {
-      execFile.mockImplementation((file, args, opts, callback) => {
-        callback(null, "");
+      stdout = new Readable();
+      stdout.push(yaml.dump({
+        "wrong wallet address": address,
+        "wrong primary seed": seed
+      }));
+      stdout.push(null);
+      spawn.mockReturnValue({
+        stdout: stdout,
+        stderr: stderr,
+        on: on,
       });
-
       const sia = new Sia();
-      await expect(sia.wallet()).rejects.toBeDefined();
+      await expect(sia.wallet()).rejects.toEqual(expect.any(String));
     });
+
+    // TODO: sync sia app returns an error if initializing wallets twice.
 
   });
 
