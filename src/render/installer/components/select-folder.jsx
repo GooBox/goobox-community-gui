@@ -30,12 +30,10 @@ const dialog = remote.dialog;
 const style = {
   main: {
     color: "white",
-    position: "absolute",
-    top: "116px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "91px"
+    margin: "52px auto 0 auto",
   },
   button: {
     width: "123px",
@@ -46,24 +44,16 @@ const style = {
     borderStyle: "none"
   },
   downArrow: {
-    position: "absolute",
-    top: "179px",
-    paddingRight: "89px",
     color: "white",
     fontSize: "30px",
     textAlign: "center",
-    width: "600px",
-    paddingLeft: "91px"
+    marginTop: "12px",
   },
   browseBtn: {
-    position: "absolute",
-    top: 236,
-    paddingRight: "89px",
-    color: "white",
     fontSize: "30px",
+    color: "white",
     textAlign: "center",
-    width: "600px",
-    paddingLeft: "91px"
+    marginTop: "16px",
   },
   selectedFolder: {
     fontSize: "11px",

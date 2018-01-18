@@ -22,14 +22,12 @@ import leftWhiteIcon from "../assets/left_white_icon.svg";
 import rightArrowImage from "../assets/right_arrow.svg";
 
 const style = {
-  main: {
+  msg: {
     color: "white",
-    position: "absolute",
-    top: "116px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "140px",
+    margin: "52px auto 0 auto",
   },
   button: {
     width: "123px",
@@ -44,24 +42,15 @@ const style = {
     height: "27px",
   },
   accountInfo: {
-    color: "white",
     fontSize: "30px",
     textAlign: "center",
-    width: "600px",
-    paddingLeft: "140px",
-    position: "absolute",
-    top: "201px",
-    paddingRight: "140px",
+    marginTop: "20px",
   },
   storjLogin: {
     color: "white",
-    textAlign: "center",
-    width: "600px",
-    paddingLeft: "140px",
-    position: "absolute",
-    top: "309px",
     fontSize: "11px",
-    paddingRight: "140px",
+    textAlign: "center",
+    marginTop: "10px",
   },
   storjLoginText: {
     paddingBottom: "9px",
@@ -115,23 +104,23 @@ export default class StorjRegistration extends React.Component {
     if (this.state.emailWarn || this.state.passwordWarn) {
       if (this.props.warnMsg) {
         msg = (
-          <main className="warnMsg" style={style.main}>
+          <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
             <div className="f211">{this.props.warnMsg}...</div>
           </main>
         );
       } else {
         msg = (
-          <main className="warnMsg" style={style.main}>
+          <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
-            <div className="f211">Invalid email or password. <span className="underlined bold">Please try again.</span>...
+            <div className="f211">Invalid email or password. <span className="underlined bold">Please try again.</span>
             </div>
           </main>
         );
       }
     } else {
       msg = (
-        <main className="info" style={style.main}>
+        <main className="info" style={style.msg}>
           <div className="f141">Storj new account.</div>
           <div className="f211">Please create your <span className="underlined bold">Storj account</span></div>
         </main>

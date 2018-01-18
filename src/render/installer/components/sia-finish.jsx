@@ -23,22 +23,16 @@ import leftWhiteIcon from "../assets/left_white_icon.svg";
 const style = {
   main: {
     color: "white",
-    position: "absolute",
-    top: "146px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "158px",
+    margin: "84px auto 0 auto",
   },
   additionalInfo: {
-    position: "absolute",
-    top: "273px",
-    paddingRight: "159px",
     fontSize: "9px",
-    color: "white",
     textAlign: "center",
-    width: "600px",
-    paddingLeft: "158px",
+    color: "white",
+    margin: "48px auto 0 auto",
   },
 };
 

@@ -24,14 +24,22 @@ import leftWhiteIcon from "../assets/left_white_icon.svg";
 import rightArrowImage from "../assets/right_arrow.svg";
 
 const style = {
-  main: {
+  msg: {
     color: "white",
-    position: "absolute",
-    top: "116px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "140px"
+    margin: "52px auto 0 auto",
+  },
+  accountInfo: {
+    fontSize: "30px",
+    textAlign: "center",
+    marginTop: "20px",
+  },
+  createAccount: {
+    fontSize: "11px",
+    textAlign: "center",
+    marginTop: "10px",
   },
   button: {
     width: "123px",
@@ -45,24 +53,6 @@ const style = {
     width: "198px",
     height: "27px",
     marginBottom: 0,
-  },
-  accountInfo: {
-    position: "absolute",
-    top: "187px",
-    paddingRight: "140px",
-    fontSize: "30px",
-    textAlign: "center",
-    width: "600px",
-    paddingLeft: "140px"
-  },
-  createAccount: {
-    position: "absolute",
-    top: "320px",
-    fontSize: "11px",
-    paddingRight: "140px",
-    textAlign: "center",
-    width: "600px",
-    paddingLeft: "140px"
   },
   createAccountText: {
     paddingBottom: "9px",
@@ -134,23 +124,24 @@ export default class StorjLogin extends React.Component {
     if (this.state.emailWarn || this.state.passwordWarn || this.state.keyWarn) {
       if (this.props.warnMsg) {
         msg = (
-          <main className="warnMsg" style={style.main}>
+          <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
             <div className="f211">{this.props.warnMsg}...</div>
           </main>
         );
       } else {
         msg = (
-          <main className="warnMsg" style={style.main}>
+          <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
-            <div className="f211">Incorrect email or password. <span className="underlined bold">Please try again.</span>...
+            <div className="f211">Incorrect email or password. <span
+              className="underlined bold">Please try again.</span>
             </div>
           </main>
         );
       }
     } else {
       msg = (
-        <main className="info" style={style.main}>
+        <main className="info" style={style.msg}>
           <div className="f141">One last thing.</div>
           <div className="f211">Please login to your <span className="underlined bold">Storj account</span></div>
         </main>

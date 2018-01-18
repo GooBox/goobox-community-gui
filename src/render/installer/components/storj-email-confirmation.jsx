@@ -24,12 +24,10 @@ import rightArrowImage from "../assets/right_arrow.svg";
 const style = {
   main: {
     color: "white",
-    position: "absolute",
-    top: "146px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "81px",
+    margin: "82px auto 0 auto",
   }
 };
 

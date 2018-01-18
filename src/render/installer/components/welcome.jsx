@@ -23,11 +23,9 @@ import rightArrowImage from "../assets/right_arrow.svg";
 const style = {
   main: {
     color: "white",
-    position: "absolute",
-    top: "181px",
     fontSize: "30px",
-    textAlign: "center",
-    width: "600px"
+    margin: "117px auto 0 auto",
+    display: "table",
   }
 };
 

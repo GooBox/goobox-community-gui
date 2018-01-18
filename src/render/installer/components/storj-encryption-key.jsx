@@ -24,12 +24,10 @@ import rightArrowImage from "../assets/right_arrow.svg";
 const style = {
   main: {
     color: "white",
-    position: "absolute",
-    top: "146px",
+    display: "table",
     fontSize: "30px",
     textAlign: "left",
-    width: "600px",
-    paddingLeft: "120px",
+    margin: "82px auto 0 auto",
   },
   input: {
     width: "346px",
@@ -39,11 +37,7 @@ const style = {
     color: "white",
     fontSize: "30px",
     textAlign: "center",
-    width: "600px",
-    paddingLeft: "120px",
-    position: "absolute",
-    top: "230px",
-    paddingRight: "120px",
+    marginTop: "35px",
   }
 };
 

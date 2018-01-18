@@ -23,36 +23,33 @@ import rightArrowImage from "../assets/right_arrow.svg";
 
 const style = {
   wallet: {
-    marginTop: "24px",
-    marginBottom: "0",
-    height: "27px",
-    width: "466px",
-    color: "#7f7f7f",
+    color: "white",
+    display: "table",
+    fontSize: "30px",
+    textAlign: "left",
+    margin: "52px auto 0 auto",
   },
   address: {
-    marginTop: "22px",
-    color: "white",
-    fontSize: "30px",
-    width: "600px",
-    paddingLeft: "75px",
-    textAlign: "left",
+    marginTop: "10px",
+    width: "466px",
+    height: "27px",
+    color: "#7f7f7f",
   },
   seed: {
-    marginTop: "47px",
-    color: "white",
-    fontSize: "30px",
-    width: "600px",
-    paddingLeft: "75px",
-    textAlign: "left",
     cursor: "text",
+    color: "white",
+    display: "table",
+    fontSize: "30px",
+    textAlign: "left",
+    margin: "20px auto 0 auto",
   },
   seedValue: {
     display: "block",
-    marginTop: "24px",
+    marginTop: "10px",
     marginBottom: "0",
     height: "39px",
     width: "466px",
-    fontSize: "7px",
+    fontSize: "10px",
     color: "#7f7f7f",
     backgroundColor: "white",
     borderRadius: "5px",
@@ -66,12 +63,12 @@ export default function SiaWallet(props) {
   return (
     <div className="background-gradation">
       <header><img className="icon" src={leftWhiteIcon}/></header>
-      <main className="left address" style={style.address}>
+      <main className="left address" style={style.wallet}>
         <div className="f141">Sia installation.</div>
         <div className="f211">
           Please save your <span className="underlined bold">Sia wallet address</span>.
         </div>
-        <input id="wallet" type="text" readOnly="readonly" value={props.address} style={style.wallet}/>
+        <input id="address" type="text" readOnly="readonly" value={props.address} style={style.address}/>
       </main>
       <main className="seed" style={style.seed}>
         <div className="f211">

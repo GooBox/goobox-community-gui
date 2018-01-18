@@ -35,7 +35,7 @@ describe("SiaWallet component", () => {
   });
 
   it("shows a wallet address given via wallet prop", () => {
-    expect(wrapper.find("#wallet").prop("value")).toEqual(wallet);
+    expect(wrapper.find("#address").prop("value")).toEqual(wallet);
   });
 
   it("shows a seed given via seed prop", () => {
