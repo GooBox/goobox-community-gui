@@ -26,7 +26,7 @@ import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
 
-import {calculateUsedVolumeHandler, changeStateHandler, openSyncFolderHandler} from "./handlers";
+import {calculateUsedVolumeHandler, changeStateHandler, openSyncFolderHandler, updateStateHandler} from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
 import Sia from "./sia";
@@ -171,8 +171,8 @@ async function main() {
       global.storj = new Storj();
       global.storj.start();
     }
-    if (global.storj && global.storj.stdout) {
-      global.storj.stdout.on("line", StorjEventHandler);
+    if (global.storj) {
+      global.storj.on("syncState", updateStateHandler(mb));
     }
 
     // Start sync-sia app.
@@ -180,8 +180,8 @@ async function main() {
       global.sia = new Sia();
       global.sia.start(cfg.syncFolder);
     }
-    if (global.sia && global.sia.stdout) {
-      global.sia.stdout.on("line", SiaEventHandler);
+    if (global.sia) {
+      global.sia.on("syncState", updateStateHandler(mb));
     }
 
   } catch (err) {

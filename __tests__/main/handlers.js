@@ -29,7 +29,8 @@ import {
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
-  storjLoginHandler
+  storjLoginHandler,
+  updateStateHandler
 } from "../../src/main/handlers";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
@@ -49,7 +50,7 @@ describe("IPC event handlers", () => {
     let handler;
     beforeEach(() => {
       menuberMock.tray.setImage.mockClear();
-      handler = changeStateHandler(menuberMock, null, null);
+      handler = changeStateHandler(menuberMock);
     });
 
     it("sets the idle icon when the state is Synchronizing", async () => {
@@ -63,51 +64,55 @@ describe("IPC event handlers", () => {
     });
 
     it("restart the Storj instance if exists when the new state is Synchronizing", async () => {
-      global.storj = {
+      const storj = {
         start: jest.fn(),
         stdout: {
           on: jest.fn()
         }
       };
+      global.storj = storj;
       await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
+      expect(global.storj).toBe(storj);
       expect(global.storj.start).toHaveBeenCalled();
-      // expect(global.storj.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
     });
 
     it("closes the Storj instance if exists when the new state is Paused", async () => {
-      global.storj = {
+      const storj = {
         close: jest.fn(),
         stdout: {
           removeListener: jest.fn(),
         }
       };
+      global.storj = storj;
       await expect(handler(Paused)).resolves.toEqual(Paused);
+      expect(global.storj).toBe(storj);
       expect(global.storj.close).toHaveBeenCalled();
-      // expect(global.storj.stdout.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
     });
 
     it("restart the Sia instance if exists when the new state is Synchronizing", async () => {
-      global.sia = {
+      const sia = {
         start: jest.fn(),
         stdout: {
           on: jest.fn()
         }
       };
+      global.sia = sia;
       await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
+      expect(global.sia).toBe(sia);
       expect(global.sia.start).toHaveBeenCalled();
-      // expect(global.sia.stdout.on).toHaveBeenCalledWith("line", expect.any(Function));
     });
 
     it("closes the Sia instance if exists when the new state is Paused", async () => {
-      global.sia = {
+      const sia = {
         close: jest.fn(),
         stdout: {
           removeListener: jest.fn(),
         }
       };
+      global.sia = sia;
       await expect(handler(Paused)).resolves.toEqual(Paused);
+      expect(global.sia).toBe(sia);
       expect(global.sia.close).toHaveBeenCalled();
-      // expect(global.sia.stdout.removeListener).toHaveBeenCalledWith("line", expect.any(Function));
     });
 
   });
@@ -445,6 +450,26 @@ describe("IPC event handlers", () => {
       })).rejects.toEqual(err);
       expect(start).toHaveBeenCalledWith(dir, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
+    });
+
+  });
+
+  describe("updateStateHandler", () => {
+
+    let handler;
+    beforeEach(async () => {
+      menuberMock.tray.setImage.mockReset();
+      handler = updateStateHandler(menuberMock);
+    });
+
+    it("sets the synchronizing icon when receiving a synchronizing event", async () => {
+      await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+    });
+
+    it("sets the idle icon when receiving an idle event", async () => {
+      await expect(handler({newState: "idle"})).resolves.not.toBeDefined();
+      expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
     });
 
   });

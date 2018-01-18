@@ -27,25 +27,21 @@ import Storj from "./storj";
 import utils from "./utils";
 
 // Handlers for the main app.
-export const changeStateHandler = (mb, storjEventHandler, siaEventHandler) => async payload => {
+export const changeStateHandler = mb => async payload => {
   if (payload === Synchronizing) {
     if (global.storj) {
       global.storj.start();
-      global.storj.stdout.on("line", storjEventHandler);
     }
     if (global.sia) {
       global.sia.start();
-      global.sia.stdout.on("line", siaEventHandler);
     }
     log.debug("Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());
   } else {
     if (global.storj) {
-      global.storj.stdout.removeListener("line", storjEventHandler);
       await global.storj.close();
     }
     if (global.sia) {
-      global.sia.stdout.removeListener("line", siaEventHandler);
       await global.sia.close();
     }
     log.debug("Update the tray icon to the paused icon");
@@ -155,3 +151,18 @@ export const storjCreateAccountHandler = () => async payload => {
   return await global.storj.createAccount(payload.email, payload.password);
 };
 
+// Handlers for sync-storj/sync-sia apps.
+export const updateStateHandler = mb => async payload => {
+  switch (payload.newState) {
+    case "synchronizing":
+      log.debug("update the tray icon to the synchronizing one");
+      mb.tray.setImage(icons.getSyncIcon());
+      break;
+    case "idle":
+      log.debug("update the tray icon to the idle one");
+      mb.tray.setImage(icons.getIdleIcon());
+      break;
+    default:
+      log.debug(`received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
+  }
+};

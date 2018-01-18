@@ -18,25 +18,24 @@
 "use strict";
 import {spawn} from "child_process";
 import log from "electron-log";
+import EventEmitter from "events";
 import jre from "node-jre";
 import path from "path";
-import readline from "readline";
+import readLine from "readline";
 
 const DefaultTimeout = 60000;
 
-export default class Storj {
+export default class Storj extends EventEmitter {
 
   constructor() {
-    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/"));
-    this.cmd = "goobox-sync-storj";
+    super();
+    this._wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/"));
+    this._cmd = "goobox-sync-storj";
     if (process.platform === "win32") {
-      this.cmd += ".bat";
+      this._cmd += ".bat";
     }
-    this.javaHome = path.join(jre.driver(), "../../");
-    this.stdin = null;
-    this.stdout = null;
-    this.stderr = null;
-    log.debug(`new storj instance: cmd = ${this.cmd}, wd = ${this.wd}, java-home = ${this.javaHome}`);
+    this._javaHome = path.join(jre.driver(), "../../");
+    log.debug(`new storj instance: cmd = ${this._cmd}, wd = ${this._wd}, java-home = ${this._javaHome}`);
   }
 
   start(dir, reset) {
@@ -51,26 +50,46 @@ export default class Storj {
       // args.push("--reset-auth-file");
     }
 
-    log.info(`starting ${this.cmd} in ${this.wd}`);
-    this.proc = spawn(this.cmd, args, {
-      cwd: this.wd,
+    let path = process.env.PATH;
+    if (process.platform === "win32") {
+      path = `${this._javaHome}/bin/;${path}`;
+    } else {
+      path = `${this._javaHome}/bin/:${path}`;
+    }
+
+    log.info(`starting ${this._cmd} in ${this._wd}`);
+    this.proc = spawn(this._cmd, args, {
+      cwd: this._wd,
       env: {
-        JAVA_HOME: this.javaHome,
-        PATH: `${this.javaHome}/bin/`
+        JAVA_HOME: this._javaHome,
+        PATH: path,
       },
       shell: true,
       windowsHide: true,
     });
 
-    this.stdin = this.proc.stdin;
-    this.stdout = readline.createInterface({input: this.proc.stdout});
-    this.stderr = readline.createInterface({input: this.proc.stderr});
-    this.stderr.on("line", log.verbose);
+    readLine.createInterface({input: this.proc.stdout}).on("line", line => {
+      try {
+        const e = JSON.parse(line);
+        if (e.method) {
+          log.debug(`received a storj event: ${e.method}`);
+          this.emit(e.method, e.args);
+        } else {
+          log.debug(`received a response from sync-storj`);
+          this.emit("response", e);
+        }
+      } catch (err) {
+        log.error(`could not handle a message from sync-storj: ${line}`);
+      }
+    });
+
+    readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
     this.proc.on("close", (code, signal) => {
-      if (this.proc) {
-        log.debug(`storj closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+      log.debug(`storj closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+      if (this.proc && !this.proc._closing) {
         this.proc = null;
+        this.start(dir);
       }
     });
 
@@ -91,21 +110,13 @@ export default class Storj {
 
     return Promise.race([
       new Promise(resolve => {
-
-        this.stdout.once("line", resolve);
-        const req = `${JSON.stringify(request)}\n`;
+        this.once("response", resolve);
+        const req = JSON.stringify(request);
         log.debug(`sending a request to sync storj: ${req}`);
-        this.stdin.write(req);
-
+        this.proc.stdin.write(`${req}\n`);
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, `${name} request timed out`), DefaultTimeout))
-    ]).then(line => {
-      try {
-        return JSON.parse(line);
-      } catch (err) {
-        return Promise.reject(`Cannot parse ${line}: ${err}`);
-      }
-    }).then(res => {
+    ]).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
       }
@@ -158,6 +169,7 @@ export default class Storj {
     }
 
     log.info("closing the sync-storj app");
+    this.proc._closing = true;
     return Promise.race([
       this._sendRequest("Quit", {
         method: "quit",
@@ -168,7 +180,9 @@ export default class Storj {
           resolve();
         });
       })
-    ]);
+    ]).then(() => {
+      this.proc = null;
+    });
 
   }
 

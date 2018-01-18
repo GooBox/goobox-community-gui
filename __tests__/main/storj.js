@@ -22,10 +22,9 @@ jest.setTimeout(5 * 60000);
 import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
-import readline from "readline";
-import {PassThrough, Readable} from "stream";
+import readLine from "readline";
+import {PassThrough} from "stream";
 import Storj from "../../src/main/storj";
-
 
 describe("Storj class", () => {
 
@@ -46,7 +45,7 @@ describe("Storj class", () => {
 
         const storj = new Storj();
         const cmd = "goobox-sync-storj";
-        expect(storj.cmd).toEqual(cmd);
+        expect(storj._cmd).toEqual(cmd);
 
       } finally {
         Object.defineProperty(process, "platform", {
@@ -64,7 +63,7 @@ describe("Storj class", () => {
 
         const storj = new Storj();
         const cmd = "goobox-sync-storj.bat";
-        expect(storj.cmd).toEqual(cmd);
+        expect(storj._cmd).toEqual(cmd);
 
       } finally {
         Object.defineProperty(process, "platform", {
@@ -73,13 +72,12 @@ describe("Storj class", () => {
       }
     });
 
-
     it("has wd which describes the directory containing the sync storj app", () => {
-      expect(storj.wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/")));
+      expect(storj._wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-storj/")));
     });
 
     it("has javaHome where the home directory of a JRE", () => {
-      expect(storj.javaHome).toEqual(path.join(jre.driver(), "../../"));
+      expect(storj._javaHome).toEqual(path.join(jre.driver(), "../../"));
     });
 
   });
@@ -87,162 +85,202 @@ describe("Storj class", () => {
   describe("start method", () => {
 
     const dir = "/tmp";
-    let stdin, stdout, stderr, on, once;
+    let stdin, stdout, stderr, on;
     beforeEach(() => {
       stdin = "standard input";
-      stdout = new Readable();
-      stdout.push("standard\n");
-      stdout.push("utput\n");
-      stdout.push(null);
-      stderr = new Readable();
-      stderr.push("standard\n");
-      stderr.push("utput\n");
-      stderr.push(null);
+      stdout = new PassThrough();
+      stderr = new PassThrough();
       on = jest.fn();
-      once = jest.fn();
       spawn.mockClear();
       spawn.mockReturnValue({
         stdin: stdin,
         stdout: stdout,
         stderr: stderr,
         on: on,
-        once: once,
       });
     });
 
-    it("spawns sync storj app", () => {
+    it("spawns sync-storj", () => {
       storj.start(dir);
-      expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`], {
-        cwd: storj.wd,
+      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
+        cwd: storj._wd,
         env: {
-          JAVA_HOME: storj.javaHome,
-          PATH: `${storj.javaHome}/bin/`
+          JAVA_HOME: storj._javaHome,
+          // This argument will be removed after the next version of sync-storj is published.
+          PATH: expect.any(String),
         },
         shell: true,
         windowsHide: true,
       });
     });
 
-    it("adds --reset-db and --reset-auth-file flags when reset is true", () => {
+    it("spawns sync-storj with --reset-db and --reset-auth-file flags when reset is true", () => {
       storj.start(dir, true);
       // expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
-      expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`, "--reset-db"], {
-        cwd: storj.wd,
+      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db"], {
+        cwd: storj._wd,
         env: {
-          JAVA_HOME: storj.javaHome,
-          PATH: `${storj.javaHome}/bin/`
+          JAVA_HOME: storj._javaHome,
+          // This argument will be removed after the next version of sync-storj is published.
+          PATH: expect.any(String),
         },
         shell: true,
         windowsHide: true,
       });
     });
 
-    it("adds stdin field which is the spawned process's stdin", () => {
-      storj.start();
-      expect(storj.stdin).toEqual(stdin);
+    it("starts listening stdout and emits syncState events", () => {
+      const event = {
+        method: "syncState",
+        args: {
+          newState: "paused",
+        }
+      };
+      storj.start(dir);
+      return new Promise((resolve, reject) => {
+        storj.on(event.method, ({newState}) => {
+          try {
+            expect(newState).toEqual(event.args.newState);
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        });
+        storj.proc.stdout.write(`${JSON.stringify(event)}\n`);
+      });
     });
 
-    it("adds stdout field which is a readline interface of spawned process's stdout", () => {
-      storj.start();
-      expect(storj.stdout instanceof readline.Interface).toBeTruthy();
-      expect(storj.stdout.input).toEqual(stdout);
-    });
-
-    it("adds stderr field which is a realine interface of spawned process's stderr", () => {
-      storj.start();
-      expect(storj.stderr instanceof readline.Interface).toBeTruthy();
-      expect(storj.stderr.input).toEqual(stderr);
+    it("starts listening stdout and emits response events", () => {
+      const event = {
+        status: "ok",
+        message: "successful result",
+      };
+      storj.start(dir);
+      return new Promise((resolve, reject) => {
+        storj.on("response", res => {
+          try {
+            expect(res).toEqual(event);
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        });
+        storj.proc.stdout.write(`${JSON.stringify(event)}\n`);
+      });
     });
 
     it("adds proc field which is the returned value of spawn", () => {
-      storj.start();
+      storj.start(dir);
       expect(storj.proc).toEqual({
         stdin: stdin,
         stdout: stdout,
         stderr: stderr,
         on: expect.any(Function),
-        once: expect.any(Function),
       });
     });
 
     it("doesn't start a new process if this.proc is not null", () => {
       storj.proc = "some-object";
-      storj.start();
+      storj.start(dir);
       expect(spawn).not.toHaveBeenCalled();
+    });
+
+    it("starts listening close events and restarts sync-storj", () => {
+      on.mockImplementationOnce((event, callback) => {
+        if (event === "close") {
+          callback();
+        }
+      });
+      storj.start(dir);
+      // The first time is by start method, the second time is to restart.
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenLastCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
+        cwd: storj._wd,
+        env: {
+          JAVA_HOME: storj._javaHome,
+          // This argument will be removed after the next version of sync-storj is published.
+          PATH: expect.any(String),
+        },
+        shell: true,
+        windowsHide: true,
+      });
+    });
+
+    // _closing is true. It means this close event is expected and don't need to restart.
+    it("starts listening close events and doesn't restart sync-storj if _closing is true", () => {
+      on.mockImplementationOnce((event, callback) => {
+        if (event === "close") {
+          storj.proc._closing = true;
+          callback();
+        }
+      });
+      storj.start();
+      expect(spawn).toHaveBeenCalledTimes(1);
     });
 
   });
 
   describe("_sendRequest method", () => {
 
+    const req = {
+      method: "some method",
+      args: {
+        a: 1,
+        b: 2,
+      }
+    };
+
     it("sends a given request as a JSON formatted string", async () => {
       const res = {
         status: "ok",
         message: "",
       };
-
-      const stdout = new Readable();
-      stdout.push(JSON.stringify(res));
-      stdout.push("\n");
-      stdout.push(null);
-
-      storj.stdin = new PassThrough();
-      storj.stdout = readline.createInterface({input: stdout});
-      storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
-      };
-
-      const req = {
-        method: "some method",
-        args: {
-          a: 1,
-          b: 2,
+      storj.on = jest.fn().mockImplementation((event, callback) => {
+        if (event === "response") {
+          callback(res);
         }
+      });
+
+      storj.proc = {
+        stdin: new PassThrough()
       };
-      const reader = readline.createInterface({input: storj.stdin});
+      const reader = readLine.createInterface({input: storj.proc.stdin});
       reader.on("line", line => expect(JSON.parse(line)).toEqual(req));
+
       await expect(storj._sendRequest("test", req)).resolves.toEqual(res);
     });
 
     it("returns a rejected promise when the request fails", async () => {
-      const error = "failed";
-      const stdout = new Readable();
-      stdout.push(JSON.stringify({
+      const res = {
         status: "error",
-        message: error,
-      }));
-      stdout.push("\n");
-      stdout.push(null);
-
-      storj.stdin = {
-        write: jest.fn()
+        message: "expected error",
       };
-      storj.stdout = readline.createInterface({input: stdout});
+      storj.on = jest.fn().mockImplementation((event, callback) => {
+        if (event === "response") {
+          callback(res);
+        }
+      });
+
       storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
+        stdin: new PassThrough()
       };
+      const reader = readLine.createInterface({input: storj.proc.stdin});
+      reader.on("line", line => expect(JSON.parse(line)).toEqual(req));
 
-      await expect(storj._sendRequest("test", null)).rejects.toEqual(error);
+      await expect(storj._sendRequest("test", req)).rejects.toEqual(res.message);
     });
 
     it("returns an error when no process is running", async () => {
+      expect(storj.proc).toBeFalsy();
       await expect(storj._sendRequest()).rejects.toEqual("sync storj app is not running");
     });
 
     it("times out and returns a rejected promise", async () => {
-      storj.stdin = {
-        write: jest.fn()
-      };
-      storj.stdout = {
-        once: jest.fn()
-      };
       storj.proc = {
-        stdin: storj.stdin,
-        stdout: storj.stdout
+        stdin: {
+          write: jest.fn()
+        }
       };
-
       setTimeout.mockImplementation(cb => cb());
       const name = "test";
       await expect(storj._sendRequest(name)).rejects.toEqual(`${name} request timed out`);
@@ -252,10 +290,12 @@ describe("Storj class", () => {
 
   describe("close method", () => {
 
+    let proc;
     beforeEach(() => {
-      storj.proc = {
+      proc = {
         once: jest.fn(),
       };
+      storj.proc = proc;
     });
 
     it("sends quit request via _sendRequest", async () => {
@@ -278,6 +318,18 @@ describe("Storj class", () => {
       expect(storj._sendRequest).toHaveBeenCalledWith("Quit", {
         method: "quit",
       });
+    });
+
+    it("sets proc._closing true", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve());
+      await expect(storj.close()).resolves.not.toBeDefined();
+      expect(proc._closing).toBeTruthy();
+    });
+
+    it("sets proc null after the chile process closed", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve());
+      await expect(storj.close()).resolves.not.toBeDefined();
+      expect(storj.proc).toBeNull();
     });
 
     it("does nothing if proc is null", async () => {

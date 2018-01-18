@@ -17,26 +17,27 @@
 
 import {execSync, spawn} from "child_process";
 import log from "electron-log";
+import EventEmitter from "events";
 import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
-import readline from "readline";
+import readLine from "readline";
 import toString from "stream-to-string";
 
-
-export default class Sia {
+export default class Sia extends EventEmitter {
 
   constructor() {
-    this.wd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"));
-    this.cmd = "goobox-sync-sia";
+    super();
+    this._wd = path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"));
+    this._cmd = "goobox-sync-sia";
     if (process.platform === "win32") {
-      this.cmd += ".bat";
+      this._cmd += ".bat";
     }
-    this.javaHome = path.join(jre.driver(), "../../");
+    this._javaHome = path.join(jre.driver(), "../../");
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
-    log.debug(`new sia instance: cmd = ${this.cmd}, java-home = ${this.javaHome}`);
+    log.debug(`new sia instance: cmd = ${this._cmd}, java-home = ${this._javaHome}`);
   }
 
   start(dir, reset) {
@@ -45,26 +46,40 @@ export default class Sia {
       return;
     }
 
-    log.info(`starting sync-sia app in ${this.cmd}`);
+    log.info(`starting sync-sia app in ${this._cmd}`);
     const args = ["--sync-dir", `"${dir}"`, "--output-events"];
     if (reset) {
       args.push("--reset-db");
     }
-    this.proc = spawn(this.cmd, args, {
-      cwd: this.wd,
+    this.proc = spawn(this._cmd, args, {
+      cwd: this._wd,
       env: {
-        JAVA_HOME: this.javaHome,
+        JAVA_HOME: this._javaHome,
       },
       shell: true,
       windowsHide: true,
     });
-    this.stdin = this.proc.stdin;
-    this.stdout = readline.createInterface({input: this.proc.stdout});
-    this.stderr = readline.createInterface({input: this.proc.stderr});
-    this.stderr.on("line", log.verbose);
+
+    // Attach a root event handler to stdout.
+    readLine.createInterface({input: this.proc.stdout}).on("line", line => {
+      log.debug(`Received a sia event: ${line}`);
+      try {
+        const e = JSON.parse(line);
+        this.emit(e.method, e.args);
+      } catch (err) {
+        log.error(`could not handle a message from sync-sia: ${line}`);
+      }
+    });
+
+    // Attach a logger to stderr.
+    readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
     this.proc.on("close", (code, signal) => {
-      log.debug(`sia closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+      if (this.proc && !this.proc._closing) {
+        log.debug(`sia closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+        this.proc = null;
+        this.start(dir);
+      }
     });
 
   }
@@ -75,9 +90,9 @@ export default class Sia {
       return;
     }
 
-    const promise = Promise.all([
+    this.proc._closing = true;
+    return Promise.all([
       new Promise(resolve => {
-        // TODO: Exit handler takes code and signal argument.
         this.proc.once("exit", () => {
           log.info("the sync-sia app is exited");
           this.proc = null;
@@ -86,38 +101,40 @@ export default class Sia {
       }),
       new Promise(resolve => {
         this.proc.once("close", () => {
-          log.info("the streams of sync-sia app is closed");
+          log.info("streams of sync-sia app is closed");
           resolve();
         });
       }),
+      new Promise(resolve => {
+        log.info("closing the sync-sia app");
+        if (process.platform === "win32") {
+          // noinspection SpellCheckingInspection
+          execSync(`taskkill /pid ${this.proc.pid} /T /F`);
+        } else {
+          this.proc.kill("SIGTERM");
+        }
+        resolve();
+      })
     ]);
-
-    log.info("closing the sync-sia app");
-    if (process.platform === "win32") {
-      execSync(`taskkill /pid ${this.proc.pid} /T /F`);
-    } else {
-      this.proc.kill("SIGTERM");
-    }
-    return promise;
 
   }
 
   async wallet() {
 
-    log.info(`requesting the wallet info to ${this.cmd}`);
+    log.info(`requesting the wallet info to ${this._cmd}`);
     return new Promise((resolve, reject) => {
 
-      const proc = spawn(this.cmd, ["wallet"], {
-        cwd: this.wd,
+      const proc = spawn(this._cmd, ["wallet"], {
+        cwd: this._wd,
         env: {
-          JAVA_HOME: this.javaHome,
+          JAVA_HOME: this._javaHome,
         },
         timeout: 5 * 60 * 1000,
         shell: true,
         windowsHide: true,
       });
 
-      const stderr = readline.createInterface({input: proc.stderr});
+      const stderr = readLine.createInterface({input: proc.stderr});
       stderr.on("line", log.verbose);
 
       proc.on("error", (err) => {

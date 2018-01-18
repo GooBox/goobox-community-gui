@@ -22,9 +22,7 @@ jest.useFakeTimers();
 import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
 import {menubar, menuberMock} from "menubar";
 import path from "path";
-import {SynchronizedEvent, SynchronizingEvent} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
-import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
@@ -276,105 +274,8 @@ describe("main process of the core app", () => {
       expect(app.quit).toHaveBeenCalled();
     });
 
-    describe("StorjEventHandler", () => {
-
-      let handler;
-      beforeEach(async () => {
-        getConfig.mockReturnValue(Promise.resolve({sia: true}));
-        global.storj = {
-          start: () => {
-          },
-          stdout: {
-            on: jest.fn()
-          }
-        };
-        await onReady();
-        handler = getEventHandler(global.storj.stdout, "line");
-        menuberMock.tray.setImage.mockReset();
-      });
-
-      afterEach(() => {
-        delete global.storj;
-      });
-
-      it("sets the synchronizing icon when receiving a synchronizing event", () => {
-        handler(JSON.stringify({
-          method: "syncState",
-          args: {
-            newState: "synchronizing"
-          }
-        }));
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
-      });
-
-      it("sets the idle icon when receiving an idle event", () => {
-        handler(JSON.stringify({
-          method: "syncState",
-          args: {
-            newState: "idle"
-          }
-        }));
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
-      });
-
-      // it("should be equal to the handler registered to the initial storj instance", async () => {
-      //   const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
-      //   await changeStateEventHandler({
-      //     sender: {
-      //       send: () => {
-      //       }
-      //     }
-      //   }, Synchronizing);
-      //   expect(global.storj.stdout.on).toHaveBeenLastCalledWith("line", handler);
-      // });
-
-    });
-
-    describe("SiaEventHandler", () => {
-
-      let handler;
-      beforeEach(async () => {
-        getConfig.mockReturnValue(Promise.resolve({sia: true}));
-        global.sia = {
-          start: () => {
-          },
-          stdout: {
-            on: jest.fn()
-          }
-        };
-        await onReady();
-        handler = getEventHandler(global.sia.stdout, "line");
-        menuberMock.tray.setImage.mockReset();
-      });
-
-      afterEach(() => {
-        delete global.sia;
-      });
-
-      it("sets the synchronizing icon when receiving a Synchronizing event", () => {
-        handler(JSON.stringify({eventType: SynchronizingEvent}));
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
-      });
-
-      it("sets the idle icon when receiving a Synchronized event", () => {
-        handler(JSON.stringify({eventType: SynchronizedEvent}));
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
-      });
-
-      // TODO: It handles StartSynchronizationEvent and notifies sync sia app starts synchronizing.
-      // it("should be equal to the handler registered to the initial Sia instance", async () => {
-      //   const changeStateEventHandler = getEventHandler(ipcMain, ChangeStateEvent);
-      //   await changeStateEventHandler({
-      //     sender: {
-      //       send: () => {
-      //       }
-      //     }
-      //   }, Synchronizing);
-      //   expect(global.sia.stdout.on).toHaveBeenLastCalledWith("line", handler);
-      // });
-
-    });
-
   });
+
+  // TODO: Add tests for caling addListener
 
 });
