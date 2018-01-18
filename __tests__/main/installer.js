@@ -17,11 +17,22 @@
 
 jest.mock("fs");
 jest.mock("../../src/main/config");
+jest.mock("../../src/ipc/receiver");
 
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
 import path from "path";
+import "../../src/ipc/actions";
+import * as actionTypes from "../../src/ipc/constants";
+import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
+import {
+  installJREHandler,
+  siaRequestWalletInfoHandler,
+  stopSyncAppsHandler,
+  storjCreateAccountHandler,
+  storjLoginHandler
+} from "../../src/main/handlers";
 import "../../src/main/installer";
 
 describe("main process of the installer", () => {
@@ -74,6 +85,49 @@ describe("main process of the installer", () => {
   it("loads static/installer.html", () => {
     onReady();
     expect(mockLoadURL).toHaveBeenCalledWith("file://" + path.join(__dirname, "../../static/installer.html"));
+  });
+
+  describe("management of GUI event handlers", () => {
+
+    beforeEach(() => {
+      addListener.mockReset();
+    });
+
+    it("registers installJREHandler", () => {
+      onReady();
+      expect(addListener.mock.calls.find(args => {
+        return args[0] === actionTypes.InstallJRE && args[1].toString() === installJREHandler().toString();
+      })).toBeDefined();
+    });
+
+    it("registers storjLoginHandler", () => {
+      onReady();
+      expect(addListener.mock.calls.find(args => {
+        return args[0] === actionTypes.StorjLogin && args[1].toString() === storjLoginHandler().toString();
+      })).toBeDefined();
+    });
+
+    it("registers storjCreateAccountHandler", () => {
+      onReady();
+      expect(addListener.mock.calls.find(args => {
+        return args[0] === actionTypes.StorjCreateAccount && args[1].toString() === storjCreateAccountHandler().toString();
+      })).toBeDefined();
+    });
+
+    it("registers siaRequestWalletInfoHandler", () => {
+      onReady();
+      expect(addListener.mock.calls.find(args => {
+        return args[0] === actionTypes.SiaRequestWalletInfo && args[1].toString() === siaRequestWalletInfoHandler().toString();
+      })).toBeDefined();
+    });
+
+    it("registers stopSyncAppsHandler", () => {
+      onReady();
+      expect(addListener.mock.calls.find(args => {
+        return args[0] === actionTypes.StopSyncApps && args[1].toString() === stopSyncAppsHandler().toString();
+      })).toBeDefined();
+    });
+
   });
 
   describe("WindowAllClosed event handler", () => {
