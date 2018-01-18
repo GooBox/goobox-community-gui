@@ -20,8 +20,6 @@ import {app, dialog, Menu} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
-import {Synchronizing} from "../constants";
-// TODO: make constants folder.
 import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
@@ -121,41 +119,8 @@ async function main() {
     mb.hideWindow();
   });
 
-  // Define event handlers.
-  const StorjEventHandler = line => {
-    const e = JSON.parse(line);
-    log.debug(`Received a storj event: ${e.method}`);
-    if ("syncState" === e.method) {
-      switch (e.args.newState) {
-        case "synchronizing":
-          log.debug("Update the tray icon to the synchronizing one");
-          mb.tray.setImage(icons.getSyncIcon());
-          break;
-        case "idle":
-          log.debug("Update the tray icon to the idle one");
-          mb.tray.setImage(icons.getIdleIcon());
-          break;
-      }
-    }
-  };
-
-  const SiaEventHandler = line => {
-    const e = JSON.parse(line);
-    log.debug(`Received a sia event: ${e.eventType}`);
-    switch (e.eventType) {
-      case "Synchronizing":
-        log.debug("Update the tray icon to the synchronizing icon");
-        mb.tray.setImage(icons.getSyncIcon());
-        break;
-      case "Synchronized":
-        log.debug("Update the tray icon to the idle icon");
-        mb.tray.setImage(icons.getIdleIcon());
-        break;
-    }
-  };
-
-  // Register event handlers.
-  addListener(ipcActionTypes.ChangeState, changeStateHandler(mb, StorjEventHandler, SiaEventHandler));
+  // Register GUI event handlers.
+  addListener(ipcActionTypes.ChangeState, changeStateHandler(mb));
   addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
 
