@@ -16,7 +16,9 @@
  */
 
 jest.mock("fs");
+jest.mock("del")
 
+import del from "del";
 import fs from "fs";
 import jre from "node-jre";
 import path from "path";
@@ -77,6 +79,18 @@ describe("installJRE function", () => {
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
     expect(jre.install).toHaveBeenCalled();
+  });
+
+  it("deletes downloaded files if the installation fails", async () => {
+    fs.existsSync.mockReturnValue(false);
+
+    const err = "expected error";
+    jre.install.mockImplementationOnce((callback) => {
+      callback(err)
+    });
+
+    await expect(installJRE()).rejects.toEqual(err);
+    expect(del.sync).toHaveBeenCalledWith(path.join(jre.jreDir(), "**"));
   });
 
 });

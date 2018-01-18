@@ -33,6 +33,7 @@
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
     "about-window": "^1.8.0",
+    "del": "^3.0.0",
     "electron-json-storage": "^4.0.2",
     "node-jre": "jkawamoto/node-jre#fix-8"
   },

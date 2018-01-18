@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import del from "del";
 import log from "electron-log";
 import fs from "fs";
 import jre from "node-jre";
+import path from "path";
 
 export async function installJRE() {
 
@@ -41,6 +43,8 @@ export async function installJRE() {
         log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
         // noinspection SpellCheckingInspection
         if (err && err !== "Smoketest failed.") {
+          log.error("JRE installation fails and cleaning up");
+          del.sync(path.join(jre.jreDir(), "**"));
           reject(err);
         } else {
           resolve(true);
