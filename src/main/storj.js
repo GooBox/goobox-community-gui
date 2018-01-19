@@ -47,14 +47,7 @@ export default class Storj extends EventEmitter {
     const args = ["--sync-dir", `"${dir}"`];
     if (reset) {
       args.push("--reset-db");
-      // args.push("--reset-auth-file");
-    }
-
-    let path = process.env.PATH;
-    if (process.platform === "win32") {
-      path = `${this._javaHome}/bin/;${path}`;
-    } else {
-      path = `${this._javaHome}/bin/:${path}`;
+      args.push("--reset-auth-file");
     }
 
     log.info(`starting ${this._cmd} in ${this._wd}`);
@@ -62,7 +55,6 @@ export default class Storj extends EventEmitter {
       cwd: this._wd,
       env: {
         JAVA_HOME: this._javaHome,
-        PATH: path,
       },
       shell: true,
       windowsHide: true,

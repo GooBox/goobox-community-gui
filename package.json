@@ -16,9 +16,9 @@
     "dist:pre": "rm -rf dist",
     "dist:package": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=goobox-sync --ignore=.idea --ignore=__mocks__ --ignore=__tests__ --ignore=coverage",
     "dist:post": "run-p dist:sia:* dist:storj:*",
-    "dist:storj:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.14/goobox-sync-storj-0.0.14-win64.zip -o tmp.zip && unzip tmp.zip -d dist/goobox-win32-x64/resources/app/ && rm tmp.zip",
     "dist:sia:mac": "mkdir -p dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.15/goobox-sync-sia-0.0.15-mac.tar.gz | tar -zxv -C dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia --strip-components 1",
     "dist:sia:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.15/goobox-sync-sia-0.0.15-win64.tar.gz | tar -zxv -C dist/goobox-win32-x64/resources/app/goobox-sync-sia --strip-components 1",
+    "dist:storj:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.15/goobox-sync-storj-0.0.15-win64.zip -o tmp.zip && unzip tmp.zip -d dist/goobox-win32-x64/resources/app/ && rm tmp.zip",
     "check-update": "ncu -u"
   },
   "repository": {

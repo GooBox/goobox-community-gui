@@ -106,8 +106,6 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
-          // This argument will be removed after the next version of sync-storj is published.
-          PATH: expect.any(String),
         },
         shell: true,
         windowsHide: true,
@@ -116,13 +114,10 @@ describe("Storj class", () => {
 
     it("spawns sync-storj with --reset-db and --reset-auth-file flags when reset is true", () => {
       storj.start(dir, true);
-      // expect(spawn).toBeCalledWith(storj.cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
-      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db"], {
+      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
-          // This argument will be removed after the next version of sync-storj is published.
-          PATH: expect.any(String),
         },
         shell: true,
         windowsHide: true,
@@ -198,8 +193,6 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
-          // This argument will be removed after the next version of sync-storj is published.
-          PATH: expect.any(String),
         },
         shell: true,
         windowsHide: true,
