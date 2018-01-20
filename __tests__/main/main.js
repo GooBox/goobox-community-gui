@@ -27,7 +27,10 @@ import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
 import {
-  calculateUsedVolumeHandler, changeStateHandler, openSyncFolderHandler,
+  calculateUsedVolumeHandler,
+  changeStateHandler,
+  openSyncFolderHandler,
+  siaFundEventHandler,
   updateStateHandler
 } from "../../src/main/handlers";
 import {installJRE} from "../../src/main/jre";
@@ -318,6 +321,18 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(siaOn).toHaveBeenCalledWith("syncState", expect.any(Function));
       expect(siaOn.mock.calls[0][1].toString()).toEqual(updateStateHandler(menuberMock).toString());
+      expect(app.quit).not.toHaveBeenCalled();
+    });
+
+    it("registers siaFundEventHandler to the sia instance and listens walletInfo events", async () => {
+      getConfig.mockReturnValue(Promise.resolve({
+        sia: true,
+      }));
+
+      await onReady();
+      expect(getConfig).toHaveBeenCalled();
+      expect(siaOn).toHaveBeenCalledWith("walletInfo", expect.any(Function));
+      expect(siaOn.mock.calls[1][1].toString()).toEqual(siaFundEventHandler().toString());
       expect(app.quit).not.toHaveBeenCalled();
     });
 

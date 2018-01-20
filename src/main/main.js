@@ -23,8 +23,13 @@ import path from "path";
 import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
-
-import {calculateUsedVolumeHandler, changeStateHandler, openSyncFolderHandler, updateStateHandler} from "./handlers";
+import {
+  calculateUsedVolumeHandler,
+  changeStateHandler,
+  openSyncFolderHandler,
+  siaFundEventHandler,
+  updateStateHandler
+} from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
 import Sia from "./sia";
@@ -147,6 +152,7 @@ async function main() {
     }
     if (global.sia) {
       global.sia.on("syncState", updateStateHandler(mb));
+      global.sia.on("walletInfo", siaFundEventHandler());
     }
 
   } catch (err) {

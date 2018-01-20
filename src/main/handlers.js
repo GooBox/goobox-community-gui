@@ -27,6 +27,18 @@ import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
 
+const notifyAsync = async opts => {
+  return new Promise((resolve, reject) => {
+    notifier.notify(opts, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+};
+
 // Handlers for the main app.
 export const changeStateHandler = mb => async payload => {
   if (payload === Synchronizing) {
@@ -157,14 +169,12 @@ export const startSynchronizationHandler = () => async payload => {
   if (payload.newState !== "startSynchronization") {
     return;
   }
-  return new Promise(resolve => {
-    notifier.notify({
-      title: "Goobox",
-      message: "Your sia account is ready",
-      icon: path.join(__dirname, "../../resources/goobox.png"),
-      sound: true,
-      wait: true,
-    }, resolve);
+  return await notifyAsync({
+    title: "Goobox",
+    message: "Your sia account is ready",
+    icon: path.join(__dirname, "../../resources/goobox.png"),
+    sound: true,
+    wait: true,
   });
 };
 
@@ -184,3 +194,39 @@ export const updateStateHandler = mb => async payload => {
   }
 };
 
+export const siaFundEventHandler = () => async payload => {
+  switch (payload.eventType) {
+    case "NoFunds":
+      return await notifyAsync({
+        title: "Goobox",
+        message: "Your wallet doesn't have sia coins",
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true,
+      });
+    case "InsufficientFunds":
+      return await notifyAsync({
+        title: "Goobox",
+        message: payload.message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true,
+      });
+    case "Allocated":
+      return await notifyAsync({
+        title: "Goobox",
+        message: payload.message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true,
+      });
+    case "Error":
+      return await notifyAsync({
+        title: "Goobox",
+        message: payload.message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true,
+      });
+  }
+};

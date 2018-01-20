@@ -30,6 +30,7 @@ import {
   changeStateHandler,
   installJREHandler,
   openSyncFolderHandler,
+  siaFundEventHandler,
   siaRequestWalletInfoHandler,
   startSynchronizationHandler,
   stopSyncAppsHandler,
@@ -496,7 +497,7 @@ describe("IPC event handlers", () => {
       notifier.notify.mockImplementation((_, cb) => cb());
     });
 
-    it("notifies the sia account preparation ends when newState argument is startSynchronization", async () => {
+    it("notifies the user the sia account preparation ends when newState argument is startSynchronization", async () => {
       await expect(handler({newState: "startSynchronization"})).resolves.not.toBeDefined();
       expect(notifier.notify).toHaveBeenCalledWith({
         title: "Goobox",
@@ -509,6 +510,69 @@ describe("IPC event handlers", () => {
 
     it("does nothing if newState argument isn't startSynchronization", async () => {
       await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+      expect(notifier.notify).not.toHaveBeenCalled();
+    });
+
+  });
+
+  describe("siaFundInfoHandler", () => {
+
+    let handler;
+    beforeEach(() => {
+      handler = siaFundEventHandler();
+      notifier.notify.mockReset();
+      notifier.notify.mockImplementation((_, cb) => cb());
+    });
+
+    it("notifies the user that his/her current balance is 0", async () => {
+      await expect(handler({eventType: "NoFunds"})).resolves.not.toBeDefined();
+      expect(notifier.notify).toHaveBeenCalledWith({
+        title: "Goobox",
+        message: "Your wallet doesn't have sia coins",
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true
+      }, expect.any(Function));
+    });
+
+    it("notifies the user that his/her funds are insufficient", async () => {
+      const message = "sample message";
+      await expect(handler({eventType: "InsufficientFunds", message: message})).resolves.not.toBeDefined();
+      expect(notifier.notify).toHaveBeenCalledWith({
+        title: "Goobox",
+        message: message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true
+      }, expect.any(Function));
+    });
+
+    it("notifies the user that a fund allocation has been succeeded", async () => {
+      const message = "sample message";
+      await expect(handler({eventType: "Allocated", message: message})).resolves.not.toBeDefined();
+      expect(notifier.notify).toHaveBeenCalledWith({
+        title: "Goobox",
+        message: message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true
+      }, expect.any(Function));
+    });
+
+    it("notifies the user when an error occurs", async () => {
+      const message = "sample message";
+      await expect(handler({eventType: "Error", message: message})).resolves.not.toBeDefined();
+      expect(notifier.notify).toHaveBeenCalledWith({
+        title: "Goobox",
+        message: message,
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true
+      }, expect.any(Function));
+    });
+
+    it("does nothing for other events", async () => {
+      await expect(handler({eventType: "AnotherEvent"})).resolves.not.toBeDefined();
       expect(notifier.notify).not.toHaveBeenCalled();
     });
 
