@@ -33,7 +33,8 @@ module.exports = [
       extensions: [".js"]
     },
     externals: [{
-      "node-jre": "commonjs node-jre"
+      "node-jre": "commonjs node-jre",
+      "node-notifier": "commonjs node-notifier"
     }],
     module: {
       loaders: [

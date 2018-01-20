@@ -18,7 +18,11 @@
 jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
+jest.mock("node-notifier");
+
 import {menuberMock} from "menubar";
+import notifier from "node-notifier";
+import path from "path"
 import {Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {
@@ -27,6 +31,7 @@ import {
   installJREHandler,
   openSyncFolderHandler,
   siaRequestWalletInfoHandler,
+  startSynchronizationHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjLoginHandler,
@@ -191,7 +196,7 @@ describe("IPC event handlers", () => {
     const address = "0x01234567890";
     const seed = "hello world";
     const dir = "/tmp";
-    let handler, wallet, start;
+    let handler, wallet, start, once;
     beforeEach(() => {
       handler = siaRequestWalletInfoHandler();
       getConfig.mockReset();
@@ -204,11 +209,13 @@ describe("IPC event handlers", () => {
       }));
       start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
       });
+      once = jest.spyOn(Sia.prototype, "once");
     });
 
     afterEach(() => {
       wallet.mockRestore();
       start.mockRestore();
+      once.mockRestore();
       delete global.sia;
     });
 
@@ -238,6 +245,12 @@ describe("IPC event handlers", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(start).toHaveBeenCalledWith(dir, true);
       expect(global.sia instanceof Sia).toBeTruthy();
+    });
+
+    it("registers startSynchronizationHandler", async () => {
+      await handler();
+      expect(once).toHaveBeenCalledWith("syncState", expect.any(Function));
+      expect(once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
     });
 
     it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
@@ -474,4 +487,32 @@ describe("IPC event handlers", () => {
 
   });
 
+  describe("startSynchronizationHandler", () => {
+
+    let handler;
+    beforeEach(() => {
+      handler = startSynchronizationHandler();
+      notifier.notify.mockReset();
+      notifier.notify.mockImplementation((_, cb) => cb());
+    });
+
+    it("notifies the sia account preparation ends when newState argument is startSynchronization", async () => {
+      await expect(handler({newState: "startSynchronization"})).resolves.not.toBeDefined();
+      expect(notifier.notify).toHaveBeenCalledWith({
+        title: "Goobox",
+        message: "Your sia account is ready",
+        icon: path.join(__dirname, "../../resources/goobox.png"),
+        sound: true,
+        wait: true
+      }, expect.any(Function));
+    });
+
+    it("does nothing if newState argument isn't startSynchronization", async () => {
+      await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+      expect(notifier.notify).not.toHaveBeenCalled();
+    });
+
+  });
+
 });
+

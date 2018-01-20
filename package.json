@@ -16,9 +16,9 @@
     "dist:pre": "rm -rf dist",
     "dist:package": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=goobox-sync --ignore=.idea --ignore=__mocks__ --ignore=__tests__ --ignore=coverage",
     "dist:post": "run-p dist:sia:* dist:storj:*",
-    "dist:sia:mac": "mkdir -p dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.15/goobox-sync-sia-0.0.15-mac.tar.gz | tar -zxv -C dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia --strip-components 1",
-    "dist:sia:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.15/goobox-sync-sia-0.0.15-win64.tar.gz | tar -zxv -C dist/goobox-win32-x64/resources/app/goobox-sync-sia --strip-components 1",
     "dist:storj:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.15/goobox-sync-storj-0.0.15-win64.zip -o tmp.zip && unzip tmp.zip -d dist/goobox-win32-x64/resources/app/ && rm tmp.zip",
+    "dist:sia:mac": "mkdir -p dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-mac.tar.gz | tar -zxv -C dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia --strip-components 1",
+    "dist:sia:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-win64.tar.gz | tar -zxv -C dist/goobox-win32-x64/resources/app/goobox-sync-sia --strip-components 1",
     "check-update": "ncu -u"
   },
   "repository": {
@@ -33,8 +33,7 @@
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
     "about-window": "^1.8.0",
-    "del": "^3.0.0",
-    "electron-json-storage": "^4.0.2",
+    "node-notifier": "^5.2.1",
     "node-jre": "jkawamoto/node-jre#fix-8"
   },
   "devDependencies": {
@@ -47,7 +46,9 @@
     "babel-loader": "^8.0.0-beta.0",
     "classnames": "^2.2.5",
     "coveralls": "^3.0.0",
+    "del": "^3.0.0",
     "electron": "1.7.10",
+    "electron-json-storage": "^4.0.2",
     "electron-log": "^2.2.14",
     "electron-packager": "^10.1.1",
     "enzyme": "^3.3.0",

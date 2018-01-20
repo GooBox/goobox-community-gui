@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import {dialog} from "electron";
 import log from "electron-log";
+import notifier from "node-notifier";
+import path from "path";
 import {Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import icons from "./icons";
@@ -77,6 +78,7 @@ export const siaRequestWalletInfoHandler = () => async () => {
     const res = await global.sia.wallet();
     const cfg = await getConfig();
     global.sia.start(cfg.syncFolder, true);
+    global.sia.once("syncState", startSynchronizationHandler());
     return {
       address: res["wallet address"],
       seed: res["primary seed"],
@@ -151,6 +153,21 @@ export const storjCreateAccountHandler = () => async payload => {
   return await global.storj.createAccount(payload.email, payload.password);
 };
 
+export const startSynchronizationHandler = () => async payload => {
+  if (payload.newState !== "startSynchronization") {
+    return;
+  }
+  return new Promise(resolve => {
+    notifier.notify({
+      title: "Goobox",
+      message: "Your sia account is ready",
+      icon: path.join(__dirname, "../../resources/goobox.png"),
+      sound: true,
+      wait: true,
+    }, resolve);
+  });
+};
+
 // Handlers for sync-storj/sync-sia apps.
 export const updateStateHandler = mb => async payload => {
   switch (payload.newState) {
@@ -166,3 +183,4 @@ export const updateStateHandler = mb => async payload => {
       log.debug(`received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
   }
 };
+
