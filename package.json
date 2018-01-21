@@ -156,6 +156,7 @@
       "installerIcon": "resources/goobox.ico",
       "uninstallerIcon": "resources/goobox.ico",
       "license": "LICENSE",
+      "deleteAppDataOnUninstall": true,
       "artifactName": "${productName}-${version}-setup.${ext}"
     }
   }
