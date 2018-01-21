@@ -20,12 +20,10 @@ import {app, BrowserWindow} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
-import {ConfigFile} from "../constants";
 import * as actionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
-import {getConfig} from "./config";
-import {core} from "./core";
 import {
+  installerWindowAllClosedHandler,
   installJREHandler,
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
@@ -48,6 +46,7 @@ export const installer = () => {
   if ("development" === process.env.NODE_ENV) {
     width *= 2;
   }
+  // noinspection SpellCheckingInspection
   const mainWindow = new BrowserWindow({
     width: width,
     height: 400,
@@ -62,50 +61,13 @@ export const installer = () => {
     mainWindow.toggleDevTools();
   }
 
-  app.on("window-all-closed", async () => {
-
-    log.info(`loading the config file ${ConfigFile}`);
-    try {
-
-      const cfg = await getConfig();
-      if (cfg && cfg.installed) {
-
-        // if the installation process is finished.
-        log.info("installation has been finished, now starting Goobox");
-        await core();
-
-      } else {
-
-        // otherwise
-        log.info("installation has been canceled");
-        if (global.storj) {
-          log.info("closing the storj instance");
-          await global.storj.close();
-          delete global.storj;
-        }
-        if (global.sia) {
-          log.info("closing the sia instance");
-          await global.sia.close();
-          delete global.sia;
-        }
-        app.quit();
-
-      }
-
-    } catch (err) {
-      log.error(`failed to read/write the config: ${err}`);
-      app.quit();
-      throw err;
-    }
-
-  });
-
   // Register event handlers.
+  app.on("window-all-closed", installerWindowAllClosedHandler(app));
   addListener(actionTypes.InstallJRE, installJREHandler());
   addListener(actionTypes.StorjLogin, storjLoginHandler());
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
 
-}
+};
 
