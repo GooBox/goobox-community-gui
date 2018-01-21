@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import program from "commander";
+import {Command} from "commander";
 import {app} from "electron";
 import * as log from "electron-log";
 import {getConfig, saveConfig} from "./config";
@@ -24,6 +24,7 @@ import {installer} from "./installer";
 
 export const main = async () => {
 
+  const program = new Command();
   program
     .option("--installer", "Run the installer even if the installation has been succeeded")
     .option("--dev-tools", "Enable developer tools (not available in production builds)")
@@ -82,7 +83,10 @@ export const main = async () => {
 
 };
 
-app.on("ready", main);
+app.on("ready", () => main().catch(err => {
+  log.error(err);
+  app.quit();
+}));
 
 
 

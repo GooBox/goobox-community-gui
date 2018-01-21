@@ -143,7 +143,6 @@ export const core = async () => {
     }
 
   } catch (err) {
-    console.log(err);
     log.error(err);
     dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
     app.quit();
