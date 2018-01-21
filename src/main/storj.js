@@ -50,7 +50,7 @@ export default class Storj extends EventEmitter {
       args.push("--reset-auth-file");
     }
 
-    log.info(`starting ${this._cmd} in ${this._wd}`);
+    log.info(`starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
@@ -78,7 +78,7 @@ export default class Storj extends EventEmitter {
     readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
     this.proc.on("close", (code, signal) => {
-      log.debug(`storj closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+      log.debug(`storj closed: code = ${code}, signal = ${signal}`);
       if (this.proc && !this.proc._closing) {
         this.proc = null;
         this.start(dir);

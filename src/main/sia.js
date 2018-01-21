@@ -46,11 +46,11 @@ export default class Sia extends EventEmitter {
       return;
     }
 
-    log.info(`starting sync-sia app in ${this._cmd}`);
     const args = ["--sync-dir", `"${dir}"`, "--output-events"];
     if (reset) {
       args.push("--reset-db");
     }
+    log.info(`starting sync-sia app in ${this._cmd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
@@ -76,7 +76,7 @@ export default class Sia extends EventEmitter {
 
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {
-        log.debug(`sia closed: code = ${code}, signal = ${signal}, proc = ${JSON.stringify(this.proc, null, " ")}`);
+        log.debug(`sia closed: code = ${code}, signal = ${signal}`);
         this.proc = null;
         this.start(dir);
       }

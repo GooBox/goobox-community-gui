@@ -32,7 +32,7 @@ export async function installJRE() {
         shouldInstall = true;
       }
     } catch (err) {
-      log.debug(err);
+      log.silly(err);
       shouldInstall = true;
     }
 
