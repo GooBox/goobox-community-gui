@@ -12,14 +12,14 @@
     "test:watch": "jest --watch",
     "test:coverage": "npm test -- --coverage",
     "coveralls": "cat coverage/lcov.info | coveralls",
-    "dist": "run-s dist:pre dist:package dist:post",
-    "dist:pre": "rm -rf dist",
-    "dist:package": "electron-packager . goobox --platform=darwin,win32 --arch=x64 --electron-version=1.7.10 --icon=resources/goobox --out=dist --ignore=/jre --ignore=goobox-sync --ignore=.idea --ignore=__mocks__ --ignore=__tests__ --ignore=coverage",
-    "dist:post": "run-p dist:sia:* dist:storj:*",
-    "dist:storj:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.15/goobox-sync-storj-0.0.15-win64.zip -o tmp.zip && unzip tmp.zip -d dist/goobox-win32-x64/resources/app/ && rm tmp.zip",
-    "dist:sia:mac": "mkdir -p dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-mac.tar.gz | tar -zxv -C dist/goobox-darwin-x64/goobox.app/Contents/Resources/app/goobox-sync-sia --strip-components 1",
-    "dist:sia:win": "mkdir -p dist/goobox-win32-x64/resources/app/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-win64.tar.gz | tar -zxv -C dist/goobox-win32-x64/resources/app/goobox-sync-sia --strip-components 1",
-    "check-update": "ncu -u"
+    "check-update": "ncu -u",
+    "pack": "electron-builder -wm --dir",
+    "dist": "electron-builder -w",
+    "dist:pre": "run-p dist2:pre:*:*",
+    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.15/goobox-sync-storj-0.0.15-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
+    "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
+    "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
+    "dist:post": "del tmp"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
     "about-window": "^1.8.0",
+    "electron-json-storage": "^4.0.2",
     "node-notifier": "^5.2.1",
     "node-jre": "jkawamoto/node-jre#fix-8"
   },
@@ -48,10 +49,10 @@
     "commander": "^2.13.0",
     "coveralls": "^3.0.0",
     "del": "^3.0.0",
+    "del-cli": "^1.1.0",
     "electron": "1.7.10",
-    "electron-json-storage": "^4.0.2",
+    "electron-builder": "^19.54.0",
     "electron-log": "^2.2.14",
-    "electron-packager": "^10.1.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "history": "^4.7.2",
@@ -108,6 +109,54 @@
     },
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
+    }
+  },
+  "build": {
+    "appId": "com.electron.goobox",
+    "files": [
+      "!__mocks__",
+      "!__tests__",
+      "!coverage",
+      "!node_modules/node-jre/jre",
+      "!goobox-sync-*",
+      "!src",
+      "!tmp"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "resources/goobox.icns",
+      "extraResources": [
+        {
+          "from": "tmp/win/goobox-sync-sia",
+          "to": "app/goobox-sync-sia"
+        }
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "resources/goobox.ico",
+      "extraResources": [
+        {
+          "from": "tmp/win/goobox-sync-storj",
+          "to": "app/goobox-sync-storj"
+        },
+        {
+          "from": "tmp/win/goobox-sync-sia",
+          "to": "app/goobox-sync-sia"
+        }
+      ],
+      "publisherName": "Goobox"
+    },
+    "asar": false,
+    "asarUnpack": [
+      "node_modules/node-jre",
+      "node_modules/node-notifier"
+    ],
+    "nsis": {
+      "installerIcon": "resources/goobox.ico",
+      "uninstallerIcon": "resources/goobox.ico",
+      "license": "LICENSE",
+      "artifactName": "${productName}-${version}-setup.${ext}"
     }
   }
 }

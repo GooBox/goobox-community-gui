@@ -16,78 +16,74 @@
  */
 
 "use strict";
-
 const path = require("path");
 
-module.exports = [
-  {
-    target: "electron-main",
-    node: {
-      __dirname: false,
-      __filename: false
-    },
-    entry: {
-      "main/startup": "./src/main/startup.js",
-    },
-    resolve: {
-      extensions: [".js"]
-    },
-    externals: [{
-      "node-jre": "commonjs node-jre",
-      "node-notifier": "commonjs node-notifier"
-    }],
-    module: {
-      loaders: [
-        {
-          exclude: /node_modules/,
-          test: /\.jsx?$/,
-          loader: "babel-loader",
-        }
-      ],
-    },
-    output: {
-      path: path.join(__dirname, "lib"),
-      filename: "[name].js"
-    }
+module.exports = [{
+  target: "electron-main",
+  node: {
+    __dirname: false,
+    __filename: false
   },
-  {
-    target: "electron-renderer",
-    node: {
-      __dirname: false,
-      __filename: false
-    },
-    entry: {
-      "render/main": "./src/render/popup/index.js",
-      "render/installer": "./src/render/installer/index.js",
-    },
-    resolve: {
-      extensions: [".js", ".jsx"]
-    },
-    externals: [{
-      "about-window": "commonjs about-window"
+  entry: {
+    "main/startup": "./src/main/startup.js",
+  },
+  resolve: {
+    extensions: [".js"]
+  },
+  externals: [{
+    "node-jre": "commonjs node-jre",
+    "node-notifier": "commonjs node-notifier"
+  }],
+  module: {
+    loaders: [{
+      exclude: /node_modules/,
+      test: /\.jsx?$/,
+      loader: "babel-loader",
     }],
-    module: {
-      loaders: [
-        {
-          exclude: /node_modules/,
-          test: /\.jsx?$/,
-          loader: "babel-loader"
-        },
-        {
-          exclude: /node_modules/,
-          test: /\.svg$/,
-          use: {
-            loader: 'svg-url-loader',
-            options: {
-              noquotes: true
-            }
+  },
+  output: {
+    path: path.join(__dirname, "lib"),
+    filename:
+      "[name].js"
+  }
+}, {
+  target: "electron-renderer",
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+  entry: {
+    "render/main": "./src/render/popup/index.js",
+    "render/installer": "./src/render/installer/index.js",
+  },
+  resolve: {
+    extensions: [".js", ".jsx"]
+  },
+  externals: [{
+    "about-window": "commonjs about-window"
+  }],
+  module: {
+    loaders: [
+      {
+        exclude: /node_modules/,
+        test: /\.jsx?$/,
+        loader: "babel-loader"
+      },
+      {
+        exclude: /node_modules/,
+        test: /\.svg$/,
+        use: {
+          loader: 'svg-url-loader',
+          options: {
+            noquotes: true
           }
         }
-      ]
-    },
-    output: {
-      path: path.join(__dirname, "lib"),
-      filename: "[name].js"
-    }
+      }
+    ]
+  },
+  output: {
+    path: path.join(__dirname, "lib"),
+    filename:
+      "[name].js"
   }
-];
+}];
