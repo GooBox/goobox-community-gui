@@ -19,7 +19,9 @@ jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("node-notifier");
+jest.mock("electron");
 
+import {app} from "electron";
 import {menuberMock} from "menubar";
 import notifier from "node-notifier";
 import path from "path"
@@ -36,7 +38,8 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjLoginHandler,
-  updateStateHandler
+  updateStateHandler,
+  willQuitHandler
 } from "../../src/main/handlers";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
@@ -44,7 +47,7 @@ import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
 
-describe("IPC event handlers", () => {
+describe("event handlers", () => {
 
   afterEach(() => {
     delete global.storj;
@@ -126,7 +129,7 @@ describe("IPC event handlers", () => {
   describe("openSyncFolderHandler", () => {
 
     let handler;
-    beforeEach(async () => {
+    beforeEach(() => {
       handler = openSyncFolderHandler();
       utils.openDirectory.mockReset();
     });
@@ -147,7 +150,7 @@ describe("IPC event handlers", () => {
   describe("usedVolumeHandler", () => {
 
     let handler;
-    beforeEach(async () => {
+    beforeEach(() => {
       handler = calculateUsedVolumeHandler();
       utils.totalVolume.mockReset();
     });
@@ -166,6 +169,68 @@ describe("IPC event handlers", () => {
       expect(utils.totalVolume).toHaveBeenCalledWith(syncFolder);
     });
 
+  });
+
+  describe("core app will quit handler", () => {
+
+    let handler;
+    const event = {
+      preventDefault: jest.fn(),
+    };
+    beforeEach(() => {
+      app.exit.mockReset();
+      event.preventDefault.mockReset();
+      handler = willQuitHandler(app);
+    });
+
+    afterEach(() => {
+      delete global.storj;
+      delete global.sia;
+    });
+
+    it("does not prevent when global.storj and global.sia are not defined", async () => {
+      await handler(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(app.exit).not.toHaveBeenCalled();
+    });
+
+    it("does not prevent when global.storj is defined but is closed", async () => {
+      global.storj = {
+        closed: true,
+      };
+      await handler(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(app.exit).not.toHaveBeenCalled();
+    });
+
+    it("does not prevent when global.sia is defined but is closed", async () => {
+      global.sia = {
+        closed: true,
+      };
+      await handler(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(app.exit).not.toHaveBeenCalled();
+    });
+
+    it("prevents default when storj is running, closes the process, and exists", async () => {
+      global.storj = {
+        close: jest.fn().mockReturnValue(Promise.resolve())
+      };
+      await handler(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(global.storj.close).toHaveBeenCalled();
+      expect(app.exit).toHaveBeenCalled();
+    });
+
+    it("prevents default when sia is running, closes the process, and exists", async () => {
+      global.sia = {
+        close: jest.fn().mockReturnValue(Promise.resolve())
+      };
+      await handler(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(global.sia.close).toHaveBeenCalled();
+      expect(app.exit).toHaveBeenCalled();
+    });
   });
 
   describe("installJRE handler", () => {

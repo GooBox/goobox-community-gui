@@ -84,6 +84,10 @@ export default class Sia extends EventEmitter {
 
   }
 
+  get closed() {
+    return !this.proc;
+  }
+
   async close() {
 
     if (!this.proc) {

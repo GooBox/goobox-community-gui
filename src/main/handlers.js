@@ -76,6 +76,25 @@ export const calculateUsedVolumeHandler = () => async () => {
   return volume / 1024 / 1024;
 };
 
+export const willQuitHandler = (app) => async event => {
+
+  if ((!global.storj || global.storj.closed) && (!global.sia || global.sia.closed)) {
+    return;
+  }
+  log.info("Goobox will quit but synchronization processes are still running");
+  event.preventDefault();
+
+  if (global.storj) {
+    await global.storj.close();
+  }
+  if (global.sia) {
+    await global.sia.close();
+  }
+  app.exit();
+
+};
+
+
 // Handlers for the installer.
 export const installJREHandler = () => async () => {
   return await installJRE();

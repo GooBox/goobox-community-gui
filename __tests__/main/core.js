@@ -18,6 +18,7 @@ jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/handlers");
 jest.useFakeTimers();
 
 import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
@@ -32,7 +33,8 @@ import {
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
-  updateStateHandler
+  updateStateHandler,
+  willQuitHandler
 } from "../../src/main/handlers";
 import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
@@ -68,12 +70,13 @@ describe("main process of the core app", () => {
     delete global.sia;
     menubar.mockClear();
     menuberMock.on.mockClear();
+    menuberMock.app.on.mockClear();
     app.quit.mockClear();
     ipcMain.on.mockClear();
     getConfig.mockReset();
   });
 
-  it("create a menubar instance", async () => {
+  it("create a menu bar instance", async () => {
     const setSkipTaskbar = jest.spyOn(BrowserWindow.prototype, "setSkipTaskbar");
     try {
       await core();
@@ -92,6 +95,15 @@ describe("main process of the core app", () => {
       setSkipTaskbar.mockRestore();
     }
   });
+
+  it("registers willQuitEventHandler", async () => {
+    const handler = "expected handler";
+    willQuitHandler.mockReturnValue(handler);
+    await core();
+    expect(menuberMock.app.on).toHaveBeenCalledWith("will-quit", handler);
+    expect(willQuitHandler).toHaveBeenCalledWith(menuberMock.app);
+  });
+
 
   describe("system tray event handlers", () => {
 
@@ -162,27 +174,7 @@ describe("main process of the core app", () => {
         }]);
       });
 
-      it("closes a storj instance if exists when the exit menu is clicked", async () => {
-        global.storj = {
-          close: jest.fn(),
-        };
-        global.storj.close.mockReturnValue(Promise.resolve());
-
-        await Menu.buildFromTemplate.mock.calls[0][0][0].click();
-        expect(global.storj.close).toHaveBeenCalled();
-      });
-
-      it("closes a sia instance if exists when the exit menu is clicked", async () => {
-        global.sia = {
-          close: jest.fn()
-        };
-        global.sia.close.mockReturnValue(Promise.resolve());
-
-        await Menu.buildFromTemplate.mock.calls[0][0][0].click();
-        expect(global.sia.close).toHaveBeenCalled();
-      });
-
-      it("closes the app when the exit menu is clicked", async () => {
+      it("quits the app when the exit menu is clicked", async () => {
         await Menu.buildFromTemplate.mock.calls[0][0][0].click();
         expect(app.quit).toHaveBeenCalled();
       });
@@ -193,45 +185,60 @@ describe("main process of the core app", () => {
 
   describe("management of GUI event handlers", () => {
 
+    beforeAll(() => {
+      changeStateHandler.mockReturnValue("changeStateHandler");
+      openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
+      calculateUsedVolumeHandler.mockReturnValue("calculateUsedVolumeHandler");
+    });
+
     beforeEach(() => {
       addListener.mockReset();
+      changeStateHandler.mockClear();
+      openSyncFolderHandler.mockClear();
+      calculateUsedVolumeHandler.mockClear();
     });
 
     it("registers changeStateHandler", async () => {
       await core();
-      expect(addListener.mock.calls.find(args => {
-        return args[0] === ipcActionTypes.ChangeState && args[1].toString() === changeStateHandler(menuberMock).toString();
-      })).toBeDefined();
+      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.ChangeState, changeStateHandler());
+      expect(changeStateHandler).toHaveBeenCalledWith(menuberMock);
     });
 
     it("registers openSyncFolderHandler", async () => {
       await core();
-      expect(addListener.mock.calls.find(args => {
-        return args[0] === ipcActionTypes.OpenSyncFolder && args[1].toString() === openSyncFolderHandler().toString();
-      })).toBeDefined();
+      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
+      expect(openSyncFolderHandler).toHaveBeenCalled();
     });
 
     it("registers calculateUsedVolumeHandler", async () => {
       await core();
-      expect(addListener.mock.calls.find(args => {
-        return args[0] === ipcActionTypes.CalculateUsedVolume && args[1].toString() === calculateUsedVolumeHandler().toString();
-      })).toBeDefined();
+      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
+      expect(calculateUsedVolumeHandler).toHaveBeenCalled();
     });
 
   });
 
   describe("sync-storj/sync-sia integration", () => {
 
+    beforeAll(() => {
+      updateStateHandler.mockReturnValue("updateStateHandler");
+      siaFundEventHandler.mockReturnValue("siaFundEventHandler");
+    });
+
     let storjStart, storjOn, siaStart, siaOn;
     beforeEach(() => {
       storjStart = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
       });
-      storjOn = jest.spyOn(Storj.prototype, "on");
+      storjOn = jest.spyOn(Storj.prototype, "on").mockImplementation(() => {
+      });
       siaStart = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
       });
-      siaOn = jest.spyOn(Sia.prototype, "on");
+      siaOn = jest.spyOn(Sia.prototype, "on").mockImplementation(() => {
+      });
       installJRE.mockReset();
       dialog.showErrorBox.mockReset();
+      updateStateHandler.mockClear();
+      siaFundEventHandler.mockClear();
     });
 
     afterEach(() => {
@@ -274,8 +281,8 @@ describe("main process of the core app", () => {
 
       await core();
       expect(getConfig).toHaveBeenCalled();
-      expect(storjOn).toHaveBeenCalledWith("syncState", expect.any(Function));
-      expect(storjOn.mock.calls[0][1].toString()).toEqual(updateStateHandler(menuberMock).toString());
+      expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
+      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -284,14 +291,14 @@ describe("main process of the core app", () => {
         storj: true,
       }));
       global.storj = {
-        on: jest.fn(),
+        on: storjOn,
       };
 
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(storjStart).not.toHaveBeenCalled();
-      expect(global.storj.on).toHaveBeenCalledWith("syncState", expect.any(Function));
-      expect(global.storj.on.mock.calls[0][1].toString()).toEqual(updateStateHandler(menuberMock).toString());
+      expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
+      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -313,8 +320,8 @@ describe("main process of the core app", () => {
 
       await core();
       expect(getConfig).toHaveBeenCalled();
-      expect(siaOn).toHaveBeenCalledWith("syncState", expect.any(Function));
-      expect(siaOn.mock.calls[0][1].toString()).toEqual(updateStateHandler(menuberMock).toString());
+      expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
+      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -325,8 +332,8 @@ describe("main process of the core app", () => {
 
       await core();
       expect(getConfig).toHaveBeenCalled();
-      expect(siaOn).toHaveBeenCalledWith("walletInfo", expect.any(Function));
-      expect(siaOn.mock.calls[1][1].toString()).toEqual(siaFundEventHandler().toString());
+      expect(siaOn).toHaveBeenCalledWith("walletInfo", siaFundEventHandler());
+      expect(siaFundEventHandler).toHaveBeenCalled();
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -335,14 +342,14 @@ describe("main process of the core app", () => {
         sia: true,
       }));
       global.sia = {
-        on: jest.fn(),
+        on: siaOn,
       };
 
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).not.toHaveBeenCalled();
-      expect(global.sia.on).toHaveBeenCalledWith("syncState", expect.any(Function));
-      expect(global.sia.on.mock.calls[0][1].toString()).toEqual(updateStateHandler(menuberMock).toString());
+      expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
+      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 

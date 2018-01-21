@@ -28,7 +28,8 @@ import {
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
-  updateStateHandler
+  updateStateHandler,
+  willQuitHandler
 } from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
@@ -54,6 +55,7 @@ export const core = async () => {
     showDockIcon: false,
   });
   mb.window.setSkipTaskbar(true);
+  mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`Goobox is closed: status code = ${code}`));
 
   // Allow running only one instance.
@@ -71,15 +73,7 @@ export const core = async () => {
 
   const ctxMenu = Menu.buildFromTemplate([{
     label: "exit",
-    click: async () => {
-      if (global.storj) {
-        await global.storj.close();
-      }
-      if (global.sia) {
-        await global.sia.close();
-      }
-      app.quit();
-    }
+    click: app.quit,
   }]);
 
   const onClick = mb.tray.listeners("click")[0];
@@ -149,14 +143,9 @@ export const core = async () => {
     }
 
   } catch (err) {
+    console.log(err);
     log.error(err);
     dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
-    if (global.storj) {
-      await global.storj.close();
-    }
-    if (global.sia) {
-      await global.sia.close();
-    }
     app.quit();
   }
 

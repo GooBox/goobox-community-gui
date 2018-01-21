@@ -414,4 +414,17 @@ describe("Storj class", () => {
 
   });
 
+  describe("closed property", () => {
+
+    it("returns true if the proc is null", () => {
+      expect(storj.closed).toBeTruthy();
+    });
+
+    it("returns false if the proc is not null", () => {
+      storj.proc = "some process";
+      expect(storj.closed).toBeFalsy();
+    });
+
+  });
+
 });

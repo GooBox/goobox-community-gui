@@ -306,7 +306,6 @@ describe("Sia class", () => {
     });
 
     it("spawns the wallet command and returns a promise with the result", async () => {
-      const sia = new Sia();
       await expect(sia.wallet()).resolves.toEqual({
         "wallet address": address,
         "primary seed": seed,
@@ -329,7 +328,6 @@ describe("Sia class", () => {
           callback(msg);
         }
       });
-      const sia = new Sia();
       await expect(sia.wallet()).rejects.toEqual(msg);
     });
 
@@ -345,11 +343,23 @@ describe("Sia class", () => {
         stderr: stderr,
         on: on,
       });
-      const sia = new Sia();
       await expect(sia.wallet()).rejects.toEqual(expect.any(String));
     });
 
     // TODO: sync sia app returns an error if initializing wallets twice.
+
+  });
+
+  describe("closed property", () => {
+
+    it("returns true if the proc is null", () => {
+      expect(sia.closed).toBeTruthy();
+    });
+
+    it("returns false if the proc is not null", () => {
+      sia.proc = "some process";
+      expect(sia.closed).toBeFalsy();
+    });
 
   });
 
