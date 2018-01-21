@@ -31,7 +31,7 @@ if ("development" === process.env.NODE_ENV) {
 } else {
   logger = createLogger({
     logger: {
-      log: electronLog.debug,
+      log: electronLog.silly,
       colors: {
         title: false,
         prevState: false,
