@@ -18,6 +18,7 @@
 jest.mock("fs");
 jest.mock("../../src/main/config");
 jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/core");
 
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
@@ -26,6 +27,7 @@ import "../../src/ipc/actions";
 import * as actionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
+import {core} from "../../src/main/core";
 import {
   installJREHandler,
   siaRequestWalletInfoHandler,
@@ -34,17 +36,9 @@ import {
   storjLoginHandler
 } from "../../src/main/handlers";
 import "../../src/main/installer";
+import {installer} from "../../src/main/installer";
 
-describe("main process of the installer", () => {
-
-  let onReady;
-  beforeAll(() => {
-    app.on.mock.calls.forEach(args => {
-      if (args[0] === "ready") {
-        onReady = args[1];
-      }
-    });
-  });
+describe("installer", () => {
 
   let mockLoadURL;
   beforeEach(() => {
@@ -63,7 +57,7 @@ describe("main process of the installer", () => {
 
     const dir = "/tmp/some/place";
     process.env.DEFAULT_SYNC_FOLDER = dir;
-    onReady();
+    installer();
 
     expect(fs.existsSync).toHaveBeenCalledWith(dir);
     expect(fs.mkdirSync).toHaveBeenCalledWith(dir);
@@ -76,14 +70,14 @@ describe("main process of the installer", () => {
 
     const dir = "/tmp/some/place";
     process.env.DEFAULT_SYNC_FOLDER = dir;
-    onReady();
+    installer();
 
     expect(fs.existsSync).toHaveBeenCalledWith(dir);
     expect(fs.mkdirSync).not.toHaveBeenCalled();
   });
 
   it("loads static/installer.html", () => {
-    onReady();
+    installer();
     expect(mockLoadURL).toHaveBeenCalledWith("file://" + path.join(__dirname, "../../static/installer.html"));
   });
 
@@ -94,35 +88,35 @@ describe("main process of the installer", () => {
     });
 
     it("registers installJREHandler", () => {
-      onReady();
+      installer();
       expect(addListener.mock.calls.find(args => {
         return args[0] === actionTypes.InstallJRE && args[1].toString() === installJREHandler().toString();
       })).toBeDefined();
     });
 
     it("registers storjLoginHandler", () => {
-      onReady();
+      installer();
       expect(addListener.mock.calls.find(args => {
         return args[0] === actionTypes.StorjLogin && args[1].toString() === storjLoginHandler().toString();
       })).toBeDefined();
     });
 
     it("registers storjCreateAccountHandler", () => {
-      onReady();
+      installer();
       expect(addListener.mock.calls.find(args => {
         return args[0] === actionTypes.StorjCreateAccount && args[1].toString() === storjCreateAccountHandler().toString();
       })).toBeDefined();
     });
 
     it("registers siaRequestWalletInfoHandler", () => {
-      onReady();
+      installer();
       expect(addListener.mock.calls.find(args => {
         return args[0] === actionTypes.SiaRequestWalletInfo && args[1].toString() === siaRequestWalletInfoHandler().toString();
       })).toBeDefined();
     });
 
     it("registers stopSyncAppsHandler", () => {
-      onReady();
+      installer();
       expect(addListener.mock.calls.find(args => {
         return args[0] === actionTypes.StopSyncApps && args[1].toString() === stopSyncAppsHandler().toString();
       })).toBeDefined();
@@ -134,13 +128,13 @@ describe("main process of the installer", () => {
 
     let onWindowAllClosed;
     beforeEach(() => {
-      onReady();
+      installer();
       onWindowAllClosed = app.on.mock.calls
         .filter(args => args[0] === "window-all-closed")
         .map(args => args[1])[0];
-      app.isReady.mockReset();
-      app.on.mockReset();
       app.quit.mockReset();
+      core.mockClear();
+      core.mockReturnValue(Promise.resolve());
     });
 
     afterEach(() => {
@@ -148,9 +142,8 @@ describe("main process of the installer", () => {
       delete global.sia;
     });
 
-    it("starts the core app when all windows are closed and installed is true", async () => {
+    it("starts the core app when all windows are closed after the installation has been finished", async () => {
 
-      app.isReady.mockReturnValue(false);
       getConfig.mockReturnValue(Promise.resolve({
         installed: true,
       }));
@@ -158,13 +151,13 @@ describe("main process of the installer", () => {
       await onWindowAllClosed();
       expect(getConfig).toHaveBeenCalled();
       // This calling of app.on is in main.js.
-      expect(app.on).toHaveBeenCalledWith("ready", expect.any(Function));
+      expect(core).toHaveBeenCalled();
       expect(app.quit).not.toHaveBeenCalled();
 
     });
 
     // TODO: it shows some message to make sure users want to quit the installer.
-    it("does nothing when all windows are closed but installed is false", async () => {
+    it("doesn't start the core app when all windows are closed before the installation is finished", async () => {
 
       getConfig.mockReturnValue(Promise.resolve({
         installed: false,
@@ -172,7 +165,7 @@ describe("main process of the installer", () => {
 
       await onWindowAllClosed();
       expect(getConfig).toHaveBeenCalled();
-      expect(app.isReady).not.toHaveBeenCalled();
+      expect(core).not.toHaveBeenCalled();
       expect(app.quit).toHaveBeenCalled();
 
     });

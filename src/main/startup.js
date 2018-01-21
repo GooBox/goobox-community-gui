@@ -15,34 +15,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import storage from "electron-json-storage";
-import log from "electron-log";
-import {ConfigFile} from "../constants";
+import program from "commander";
+import {app} from "electron";
+import * as log from "electron-log";
+import {getConfig, saveConfig} from "./config";
+import {core} from "./core";
+import {installer} from "./installer";
 
-if ("production" !== process.env.NODE_ENV && process.argv.find(v => v === "--dev")) {
-  process.env.NODE_ENV = "development";
-}
+export const main = async () => {
 
-if ("test" === process.env.NODE_ENV) {
-  // Pass.
-} else if ("production" !== process.env.NODE_ENV) {
-  log.transports.file.level = "debug";
-  log.transports.console.level = "debug";
-} else {
-  log.transports.file.level = "info";
-  log.transports.console.level = "warn";
-}
+  program
+    .option("--installer", "Run the installer even if the installation has been succeeded")
+    .option("--dev-tools", "Enable developer tools (not available in production builds)")
+    .option("--storj", "Overwrite the configuration file and start with Storj")
+    .option("--sia", "Overwrite the configuration file and start with Sia")
+    .parse(["", "", ...process.argv]);
 
-if (process.argv.find(v => v === "installer")) {
-  require("./installer.js");
-} else {
-  storage.get(ConfigFile, (err, cfg) => {
-    if (err || !cfg.installed) {
-      require("./installer.js");
-    } else {
-      require("./main.js");
+  if ("test" === process.env.NODE_ENV) {
+    // Pass.
+  } else if ("production" !== process.env.NODE_ENV) {
+    if (program.devTools) {
+      process.env.NODE_ENV = "development";
     }
-  });
-}
+    log.transports.file.level = "debug";
+    log.transports.console.level = "debug";
+  } else {
+    log.transports.file.level = "info";
+    log.transports.console.level = "warn";
+  }
+
+  if (program.installer) {
+
+    installer();
+
+  } else {
+
+    let cfg = null;
+    try {
+      cfg = await getConfig();
+    } catch (err) {
+      log.info(`Cannot fine the configuration file`);
+    }
+
+    if (!cfg || !cfg.installed) {
+      log.info(`Start the installer`);
+      installer();
+      return;
+    }
+
+    if (program.storj && !cfg.storj) {
+      await saveConfig({
+        ...cfg,
+        storj: true,
+        sia: false,
+      });
+    } else if (program.sia && !cfg.sia) {
+      await saveConfig({
+        ...cfg,
+        storj: false,
+        sia: true
+      });
+    }
+    await core();
+
+  }
+
+};
+
+app.on("ready", main);
+
 
 

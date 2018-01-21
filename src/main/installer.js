@@ -24,6 +24,7 @@ import {ConfigFile} from "../constants";
 import * as actionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
+import {core} from "./core";
 import {
   installJREHandler,
   siaRequestWalletInfoHandler,
@@ -32,17 +33,11 @@ import {
   storjLoginHandler
 } from "./handlers";
 
-if (!process.env.DEFAULT_SYNC_FOLDER) {
-  process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
-}
+export const installer = () => {
 
-if (app.isReady()) {
-  installer();
-} else {
-  app.on("ready", installer);
-}
-
-function installer() {
+  if (!process.env.DEFAULT_SYNC_FOLDER) {
+    process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
+  }
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
     log.verbose(`creating the default sync folder: ${process.env.DEFAULT_SYNC_FOLDER}`);
@@ -77,7 +72,7 @@ function installer() {
 
         // if the installation process is finished.
         log.info("installation has been finished, now starting Goobox");
-        require("./main");
+        await core();
 
       } else {
 

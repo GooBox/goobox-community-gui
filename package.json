@@ -45,6 +45,7 @@
     "babel-jest": "^22.0.6",
     "babel-loader": "^8.0.0-beta.0",
     "classnames": "^2.2.5",
+    "commander": "^2.13.0",
     "coveralls": "^3.0.0",
     "del": "^3.0.0",
     "electron": "1.7.10",

@@ -36,14 +36,7 @@ import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
 
-if (app.isReady()) {
-  log.info("the app is already ready");
-  main();
-} else {
-  app.on("ready", main);
-}
-
-async function main() {
+export const core = async () => {
 
   let width = 518;
   if ("development" === process.env.NODE_ENV) {
@@ -167,4 +160,4 @@ async function main() {
     app.quit();
   }
 
-}
+};
