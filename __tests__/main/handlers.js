@@ -274,10 +274,6 @@ describe("event handlers", () => {
       let handler, wallet, start, once;
       beforeEach(() => {
         handler = siaRequestWalletInfoHandler();
-        getConfig.mockReset();
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: dir
-        }));
         wallet = jest.spyOn(Sia.prototype, "wallet").mockReturnValue(Promise.resolve({
           "wallet address": address,
           "primary seed": seed,
@@ -296,7 +292,7 @@ describe("event handlers", () => {
 
       it("creates a sia instance, calls the wallet method of the sia instance, and returns the result", async () => {
         expect(global.sia).not.toBeDefined();
-        await expect(handler()).resolves.toEqual({
+        await expect(handler({syncFolder: dir})).resolves.toEqual({
           address: address,
           seed: seed,
         });
@@ -307,7 +303,7 @@ describe("event handlers", () => {
       it("reuses the sia instance, calls the wallet method of the sia instance if a sia instance exists", async () => {
         const sia = new Sia();
         global.sia = sia;
-        await expect(handler()).resolves.toEqual({
+        await expect(handler({syncFolder: dir})).resolves.toEqual({
           address: address,
           seed: seed,
         });
@@ -316,14 +312,14 @@ describe("event handlers", () => {
       });
 
       it("starts the sync sia app with reset option", async () => {
-        await handler();
+        await handler({syncFolder: dir});
         expect(getConfig).toHaveBeenCalled();
         expect(start).toHaveBeenCalledWith(dir, true);
         expect(global.sia instanceof Sia).toBeTruthy();
       });
 
       it("registers startSynchronizationHandler", async () => {
-        await handler();
+        await handler({syncFolder: dir});
         expect(once).toHaveBeenCalledWith("syncState", expect.any(Function));
         expect(once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
       });
@@ -331,7 +327,7 @@ describe("event handlers", () => {
       it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
         const error = "expected error";
         wallet.mockReturnValue(Promise.reject(error));
-        await expect(handler()).rejects.toEqual(error);
+        await expect(handler({syncFolder: dir})).rejects.toEqual(error);
         expect(start).not.toHaveBeenCalled();
       });
 
@@ -372,12 +368,6 @@ describe("event handlers", () => {
       const password = "password";
       const key = "xxx xxx xxx";
       const dir = "/tmp";
-      beforeAll(() => {
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: dir
-        }));
-      });
-
       let handler, start, checkMnemonic, login;
       beforeEach(() => {
         handler = storjLoginHandler();
@@ -388,7 +378,6 @@ describe("event handlers", () => {
         });
         checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockReturnValue(Promise.resolve());
         login = jest.spyOn(Storj.prototype, "login").mockReturnValue(Promise.resolve());
-        getConfig.mockClear();
       });
 
       afterEach(() => {
@@ -403,9 +392,9 @@ describe("event handlers", () => {
           email: email,
           password: password,
           encryptionKey: key,
+          syncFolder: dir,
         })).resolves.not.toBeDefined();
         expect(global.storj).toBeDefined();
-        expect(getConfig).toHaveBeenCalled();
         expect(start).toHaveBeenCalledWith(dir, true);
         expect(checkMnemonic).toHaveBeenCalledWith(key);
         expect(login).toHaveBeenCalledWith(email, password, key);
@@ -421,10 +410,10 @@ describe("event handlers", () => {
           email: email,
           password: password,
           encryptionKey: key,
+          syncFolder: dir,
         })).resolves.not.toBeDefined();
         expect(close).toHaveBeenCalled();
         expect(global.storj).toBeDefined();
-        expect(getConfig).toHaveBeenCalled();
         expect(start).toHaveBeenCalledWith(dir, true);
         expect(checkMnemonic).toHaveBeenCalledWith(key);
         expect(login).toHaveBeenCalledWith(email, password, key);
@@ -438,6 +427,7 @@ describe("event handlers", () => {
           email: email,
           password: password,
           encryptionKey: key,
+          syncFolder: dir,
         })).rejects.toEqual({
           error: err,
           email: false,
@@ -457,6 +447,7 @@ describe("event handlers", () => {
           email: email,
           password: password,
           encryptionKey: key,
+          syncFolder: dir,
         })).rejects.toEqual({
           error: err,
           email: true,

@@ -20,6 +20,7 @@ jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
 jest.mock("../../src/main/core");
 
+import {app} from "electron";
 import {getConfig, saveConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
 import {installer} from "../../src/main/installer";
@@ -43,6 +44,7 @@ describe("main", () => {
     core.mockClear();
     getConfig.mockClear();
     saveConfig.mockClear();
+    app.quit.mockClear();
   });
 
   it("starts the installer when there are no config file", async () => {
@@ -50,6 +52,7 @@ describe("main", () => {
     await main();
     expect(installer).toHaveBeenCalled();
     expect(core).not.toHaveBeenCalled();
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
   it("starts the installer when it hasn't been finished yet", async () => {
@@ -58,7 +61,8 @@ describe("main", () => {
     }));
     await main();
     expect(installer).toHaveBeenCalled();
-    expect(cpre).not.toHaveBeenCalled();
+    expect(core).not.toHaveBeenCalled();
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
   it("starts the core when the installer already has been finished", async () => {
@@ -68,6 +72,7 @@ describe("main", () => {
     await main();
     expect(core).toHaveBeenCalled();
     expect(installer).not.toHaveBeenCalled();
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
   it("starts the installer when --installer flag is given", async () => {
@@ -75,6 +80,7 @@ describe("main", () => {
     await main();
     expect(installer).toHaveBeenCalled();
     expect(core).not.toHaveBeenCalled();
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
   it("sets storj true when --storj flag is given", async () => {
@@ -92,6 +98,7 @@ describe("main", () => {
       storj: true,
       sia: false,
     });
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
   it("sets sia true when --sia flag is given", async () => {
@@ -109,6 +116,7 @@ describe("main", () => {
       storj: false,
       sia: true,
     });
+    expect(app.quit).not.toHaveBeenCalled();
   });
 
 });

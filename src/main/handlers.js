@@ -100,15 +100,14 @@ export const installJREHandler = () => async () => {
   return await installJRE();
 };
 
-export const siaRequestWalletInfoHandler = () => async () => {
+export const siaRequestWalletInfoHandler = () => async payload => {
 
   if (!global.sia) {
     global.sia = new Sia();
   }
   try {
     const res = await global.sia.wallet();
-    const cfg = await getConfig();
-    global.sia.start(cfg.syncFolder, true);
+    global.sia.start(payload.syncFolder, true);
     global.sia.once("syncState", startSynchronizationHandler());
     return {
       address: res["wallet address"],
@@ -143,9 +142,8 @@ export const storjLoginHandler = () => async payload => {
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
-  const cfg = await getConfig();
   global.storj = new Storj();
-  global.storj.start(cfg.syncFolder, true);
+  global.storj.start(payload.syncFolder, true);
 
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);

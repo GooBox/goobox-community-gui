@@ -19,7 +19,8 @@ import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {
-  mapDispatchToProps, mapStateToProps,
+  mapDispatchToProps,
+  mapStateToProps,
   mergeProps
 } from "../../../../src/render/installer/containers/select-folder";
 
@@ -63,9 +64,10 @@ describe("mapDispatchToProps", () => {
   });
 
   it("maps onClickNext to push SiaPreparation and requestSiaWalletInfo", () => {
-    mapDispatchToProps(dispatch).onClickNext({storj: false, siaAccount: {address: null}});
+    const mainState = {storj: false, siaAccount: {address: null}};
+    mapDispatchToProps(dispatch).onClickNext(mainState);
     expect(dispatch).toHaveBeenCalledWith(push(screens.SiaPreparation));
-    expect(dispatch).toHaveBeenCalledWith(actions.requestSiaWalletInfo());
+    expect(dispatch).toHaveBeenCalledWith(actions.requestSiaWalletInfo(mainState));
   });
 
   it("maps onSelectFolder to selectFolder", () => {

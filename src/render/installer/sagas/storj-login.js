@@ -15,38 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ipcRenderer} from "electron";
 import {push} from "react-router-redux";
 import {call, put} from "redux-saga/effects";
 import util from "util";
-import {StorjLoginEvent} from "../../../constants";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 import * as screens from "../constants/screens";
-
-export const storjLoginAsync = async (info) => {
-
-  return new Promise((resolve, reject) => {
-
-    ipcRenderer.once(StorjLoginEvent, (_, succeeded, msg, validKeys) => {
-      if (succeeded) {
-        resolve(info);
-      } else {
-        reject({
-          ...info,
-          emailWarn: !validKeys.email,
-          passwordWarn: !validKeys.password,
-          keyWarn: !validKeys.encryptionKey,
-          warnMsg: util.isString(msg) ? msg : null,
-        });
-      }
-    });
-    ipcRenderer.send(StorjLoginEvent, info);
-
-  });
-
-};
 
 export default function* storjLogin(action) {
 
@@ -58,6 +33,7 @@ export default function* storjLogin(action) {
       email: mainState.storjAccount.email,
       password: mainState.storjAccount.password,
       encryptionKey: mainState.storjAccount.key,
+      syncFolder: mainState.folder,
     }));
     yield put(actions.storjLoginSuccess(mainState.storjAccount));
 

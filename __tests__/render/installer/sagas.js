@@ -116,14 +116,21 @@ describe("prepareJRE", () => {
 
 describe("requestSiaWallet", () => {
 
+  const dir = "/tmp";
+  const action = {
+    payload: {
+      folder: dir,
+    }
+  };
+
   it("yields incrementProgress and sendAsync with a siaRequestWalletInfo ipc action", () => {
     const info = "wallet information";
     const inc = {
       cancel: jest.fn()
     };
-    const saga = requestSiaWallet();
+    const saga = requestSiaWallet(action);
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo()));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo({syncFolder: dir})));
     expect(inc.cancel).not.toHaveBeenCalled();
     expect(saga.next(info).value).toEqual(put(actions.requestSiaWalletInfoSuccess(info)));
     expect(inc.cancel).toHaveBeenCalled();
@@ -141,9 +148,9 @@ describe("requestSiaWallet", () => {
     const inc = {
       cancel: jest.fn()
     };
-    const saga = requestSiaWallet();
+    const saga = requestSiaWallet(action);
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo()));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.siaRequestWalletInfo({syncFolder: dir})));
     expect(inc.cancel).not.toHaveBeenCalled();
     expect(saga.throw(err).value).toEqual(put(actions.requestSiaWalletInfoFailure(err)));
     expect(inc.cancel).toHaveBeenCalled();
@@ -237,6 +244,7 @@ describe("storjCreateAccount", () => {
 
 describe("storjLogin", () => {
 
+  const dir = "/tmp";
   const storjAccount = {
     email: "test@example.com",
     password: "abcdefg",
@@ -252,6 +260,7 @@ describe("storjLogin", () => {
       payload: {
         storjAccount: storjAccount,
         sia: true,
+        folder: dir,
       }
     };
   });
@@ -262,7 +271,8 @@ describe("storjLogin", () => {
     expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
       email: storjAccount.email,
       password: storjAccount.password,
-      encryptionKey: storjAccount.key
+      encryptionKey: storjAccount.key,
+      syncFolder: dir,
     })));
     expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
       ...storjAccount
@@ -278,7 +288,8 @@ describe("storjLogin", () => {
     expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
       email: storjAccount.email,
       password: storjAccount.password,
-      encryptionKey: storjAccount.key
+      encryptionKey: storjAccount.key,
+      syncFolder: dir,
     })));
     expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
       ...storjAccount
@@ -300,7 +311,8 @@ describe("storjLogin", () => {
     expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
       email: storjAccount.email,
       password: storjAccount.password,
-      encryptionKey: storjAccount.key
+      encryptionKey: storjAccount.key,
+      syncFolder: dir,
     })));
     expect(saga.throw(err).value).toEqual(put(actions.storjLoginFailure({
       ...storjAccount,

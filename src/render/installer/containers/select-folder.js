@@ -42,7 +42,7 @@ export const mapDispatchToProps = (dispatch) => ({
       dispatch(push(screens.SiaWallet));
     } else {
       dispatch(push(screens.SiaPreparation));
-      dispatch(actions.requestSiaWalletInfo());
+      dispatch(actions.requestSiaWalletInfo(mainState));
     }
   },
 
