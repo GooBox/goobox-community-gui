@@ -25,7 +25,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/GooBox/goobox-community-gui.git"
   },
-  "author": "Junpei Kawamoto <kawamoto.junpei@gmail.com>",
+  "author": "Goobox",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/GooBox/goobox-community-gui/issues"
@@ -120,7 +120,8 @@
       "!node_modules/node-jre/jre",
       "!goobox-sync-*",
       "!src",
-      "!tmp"
+      "!tmp",
+      "!vendor"
     ],
     "mac": {
       "category": "public.app-category.productivity",
@@ -143,6 +144,11 @@
         {
           "from": "tmp/win/goobox-sync-sia",
           "to": "app/goobox-sync-sia"
+        },
+        {
+          "from": "vendor/win",
+          "to": "libraries",
+          "filter": "*.dll"
         }
       ],
       "publisherName": "Goobox"
@@ -157,7 +163,8 @@
       "uninstallerIcon": "resources/goobox.ico",
       "license": "LICENSE",
       "deleteAppDataOnUninstall": true,
-      "artifactName": "${productName}-${version}-setup.${ext}"
+      "artifactName": "${productName}-${version}-setup.${ext}",
+      "include": "vendor/win/installer.nsi"
     }
   }
 }
