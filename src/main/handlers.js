@@ -192,6 +192,7 @@ export const startSynchronizationHandler = () => async payload => {
     icon: path.join(__dirname, "../../resources/goobox.png"),
     sound: true,
     wait: true,
+    appID: "Goobox"
   });
 };
 
@@ -257,6 +258,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
+        appID: "Goobox"
       });
     case "InsufficientFunds":
       return await notifyAsync({
@@ -265,6 +267,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
+        appID: "Goobox"
       });
     case "Allocated":
       return await notifyAsync({
@@ -273,6 +276,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
+        appID: "Goobox"
       });
     case "Error":
       return await notifyAsync({
@@ -281,6 +285,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
+        appID: "Goobox"
       });
   }
 };

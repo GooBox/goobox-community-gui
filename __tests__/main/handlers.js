@@ -647,7 +647,8 @@ describe("event handlers", () => {
           message: "Your sia account is ready",
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
-          wait: true
+          wait: true,
+          appID: "Goobox"
         }, expect.any(Function));
       });
 
@@ -674,7 +675,8 @@ describe("event handlers", () => {
           message: "Your wallet doesn't have sia coins",
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
-          wait: true
+          wait: true,
+          appID: "Goobox"
         }, expect.any(Function));
       });
 
@@ -686,7 +688,8 @@ describe("event handlers", () => {
           message: message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
-          wait: true
+          wait: true,
+          appID: "Goobox"
         }, expect.any(Function));
       });
 
@@ -698,7 +701,8 @@ describe("event handlers", () => {
           message: message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
-          wait: true
+          wait: true,
+          appID: "Goobox"
         }, expect.any(Function));
       });
 
@@ -710,7 +714,8 @@ describe("event handlers", () => {
           message: message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
-          wait: true
+          wait: true,
+          appID: "Goobox"
         }, expect.any(Function));
       });
 
