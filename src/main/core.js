@@ -126,7 +126,7 @@ export const core = async () => {
     // Start sync-storj app.
     if (cfg.storj && !global.storj) {
       global.storj = new Storj();
-      global.storj.start();
+      global.storj.start(cfg.syncFolder);
     }
     if (global.storj) {
       global.storj.on("syncState", updateStateHandler(mb));

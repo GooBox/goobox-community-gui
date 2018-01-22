@@ -225,6 +225,7 @@ describe("main process of the core app", () => {
       siaFundEventHandler.mockReturnValue("siaFundEventHandler");
     });
 
+    const syncFolder = "/tmp";
     let storjStart, storjOn, siaStart, siaOn;
     beforeEach(() => {
       storjStart = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
@@ -266,11 +267,12 @@ describe("main process of the core app", () => {
     it("starts the storj backend if storj conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         storj: true,
+        syncFolder: syncFolder,
       }));
 
       await core();
       expect(getConfig).toHaveBeenCalled();
-      expect(storjStart).toHaveBeenCalled();
+      expect(storjStart).toHaveBeenCalledWith(syncFolder);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -305,11 +307,12 @@ describe("main process of the core app", () => {
     it("starts the sia backend if sia conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         sia: true,
+        syncFolder: syncFolder
       }));
 
       await core();
       expect(getConfig).toHaveBeenCalled();
-      expect(siaStart).toHaveBeenCalled();
+      expect(siaStart).toHaveBeenCalledWith(syncFolder);
       expect(app.quit).not.toHaveBeenCalled();
     });
 

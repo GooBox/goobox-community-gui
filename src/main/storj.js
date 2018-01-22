@@ -50,11 +50,19 @@ export default class Storj extends EventEmitter {
       args.push("--reset-auth-file");
     }
 
+    let pathEnv = process.env.PATH;
+    if (process.platform === "win32") {
+      const lib = path.normalize(path.join(this._wd, "../../libraries/"));
+      pathEnv = `${pathEnv};${lib}`;
+    }
+    log.debug(`PATH = ${pathEnv}`);
+
     log.info(`starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
         JAVA_HOME: this._javaHome,
+        PATH: pathEnv,
       },
       shell: true,
       windowsHide: true,
