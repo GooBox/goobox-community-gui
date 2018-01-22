@@ -34,8 +34,8 @@
   "dependencies": {
     "about-window": "^1.8.0",
     "electron-json-storage": "^4.0.2",
-    "node-notifier": "^5.2.1",
-    "node-jre": "jkawamoto/node-jre#fix-8"
+    "node-jre": "jkawamoto/node-jre#custom-install-dir",
+    "node-notifier": "^5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.37",

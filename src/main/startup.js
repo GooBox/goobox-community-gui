@@ -18,6 +18,8 @@
 import {Command} from "commander";
 import {app} from "electron";
 import * as log from "electron-log";
+import * as jre from "node-jre";
+import path from "path";
 import {getConfig, saveConfig} from "./config";
 import {core} from "./core";
 import {installer} from "./installer";
@@ -44,6 +46,8 @@ export const main = async () => {
     log.transports.file.level = "info";
     log.transports.console.level = "warn";
   }
+
+  jre.setJreDir(path.join(app.getPath("userData"), "jre"));
 
   if (program.installer) {
 

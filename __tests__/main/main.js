@@ -16,11 +16,14 @@
  */
 
 jest.mock("electron");
+jest.mock("node-jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
 jest.mock("../../src/main/core");
 
 import {app} from "electron";
+import jre from "node-jre";
+import path from "path";
 import {getConfig, saveConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
 import {installer} from "../../src/main/installer";
@@ -117,6 +120,14 @@ describe("main", () => {
       sia: true,
     });
     expect(app.quit).not.toHaveBeenCalled();
+  });
+
+  it("sets the JRE directory in the user data directory", async () => {
+    const userData = "/tmp/user-data";
+    app.getPath.mockReturnValue(userData);
+    await main();
+    expect(jre.setJreDir).toHaveBeenLastCalledWith(path.join(userData, "jre"));
+    expect(app.getPath).toHaveBeenCalledWith("userData");
   });
 
 });

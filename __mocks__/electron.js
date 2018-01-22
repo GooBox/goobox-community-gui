@@ -20,7 +20,7 @@ import electronJsonStorage from "./electron-json-storage";
 export const app = {
   on: jest.fn(),
   getName: () => "Goobox",
-  getPath: () => ".",
+  getPath: jest.fn().mockReturnValue("."),
   isReady: jest.fn(),
   quit: jest.fn(),
   makeSingleInstance: jest.fn(),
