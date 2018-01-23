@@ -181,6 +181,10 @@ input {
   text-align: center;
 }
 
+.errorMsg {
+  color: red;
+}
+
 /*input.warn {*/
 /*border: 1px solid red;*/
 /*}*/
