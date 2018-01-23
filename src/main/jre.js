@@ -38,12 +38,12 @@ export async function installJRE() {
 
     if (shouldInstall) {
 
-      log.info("JRE is not found and starts installation of a JRE");
+      log.info("[GUI main] JRE is not found and starts installation of a JRE");
       jre.install((err) => {
-        log.info(`JRE installation finished ${err ? `with an error: ${err}` : ""}`);
+        log.info(`[GUI main] JRE installation has been succeeded ${err ? `with an error: ${err}` : ""}`);
         // noinspection SpellCheckingInspection
         if (err && err !== "Smoketest failed.") {
-          log.error("JRE installation fails and cleaning up");
+          log.error("[GUI main] JRE installation failed and cleaning up");
           del.sync(path.join(jre.jreDir(), "**"));
           reject(err);
         } else {

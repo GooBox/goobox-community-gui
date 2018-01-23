@@ -29,21 +29,21 @@ export default function* prepareJRE() {
 
   const inc = yield fork(incrementProgress);
   try {
-    log.debug("requesting JRE installation");
+    log.debug("[GUI render] Requesting JRE installation");
     const installed = yield call(sendAsync, ipcActions.installJRE());
     inc.cancel();
     if (installed) {
-      log.debug("JRE installation succeeds");
+      log.debug("[GUI render] JRE installation succeeds");
       yield put(actions.setProgressValue(100));
       // noinspection JSCheckFunctionSignatures
       yield call(delay, 500);
     } else {
-      log.debug("JRE installation is skipped");
+      log.debug("[GUI render] JRE installation is skipped");
     }
     yield put(push(screens.ChooseCloudService));
     yield put(actions.setProgressValue(0));
   } catch (err) {
-    log.debug(`JRE installation fails: ${err}`);
+    log.debug(`[GUI render] JRE installation fails: ${err}`);
     inc.cancel();
     // TODO: show the error message.
   }

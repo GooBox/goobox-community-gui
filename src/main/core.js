@@ -57,7 +57,7 @@ export const core = async () => {
   mb.window.setSkipTaskbar(true);
   mb.app.on('window-all-closed', app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
-  mb.app.on("quit", (_, code) => log.info(`Goobox is closed: status code = ${code}`));
+  mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
@@ -118,12 +118,12 @@ export const core = async () => {
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
 
   // Start back ends.
-  log.info("Loading the config file.");
+  log.info("[GUI main] Loading the config file.");
   try {
     await installJRE();
 
     const cfg = await getConfig();
-    log.debug(JSON.stringify(cfg));
+    log.debug(`[GUI main] Config = ${JSON.stringify(cfg)}`);
     // Start sync-storj app.
     if (cfg.storj && !global.storj) {
       global.storj = new Storj();
@@ -144,7 +144,7 @@ export const core = async () => {
     }
 
   } catch (err) {
-    log.error(err);
+    log.error(`[GUI main] Failed to start synchronization ${err}`);
     dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
     app.quit();
   }

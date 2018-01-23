@@ -38,7 +38,7 @@ export const installer = () => {
   }
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
-    log.verbose(`creating the default sync folder: ${process.env.DEFAULT_SYNC_FOLDER}`);
+    log.verbose(`[GUI main] Creating the default sync folder: ${process.env.DEFAULT_SYNC_FOLDER}`);
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 

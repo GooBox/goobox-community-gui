@@ -31,13 +31,13 @@ export default function* requestSiaWallet(action) {
   const inc = yield fork(incrementProgress);
   try {
 
-    log.info("requesting sia wallet information");
+    log.info("[GUI render] Requesting sia wallet information");
     const info = yield call(sendAsync, ipcActions.siaRequestWalletInfo({
       syncFolder: mainState.folder,
     }));
     inc.cancel();
 
-    log.debug(`received the wallet information: ${info}`);
+    log.debug(`[GUI render] Received the wallet information: ${info}`);
     yield put(actions.requestSiaWalletInfoSuccess(info));
     yield put(actions.setProgressValue(100));
     // noinspection JSCheckFunctionSignatures
@@ -46,7 +46,7 @@ export default function* requestSiaWallet(action) {
   } catch (err) {
 
     inc.cancel();
-    log.debug(`fails to received the wallet information: ${err}`);
+    log.debug(`[GUI render] Fails to received the wallet information: ${err}`);
     yield put(actions.requestSiaWalletInfoFailure(err));
 
   }

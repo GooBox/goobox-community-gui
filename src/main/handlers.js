@@ -49,7 +49,7 @@ export const changeStateHandler = mb => async payload => {
     if (global.sia) {
       global.sia.start();
     }
-    log.debug("Update the tray icon to the idle icon");
+    log.debug("[GUI main] Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());
   } else {
     if (global.storj) {
@@ -58,7 +58,7 @@ export const changeStateHandler = mb => async payload => {
     if (global.sia) {
       await global.sia.close();
     }
-    log.debug("Update the tray icon to the paused icon");
+    log.debug("[GUI main] Update the tray icon to the paused icon");
     mb.tray.setImage(icons.getPausedIcon());
   }
   return payload;
@@ -66,14 +66,14 @@ export const changeStateHandler = mb => async payload => {
 
 export const openSyncFolderHandler = () => async () => {
   const cfg = await getConfig();
-  log.info(`Open sync folder ${cfg.syncFolder}`);
+  log.info(`[GUI main] Open sync folder ${cfg.syncFolder}`);
   utils.openDirectory(cfg.syncFolder);
 };
 
 export const calculateUsedVolumeHandler = () => async () => {
   const cfg = await getConfig();
   const volume = await utils.totalVolume(cfg.syncFolder);
-  log.info(`Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
+  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
   return volume / 1024 / 1024;
 };
 
@@ -82,7 +82,7 @@ export const willQuitHandler = (app) => async event => {
   if ((!global.storj || global.storj.closed) && (!global.sia || global.sia.closed)) {
     return;
   }
-  log.info("Goobox will quit but synchronization processes are still running");
+  log.info("[GUI main] Goobox will quit but synchronization processes are still running");
   event.preventDefault();
 
   if (global.storj) {
@@ -137,7 +137,7 @@ export const stopSyncAppsHandler = () => async () => {
 
 export const storjLoginHandler = () => async payload => {
 
-  log.info(`logging in to Storj: ${payload.email}`);
+  log.info(`[GUI main] Logging in to Storj: ${payload.email}`);
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
@@ -147,7 +147,7 @@ export const storjLoginHandler = () => async payload => {
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);
   } catch (err) {
-    log.error(err);
+    log.error(`[GUI main] Invalid mnemonic: ${err}`);
     throw {
       error: err,
       email: false,
@@ -159,7 +159,7 @@ export const storjLoginHandler = () => async payload => {
   try {
     await global.storj.login(payload.email, payload.password, payload.encryptionKey);
   } catch (err) {
-    log.error(err);
+    log.error(`[GUI main] Failed to log in to Storj: ${err}`);
     throw {
       error: err,
       email: true,
@@ -171,7 +171,7 @@ export const storjLoginHandler = () => async payload => {
 };
 
 export const storjCreateAccountHandler = () => async payload => {
-  log.info(`creating a new Storj account for ${payload.email}`);
+  log.info(`[GUI main] Creating a new Storj account for ${payload.email}`);
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
@@ -197,7 +197,7 @@ export const startSynchronizationHandler = () => async payload => {
 
 export const installerWindowAllClosedHandler = (app) => async () => {
 
-  log.info(`loading the config file ${ConfigFile}`);
+  log.info(`[GUI main] Loading the config file ${ConfigFile}`);
   try {
 
     const cfg = await getConfig();
@@ -208,20 +208,20 @@ export const installerWindowAllClosedHandler = (app) => async () => {
       }
 
       // if the installation process is finished.
-      log.info("installation has been finished, now starting Goobox");
+      log.info("[GUI main] Installation has been succeeded, now starting synchronization");
       await core();
 
     } else {
 
       // otherwise
-      log.info("installation has been canceled");
+      log.info("[GUI main] Installation has been canceled");
       if (global.storj) {
-        log.info("closing the storj instance");
+        log.info("[GUI main] Closing the storj instance");
         await global.storj.close();
         delete global.storj;
       }
       if (global.sia) {
-        log.info("closing the sia instance");
+        log.info("[GUI main] Closing the sia instance");
         await global.sia.close();
         delete global.sia;
       }
@@ -230,7 +230,7 @@ export const installerWindowAllClosedHandler = (app) => async () => {
     }
 
   } catch (err) {
-    log.error(`failed to read/write the config: ${err}`);
+    log.error(`[GUI main] Failed to read/write the config: ${err}`);
     app.quit();
   }
 
@@ -240,15 +240,15 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 export const updateStateHandler = mb => async payload => {
   switch (payload.newState) {
     case "synchronizing":
-      log.debug("update the tray icon to the synchronizing one");
+      log.debug("[GUI main] Set the synchronizing icon");
       mb.tray.setImage(icons.getSyncIcon());
       break;
     case "idle":
-      log.debug("update the tray icon to the idle one");
+      log.debug("[GUI main] Set the idle icon");
       mb.tray.setImage(icons.getIdleIcon());
       break;
     default:
-      log.debug(`received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
+      log.debug(`[GUI main] Received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
   }
 };
 

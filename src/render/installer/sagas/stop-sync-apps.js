@@ -24,10 +24,10 @@ import * as actions from "../actions";
 export default function* stopSyncApps() {
   yield put(actions.processingStart());
   try {
-    log.debug("closing sync apps if running");
+    log.debug("[GUI render] Closing sync apps if running");
     yield call(sendAsync, ipcActions.stopSyncApps());
   } catch (err) {
-    log.debug(`fails to stop sync apps: ${err}`);
+    log.debug(`[GUI render] Failed to stop sync apps: ${err}`);
     // TODO: error handling.
   }
   yield put(actions.processingEnd());

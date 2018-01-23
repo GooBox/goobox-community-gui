@@ -26,7 +26,7 @@ if (process.platform === "win32") {
   };
 
   totalVolume = async (dir) => {
-    //
+    // TODO: Implement it.
     return 0;
   };
 
