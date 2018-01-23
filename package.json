@@ -37,19 +37,19 @@
     "node-jre": "jkawamoto/node-jre#fix-8"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.36",
-    "@babel/preset-env": "^7.0.0-beta.36",
-    "@babel/preset-react": "^7.0.0-beta.36",
+    "@babel/core": "^7.0.0-beta.38",
+    "@babel/preset-env": "^7.0.0-beta.38",
+    "@babel/preset-react": "^7.0.0-beta.38",
     "babel-core": "^7.0.0-0",
-    "babel-jest": "^22.0.4",
+    "babel-jest": "^22.1.0",
     "babel-loader": "^8.0.0-beta.0",
     "coveralls": "^3.0.0",
-    "electron": "1.7.10",
-    "electron-log": "^2.2.13",
+    "electron": "1.7.11",
+    "electron-log": "^2.2.14",
     "electron-packager": "^10.1.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "jest": "^22.0.4",
+    "jest": "^22.1.4",
     "js-yaml": "^3.10.0",
     "menubar": "^5.2.3",
     "npm-check-updates": "^2.14.0",
@@ -58,7 +58,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
-    "semver": "^5.4.1",
+    "semver": "^5.5.0",
     "webpack": "^3.10.0"
   },
   "babel": {
@@ -69,7 +69,7 @@
         {
           "targets": {
             "node": "current",
-            "electron": "1.7.10"
+            "electron": "1.7.11"
           },
           "useBuiltIns": "usage"
         }
