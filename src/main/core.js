@@ -55,6 +55,7 @@ export const core = async () => {
     showDockIcon: false,
   });
   mb.window.setSkipTaskbar(true);
+  mb.app.on('window-all-closed', app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`Goobox is closed: status code = ${code}`));
 

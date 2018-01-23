@@ -108,7 +108,6 @@ export const siaRequestWalletInfoHandler = () => async payload => {
   try {
     const res = await global.sia.wallet();
     global.sia.start(payload.syncFolder, true);
-    global.sia.once("syncState", startSynchronizationHandler());
     return {
       address: res["wallet address"],
       seed: res["primary seed"],
@@ -203,6 +202,10 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 
     const cfg = await getConfig();
     if (cfg && cfg.installed) {
+
+      if (global.sia) {
+        global.sia.once("syncState", startSynchronizationHandler());
+      }
 
       // if the installation process is finished.
       log.info("installation has been finished, now starting Goobox");

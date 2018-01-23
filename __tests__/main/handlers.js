@@ -318,12 +318,6 @@ describe("event handlers", () => {
         expect(global.sia instanceof Sia).toBeTruthy();
       });
 
-      it("registers startSynchronizationHandler", async () => {
-        await handler({syncFolder: dir});
-        expect(once).toHaveBeenCalledWith("syncState", expect.any(Function));
-        expect(once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
-      });
-
       it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
         const error = "expected error";
         wallet.mockReturnValue(Promise.reject(error));
@@ -560,6 +554,20 @@ describe("event handlers", () => {
         expect(core).toHaveBeenCalled();
         expect(app.quit).not.toHaveBeenCalled();
 
+      });
+
+      it("registers startSynchronizationHandler when the user chooses sia", async () => {
+        getConfig.mockReturnValue(Promise.resolve({
+          installed: true,
+          sia: true,
+        }));
+        global.sia = {
+          once: jest.fn(),
+        };
+
+        await onWindowAllClosed();
+        expect(global.sia.once).toHaveBeenCalledWith("syncState", expect.any(Function));
+        expect(global.sia.once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
       });
 
       // TODO: it shows some message to make sure users want to quit the installer.
