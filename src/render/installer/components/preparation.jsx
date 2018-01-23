@@ -67,8 +67,16 @@ export default function Preparation(props) {
   const barStyle = {
     width: `${props.progress}%`
   };
+
+  let msg;
+  if (props.errorMsg) {
+    msg = <p className="errorMsg">{props.errorMsg}</p>
+  } else {
+    msg = props.children;
+  }
+
   return (
-    <div className="wait">
+    <div className={!props.errorMsg ? "wait" : ""}>
       <div style={style.background}>
       </div>
       <main style={style.main}>
@@ -80,7 +88,7 @@ export default function Preparation(props) {
           <span className="bar" style={barStyle}/>
         </div>
         <p className="msg" style={style.msg}>
-          {props.children}
+          {msg}
         </p>
       </main>
     </div>
@@ -90,4 +98,5 @@ export default function Preparation(props) {
 
 Preparation.propTypes = {
   progress: PropTypes.number.isRequired,
+  errorMsg: PropTypes.string,
 };

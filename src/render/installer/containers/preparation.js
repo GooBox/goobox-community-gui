@@ -20,6 +20,7 @@ import Preparation from "../components/preparation";
 
 export const mapStateToProps = (state) => ({
   progress: state.main.progress,
+  errorMsg: state.main.errorMsg
 });
 
 export default connect(mapStateToProps)(Preparation);

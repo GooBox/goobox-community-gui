@@ -40,4 +40,20 @@ describe("Preparation component", () => {
     expect(wrapper.find(".bar").prop("style").width).toEqual(`${progress}%`);
   });
 
+  it("shows an error message instead of the given children if given", () => {
+    const errorMsg = "expected error";
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}>{children}</Preparation>);
+    expect(wrapper.find(".msg").html()).toContain(errorMsg);
+  });
+
+  it("has wait class", () => {
+    expect(wrapper.hasClass("wait")).toBeTruthy();
+  });
+
+  it("doesn't have wait class if error message is given", () => {
+    const errorMsg = "expected error";
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}>{children}</Preparation>);
+    expect(wrapper.hasClass("wait")).toBeFalsy();
+  });
+
 });
