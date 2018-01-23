@@ -183,5 +183,14 @@ describe("reducer", () => {
     });
   });
 
+  it("sets the given error message to errorMsg state", () => {
+    const error = "expected error";
+    expect(reducer(state, actions.setErrorMsg(error))).toEqual({
+      ...state,
+      errorMsg: error,
+    });
+
+  });
+
 });
 

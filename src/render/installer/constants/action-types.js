@@ -41,3 +41,5 @@ export const ProcessingEnd = "ProcessingEnd";
 
 export const SaveConfig = "SaveConfig";
 export const StopSyncApps = "StopSyncApps";
+
+export const SetErrorMsg = "SetErrorMsg";

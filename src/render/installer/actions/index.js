@@ -44,3 +44,5 @@ export const processingEnd = createAction(actionTypes.ProcessingEnd);
 
 export const saveConfig = createAction(actionTypes.SaveConfig);
 export const stopSyncApps = createAction(actionTypes.StopSyncApps);
+
+export const setErrorMsg = createAction(actionTypes.SetErrorMsg);

@@ -112,6 +112,22 @@ describe("prepareJRE", () => {
     expect(saga.next().done).toBeTruthy();
   });
 
+  it("yields setErrorMsg action and stops increasing progress when installJRE throws an error", () => {
+    const saga = prepareJRE();
+    const inc = {
+      cancel: jest.fn()
+    };
+    const err = "expected error";
+    expect(saga.next().value).toEqual(fork(incrementProgress));
+    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
+    expect(inc.cancel).not.toHaveBeenCalled();
+
+    // throw an error.
+    expect(saga.throw(err).value).toEqual(put(actions.setErrorMsg(err)));
+    expect(inc.cancel).toHaveBeenCalled();
+    expect(saga.next().done).toBeTruthy();
+  });
+
 });
 
 describe("requestSiaWallet", () => {

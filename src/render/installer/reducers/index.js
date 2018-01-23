@@ -46,6 +46,8 @@ export const InitialState = {
   processing: false,
   // used to show current progress in a progress bar.
   progress: 0,
+  // error message.
+  errorMsg: null,
 };
 
 export default handleActions({
@@ -100,8 +102,11 @@ export default handleActions({
   [actionTypes.ProcessingEnd]: (state) => ({
     ...state,
     processing: false,
-  })
-
+  }),
+  [actionTypes.SetErrorMsg]: (state, action) => ({
+    ...state,
+    errorMsg: action.payload
+  }),
 }, InitialState);
 
 
