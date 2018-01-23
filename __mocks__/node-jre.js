@@ -18,6 +18,7 @@
 export const driver = jest.fn();
 export const install = jest.fn();
 export const jreDir = jest.fn();
+export const setJreDir = jest.fn();
 
 driver.mockReturnValue("/tmp/jre/bin/java");
 
@@ -31,5 +32,6 @@ const jre = {
   driver: driver,
   install: install,
   jreDir: jreDir,
+  setJreDir: setJreDir,
 };
 export default jre;
