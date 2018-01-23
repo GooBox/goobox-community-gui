@@ -17,6 +17,7 @@
 
 "use strict";
 jest.mock("child_process");
+jest.useFakeTimers();
 
 import {execSync, spawn} from "child_process";
 import yaml from "js-yaml";
@@ -171,6 +172,7 @@ describe("Sia class", () => {
         }
       });
       sia.start(dir);
+      jest.runOnlyPendingTimers();
       expect(spawn).toHaveBeenCalledTimes(2);
       expect(spawn).toHaveBeenLastCalledWith(sia._cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
         cwd: sia._wd,

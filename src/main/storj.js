@@ -35,7 +35,7 @@ export default class Storj extends EventEmitter {
       this._cmd += ".bat";
     }
     this._javaHome = path.join(jre.driver(), "../../");
-    log.debug(`new storj instance: cmd = ${this._cmd}, wd = ${this._wd}, java-home = ${this._javaHome}`);
+    log.debug(`[GUI main] New storj instance: cmd = ${this._cmd}, wd = ${this._wd}, java-home = ${this._javaHome}`);
   }
 
   start(dir, reset) {
@@ -57,7 +57,7 @@ export default class Storj extends EventEmitter {
     }
     log.debug(`PATH = ${pathEnv}`);
 
-    log.info(`starting ${this._cmd} in ${this._wd} with ${args}`);
+    log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
@@ -72,24 +72,24 @@ export default class Storj extends EventEmitter {
       try {
         const e = JSON.parse(line);
         if (e.method) {
-          log.debug(`received a storj event: ${e.method}`);
+          log.debug(`[GUI main] Received a storj event: ${e.method}`);
           this.emit(e.method, e.args);
         } else {
-          log.debug(`received a response from sync-storj`);
+          log.debug(`[GUI main] Received a response from sync-storj`);
           this.emit("response", e);
         }
       } catch (err) {
-        log.error(`could not handle a message from sync-storj: ${line}`);
+        log.error(`[GUI main] Could not handle a message from sync-storj: ${line}`);
       }
     });
 
     readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
     this.proc.on("close", (code, signal) => {
-      log.debug(`storj closed: code = ${code}, signal = ${signal}`);
       if (this.proc && !this.proc._closing) {
+        log.debug(`[GUI main] sync-storj closed: code = ${code}, signal = ${signal}`);
         this.proc = null;
-        this.start(dir);
+        setTimeout(() => this.start(dir), 5000);
       }
     });
 
@@ -112,7 +112,7 @@ export default class Storj extends EventEmitter {
       new Promise(resolve => {
         this.once("response", resolve);
         const req = JSON.stringify(request);
-        log.debug(`sending a request to sync storj: ${req}`);
+        log.debug(`[GUI main] Sending a ${name} request to sync storj: ${req}`);
         this.proc.stdin.write(`${req}\n`);
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, `${name} request timed out`), DefaultTimeout))
@@ -172,7 +172,7 @@ export default class Storj extends EventEmitter {
       return;
     }
 
-    log.info("closing the sync-storj app");
+    log.info("[GUI main] Closing the sync-storj app");
     this.proc._closing = true;
     return Promise.race([
       this._sendRequest("Quit", {
@@ -180,7 +180,7 @@ export default class Storj extends EventEmitter {
       }),
       new Promise(resolve => {
         this.proc.once("close", () => {
-          log.info("streams of sync-storj are closed");
+          log.info("[GUI main] Streams of sync-storj are closed");
           resolve();
         });
       })

@@ -17,7 +17,6 @@
 "use strict";
 jest.mock("child_process");
 jest.useFakeTimers();
-jest.setTimeout(5 * 60000);
 
 import {spawn} from "child_process";
 import jre from "node-jre";
@@ -28,48 +27,32 @@ import Storj from "../../src/main/storj";
 
 describe("Storj class", () => {
 
+  const oldPlatform = process.platform;
+  beforeAll(() => {
+    Object.defineProperty(process, "platform", {
+      value: "darwin"
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(process, "platform", {
+      value: oldPlatform
+    });
+  });
+
   let storj;
   beforeEach(() => {
     storj = new Storj();
     setTimeout.mockReset();
   });
 
+
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync storj app", () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "darwin"
-        });
-
-        const storj = new Storj();
-        const cmd = "goobox-sync-storj";
-        expect(storj._cmd).toEqual(cmd);
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
-    });
-
-    it("has cmd which describes the path to the bat file of sync storj app in Windows", () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "win32"
-        });
-
-        const storj = new Storj();
-        const cmd = "goobox-sync-storj.bat";
-        expect(storj._cmd).toEqual(cmd);
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
+      const storj = new Storj();
+      const cmd = "goobox-sync-storj";
+      expect(storj._cmd).toEqual(cmd);
     });
 
     it("has wd which describes the directory containing the sync storj app", () => {
@@ -106,6 +89,7 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
+          PATH: process.env.PATH,
         },
         shell: true,
         windowsHide: true,
@@ -118,6 +102,7 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
+          PATH: process.env.PATH,
         },
         shell: true,
         windowsHide: true,
@@ -188,11 +173,15 @@ describe("Storj class", () => {
       });
       storj.start(dir);
       // The first time is by start method, the second time is to restart.
+      expect(spawn).toHaveBeenCalledTimes(1);
+      // jest.runOnlyPendingTimers();
+      setTimeout.mock.calls[0][0]();
       expect(spawn).toHaveBeenCalledTimes(2);
       expect(spawn).toHaveBeenLastCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: {
           JAVA_HOME: storj._javaHome,
+          PATH: process.env.PATH,
         },
         shell: true,
         windowsHide: true,
@@ -423,6 +412,56 @@ describe("Storj class", () => {
     it("returns false if the proc is not null", () => {
       storj.proc = "some process";
       expect(storj.closed).toBeFalsy();
+    });
+
+  });
+
+  describe("in Windows", () => {
+
+    const dir = "/tmp";
+    const oldPlatform = process.platform;
+    beforeAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: "win32"
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform
+      });
+    });
+
+    it("has cmd which describes the path to the bat file of sync storj app", () => {
+      const storj = new Storj();
+      const cmd = "goobox-sync-storj.bat";
+      expect(storj._cmd).toEqual(cmd);
+    });
+
+    it("spawns sync-storj", () => {
+      storj.start(dir);
+      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
+        cwd: storj._wd,
+        env: {
+          JAVA_HOME: storj._javaHome,
+          PATH: `${process.env.PATH};${path.normalize(path.join(storj._wd, "../../libraries/"))}`,
+        },
+        shell: true,
+        windowsHide: true,
+      });
+    });
+
+    it("spawns sync-storj with --reset-db and --reset-auth-file flags when reset is true", () => {
+      storj.start(dir, true);
+      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
+        cwd: storj._wd,
+        env: {
+          JAVA_HOME: storj._javaHome,
+          PATH: `${process.env.PATH};${path.normalize(path.join(storj._wd, "../../libraries/"))}`,
+        },
+        shell: true,
+        windowsHide: true,
+      });
     });
 
   });

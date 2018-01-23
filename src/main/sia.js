@@ -37,7 +37,7 @@ export default class Sia extends EventEmitter {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
-    log.debug(`new sia instance: cmd = ${this._cmd}, java-home = ${this._javaHome}`);
+    log.debug(`[GUI main] New sia instance: cmd = ${this._cmd}, java-home = ${this._javaHome}`);
   }
 
   start(dir, reset) {
@@ -50,7 +50,7 @@ export default class Sia extends EventEmitter {
     if (reset) {
       args.push("--reset-db");
     }
-    log.info(`starting sync-sia app in ${this._cmd} with ${args}`);
+    log.info(`[GUI main] Starting ${this._cmd} in ${this._cmd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
@@ -62,12 +62,12 @@ export default class Sia extends EventEmitter {
 
     // Attach a root event handler to stdout.
     readLine.createInterface({input: this.proc.stdout}).on("line", line => {
-      log.debug(`Received a sia event: ${line}`);
+      log.debug(`[GUI main] Received a sia event: ${line}`);
       try {
         const e = JSON.parse(line);
         this.emit(e.method, e.args);
       } catch (err) {
-        log.error(`could not handle a message from sync-sia: ${line}`);
+        log.error(`[GUI main] Could not handle a message from sync-sia: ${line}`);
       }
     });
 
@@ -76,9 +76,9 @@ export default class Sia extends EventEmitter {
 
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {
-        log.debug(`sia closed: code = ${code}, signal = ${signal}`);
+        log.debug(`[GUI main] sync-sia closed: code = ${code}, signal = ${signal}`);
         this.proc = null;
-        this.start(dir);
+        setTimeout(() => this.start(dir), 5000);
       }
     });
 
@@ -98,19 +98,19 @@ export default class Sia extends EventEmitter {
     return Promise.all([
       new Promise(resolve => {
         this.proc.once("exit", () => {
-          log.info("the sync-sia app is exited");
+          log.info("[GUI main] sync-sia app is exited");
           this.proc = null;
           resolve();
         });
       }),
       new Promise(resolve => {
         this.proc.once("close", () => {
-          log.info("streams of sync-sia app is closed");
+          log.info("[GUI main] Streams of sync-sia app are closed");
           resolve();
         });
       }),
       new Promise(resolve => {
-        log.info("closing the sync-sia app");
+        log.info("[GUI main] Closing the sync-sia app");
         if (process.platform === "win32") {
           // noinspection SpellCheckingInspection
           execSync(`taskkill /pid ${this.proc.pid} /T /F`);
@@ -125,7 +125,7 @@ export default class Sia extends EventEmitter {
 
   async wallet() {
 
-    log.info(`requesting the wallet info to ${this._cmd}`);
+    log.info(`[GUI main] Requesting the wallet info to ${this._cmd}`);
     return new Promise((resolve, reject) => {
 
       const proc = spawn(this._cmd, ["wallet"], {
@@ -149,10 +149,10 @@ export default class Sia extends EventEmitter {
       toString(proc.stdout).then(res => {
         const info = yaml.safeLoad(res);
         if (!info || !info["wallet address"]) {
-          log.error(`failed to obtain the wallet information: ${info}`);
+          log.error(`[GUI main] Failed to obtain the wallet information: ${info}`);
           reject("failed to obtain the wallet information");
         } else {
-          log.info(`the wallet info is received: ${info["wallet address"]}`);
+          log.info(`[GUI main] Received the wallet info: address = ${info["wallet address"]}`);
           resolve(info);
         }
       });
