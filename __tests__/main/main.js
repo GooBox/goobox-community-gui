@@ -20,6 +20,7 @@ jest.mock("node-jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
 jest.mock("../../src/main/core");
+jest.mock("../../src/main/papertrail");
 
 import {app} from "electron";
 import jre from "node-jre";

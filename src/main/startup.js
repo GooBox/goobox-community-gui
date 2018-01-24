@@ -23,8 +23,13 @@ import path from "path";
 import {getConfig, saveConfig} from "./config";
 import {core} from "./core";
 import {installer} from "./installer";
+import {initPapertrail} from "./papertrail";
 
 export const main = async () => {
+
+  if ("production" !== process.env.NODE_ENV && process.env.PAPERTRAIL) {
+    initPapertrail();
+  }
 
   const program = new Command();
   program
@@ -59,11 +64,11 @@ export const main = async () => {
     try {
       cfg = await getConfig();
     } catch (err) {
-      log.info(`Cannot fine the configuration file`);
+      log.info("[GUI main] Cannot fine the configuration file");
     }
 
     if (!cfg || !cfg.installed) {
-      log.info(`Start the installer`);
+      log.info("[GUI main] Start the installer");
       installer();
       return;
     }

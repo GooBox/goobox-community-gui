@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "start:installer": "electron . installer",
+    "start:installer": "electron . --installer",
     "build": "webpack",
     "build:watch": "webpack -w",
     "test": "jest",
@@ -14,8 +14,8 @@
     "coveralls": "cat coverage/lcov.info | coveralls",
     "check-update": "ncu -u",
     "pack": "electron-builder -wm --dir",
-    "dist": "electron-builder -w",
-    "dist:pre": "run-p dist2:pre:*:*",
+    "dist": "electron-builder -w --x64",
+    "dist:pre": "run-p dist:pre:*:*",
     "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.15/goobox-sync-storj-0.0.15-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.17/goobox-sync-sia-0.0.17-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
@@ -75,7 +75,9 @@
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
     "svg-url-loader": "^2.3.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "winston": "^2.4.0",
+    "winston-papertrail": "^1.0.5"
   },
   "babel": {
     "sourceMaps": "inline",
@@ -113,6 +115,9 @@
   },
   "build": {
     "appId": "com.electron.goobox",
+    "directories": {
+      "buildResources": ""
+    },
     "files": [
       "!__mocks__",
       "!__tests__",
@@ -159,6 +164,7 @@
       "node_modules/node-notifier"
     ],
     "nsis": {
+      "perMachine": true,
       "installerIcon": "resources/goobox.ico",
       "uninstallerIcon": "resources/goobox.ico",
       "license": "LICENSE",
