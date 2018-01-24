@@ -23,38 +23,45 @@ import path from "path";
 
 export async function installJRE() {
 
-  return new Promise((resolve, reject) => {
+  return Promise.race([
 
-    log.verbose(`[GUI main] JRE path: ${jre.jreDir()}`);
-    let shouldInstall = false;
-    try {
-      if (!fs.existsSync(jre.driver())) {
+    new Promise((resolve, reject) => {
+
+      log.verbose(`[GUI main] JRE path: ${jre.jreDir()}`);
+      let shouldInstall = false;
+      try {
+        if (!fs.existsSync(jre.driver())) {
+          shouldInstall = true;
+        }
+      } catch (err) {
+        log.silly(err);
         shouldInstall = true;
       }
-    } catch (err) {
-      log.silly(err);
-      shouldInstall = true;
-    }
 
-    if (shouldInstall) {
+      if (shouldInstall) {
 
-      log.info("[GUI main] JRE is not found and starts installation of a JRE");
-      jre.install((err) => {
-        log.info(`[GUI main] JRE installation has been finished ${err ? `with an error: ${err}` : ""}`);
-        // noinspection SpellCheckingInspection
-        if (err && err !== "Smoketest failed.") {
-          log.error("[GUI main] JRE installation failed and cleaning up");
-          del.sync(path.join(jre.jreDir(), "**"));
-          reject("Failed to install JRE");
-        } else {
-          resolve(true);
-        }
-      });
+        log.info("[GUI main] JRE is not found and starts installation of a JRE");
+        jre.install((err) => {
+          log.info(`[GUI main] JRE installation has been finished ${err ? `with an error: ${err}` : ""}`);
+          // noinspection SpellCheckingInspection
+          if (err && err !== "Smoketest failed.") {
+            log.error("[GUI main] JRE installation failed and cleaning up");
+            del.sync(path.join(jre.jreDir(), "**"));
+            reject("Failed to install JRE");
+          } else {
+            resolve(true);
+          }
+        });
 
-    } else {
-      resolve(false);
-    }
 
-  });
+      } else {
+        resolve(false);
+      }
+
+    }),
+
+    new Promise((_, reject) => setTimeout(() => reject("JRE installation timed out"), 5 * 60 * 1000))
+
+  ]);
 
 }

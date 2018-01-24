@@ -17,6 +17,7 @@
 
 jest.mock("fs");
 jest.mock("del");
+jest.useFakeTimers();
 
 import del from "del";
 import fs from "fs";
@@ -79,6 +80,17 @@ describe("installJRE function", () => {
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
     expect(jre.install).toHaveBeenCalled();
+  });
+
+  it("times out the installation after 5min", async () => {
+    fs.existsSync.mockReturnValue(false);
+
+    jre.install.mockImplementationOnce(() => {
+    });
+    setTimeout.mockImplementation(cb => cb());
+    await expect(installJRE()).rejects.toEqual(expect.any(String));
+    expect(jre.install).toHaveBeenCalled();
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 5 * 60 * 1000);
   });
 
   it("deletes downloaded files if the installation fails", async () => {
