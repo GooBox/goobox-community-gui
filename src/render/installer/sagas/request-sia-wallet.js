@@ -43,6 +43,9 @@ export default function* requestSiaWallet(action) {
     // noinspection JSCheckFunctionSignatures
     yield call(delay, 500);
 
+    yield put(push(screens.SiaWallet));
+    yield put(actions.setProgressValue(0));
+
   } catch (err) {
 
     inc.cancel();
@@ -50,9 +53,6 @@ export default function* requestSiaWallet(action) {
     yield put(actions.requestSiaWalletInfoFailure(err));
 
   }
-
-  yield put(push(screens.SiaWallet));
-  yield put(actions.setProgressValue(0));
 
 }
 

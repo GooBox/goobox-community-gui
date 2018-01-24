@@ -95,6 +95,10 @@ export default handleActions({
     ...state,
     siaAccount: action.payload,
   }),
+  [actionTypes.RequestSiaWalletInfoFailure]: (state, action) => ({
+    ...state,
+    errorMsg: action.payload
+  }),
   [actionTypes.ProcessingStart]: (state) => ({
     ...state,
     processing: true,

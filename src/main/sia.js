@@ -23,6 +23,7 @@ import jre from "node-jre";
 import path from "path";
 import readLine from "readline";
 import toString from "stream-to-string";
+import util from "util";
 
 export default class Sia extends EventEmitter {
 
@@ -143,7 +144,7 @@ export default class Sia extends EventEmitter {
 
       proc.on("error", (err) => {
         log.error(err);
-        reject(err);
+        reject(util.isString(err) ? err : "failed to obtain the wallet information");
       });
 
       toString(proc.stdout).then(res => {

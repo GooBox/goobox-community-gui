@@ -167,7 +167,13 @@ describe("reducer", () => {
     });
   });
 
-  // TODO: RequestSiaWalletInfoFailure.
+  it("sets the give error message to errorMsg state by RequestSiaWalletInfoFailure action", () => {
+    const error = "expected error";
+    expect(reducer(state, actions.requestSiaWalletInfoFailure(error))).toEqual({
+      ...state,
+      errorMsg: error,
+    });
+  });
 
   it("sets processing true by ProcessingStart action", () => {
     expect(reducer(state, actions.processingStart())).toEqual({
@@ -183,7 +189,7 @@ describe("reducer", () => {
     });
   });
 
-  it("sets the given error message to prepareJREFailure state", () => {
+  it("sets the given error message to errorMsg state by PrepareJREFailure action", () => {
     const error = "expected error";
     expect(reducer(state, actions.prepareJREFailure(error))).toEqual({
       ...state,

@@ -156,10 +156,10 @@ describe("requestSiaWallet", () => {
     expect(saga.next().value).toEqual(call(delay, 500));
     expect(saga.next().value).toEqual(put(push(screens.SiaWallet)));
     expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
-    expect(saga.next().done);
+    expect(saga.next().done).toBeTruthy();
   });
 
-  it("yields incrementProgress and sendAsync, and handle errors", () => {
+  it("yields setErrorMsg action and stops increasing progress when requestSiaWallet throws an error", () => {
     const err = "expected error";
     const inc = {
       cancel: jest.fn()
@@ -170,9 +170,7 @@ describe("requestSiaWallet", () => {
     expect(inc.cancel).not.toHaveBeenCalled();
     expect(saga.throw(err).value).toEqual(put(actions.requestSiaWalletInfoFailure(err)));
     expect(inc.cancel).toHaveBeenCalled();
-    expect(saga.next().value).toEqual(put(push(screens.SiaWallet)));
-    expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
-    expect(saga.next().done);
+    expect(saga.next().done).toBeTruthy();
   });
 
 });
