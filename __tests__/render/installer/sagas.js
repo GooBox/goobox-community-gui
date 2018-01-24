@@ -112,7 +112,7 @@ describe("prepareJRE", () => {
     expect(saga.next().done).toBeTruthy();
   });
 
-  it("yields setErrorMsg action and stops increasing progress when installJRE throws an error", () => {
+  it("yields prepareJREFailure action and stops increasing progress when installJRE throws an error", () => {
     const saga = prepareJRE();
     const inc = {
       cancel: jest.fn()
@@ -123,7 +123,7 @@ describe("prepareJRE", () => {
     expect(inc.cancel).not.toHaveBeenCalled();
 
     // throw an error.
-    expect(saga.throw(err).value).toEqual(put(actions.setErrorMsg(err)));
+    expect(saga.throw(err).value).toEqual(put(actions.prepareJREFailure(err)));
     expect(inc.cancel).toHaveBeenCalled();
     expect(saga.next().done).toBeTruthy();
   });

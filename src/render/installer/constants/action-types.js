@@ -35,6 +35,7 @@ export const RequestSiaWalletInfoFailure = "RequestSiaWalletInfoFailure";
 export const SetProgressValue = "SetProgressValue";
 
 export const PrepareJRE = "PrepareJRE";
+export const PrepareJREFailure = "PrepareJREFailure";
 
 export const ProcessingStart = "ProcessingStart";
 export const ProcessingEnd = "ProcessingEnd";
@@ -42,4 +43,3 @@ export const ProcessingEnd = "ProcessingEnd";
 export const SaveConfig = "SaveConfig";
 export const StopSyncApps = "StopSyncApps";
 
-export const SetErrorMsg = "SetErrorMsg";

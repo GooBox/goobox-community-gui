@@ -45,7 +45,7 @@ export default function* prepareJRE() {
   } catch (err) {
     log.debug(`[GUI render] JRE installation fails: ${err}`);
     inc.cancel();
-    yield put(actions.setErrorMsg(err));
+    yield put(actions.prepareJREFailure(err));
   }
 
 }

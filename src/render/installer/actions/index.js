@@ -37,7 +37,9 @@ export const requestSiaWalletInfoSuccess = createAction(actionTypes.RequestSiaWa
 export const requestSiaWalletInfoFailure = createAction(actionTypes.RequestSiaWalletInfoFailure);
 
 export const setProgressValue = createAction(actionTypes.SetProgressValue);
+
 export const prepareJRE = createAction(actionTypes.PrepareJRE);
+export const prepareJREFailure = createAction(actionTypes.PrepareJREFailure);
 
 export const processingStart = createAction(actionTypes.ProcessingStart);
 export const processingEnd = createAction(actionTypes.ProcessingEnd);
@@ -45,4 +47,3 @@ export const processingEnd = createAction(actionTypes.ProcessingEnd);
 export const saveConfig = createAction(actionTypes.SaveConfig);
 export const stopSyncApps = createAction(actionTypes.StopSyncApps);
 
-export const setErrorMsg = createAction(actionTypes.SetErrorMsg);

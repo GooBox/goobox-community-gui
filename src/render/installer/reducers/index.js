@@ -103,7 +103,7 @@ export default handleActions({
     ...state,
     processing: false,
   }),
-  [actionTypes.SetErrorMsg]: (state, action) => ({
+  [actionTypes.PrepareJREFailure]: (state, action) => ({
     ...state,
     errorMsg: action.payload
   }),

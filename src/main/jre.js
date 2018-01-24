@@ -25,7 +25,7 @@ export async function installJRE() {
 
   return new Promise((resolve, reject) => {
 
-    log.verbose(`JRE path: ${jre.jreDir()}`);
+    log.verbose(`[GUI main] JRE path: ${jre.jreDir()}`);
     let shouldInstall = false;
     try {
       if (!fs.existsSync(jre.driver())) {

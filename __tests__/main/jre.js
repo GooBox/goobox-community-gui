@@ -16,7 +16,7 @@
  */
 
 jest.mock("fs");
-jest.mock("del")
+jest.mock("del");
 
 import del from "del";
 import fs from "fs";
@@ -56,7 +56,7 @@ describe("installJRE function", () => {
     expect(jre.install).toHaveBeenCalled();
   });
 
-  it("checks JRE is installed and if an error is raised, installs a JRE and returns true", async () => {
+  it("checks JRE is installed and if fs.existsSync throws an error, installs a JRE and returns true", async () => {
     jre.driver.mockImplementation(() => {
       throw "expected jre.driver error";
     });
@@ -75,7 +75,7 @@ describe("installJRE function", () => {
       callback(err)
     });
 
-    await expect(installJRE()).rejects.toEqual(err);
+    await expect(installJRE()).rejects.toEqual(expect.any(String));
     expect(jre.driver).toHaveBeenCalled();
     expect(fs.existsSync).toHaveBeenCalledWith(jreExec);
     expect(jre.install).toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe("installJRE function", () => {
       callback(err)
     });
 
-    await expect(installJRE()).rejects.toEqual(err);
+    await expect(installJRE()).rejects.toEqual(expect.any(String));
     expect(del.sync).toHaveBeenCalledWith(path.join(jre.jreDir(), "**"));
   });
 
