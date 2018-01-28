@@ -57,13 +57,13 @@ export default class Storj extends EventEmitter {
     }
     log.debug(`PATH = ${pathEnv}`);
 
+    process.env.JAVA_HOME = this._javaHome;
+    process.env.PATH = pathEnv;
+
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
-      env: {
-        JAVA_HOME: this._javaHome,
-        PATH: pathEnv,
-      },
+      env: process.env,
       shell: true,
       windowsHide: true,
     });
