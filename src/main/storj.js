@@ -52,15 +52,16 @@ export default class Storj extends EventEmitter {
 
     let pathEnv = process.env.PATH;
     if (process.platform === "win32") {
-      const lib = path.normalize(path.join(this._wd, "../../libraries/"));
-      pathEnv = `${pathEnv};${lib}`;
+      const lib = path.normalize(path.join(this._wd, "../../libraries"));
+      pathEnv = `${lib};${pathEnv}`;
     }
-    log.debug(`PATH = ${pathEnv}`);
+    log.debug(`[GUI main] PATH = ${pathEnv}`);
 
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
+        ...process.env,
         JAVA_HOME: this._javaHome,
         PATH: pathEnv,
       },

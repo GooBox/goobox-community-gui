@@ -40,10 +40,21 @@ describe("Storj class", () => {
     });
   });
 
-  let storj;
+  let storj, stdin, stdout, stderr, on;
   beforeEach(() => {
     storj = new Storj();
     setTimeout.mockReset();
+    stdin = "standard input";
+    stdout = new PassThrough();
+    stderr = new PassThrough();
+    on = jest.fn();
+    spawn.mockClear();
+    spawn.mockReturnValue({
+      stdin: stdin,
+      stdout: stdout,
+      stderr: stderr,
+      on: on,
+    });
   });
 
 
@@ -68,26 +79,13 @@ describe("Storj class", () => {
   describe("start method", () => {
 
     const dir = "/tmp";
-    let stdin, stdout, stderr, on;
-    beforeEach(() => {
-      stdin = "standard input";
-      stdout = new PassThrough();
-      stderr = new PassThrough();
-      on = jest.fn();
-      spawn.mockClear();
-      spawn.mockReturnValue({
-        stdin: stdin,
-        stdout: stdout,
-        stderr: stderr,
-        on: on,
-      });
-    });
 
     it("spawns sync-storj", () => {
       storj.start(dir);
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: {
+          ...process.env,
           JAVA_HOME: storj._javaHome,
           PATH: process.env.PATH,
         },
@@ -101,6 +99,7 @@ describe("Storj class", () => {
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
         env: {
+          ...process.env,
           JAVA_HOME: storj._javaHome,
           PATH: process.env.PATH,
         },
@@ -180,6 +179,7 @@ describe("Storj class", () => {
       expect(spawn).toHaveBeenLastCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: {
+          ...process.env,
           JAVA_HOME: storj._javaHome,
           PATH: process.env.PATH,
         },
@@ -443,8 +443,9 @@ describe("Storj class", () => {
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: {
+          ...process.env,
           JAVA_HOME: storj._javaHome,
-          PATH: `${process.env.PATH};${path.normalize(path.join(storj._wd, "../../libraries/"))}`,
+          PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -456,8 +457,9 @@ describe("Storj class", () => {
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
         env: {
+          ...process.env,
           JAVA_HOME: storj._javaHome,
-          PATH: `${process.env.PATH};${path.normalize(path.join(storj._wd, "../../libraries/"))}`,
+          PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
