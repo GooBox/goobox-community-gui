@@ -31,10 +31,12 @@ export default function* storjCreateAccount(action) {
     const encryptionKey = yield call(sendAsync, ipcActions.storjCreateAccount({
       email: accountInfo.email,
       password: accountInfo.password,
+      syncFolder: accountInfo.syncFolder,
     }));
     yield put(actions.storjCreateAccountSuccess({
       ...accountInfo,
       key: encryptionKey,
+      syncFolder: undefined,
     }));
     yield put(push(screens.StorjEncryptionKey));
 
@@ -44,6 +46,7 @@ export default function* storjCreateAccount(action) {
       emailWarn: true,
       passwordWarn: true,
       warnMsg: util.isString(err) ? err : null,
+      syncFolder: undefined,
     }));
   }
   yield put(actions.processingEnd());

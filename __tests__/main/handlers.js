@@ -460,13 +460,7 @@ describe("event handlers", () => {
       const email = "abc@example.com";
       const password = "password";
       const key = "xxx xxx xxx";
-      const dir = "/tmp";
-      beforeAll(() => {
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: dir
-        }));
-      });
-
+      const syncFolder = "/tmp";
       let handler, start, createAccount;
       beforeEach(() => {
         handler = storjCreateAccountHandler();
@@ -476,7 +470,6 @@ describe("event handlers", () => {
           }
         });
         createAccount = jest.spyOn(Storj.prototype, "createAccount").mockReturnValue(Promise.resolve(key));
-        getConfig.mockClear();
       });
 
       afterEach(() => {
@@ -489,10 +482,10 @@ describe("event handlers", () => {
         await expect(handler({
           email: email,
           password: password,
+          syncFolder: syncFolder,
         })).resolves.toEqual(key);
         expect(global.storj).toBeDefined();
-        expect(getConfig).toHaveBeenCalled();
-        expect(start).toHaveBeenCalledWith(dir, true);
+        expect(start).toHaveBeenCalledWith(syncFolder, true);
         expect(createAccount).toHaveBeenCalledWith(email, password);
       });
 
@@ -505,11 +498,11 @@ describe("event handlers", () => {
         await expect(handler({
           email: email,
           password: password,
+          syncFolder: syncFolder,
         })).resolves.toEqual(key);
         expect(close).toHaveBeenCalled();
         expect(global.storj).toBeDefined();
-        expect(getConfig).toHaveBeenCalled();
-        expect(start).toHaveBeenCalledWith(dir, true);
+        expect(start).toHaveBeenCalledWith(syncFolder, true);
         expect(createAccount).toHaveBeenCalledWith(email, password);
       });
 
@@ -520,8 +513,9 @@ describe("event handlers", () => {
         await expect(handler({
           email: email,
           password: password,
+          syncFolder: syncFolder,
         })).rejects.toEqual(err);
-        expect(start).toHaveBeenCalledWith(dir, true);
+        expect(start).toHaveBeenCalledWith(syncFolder, true);
         expect(createAccount).toHaveBeenCalledWith(email, password);
       });
 

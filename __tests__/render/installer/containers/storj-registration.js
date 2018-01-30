@@ -18,7 +18,11 @@
 import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-registration";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+  mergeProps
+} from "../../../../src/render/installer/containers/storj-registration";
 
 describe("mapStateToProps", () => {
 
@@ -29,11 +33,13 @@ describe("mapStateToProps", () => {
         emailWarn: false,
         passwordWarn: true,
         warnMsg: "some message",
-      }
+      },
+      syncFolder: "/tmp"
     };
     expect(mapStateToProps({main: main})).toEqual({
       ...main.storjAccount,
       processing: main.processing,
+      syncFolder: main.syncFolder,
     });
   });
 
@@ -52,14 +58,65 @@ describe("mapDispatchToProps", () => {
   });
 
   it("maps onClickNext to storjCreateAccount action", () => {
-    const info = "storj account information";
-    mapDispatchToProps(dispatch).onClickNext(info);
-    expect(dispatch).toHaveBeenCalledWith(actions.storjCreateAccount(info));
+    const syncFolder = "/tmp";
+    const info = {
+      email: "test@example.com",
+      password: "password",
+    };
+    mapDispatchToProps(dispatch).onClickNext(syncFolder, info);
+    expect(dispatch).toHaveBeenCalledWith(actions.storjCreateAccount({
+      ...info,
+      syncFolder: syncFolder,
+    }));
   });
 
   it("maps onClickLogin to push StorjLogin", () => {
     mapDispatchToProps(dispatch).onClickLogin();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
+  });
+
+});
+
+describe("mergeProps", () => {
+
+  it("merges props, bind onClickNext to the main state, and removes that state from the result", () => {
+    const main = {
+      processing: true,
+      storjAccount: {
+        emailWarn: false,
+        passwordWarn: true,
+        warnMsg: "some message",
+      },
+      syncFolder: "/tmp"
+    };
+    const stateProps = {
+      ...main.storjAccount,
+      processing: main.processing,
+      syncFolder: main.syncFolder,
+    };
+    const dispatchProps = {
+      onClickBack: jest.fn(),
+      onClickNext: jest.fn(),
+      onClickLogin: jest.fn(),
+    };
+    const ownProps = {
+      key: "value"
+    };
+    const res = mergeProps(stateProps, dispatchProps, ownProps);
+    expect(res).toEqual({
+      ...ownProps,
+      ...stateProps,
+      ...dispatchProps,
+      onClickNext: expect.any(Function),
+      syncFolder: undefined,
+    });
+
+    const accountInfo = {
+      email: "test@exmaple.com",
+      password: "password"
+    };
+    res.onClickNext(accountInfo);
+    expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main.syncFolder, accountInfo);
   });
 
 });

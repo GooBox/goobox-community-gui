@@ -216,6 +216,7 @@ describe("storjCreateAccount", () => {
       passwordWarn: false,
       keyWarn: false,
       warnMsg: "",
+      syncFolder: "/tmp"
     }
   };
 
@@ -226,10 +227,12 @@ describe("storjCreateAccount", () => {
     expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
       email: action.payload.email,
       password: action.payload.password,
+      syncFolder: action.payload.syncFolder,
     })));
     expect(saga.next(encryptionKey).value).toEqual(put(actions.storjCreateAccountSuccess({
       ...action.payload,
       key: encryptionKey,
+      syncFolder: undefined,
     })));
     expect(saga.next().value).toEqual(put(push(screens.StorjEncryptionKey)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
@@ -243,12 +246,14 @@ describe("storjCreateAccount", () => {
     expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
       email: action.payload.email,
       password: action.payload.password,
+      syncFolder: action.payload.syncFolder,
     })));
     expect(saga.throw(err).value).toEqual(put(actions.storjCreateAccountFailure({
       ...action.payload,
       emailWarn: true,
       passwordWarn: true,
       warnMsg: err,
+      syncFolder: undefined
     })));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();

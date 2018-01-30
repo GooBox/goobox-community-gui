@@ -175,9 +175,8 @@ export const storjCreateAccountHandler = () => async payload => {
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
-  const cfg = await getConfig();
   global.storj = new Storj();
-  global.storj.start(cfg.syncFolder, true);
+  global.storj.start(payload.syncFolder, true);
   return await global.storj.createAccount(payload.email, payload.password);
 };
 

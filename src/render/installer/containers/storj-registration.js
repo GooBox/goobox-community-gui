@@ -26,16 +26,28 @@ export const mapStateToProps = (state) => ({
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
   warnMsg: state.main.storjAccount.warnMsg,
+  syncFolder: state.main.syncFolder,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (accountInfo) => dispatch(actions.storjCreateAccount(accountInfo)),
+  onClickNext: (syncFolder, accountInfo) => dispatch(actions.storjCreateAccount({
+    ...accountInfo,
+    syncFolder: syncFolder,
+  })),
 
   onClickLogin: () => dispatch(push(screens.StorjLogin)),
 
+});
+
+export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...ownProps,
+  ...stateProps,
+  ...dispatchProps,
+  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.syncFolder),
+  syncFolder: undefined,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StorjRegistration);
