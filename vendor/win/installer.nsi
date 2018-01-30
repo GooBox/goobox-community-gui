@@ -22,3 +22,7 @@
     # For debugging: disable deleting sia directory.
     # RMDir /r "$LOCALAPPDATA\Goobox\sia"
 !macroend
+
+!macro customRemoveFiles
+    RMDir /r /REBOOTOK $INSTDIR
+!macroend
