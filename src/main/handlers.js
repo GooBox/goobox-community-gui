@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 import {dialog} from "electron";
 import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
+import * as desktop from "../../src/main/desktop";
 import {ConfigFile, Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
@@ -202,6 +204,12 @@ export const installerWindowAllClosedHandler = (app) => async () => {
     const cfg = await getConfig();
     if (cfg && cfg.installed) {
 
+      try {
+        await desktop.register(cfg.syncFolder);
+      } catch (err) {
+        log.error(`[GUI main] Failed to register the folder icon: ${err}`);
+      }
+
       if (global.sia) {
         global.sia.once("syncState", startSynchronizationHandler());
       }
@@ -230,6 +238,12 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 
   } catch (err) {
     log.error(`[GUI main] Failed to read/write the config: ${err}`);
+    if (global.storj) {
+      await global.storj.close();
+    }
+    if (global.sia) {
+      await global.sia.close();
+    }
     app.quit();
   }
 
