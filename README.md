@@ -214,3 +214,7 @@ Storj: 0x78d1fd828a874b40afba13d37238da5553ec3156
 [Slack]( https://join.slack.com/t/goobox/shared_invite/enQtMjY2NzEwNTA3MjA0LTBkZWQwOWY1MmRjMWJiMDI1NzhlODQ4OWJlNzViYjI5MTQ2YTlkMjRlYTE0ZjA2MzBmOGU4ZGZhYTRkYjg1NTE)
 
 [reddit]( reddit.com/r/goobox)
+
+May the force be with you,
+
+The Goobox team
