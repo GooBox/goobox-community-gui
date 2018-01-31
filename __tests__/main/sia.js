@@ -28,51 +28,43 @@ import Sia from "../../src/main/sia";
 
 describe("Sia class", () => {
 
+  const syncFolder = "/tmp";
+  const oldPlatform = process.platform;
   beforeAll(() => {
+    Object.defineProperty(process, "platform", {
+      value: "darwin"
+    });
     jre.driver.mockReturnValue("/tmp/jre/bin/java");
   });
 
-  let sia;
+  afterAll(() => {
+    Object.defineProperty(process, "platform", {
+      value: oldPlatform
+    });
+  });
+
+  let sia, stdin, stdout, stderr, on;
   beforeEach(() => {
     sia = new Sia();
+    stdin = "standard input";
+    stdout = new PassThrough();
+    stderr = new PassThrough();
+    on = jest.fn();
+    spawn.mockClear();
+    spawn.mockReturnValue({
+      stdin: stdin,
+      stdout: stdout,
+      stderr: stderr,
+      on: on,
+    });
   });
 
   describe("instance fields", () => {
 
     it("has cmd which describes the path to the sync sia app", () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "darwin"
-        });
-
-        const sia = new Sia();
-        const cmd = "goobox-sync-sia";
-        expect(sia._cmd).toEqual(cmd);
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
-    });
-
-    it("has cmd which describes the path to the bat file of sync sia app in Windows", () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "win32"
-        });
-
-        const sia = new Sia();
-        const cmd = "goobox-sync-sia.bat";
-        expect(sia._cmd).toEqual(cmd);
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
+      const sia = new Sia();
+      const cmd = "goobox-sync-sia";
+      expect(sia._cmd).toEqual(cmd);
     });
 
     it("has wd which describes the directory containing the sync sia app", () => {
@@ -87,27 +79,12 @@ describe("Sia class", () => {
 
   describe("start method", () => {
 
-    const dir = "/tmp";
-    let stdin, stdout, stderr, on;
-    beforeEach(() => {
-      stdin = "standard input";
-      stdout = new PassThrough();
-      stderr = new PassThrough();
-      on = jest.fn();
-      spawn.mockClear();
-      spawn.mockReturnValue({
-        stdin: stdin,
-        stdout: stdout,
-        stderr: stderr,
-        on: on,
-      });
-    });
-
     it("spawns sync-sia", () => {
-      sia.start(dir);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
+      sia.start(syncFolder);
+      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
         cwd: sia._wd,
         env: {
+          ...process.env,
           JAVA_HOME: sia._javaHome,
         },
         shell: true,
@@ -116,10 +93,11 @@ describe("Sia class", () => {
     });
 
     it("spawns sync-sia with --reset-db flag when reset is true", () => {
-      sia.start(dir, true);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${dir}"`, "--output-events", "--reset-db"], {
+      sia.start(syncFolder, true);
+      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
         cwd: sia._wd,
         env: {
+          ...process.env,
           JAVA_HOME: sia._javaHome,
         },
         shell: true,
@@ -134,7 +112,7 @@ describe("Sia class", () => {
           newState: "paused",
         }
       };
-      sia.start(dir);
+      sia.start(syncFolder);
       return new Promise((resolve, reject) => {
         sia.on(event.method, ({newState}) => {
           try {
@@ -150,7 +128,7 @@ describe("Sia class", () => {
 
     it("adds proc field which is the returned value of spawn", () => {
       expect(sia.proc).not.toBeDefined();
-      sia.start(dir);
+      sia.start(syncFolder);
       expect(sia.proc).toEqual({
         stdin: stdin,
         stdout: stdout,
@@ -161,7 +139,7 @@ describe("Sia class", () => {
 
     it("doesn't start a new process if this.proc is not null", () => {
       sia.proc = "some-object";
-      sia.start(dir);
+      sia.start(syncFolder);
       expect(spawn).not.toHaveBeenCalled();
     });
 
@@ -171,12 +149,13 @@ describe("Sia class", () => {
           callback();
         }
       });
-      sia.start(dir);
+      sia.start(syncFolder);
       jest.runOnlyPendingTimers();
       expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenLastCalledWith(sia._cmd, ["--sync-dir", `"${dir}"`, "--output-events"], {
+      expect(spawn).toHaveBeenLastCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
         cwd: sia._wd,
         env: {
+          ...process.env,
           JAVA_HOME: sia._javaHome,
         },
         shell: true,
@@ -192,7 +171,7 @@ describe("Sia class", () => {
           callback();
         }
       });
-      sia.start(dir);
+      sia.start(syncFolder);
       expect(spawn).toHaveBeenCalledTimes(1);
     });
 
@@ -201,85 +180,50 @@ describe("Sia class", () => {
   describe("close method", () => {
 
     beforeEach(() => {
+      sia.closeProc = jest.fn().mockReturnValue(Promise.resolve());
+    });
+
+    it("calls closeProc with proc and walletProc", async () => {
+      await sia.close();
+      expect(sia.closeProc).toHaveBeenCalledWith("proc");
+      expect(sia.closeProc).toHaveBeenCalledWith("walletProc");
+    });
+
+  });
+
+  describe("closeProc method", () => {
+
+    beforeEach(() => {
       execSync.mockReset();
     });
 
     it("sends SIGTERM and waits exit event is emitted", async () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "darwin"
-        });
-
-        let onExit, onClose;
-        const proc = {
-          kill(signal) {
-            expect(signal).toEqual("SIGTERM");
-            expect(onExit).toBeDefined();
-            onExit();
-            expect(onClose).toBeDefined();
-            onClose();
-          },
-          once(event, callback) {
-            if (event === "exit") {
-              onExit = callback;
-            } else if (event === "close") {
-              onClose = callback;
-            }
-          }
-        };
-        sia.proc = proc;
-        await sia.close();
-        expect(sia.proc).toBeNull();
-        expect(proc._closing).toBeTruthy();
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
-    });
-
-    // noinspection SpellCheckingInspection
-    it("executes taskkill and waits exit event is emitted in Windows", async () => {
-      const oldPlatform = process.platform;
-      try {
-        Object.defineProperty(process, "platform", {
-          value: "win32"
-        });
-
-        let onExit, onClose;
-        const proc = {
-          once(event, callback) {
-            if (event === "exit") {
-              onExit = callback;
-            } else if (event === "close") {
-              onClose = callback;
-            }
-          },
-          pid: 12345,
-        };
-        sia.proc = proc;
-        execSync.mockImplementation(() => {
+      let onExit, onClose;
+      const proc = {
+        kill(signal) {
+          expect(signal).toEqual("SIGTERM");
+          expect(onExit).toBeDefined();
           onExit();
+          expect(onClose).toBeDefined();
           onClose();
-        });
-
-        await sia.close();
-        expect(sia.proc).toBeNull();
-        expect(execSync).toHaveBeenCalledWith(`taskkill /pid ${proc.pid} /T /F`);
-        expect(proc._closing).toBeTruthy();
-
-      } finally {
-        Object.defineProperty(process, "platform", {
-          value: oldPlatform
-        });
-      }
+        },
+        once(event, callback) {
+          if (event === "exit") {
+            onExit = callback;
+          } else if (event === "close") {
+            onClose = callback;
+          }
+        }
+      };
+      sia.proc = proc;
+      await sia.closeProc("proc");
+      expect(sia.proc).toBeNull();
+      expect(proc._closing).toBeTruthy();
     });
 
     it("does nothing if proc is null", async () => {
       const sia = new Sia();
-      await sia.close();
+      await sia.closeProc("proc");
     });
 
   });
@@ -348,6 +292,28 @@ describe("Sia class", () => {
       await expect(sia.wallet()).rejects.toEqual(expect.any(String));
     });
 
+    it("adds process object for the wallet command as walletProc attribute, and deletes it after the command ends", async () => {
+      stdout = new Readable();
+      spawn.mockReturnValue({
+        stdout: stdout,
+        stderr: stderr,
+        on: on,
+      });
+      expect(sia.walletProc).not.toBeDefined();
+
+      const promise = sia.wallet();
+      expect(sia.walletProc).toBeDefined();
+
+      stdout.push(yaml.dump({
+        "wallet address": address,
+        "primary seed": seed
+      }));
+      stdout.push(null);
+      await promise;
+
+      expect(sia.walletProc).toBeNull();
+    });
+
     // TODO: sync sia app returns an error if initializing wallets twice.
 
   });
@@ -361,6 +327,83 @@ describe("Sia class", () => {
     it("returns false if the proc is not null", () => {
       sia.proc = "some process";
       expect(sia.closed).toBeFalsy();
+    });
+
+  });
+
+  describe("in Windows", () => {
+
+    let oldPlatform;
+    beforeAll(() => {
+      oldPlatform = process.platform;
+      Object.defineProperty(process, "platform", {
+        value: "win32"
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform
+      });
+    });
+
+    it("has cmd which describes the path to the bat file of sync sia app", () => {
+      const sia = new Sia();
+      const cmd = "goobox-sync-sia.bat";
+      expect(sia._cmd).toEqual(cmd);
+    });
+
+    // noinspection SpellCheckingInspection
+    it("executes taskkill and waits exit event is emitted to close", async () => {
+      let onExit, onClose;
+      const proc = {
+        once(event, callback) {
+          if (event === "exit") {
+            onExit = callback;
+          } else if (event === "close") {
+            onClose = callback;
+          }
+        },
+        pid: 12345,
+      };
+      sia.proc = proc;
+      execSync.mockImplementation(() => {
+        onExit();
+        onClose();
+      });
+
+      await sia.closeProc("proc");
+      expect(sia.proc).toBeNull();
+      expect(execSync).toHaveBeenCalledWith(`taskkill /pid ${proc.pid} /T /F`);
+      expect(proc._closing).toBeTruthy();
+    });
+
+    it("spawns sync-sia", () => {
+      sia.start(syncFolder);
+      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
+        cwd: sia._wd,
+        env: {
+          ...process.env,
+          JAVA_HOME: sia._javaHome,
+          PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
+        },
+        shell: true,
+        windowsHide: true,
+      });
+    });
+
+    it("spawns sync-sia with --reset-db flag when reset is true", () => {
+      sia.start(syncFolder, true);
+      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
+        cwd: sia._wd,
+        env: {
+          ...process.env,
+          JAVA_HOME: sia._javaHome,
+          PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
+        },
+        shell: true,
+        windowsHide: true,
+      });
     });
 
   });
