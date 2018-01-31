@@ -44,11 +44,12 @@ const notifyAsync = async opts => {
 // Handlers for the main app.
 export const changeStateHandler = mb => async payload => {
   if (payload === Synchronizing) {
+    const cfg = await getConfig();
     if (global.storj) {
-      global.storj.start();
+      global.storj.start(cfg.syncFolder);
     }
     if (global.sia) {
-      global.sia.start();
+      global.sia.start(cfg.syncFolder);
     }
     log.debug("[GUI main] Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());

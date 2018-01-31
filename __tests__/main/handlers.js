@@ -63,10 +63,15 @@ describe("event handlers", () => {
 
     describe("changeStateHandler", () => {
 
+      const dir = "/tmp";
       let handler;
       beforeEach(() => {
         menuberMock.tray.setImage.mockClear();
         handler = changeStateHandler(menuberMock);
+        getConfig.mockReset();
+        getConfig.mockReturnValue({
+          syncFolder: dir,
+        });
       });
 
       it("sets the idle icon when the state is Synchronizing", async () => {
@@ -89,7 +94,7 @@ describe("event handlers", () => {
         global.storj = storj;
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
         expect(global.storj).toBe(storj);
-        expect(global.storj.start).toHaveBeenCalled();
+        expect(global.storj.start).toHaveBeenCalledWith(dir);
       });
 
       it("closes the Storj instance if exists when the new state is Paused", async () => {
@@ -115,7 +120,7 @@ describe("event handlers", () => {
         global.sia = sia;
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
         expect(global.sia).toBe(sia);
-        expect(global.sia.start).toHaveBeenCalled();
+        expect(global.sia.start).toHaveBeenCalledWith(dir);
       });
 
       it("closes the Sia instance if exists when the new state is Paused", async () => {
