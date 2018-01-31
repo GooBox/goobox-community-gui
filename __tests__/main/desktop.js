@@ -42,7 +42,7 @@ describe("desktop module", () => {
 
     let dir;
     beforeEach(() => {
-      dir = fs.mkdtempSync(os.tmpdir());
+      dir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
       execFileSync.mockReset();
     });
 
