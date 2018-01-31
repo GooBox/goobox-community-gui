@@ -30,7 +30,6 @@ a *:hover {
 }
 
 .background-gradation {
-  background: -prefix-linear-gradient(top, #00AFB1, #7A55DE);
   background: linear-gradient(to bottom, #00AFB1, #7A55DE);
 }
 
@@ -102,12 +101,12 @@ a:active {
 }
 
 .state-icon {
-  margin-top: 40px;
+  margin-top: 50px;
 }
 
 .state-text {
-  margin-top: 10px;
-  font-size: 19.7px;
+  margin-top: 15px;
+  font-size: 20px;
   color: rgb(153, 153, 153);
   display: inline-block;
 }
@@ -144,7 +143,6 @@ a:active {
 .meter > span {
   display: block;
   height: 100%;
-  background: -prefix-linear-gradient(left, #7A55DE, #00AFB1);
   background: linear-gradient(to right, #7A55DE, #00AFB1);
   border-radius: 50px;
 }
