@@ -26,6 +26,9 @@ const style = {
     fontSize: "30px",
     margin: "117px auto 0 auto",
     display: "table",
+  },
+  greeting: {
+    marginRight: "0.2em",
   }
 };
 
@@ -35,7 +38,7 @@ export default function Welcome(props) {
     <div className="background-gradation">
       <header><img src={leftWhiteIcon} width="41px" height="40px"/></header>
       <main style={style.main}>
-        <span>Welcome to</span> <span className="underlined bold">Goobox</span>
+        <span style={style.greeting}>Welcome to</span><span className="underlined bold">Goobox</span>
       </main>
       <footer>
         <a className="next-btn" onClick={props.onClickNext}>

@@ -16,12 +16,11 @@
  */
 
 
-import {dialog} from "electron";
 import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
 import * as desktop from "../../src/main/desktop";
-import {ConfigFile, Synchronizing} from "../constants";
+import {Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
 import icons from "./icons";
@@ -117,8 +116,6 @@ export const siaRequestWalletInfoHandler = () => async payload => {
 
   } catch (error) {
     log.error(error);
-    // TODO: Disable showing the dialog box after implementing error message in the installation screen.
-    dialog.showErrorBox("Goobox", `Failed to obtain sia wallet information: ${error}`);
     delete global.sia;
     throw error;
   }
@@ -198,7 +195,7 @@ export const startSynchronizationHandler = () => async payload => {
 
 export const installerWindowAllClosedHandler = (app) => async () => {
 
-  log.info(`[GUI main] Loading the config file ${ConfigFile}`);
+  log.info(`[GUI main] Loading the config file`);
   try {
 
     const cfg = await getConfig();
