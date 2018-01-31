@@ -90,7 +90,7 @@ describe("installJRE function", () => {
     setTimeout.mockImplementation(cb => cb());
     await expect(installJRE()).rejects.toEqual(expect.any(String));
     expect(jre.install).toHaveBeenCalled();
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 5 * 60 * 1000);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 60 * 60 * 1000);
   });
 
   it("deletes downloaded files if the installation fails", async () => {

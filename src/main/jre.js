@@ -53,14 +53,13 @@ export async function installJRE() {
           }
         });
 
-
       } else {
         resolve(false);
       }
 
     }),
 
-    new Promise((_, reject) => setTimeout(() => reject("JRE installation timed out"), 5 * 60 * 1000))
+    new Promise((_, reject) => setTimeout(() => reject("JRE installation timed out"), 60 * 60 * 1000))
 
   ]);
 
