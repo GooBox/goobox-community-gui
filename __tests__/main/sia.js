@@ -86,6 +86,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
+          PATH: `${sia._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -99,6 +100,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
+          PATH: `${sia._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -157,6 +159,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
+          PATH: `${sia._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,

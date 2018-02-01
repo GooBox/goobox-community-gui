@@ -54,6 +54,8 @@ export default class Storj extends EventEmitter {
     if (process.platform === "win32") {
       const lib = path.normalize(path.join(this._wd, "../../libraries"));
       pathEnv = `${lib};${pathEnv}`;
+    } else {
+      pathEnv = `${this._wd}:${pathEnv}`;
     }
     log.debug(`[GUI main] PATH = ${pathEnv}`);
 

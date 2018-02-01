@@ -38,7 +38,7 @@ export default class Sia extends EventEmitter {
     this.stdin = null;
     this.stdout = null;
     this.stderr = null;
-    log.debug(`[GUI main] New sia instance: cmd = ${this._cmd}, java-home = ${this._javaHome}`);
+    log.debug(`[GUI main] New sia instance: cmd = ${this._cmd} in ${this._wd}, java-home = ${this._javaHome}`);
   }
 
   start(dir, reset) {
@@ -56,10 +56,12 @@ export default class Sia extends EventEmitter {
     if (process.platform === "win32") {
       const lib = path.normalize(path.join(this._wd, "../../../libraries"));
       pathEnv = `${lib};${pathEnv}`;
+    } else {
+      pathEnv = `${this._wd}:${pathEnv}`;
     }
     log.debug(`[GUI main] PATH = ${pathEnv}`);
 
-    log.info(`[GUI main] Starting ${this._cmd} in ${this._cmd} with ${args}`);
+    log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
       env: {
