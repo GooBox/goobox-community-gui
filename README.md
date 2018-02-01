@@ -168,20 +168,22 @@ After successful login you should now see the screen above, you can click on ‘
 
 # Some info for developers
 
-- The front-end is electron/ReactJS based, while it the back-ends are built in java.
+- The front-end is electron/ReactJS based, while it the back-ends are built in Java.
 - Both the Sia and Storj sync back-ends are separate modules that communicate with the GUI. This makes it easier to develop on each back-end separately.
 - A number of DLLs are installed to the system for namely the overlay icons.
+- To build executable packages, [wine](https://www.winehq.org/)(>=1.8) and nodejs are required.
 
 To install the app from source follow the steps below:
 
-1. Download the latest binaries.
-2. Extract the zip file.
-3. In the extracted folder execute:
+1. Download the latest [source code](https://github.com/GooBox/goobox-community-gui/releases) or clone this repository.
+2. In the extracted folder execute:
 
 	- `npm install`
 	- `npm run build`
 	- `npm run dist:pre`
-	- `npm run dis`
+	- `npm run pack`
+	
+3. Compiled binaries are stored in `dist`.
 
 Done
 
