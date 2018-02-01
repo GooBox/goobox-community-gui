@@ -17,7 +17,9 @@
 
 jest.mock("child_process");
 
-import {spawnSync} from "child_process";
+import {spawn, spawnSync} from "child_process";
+import * as path from "path";
+import {PassThrough} from "stream";
 
 describe("utils module in Windows", () => {
 
@@ -51,15 +53,39 @@ describe("utils module in Windows", () => {
 
   });
 
-  // describe("totalVolume", () => {
-  //
-  //   it("calculate total volume of a given directory with du", () => {
-  //     const size = 12345;
-  //     const dir = "/tmp/some-dir";
-  //     // (dir -literalpath c:\work -recurse -force | measure-object Length -sum).Sum
-  //   });
-  //
-  // });
+  describe("totalVolume", () => {
 
+    it("calculate total volume of a given directory with du", async () => {
+      const file1 = 12345;
+      const file2 = 123450;
+      const dir = "/tmp/some-dir";
+
+      const stdout = new PassThrough();
+      const on = jest.fn().mockImplementation((event, cb) => {
+        if (event === "close") {
+          stdout.push("  Length\n");
+          stdout.push("--------\n");
+          stdout.push(`       ${file1}\n`);
+          stdout.push(`${file2}\n`);
+          stdout.push(null);
+          cb();
+        }
+      });
+      spawn.mockReturnValue({
+        stdout: stdout,
+        on: on,
+      });
+
+      const volume = await utils.totalVolume(dir);
+      expect(volume).toEqual((file1 + file2) / 1024 / 1024 / 1024);
+      const script = path.normalize(path.join(__dirname, "../../resources/du.ps1"));
+      expect(spawn).toHaveBeenCalledWith("powershell", ["-ExecutionPolicy", "RemoteSigned", "-File", script], {
+        cwd: dir,
+        windowsHide: true,
+      });
+
+    });
+
+  });
 
 });

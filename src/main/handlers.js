@@ -75,8 +75,8 @@ export const openSyncFolderHandler = () => async () => {
 export const calculateUsedVolumeHandler = () => async () => {
   const cfg = await getConfig();
   const volume = await utils.totalVolume(cfg.syncFolder);
-  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
-  return volume / 1024 / 1024;
+  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume}GB`);
+  return volume;
 };
 
 export const willQuitHandler = (app) => async event => {

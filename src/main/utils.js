@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {execFile, spawnSync} from "child_process";
+import {execFile, spawn, spawnSync} from "child_process";
+import path from "path";
+import readLine from "readline";
 
 let openDirectory, totalVolume;
 
@@ -26,8 +28,31 @@ if (process.platform === "win32") {
   };
 
   totalVolume = async (dir) => {
-    // TODO: Implement it.
-    return 0;
+    return new Promise((resolve, reject) => {
+      const script = path.normalize(path.join(__dirname, "../../resources/du.ps1"));
+      const proc = spawn("powershell", ["-ExecutionPolicy", "RemoteSigned", "-File", script], {
+        cwd: dir,
+        windowsHide: true,
+      });
+
+      proc.on("error", err => {
+        reject(err);
+        proc.kill();
+      });
+
+      let count = 0;
+      readLine.createInterface({input: proc.stdout}).on("line", line => {
+        const value = Number.parseInt(line);
+        if (!Number.isNaN(value)) {
+          count += value;
+        }
+      });
+
+      proc.on("close", () => {
+        resolve(count / 1024 / 1024 / 1024);
+      });
+
+    });
   };
 
 } else {
@@ -38,7 +63,7 @@ if (process.platform === "win32") {
 
   totalVolume = async (dir) => {
     return new Promise((resolve, reject) => {
-      execFile("du", ["-s", dir], (error, stdout) => {
+      execFile("du", ["-s", "-k", dir], (error, stdout) => {
         if (error) {
           reject(error);
         }
@@ -46,7 +71,7 @@ if (process.platform === "win32") {
         if (!sp.length) {
           reject("invalid response");
         }
-        resolve(parseInt(sp[0]));
+        resolve(parseInt(sp[0]) / 1024 / 1024);
       });
     });
   };

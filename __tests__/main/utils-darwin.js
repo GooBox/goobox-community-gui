@@ -60,8 +60,8 @@ describe("utils module for mac", () => {
         cb(null, `${size}\t${dir}`);
       });
 
-      await expect(utils.totalVolume(dir)).resolves.toEqual(size);
-      expect(execFile).toHaveBeenCalledWith("du", ["-s", dir], expect.anything());
+      await expect(utils.totalVolume(dir)).resolves.toEqual(size / 1024 / 1024);
+      expect(execFile).toHaveBeenCalledWith("du", ["-s", "-k", dir], expect.any(Function));
     });
 
   });

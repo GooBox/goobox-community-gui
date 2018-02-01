@@ -176,7 +176,7 @@ describe("event handlers", () => {
         const volume = 1234567;
         utils.totalVolume.mockReturnValue(Promise.resolve(volume));
 
-        await expect(handler()).resolves.toEqual(volume / 1024 / 1024);
+        await expect(handler()).resolves.toEqual(volume);
         expect(getConfig).toHaveBeenCalled();
         expect(utils.totalVolume).toHaveBeenCalledWith(syncFolder);
       });
