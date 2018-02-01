@@ -182,10 +182,39 @@ To install the app from source follow the steps below:
 	- `npm run build`
 	- `npm run dist:pre`
 	- `npm run pack`
-	
+
 3. Compiled binaries are stored in `dist`.
 
 Done
+
+# Troubleshooting
+
+## Windows
+
+Goobox stores configuration and log files in two important places on windows:
+
+- `C:\Users\USER\AppData\Local\Goobox`
+- `C:\Users\meije\AppData\Roaming\Goobox`
+
+In case any errors or unexpected app behavior occurs like for example crashes, missing overlay icons... please either open a [issue on github](https://github.com/GooBox/goobox-community-gui/issues/new) or provide us with the following logs through one of our support channels (linked at the bottom of this page):
+
+- `C:\Users\USER\AppData\Roaming\Goobox\log.log`
+- All logs in `C:\Users\USER\AppData\Local\Goobox\Logs`
+
+-------------------------------------------------------------------------------
+
+The following files and directories can also be important for troubleshooting:
+
+- All the Sia node data is stored in the following directory: `C:\Users\USER\AppData\Local\Goobox\sia`
+
+- The Sia database is stored here: `C:\Users\USER\AppData\Local\Goobox\sync.sia.db`
+(consult [goobox-sync-sia](https://github.com/GooBox/goobox-sync-sia/blob/master/README.md) for DB content dump command to stdout).
+
+- `C:\Users\USER\AppData\Local\Goobox\goobox.properties` contains your account details.
+
+- The goobox config file can be found here: `C:\Users\USER\AppData\Roaming\Goobox\storage\config.json`
+
+- Java Runtime environment is installed here: `C:\Users\USER\AppData\Roaming\Goobox\jre`
 
 # Contributions
 
