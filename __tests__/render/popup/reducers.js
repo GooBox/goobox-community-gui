@@ -29,8 +29,8 @@ describe("InitialState", () => {
     expect(InitialState.usedVolume).toEqual(0);
   });
 
-  it("sets 50 as the total volume size", () => {
-    expect(InitialState.totalVolume).toEqual(50);
+  it("sets 25 as the total volume size", () => {
+    expect(InitialState.totalVolume).toEqual(25);
   });
 
   it("sets false as the disabled state", () => {
