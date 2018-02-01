@@ -22,7 +22,7 @@ import * as constants from "../constants";
 export const InitialState = {
   state: Synchronizing,
   usedVolume: 0,
-  totalVolume: 50,
+  totalVolume: 25,
   disabled: false,
 };
 

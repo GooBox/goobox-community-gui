@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 "use strict";
 const path = require("path");
+const webpack = require("webpack");
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = [{
   target: "electron-main",
@@ -87,3 +89,17 @@ module.exports = [{
       "[name].js"
   }
 }];
+
+
+if (process.env.NODE_ENV === "production") {
+
+  module.exports.forEach(cfg => {
+    cfg.plugins = [
+      new webpack.DefinePlugin({
+        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      }),
+      new MinifyPlugin(),
+    ];
+  });
+
+}

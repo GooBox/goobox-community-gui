@@ -26,7 +26,7 @@ export default async function sendAsync(action) {
         log.debug(`[GUI render] Received an error response for the ${action.type} request: ${payload}`);
         reject(payload, meta);
       } else {
-        log.debug(`[GUI render] Received an successful response for the ${action.type} request: ${payload}`);
+        log.debug(`[GUI render] Received an successful response for the ${action.type} request: ${JSON.stringify(payload)}`);
         resolve(payload, meta);
       }
     });

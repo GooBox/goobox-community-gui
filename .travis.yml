@@ -6,11 +6,8 @@ node_js:
 - node
 env:
   global:
-    - ELECTRON_CACHE=$HOME/.cache/electron
-    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-os:
-  - linux
-  - osx
+  - ELECTRON_CACHE=$HOME/.cache/electron
+  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 cache:
   directories:
   - node_modules
@@ -19,17 +16,15 @@ cache:
   - $HOME/.npm/_prebuilds
 script:
 - npm run test:coverage
+before_cache:
+- rm -rf $HOME/.cache/electron-builder/wine
 after_success:
 - npm run coveralls
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
 before_deploy:
-#- sudo add-apt-repository ppa:ubuntu-wine/ppa -y
-#- sudo apt-get update -q
-#- sudo apt-get install -y wine1.8
-- npm run build
+- NODE_ENV=production npm run build
 - npm run dist:pre
 - npm run dist
+- npm run dist:post
 deploy:
   provider: releases
   api_key:

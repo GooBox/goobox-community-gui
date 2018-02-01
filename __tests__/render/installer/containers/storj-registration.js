@@ -34,12 +34,12 @@ describe("mapStateToProps", () => {
         passwordWarn: true,
         warnMsg: "some message",
       },
-      syncFolder: "/tmp"
+      folder: "/tmp"
     };
     expect(mapStateToProps({main: main})).toEqual({
       ...main.storjAccount,
       processing: main.processing,
-      syncFolder: main.syncFolder,
+      syncFolder: main.folder,
     });
   });
 
@@ -87,7 +87,7 @@ describe("mergeProps", () => {
         passwordWarn: true,
         warnMsg: "some message",
       },
-      syncFolder: "/tmp"
+      folder: "/tmp"
     };
     const stateProps = {
       ...main.storjAccount,

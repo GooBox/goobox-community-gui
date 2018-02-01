@@ -44,11 +44,12 @@ const notifyAsync = async opts => {
 // Handlers for the main app.
 export const changeStateHandler = mb => async payload => {
   if (payload === Synchronizing) {
+    const cfg = await getConfig();
     if (global.storj) {
-      global.storj.start();
+      global.storj.start(cfg.syncFolder);
     }
     if (global.sia) {
-      global.sia.start();
+      global.sia.start(cfg.syncFolder);
     }
     log.debug("[GUI main] Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());
@@ -74,8 +75,8 @@ export const openSyncFolderHandler = () => async () => {
 export const calculateUsedVolumeHandler = () => async () => {
   const cfg = await getConfig();
   const volume = await utils.totalVolume(cfg.syncFolder);
-  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume / 1024 / 1024}GB`);
-  return volume / 1024 / 1024;
+  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume}GB`);
+  return volume;
 };
 
 export const willQuitHandler = (app) => async event => {

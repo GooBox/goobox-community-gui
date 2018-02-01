@@ -26,7 +26,7 @@ export const mapStateToProps = (state) => ({
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
   warnMsg: state.main.storjAccount.warnMsg,
-  syncFolder: state.main.syncFolder,
+  syncFolder: state.main.folder,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -50,5 +50,5 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   syncFolder: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StorjRegistration);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(StorjRegistration);
 
