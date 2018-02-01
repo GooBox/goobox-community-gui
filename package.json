@@ -32,25 +32,26 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
-    "about-window": "^1.8.0",
+    "about-window": "^1.9.1",
     "electron-json-storage": "^4.0.2",
     "node-jre": "jkawamoto/node-jre",
     "node-notifier": "^5.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.38",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.38",
-    "@babel/preset-env": "^7.0.0-beta.38",
-    "@babel/preset-react": "^7.0.0-beta.38",
+    "@babel/core": "^7.0.0-beta.39",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.39",
+    "@babel/preset-react": "^7.0.0-beta.39",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.1.0",
     "babel-loader": "^8.0.0-beta.0",
+    "babel-minify-webpack-plugin": "^0.2.0",
     "classnames": "^2.2.5",
     "commander": "^2.13.0",
     "coveralls": "^3.0.0",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
-    "electron": "1.7.11",
+    "electron": "1.7.12",
     "electron-builder": "^19.55.3",
     "electron-log": "^2.2.14",
     "enzyme": "^3.3.0",
@@ -70,7 +71,7 @@
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-logger": "^3.0.6",
-    "redux-mock-store": "^1.4.0",
+    "redux-mock-store": "^1.5.1",
     "redux-saga": "^0.16.0",
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
@@ -87,7 +88,7 @@
         {
           "targets": {
             "node": "current",
-            "electron": "1.7.11"
+            "electron": "1.7.12"
           },
           "useBuiltIns": "usage"
         }
