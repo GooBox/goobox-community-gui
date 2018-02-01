@@ -47,6 +47,10 @@ export default handleActions({
   [constants.SetVolumeSize]: (state, action) => ({
     ...state,
     usedVolume: action.payload,
-  })
+  }),
+  [constants.SetTotalVolumeSize]: (state, action) => ({
+    ...state,
+    totalVolume: action.payload,
+  }),
 
 }, InitialState);

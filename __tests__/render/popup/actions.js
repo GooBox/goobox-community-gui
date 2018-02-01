@@ -72,4 +72,12 @@ describe("actions of popup module", () => {
     });
   });
 
+  it("provides set total volume size action", () => {
+    const size = 12345;
+    expect(actions.setTotalVolumeSize(size)).toEqual({
+      type: constants.SetTotalVolumeSize,
+      payload: size,
+    });
+  });
+
 });

@@ -19,6 +19,7 @@ export const ChangeState = "ChangeState";
 export const Pause = "Pause";
 export const Restart = "Restart";
 export const SetVolumeSize = "SetVolumeSize";
+export const SetTotalVolumeSize = "SetTotalVolumeSize";
 export const OpenSyncFolder = "OpenSyncFolder";
 export const OpenAboutWindow = "OpenAboutWindow";
 export const Disable = "Disable";

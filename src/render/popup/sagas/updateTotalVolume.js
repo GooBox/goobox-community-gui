@@ -15,18 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../constants";
-import changeState from "./changeState";
-import openAboutWindow from "./openAboutWindow";
-import openSyncFolder from "./openSyncFolder";
-import requestUsedVolumeTimer from "./requestUsedVolume";
-import updateTotalVolume from "./updateTotalVolume";
+import {call, put} from "redux-saga/effects";
+import {getConfig} from "../../../config";
+import * as actions from "../actions";
 
-export default function* rootSaga() {
-  yield fork(updateTotalVolume);
-  yield fork(requestUsedVolumeTimer);
-  yield takeEvery(constants.OpenSyncFolder, openSyncFolder);
-  yield takeEvery(constants.OpenAboutWindow, openAboutWindow);
-  yield takeEvery(constants.ChangeState, changeState);
+export default function* updateTotalVolume() {
+
+  const cfg = yield call(getConfig);
+  if (cfg.storj) {
+    yield put(actions.setTotalVolumeSize(15.654));
+  } else {
+    yield put(actions.setTotalVolumeSize(20));
+  }
+
 }
