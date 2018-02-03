@@ -170,7 +170,7 @@
       "uninstallerIcon": "resources/goobox.ico",
       "license": "LICENSE",
       "deleteAppDataOnUninstall": true,
-      "artifactName": "${productName}-${version}-setup.${ext}",
+      "artifactName": "${productName}-${version}-setup_x64.${ext}",
       "include": "vendor/win/installer.nsi"
     }
   }
