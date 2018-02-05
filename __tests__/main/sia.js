@@ -317,8 +317,6 @@ describe("Sia class", () => {
       expect(sia.walletProc).toBeNull();
     });
 
-    // TODO: sync sia app returns an error if initializing wallets twice.
-
   });
 
   describe("closed property", () => {
@@ -388,6 +386,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
+          JAVA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
         },
         shell: true,
@@ -402,6 +401,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
+          JAVA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
         },
         shell: true,

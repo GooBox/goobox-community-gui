@@ -52,23 +52,25 @@ export default class Sia extends EventEmitter {
       args.push("--reset-db");
     }
 
-    let pathEnv = process.env.PATH;
+    const env = {
+      ...process.env,
+      JAVA_HOME: this._javaHome,
+    };
+
     if (process.platform === "win32") {
       const lib = path.normalize(path.join(this._wd, "../../../libraries"));
-      pathEnv = `${lib};${pathEnv}`;
+      env.PATH = `${lib};${env.PATH}`;
+      env.JAVA_OPTS = `-Djava.library.path="${lib}"`;
+
     } else {
-      pathEnv = `${this._wd}:${pathEnv}`;
+      env.PATH = `${this._wd}:${env.PATH}`;
+
     }
-    log.debug(`[GUI main] PATH = ${pathEnv}`);
 
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
-      env: {
-        ...process.env,
-        JAVA_HOME: this._javaHome,
-        PATH: pathEnv
-      },
+      env: env,
       shell: true,
       windowsHide: true,
     });
