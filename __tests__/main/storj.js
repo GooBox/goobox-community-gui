@@ -87,7 +87,7 @@ describe("Storj class", () => {
         env: {
           ...process.env,
           JAVA_HOME: storj._javaHome,
-          PATH: process.env.PATH,
+          PATH: `${storj._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -101,7 +101,7 @@ describe("Storj class", () => {
         env: {
           ...process.env,
           JAVA_HOME: storj._javaHome,
-          PATH: process.env.PATH,
+          PATH: `${storj._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -181,7 +181,7 @@ describe("Storj class", () => {
         env: {
           ...process.env,
           JAVA_HOME: storj._javaHome,
-          PATH: process.env.PATH,
+          PATH: `${storj._wd}:${process.env.PATH}`,
         },
         shell: true,
         windowsHide: true,
@@ -445,6 +445,7 @@ describe("Storj class", () => {
         env: {
           ...process.env,
           JAVA_HOME: storj._javaHome,
+          JAVA_OPTS: `-Djava.library.path="${storj._wd};${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
           PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
         },
         shell: true,
@@ -459,6 +460,7 @@ describe("Storj class", () => {
         env: {
           ...process.env,
           JAVA_HOME: storj._javaHome,
+          JAVA_OPTS: `-Djava.library.path="${storj._wd};${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
           PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
         },
         shell: true,

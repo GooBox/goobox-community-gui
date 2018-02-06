@@ -16,9 +16,9 @@
     "pack": "electron-builder -wm --dir",
     "dist": "electron-builder -w --x64",
     "dist:pre": "run-p dist:pre:*:*",
-    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.17/goobox-sync-storj-0.0.17-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
-    "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.18/goobox-sync-sia-0.0.18-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
-    "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.0.18/goobox-sync-sia-0.0.18-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
+    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.19/goobox-sync-storj-0.0.19-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
+    "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.1.0/goobox-sync-sia-0.1.0-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
+    "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.1.0/goobox-sync-sia-0.1.0-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
     "dist:post": "del tmp"
   },
   "repository": {
@@ -170,7 +170,7 @@
       "uninstallerIcon": "resources/goobox.ico",
       "license": "LICENSE",
       "deleteAppDataOnUninstall": true,
-      "artifactName": "${productName}-${version}-setup.${ext}",
+      "artifactName": "${productName}-${version}-setup_x64.${ext}",
       "include": "vendor/win/installer.nsi"
     }
   }

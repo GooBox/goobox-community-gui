@@ -88,11 +88,15 @@ a:active {
 
 .settings-btn {
   margin-top: 38px;
-  display: inline-block;
+  /*Hide this button until setting screen is implemented*/
+  display: none;
+  /*display: inline-block;*/
 }
 
 .info-btn {
-  margin-top: 38px;
+  /*Use wider margin until setting screen is implemented*/
+  margin-top: 100px;
+  /*margin-top: 38px;*/
   display: inline-block;
 }
 
@@ -159,17 +163,22 @@ a:active {
   width: auto;
   font-size: 11px;
   color: rgb(153, 153, 153);
+  /*Centering buttons until import drive button is implemented*/
+  text-align: center;
 }
 
 .sync-folder {
-  float: left;
   padding-top: 3px;
-  margin-left: 80px;
+  /*Disabled untie import drive button is implemented*/
+  /*float: left;*/
+  /*margin-left: 80px;*/
 }
 
 .import-drive {
   float: right;
   margin-right: 85px;
+  /*Hide this component until import drive button is implemented*/
+  display: none;
 }
 
 ::selection {

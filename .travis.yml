@@ -23,7 +23,8 @@ before_cache:
 after_success:
 - npm run coveralls
 before_deploy:
-- NODE_ENV=production npm run build
+- npm run build
+#- NODE_ENV=production npm run build
 - npm run dist:pre
 - npm run dist
 - npm run dist:post
@@ -33,7 +34,7 @@ deploy:
     secure: NW1GGTAdJQpjlWnRvIXVNWm7bsEb33l+inZu4HpG7oKse73YSE6pr8/p0aDO2DHhq1YpTh8eQ2ulGBk3dhFWNS39dlTEdhN7tRLnZlBmxJe2fwlMVBkeLDlPWFWDVPHP/dZ8IAfaOZ98ehphlM8FYjqkRaVse+dFyOGqC3qfVgaj/4RnJns/wmQtnOapKgMd89GYghnhPsaVec2kT9zO7uu80GpzXG1lIVW0mwFBqdKBlqKynm7K4VdRaze0mwFvLnJWdHc8XRwYZoWUxGsUzuJBw1Hie8FzDTLdTs3SbDJJ4IIRHcU0eYdN+CLWBXfCsgJOReifgWbIHQ48AEn5E5zNN9UbRuUf8ghGtArS6KPymnKAyzj6gT0If3QAeVQtjeRrWhzt8naL9GjrgWv2kLkwDKZNiuoip8eKkfJktBs1vsZi6RUa89lgp9Eb/fWbG0g6KpAn6fZcyZDlch0j5RUUAogc3OItBpilu9PK1CyKs25HhDKpUYuDEWauFQAZeulf+puMUfk+OGQI7I0+hlxN0KdK3A2oixevNn+l6UFil3vPoxBIo89TmLEYLXdQ3PvI7XqpEfpsIP9SOq4psOuOqZ24JqhDo9NIlgFOQjFCX0ul9M4ToGvKMT2OiJQR01W19NceJd/ZTVM1mRlzGtaMPVehKrU9+G14bJ6c9XU=
   skip_cleanup: true
   file:
-  - dist/Goobox-0.0.7-setup.exe
+  - dist/Goobox-0.0.7-setup_x64.exe
   on:
     tags: true
     repo: GooBox/goobox-community-gui

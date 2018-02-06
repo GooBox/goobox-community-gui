@@ -29,11 +29,13 @@ import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
 
+const appID = "com.electron.goobox";
+
 const notifyAsync = async opts => {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     notifier.notify(opts, (err, res) => {
       if (err) {
-        reject(err);
+        log.warn(`Notification failed, maybe the user canceled it: ${err}`);
       } else {
         resolve(res);
       }
@@ -184,13 +186,14 @@ export const startSynchronizationHandler = () => async payload => {
   if (payload.newState !== "startSynchronization") {
     return;
   }
+  log.debug("[GUI main] Notify the sia account is ready");
   return await notifyAsync({
     title: "Goobox",
     message: "Your sia account is ready",
     icon: path.join(__dirname, "../../resources/goobox.png"),
     sound: true,
     wait: true,
-    appID: "Goobox"
+    appID: appID
   });
 };
 
@@ -209,6 +212,7 @@ export const installerWindowAllClosedHandler = (app) => async () => {
       }
 
       if (global.sia) {
+        log.debug("[GUI main] Register startSynchronizationHandler");
         global.sia.once("syncState", startSynchronizationHandler());
       }
 
@@ -266,40 +270,44 @@ export const updateStateHandler = mb => async payload => {
 export const siaFundEventHandler = () => async payload => {
   switch (payload.eventType) {
     case "NoFunds":
+      log.debug("[GUI main] Notify the user his/her wallet doesn't have sia coins");
       return await notifyAsync({
         title: "Goobox",
         message: "Your wallet doesn't have sia coins",
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: "Goobox"
+        appID: appID
       });
     case "InsufficientFunds":
+      log.debug("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
       return await notifyAsync({
         title: "Goobox",
         message: payload.message,
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: "Goobox"
+        appID: appID
       });
     case "Allocated":
+      log.debug("[GUI main] Notify the user his/her funds are allocated");
       return await notifyAsync({
         title: "Goobox",
         message: payload.message,
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: "Goobox"
+        appID: appID
       });
     case "Error":
+      log.error(`[GUI main] siaFundEventHandler received an error: ${payload.message}`);
       return await notifyAsync({
         title: "Goobox",
         message: payload.message,
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: "Goobox"
+        appID: appID
       });
   }
 };

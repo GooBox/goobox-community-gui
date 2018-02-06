@@ -17,16 +17,18 @@
 
 import {fork, takeEvery} from "redux-saga/effects";
 import * as constants from "../../../../src/render/popup/constants";
-import rootSaga from "../../../../src/render/popup/sagas/index";
 import changeState from "../../../../src/render/popup/sagas/changeState";
+import rootSaga from "../../../../src/render/popup/sagas/index";
 import openAboutWindow from "../../../../src/render/popup/sagas/openAboutWindow";
 import openSyncFolder from "../../../../src/render/popup/sagas/openSyncFolder";
 import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUsedVolume";
+import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVolume";
 
 describe("rootSaga", () => {
 
-  it("yields requestUsedVolumeTimer, openSyncFolder, openAboutWindow, and changeState", () => {
+  it("yields updateTotalVolume, requestUsedVolumeTimer, openSyncFolder, openAboutWindow, and changeState", () => {
     const saga = rootSaga();
+    expect(saga.next().value).toEqual(fork(updateTotalVolume));
     expect(saga.next().value).toEqual(fork(requestUsedVolumeTimer));
     expect(saga.next().value).toEqual(takeEvery(constants.OpenSyncFolder, openSyncFolder));
     expect(saga.next().value).toEqual(takeEvery(constants.OpenAboutWindow, openAboutWindow));

@@ -52,6 +52,8 @@ import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
 
+const appID = "com.electron.goobox";
+
 describe("event handlers", () => {
 
   afterEach(() => {
@@ -670,7 +672,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: "Goobox"
+          appID: appID
         }, expect.any(Function));
       });
 
@@ -698,7 +700,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: "Goobox"
+          appID: appID
         }, expect.any(Function));
       });
 
@@ -711,7 +713,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: "Goobox"
+          appID: appID
         }, expect.any(Function));
       });
 
@@ -724,7 +726,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: "Goobox"
+          appID: appID
         }, expect.any(Function));
       });
 
@@ -737,7 +739,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: "Goobox"
+          appID: appID
         }, expect.any(Function));
       });
 

@@ -113,8 +113,11 @@ export const core = async () => {
   });
 
   // Register GUI event handlers.
+  log.debug("[GUI main] Register changeStateHandler");
   addListener(ipcActionTypes.ChangeState, changeStateHandler(mb));
+  log.debug("[GUI main] Register openSyncFolderHandler");
   addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
+  log.debug("[GUI main] Register calculateUsedVolumeHandler");
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
 
   // Start back ends.
@@ -130,6 +133,7 @@ export const core = async () => {
       global.storj.start(cfg.syncFolder);
     }
     if (global.storj) {
+      log.debug("[GUI main] Register updateStateHandler");
       global.storj.on("syncState", updateStateHandler(mb));
     }
 
@@ -139,7 +143,9 @@ export const core = async () => {
       global.sia.start(cfg.syncFolder);
     }
     if (global.sia) {
+      log.debug("[GUI main] Register updateStateHandler");
       global.sia.on("syncState", updateStateHandler(mb));
+      log.debug("[GUI main] Register siaFundEventHandler");
       global.sia.on("walletInfo", siaFundEventHandler());
     }
 

@@ -22,6 +22,7 @@ export const changeState = createAction(constants.ChangeState);
 export const pause = createAction(constants.Pause);
 export const restart = createAction(constants.Restart);
 export const setVolumeSize = createAction(constants.SetVolumeSize);
+export const setTotalVolumeSize = createAction(constants.SetTotalVolumeSize);
 export const openSyncFolder = createAction(constants.OpenSyncFolder);
 export const openAboutWindow = createAction(constants.OpenAboutWindow);
 export const enable = createAction(constants.Enable);

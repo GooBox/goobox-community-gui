@@ -69,4 +69,12 @@ describe("reducer", () => {
     });
   });
 
+  it("updates the total volume size by SetTotalVolumeSize action", () => {
+    const value = 1234;
+    expect(reducer(InitialState, actions.setTotalVolumeSize(value))).toEqual({
+      ...InitialState,
+      totalVolume: value,
+    });
+  });
+
 });
