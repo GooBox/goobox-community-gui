@@ -47,13 +47,14 @@ const style = {
     display: "block",
     marginTop: "10px",
     marginBottom: "0",
-    height: "39px",
+    height: "56px",
     width: "466px",
     fontSize: "10px",
     color: "#7f7f7f",
     backgroundColor: "white",
     borderRadius: "5px",
     padding: "8px",
+    overflowY: "auto"
   },
 };
 
