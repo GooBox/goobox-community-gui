@@ -35,9 +35,6 @@ export default class Sia extends EventEmitter {
       this._cmd += ".bat";
     }
     this._javaHome = path.join(jre.driver(), "../../");
-    this.stdin = null;
-    this.stdout = null;
-    this.stderr = null;
     log.debug(`[GUI main] New sia instance: cmd = ${this._cmd} in ${this._wd}, java-home = ${this._javaHome}`);
   }
 
@@ -87,7 +84,13 @@ export default class Sia extends EventEmitter {
     });
 
     // Attach a logger to stderr.
-    readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
+    // readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
+
+    // Until https://github.com/NebulousLabs/Sia/issues/2741 is fixed, expose stderr so that
+    // siaRequestWalletInfoHandler can add an event handler to restart the siad.
+    this.stderr = readLine.createInterface({input: this.proc.stderr});
+    this.stderr.on("line", log.verbose);
+    // --
 
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {

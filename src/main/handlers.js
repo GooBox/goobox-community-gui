@@ -112,6 +112,19 @@ export const siaRequestWalletInfoHandler = () => async payload => {
   try {
     const res = await global.sia.wallet();
     global.sia.start(payload.syncFolder, true);
+
+    // Until https://github.com/NebulousLabs/Sia/issues/2741 is fixed, restart sync-sia when wallet scan finishes.
+    if (global.sia.stderr) {
+      global.sia.stderr.on("line", async line => {
+        if (line.indexOf("io.goobox.sync.sia.SiaDaemon - Done!") !== -1) {
+          log.info("Restarting sync-sia");
+          await global.sia.close();
+          global.sia.start(payload.syncFolder);
+        }
+      });
+    }
+    // --
+
     return {
       address: res["wallet address"],
       seed: res["primary seed"],
