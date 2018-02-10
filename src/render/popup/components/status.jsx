@@ -17,15 +17,15 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import {Paused, Synchronizing} from "../../../constants";
 import folderImage from "../assets/folder.svg";
 import importDriveImage from "../assets/import_drive.svg";
 import infoImage from "../assets/info.svg";
+import leftWhiteIcon from "../assets/left_white_icon.svg";
 import pauseSyncImage from "../assets/pause_sync.svg";
 import pausedImage from "../assets/paused.svg";
 import settingsImage from "../assets/settings.svg";
 import syncAgainImage from "../assets/sync_again.svg";
-import {Paused, Synchronizing} from "../../../constants";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
 import synchronizedImage from "../assets/synchronized.svg";
 import titleImage from "../assets/title.svg";
 
@@ -33,7 +33,7 @@ export default function Status(props) {
 
   const rate = props.totalVolume && Math.round(props.usedVolume / props.totalVolume * 100);
   const barStyle = {
-    width: `${rate}%`
+    width: `${rate < 100 ? rate : 100}%`
   };
 
   let pauseRestartBtn;
