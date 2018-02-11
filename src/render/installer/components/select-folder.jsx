@@ -116,7 +116,11 @@ export default class SelectFolder extends React.Component {
     }).then(selected => {
 
       if (selected && selected.length > 0 && this.props.onSelectFolder) {
-        this.props.onSelectFolder(selected[0]);
+        let dir = selected[0];
+        if (dir.endsWith("\\")) {
+          dir = dir.substr(0, dir.length - 1);
+        }
+        this.props.onSelectFolder(dir);
       }
 
     }).catch(reason => {

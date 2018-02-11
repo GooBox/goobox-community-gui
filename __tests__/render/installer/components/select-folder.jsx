@@ -175,6 +175,19 @@ describe("SelectFolder component", () => {
       await expect(wrapper.instance()._onClickBrowse()).rejects.toBeDefined();
     });
 
+    it("removes trailing back slashes in chosen paths", async () => {
+      const dir = "F:";
+      dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
+        callback([`${dir}\\`]);
+      });
+      await wrapper.instance()._onClickBrowse();
+      expect(selectFolder).toHaveBeenCalledWith(dir);
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+        defaultPath: defaultDir,
+        properties: ["openDirectory", "createDirectory"]
+      }, expect.any(Function));
+    });
+
   });
 
 });
