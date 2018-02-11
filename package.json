@@ -134,7 +134,11 @@
       "icon": "resources/goobox.icns",
       "extraResources": [
         {
-          "from": "tmp/win/goobox-sync-sia",
+          "from": "tmp/mac/goobox-sync-storj",
+          "to": "app/goobox-sync-storj"
+        },
+        {
+          "from": "tmp/mac/goobox-sync-sia",
           "to": "app/goobox-sync-sia"
         }
       ]
