@@ -28,7 +28,8 @@ export const register = async dir => {
 
   log.info(`[GUI main] Registering the folder icon to ${dir}`);
 
-  log.debug(`[GUI main] Set ${path.basename(dir)} as a system directory`);
+  log.verbose(`[GUI main] Set ${path.basename(dir)} as a system directory`);
+  // noinspection SpellCheckingInspection
   execFileSync("attrib", ["+S", path.basename(dir)], {
     cwd: path.dirname(dir),
     windowsHide: true,
@@ -42,10 +43,10 @@ export const register = async dir => {
       const src = path.join(__dirname, `../../resources/${name}`);
       const dest = path.join(dir, name);
       if (fs.existsSync(dest)) {
-        log.debug(`[GUI main] ${dest} already exists`);
+        log.verbose(`[GUI main] ${dest} already exists`);
         resolve();
       } else {
-        log.debug(`[GUI main] Copying ${src} to ${dest}`);
+        log.verbose(`[GUI main] Copying ${src} to ${dest}`);
         fs.createReadStream(src)
           .pipe(fs.createWriteStream(dest))
           .on("close", resolve)
@@ -53,7 +54,7 @@ export const register = async dir => {
       }
 
     }).then(() => {
-      log.debug(`[GUI main] Update the attribute of ${name}`);
+      log.verbose(`[GUI main] Update the attribute of ${name}`);
       try {
         execFileSync("attrib", ["+S", "+H", name], {
           cwd: dir,

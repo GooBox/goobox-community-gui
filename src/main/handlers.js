@@ -33,6 +33,7 @@ const appID = "com.electron.goobox";
 
 const notifyAsync = async opts => {
   return new Promise(resolve => {
+    // noinspection JSUnresolvedFunction
     notifier.notify(opts, (err, res) => {
       if (err) {
         log.warn(`Notification failed, maybe the user canceled it: ${err}`);
@@ -199,7 +200,7 @@ export const startSynchronizationHandler = () => async payload => {
   if (payload.newState !== "startSynchronization") {
     return;
   }
-  log.debug("[GUI main] Notify the sia account is ready");
+  log.verbose("[GUI main] Notify the sia account is ready");
   return await notifyAsync({
     title: "Goobox",
     message: "Your sia account is ready",
@@ -283,7 +284,7 @@ export const updateStateHandler = mb => async payload => {
 export const siaFundEventHandler = () => async payload => {
   switch (payload.eventType) {
     case "NoFunds":
-      log.debug("[GUI main] Notify the user his/her wallet doesn't have sia coins");
+      log.verbose("[GUI main] Notify the user his/her wallet doesn't have sia coins");
       return await notifyAsync({
         title: "Goobox",
         message: "Your wallet doesn't have sia coins",
@@ -293,7 +294,7 @@ export const siaFundEventHandler = () => async payload => {
         appID: appID
       });
     case "InsufficientFunds":
-      log.debug("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
+      log.verbose("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
       return await notifyAsync({
         title: "Goobox",
         message: payload.message,
@@ -303,7 +304,7 @@ export const siaFundEventHandler = () => async payload => {
         appID: appID
       });
     case "Allocated":
-      log.debug("[GUI main] Notify the user his/her funds are allocated");
+      log.verbose("[GUI main] Notify the user his/her funds are allocated");
       return await notifyAsync({
         title: "Goobox",
         message: payload.message,

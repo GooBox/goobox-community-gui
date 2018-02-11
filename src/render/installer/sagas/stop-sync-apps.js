@@ -27,7 +27,7 @@ export default function* stopSyncApps() {
     log.debug("[GUI render] Closing sync apps if running");
     yield call(sendAsync, ipcActions.stopSyncApps());
   } catch (err) {
-    log.debug(`[GUI render] Failed to stop sync apps: ${err}`);
+    log.error(`[GUI render] Failed to stop sync apps: ${err}`);
     // TODO: error handling.
   }
   yield put(actions.processingEnd());

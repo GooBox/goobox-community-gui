@@ -49,7 +49,7 @@ export default function* requestSiaWallet(action) {
   } catch (err) {
 
     inc.cancel();
-    log.debug(`[GUI render] Fails to received the wallet information: ${err}`);
+    log.error(`[GUI render] Fails to received the wallet information: ${err}`);
     yield put(actions.requestSiaWalletInfoFailure(err));
 
   }
