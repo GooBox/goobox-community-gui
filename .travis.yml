@@ -10,6 +10,8 @@ env:
   global:
   - ELECTRON_CACHE=$HOME/.cache/electron
   - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  - SYNC_STORJ_VERSION=0.0.21
+  - SYNC_SIA_VERSION=0.1.1
 cache:
   directories:
   - node_modules
