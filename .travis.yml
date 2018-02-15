@@ -26,9 +26,7 @@ after_success:
 - npm run coveralls
 before_deploy:
 - NODE_ENV=production npm run build
-- npm run dist:pre
 - npm run dist
-- npm run dist:post
 deploy:
   provider: releases
   api_key:
