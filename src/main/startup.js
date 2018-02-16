@@ -48,8 +48,8 @@ export const main = async () => {
     log.transports.file.level = "debug";
     log.transports.console.level = "debug";
   } else {
-    log.transports.file.level = "info";
-    log.transports.console.level = "warn";
+    log.transports.file.level = "verbose";
+    log.transports.console.level = "info";
   }
 
   jre.setJreDir(path.join(app.getPath("userData"), "jre"));

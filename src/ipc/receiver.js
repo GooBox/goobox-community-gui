@@ -27,7 +27,7 @@ export default function addListener(actionType, asyncCallback) {
       log.debug(`[GUI main] Sending a successful response for ${actionType} request: ${JSON.stringify(payload)}`);
       event.sender.send(actionType, res);
     } catch (error) {
-      log.debug(`[GUI main] Sending an error response for ${actionType} request: ${error}`);
+      log.error(`[GUI main] Sending an error response for ${actionType} request: ${error}`);
       event.sender.send(actionType, error, true);
     }
   });

@@ -121,5 +121,15 @@ describe("Status component", () => {
     });
   });
 
+  it("ensures the the usage bar doesn't exceed 100%", () => {
+    const wrapper = shallow(<Status usedVolume={total * 2} totalVolume={total}/>);
+    const usageBar = wrapper.find(".bar");
+    expect(usageBar.exists()).toBeTruthy();
+    expect(usageBar.prop("style")).toEqual({
+      width: "100%"
+    });
+  });
+
+
 });
 

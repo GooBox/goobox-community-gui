@@ -8,7 +8,7 @@
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay4Error_x64.dll"'
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxContextMenus_x64.dll"'
 	ExecWait "taskkill /F /IM explorer.exe"
-	Sleep 200
+	Sleep 500
 	ExecWait "explorer.exe"
 !macroend
 
