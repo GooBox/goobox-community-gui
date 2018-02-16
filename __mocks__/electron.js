@@ -80,7 +80,8 @@ export const remote = {
 };
 
 export const Menu = {
-  buildFromTemplate: jest.fn()
+  buildFromTemplate: jest.fn(),
+  setApplicationMenu: jest.fn()
 };
 
 export const dialog = {

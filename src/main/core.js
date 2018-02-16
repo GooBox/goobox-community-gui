@@ -121,12 +121,11 @@ export const core = async () => {
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
 
   // Start back ends.
-  log.info("[GUI main] Loading the config file.");
   try {
     await installJRE();
 
     const cfg = await getConfig();
-    log.debug(`[GUI main] Config = ${JSON.stringify(cfg)}`);
+    log.verbose(`[GUI main] Config = ${JSON.stringify(cfg)}`);
     // Start sync-storj app.
     if (cfg.storj && !global.storj) {
       global.storj = new Storj();

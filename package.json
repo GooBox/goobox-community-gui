@@ -1,6 +1,6 @@
 {
   "name": "Goobox",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Goobox community edition sync app for sia and storj 🎉🚀",
   "main": "index.js",
   "scripts": {
@@ -14,11 +14,13 @@
     "coveralls": "cat coverage/lcov.info | coveralls",
     "check-update": "ncu -u",
     "pack": "electron-builder -wm --dir",
-    "dist": "electron-builder -w --x64",
+    "dist": "run-s dist:pre dist:build dist:post",
+    "dist:build": "electron-builder -wm --x64",
     "dist:pre": "run-p dist:pre:*:*",
-    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/0.0.20/goobox-sync-storj-0.0.20-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
-    "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.1.1/goobox-sync-sia-0.1.1-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
-    "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v0.1.1/goobox-sync-sia-0.1.1-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
+    "dist:pre:storj:mac": "mkdir -p tmp/mac/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-darwin.tar.gz | tar -zxv -C tmp/mac/goobox-sync-storj --strip-components 1",
+    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-win64.zip -o tmp.zip && unzip tmp.zip -d tmp/win/ && rm tmp.zip",
+    "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
+    "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
     "dist:post": "del tmp"
   },
   "repository": {
@@ -134,7 +136,11 @@
       "icon": "resources/goobox.icns",
       "extraResources": [
         {
-          "from": "tmp/win/goobox-sync-sia",
+          "from": "tmp/mac/goobox-sync-storj",
+          "to": "app/goobox-sync-storj"
+        },
+        {
+          "from": "tmp/mac/goobox-sync-sia",
           "to": "app/goobox-sync-sia"
         }
       ]

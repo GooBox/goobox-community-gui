@@ -30,7 +30,7 @@ export default function* saveConfig(action) {
     });
   } catch (err) {
     // TODO: Show this error message.
-    log.error(`[GUI render] Failed to store configuraions: ${err}`);
+    log.error(`[GUI render] Failed to store configurations: ${err}`);
   }
 }
 

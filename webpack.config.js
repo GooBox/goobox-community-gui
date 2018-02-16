@@ -33,6 +33,7 @@ module.exports = [{
     extensions: [".js"]
   },
   externals: [{
+    "about-window": "commonjs about-window",
     "node-jre": "commonjs node-jre",
     "node-notifier": "commonjs node-notifier"
   }],
@@ -41,6 +42,15 @@ module.exports = [{
       exclude: /node_modules/,
       test: /\.jsx?$/,
       loader: "babel-loader",
+    }, {
+      exclude: /node_modules/,
+      test: /\.svg$/,
+      use: {
+        loader: 'svg-url-loader',
+        options: {
+          noquotes: true
+        }
+      }
     }],
   },
   output: {
@@ -65,23 +75,20 @@ module.exports = [{
     "about-window": "commonjs about-window"
   }],
   module: {
-    loaders: [
-      {
-        exclude: /node_modules/,
-        test: /\.jsx?$/,
-        loader: "babel-loader"
-      },
-      {
-        exclude: /node_modules/,
-        test: /\.svg$/,
-        use: {
-          loader: 'svg-url-loader',
-          options: {
-            noquotes: true
-          }
+    loaders: [{
+      exclude: /node_modules/,
+      test: /\.jsx?$/,
+      loader: "babel-loader"
+    }, {
+      exclude: /node_modules/,
+      test: /\.svg$/,
+      use: {
+        loader: 'svg-url-loader',
+        options: {
+          noquotes: true
         }
       }
-    ]
+    }]
   },
   output: {
     path: path.join(__dirname, "lib"),

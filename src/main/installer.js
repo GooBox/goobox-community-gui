@@ -16,10 +16,11 @@
  */
 
 "use strict";
-import {app, BrowserWindow} from "electron";
+import {app, BrowserWindow, Menu} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
+import showInfoWindowAsync from "../about-window";
 import * as actionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {
@@ -69,6 +70,34 @@ export const installer = () => {
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
+
+  // Create the Application's main menu for mac
+  if (process.platform === "darwin") {
+    const template = [{
+      label: "Goobox",
+      submenu: [
+        {label: "About Goobox", click: showInfoWindowAsync},
+        {type: "separator"},
+        {
+          label: "Quit", accelerator: "Command+Q", click: () => {
+            mainWindow.close();
+          }
+        }
+      ]
+    }, {
+      label: "Edit",
+      submenu: [
+        {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
+        {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
+        {type: "separator"},
+        {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
+        {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
+        {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
+        {label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"}
+      ]
+    }];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  }
 
 };
 
