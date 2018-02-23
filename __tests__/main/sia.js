@@ -85,6 +85,7 @@ describe("Sia class", () => {
         cwd: sia._wd,
         env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
+          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${sia._wd}:${process.env.PATH}`,
         }),
         shell: true,
@@ -98,6 +99,7 @@ describe("Sia class", () => {
         cwd: sia._wd,
         env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
+          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${sia._wd}:${process.env.PATH}`,
         }),
         shell: true,
@@ -156,6 +158,7 @@ describe("Sia class", () => {
         cwd: sia._wd,
         env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
+          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${sia._wd}:${process.env.PATH}`,
         }),
         shell: true,
