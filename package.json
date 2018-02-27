@@ -49,14 +49,14 @@
     "babel-core": "^7.0.0-0",
     "babel-jest": "^22.1.0",
     "babel-loader": "^8.0.0-beta.0",
-    "babel-minify-webpack-plugin": "^0.2.0",
+    "babel-minify-webpack-plugin": "^0.3.0",
     "classnames": "^2.2.5",
     "commander": "^2.13.0",
     "coveralls": "^3.0.0",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
-    "electron": "1.7.12",
-    "electron-builder": "^19.55.3",
+    "electron": "1.8.2",
+    "electron-builder": "^20.2.0",
     "electron-log": "^2.2.14",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -92,7 +92,7 @@
         {
           "targets": {
             "node": "current",
-            "electron": "1.7.12"
+            "electron": "1.8.2"
           },
           "useBuiltIns": "usage"
         }
