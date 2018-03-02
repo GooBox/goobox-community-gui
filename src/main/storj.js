@@ -166,6 +166,15 @@ export default class Storj extends EventEmitter {
 
   }
 
+  async generateMnemonic() {
+
+    const res = await this._sendRequest("Generate encryption key", {
+      method: "generateMnemonic",
+    });
+    return res.encryptionKey;
+
+  }
+
   get closed() {
     return !this.proc;
   }

@@ -403,6 +403,29 @@ describe("Storj class", () => {
 
   });
 
+  describe("generateMnemonic method", () => {
+
+    const key = "xxx xxx xxx";
+
+    it("sends a generate mnemonic request and returns a mnemonic code", async () => {
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.resolve({
+        status: "ok",
+        encryptionKey: key,
+      }));
+      await expect(storj.generateMnemonic()).resolves.toEqual(key);
+      expect(storj._sendRequest).toHaveBeenCalledWith("Generate encryption key", {
+        method: "generateMnemonic",
+      });
+    });
+
+    it("returns a rejected promise when failing to generate a mnemonic key", async () => {
+      const error = "failed to generate a mnemonic key";
+      storj._sendRequest = jest.fn().mockReturnValue(Promise.reject(error));
+      await expect(storj.generateMnemonic()).rejects.toEqual(error);
+    });
+
+  });
+
   describe("closed property", () => {
 
     it("returns true if the proc is null", () => {
