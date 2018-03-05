@@ -127,6 +127,7 @@
       "!__mocks__",
       "!__tests__",
       "!coverage",
+      "!Docs",
       "!node_modules/node-jre/jre",
       "!goobox-sync-*",
       "!src",
