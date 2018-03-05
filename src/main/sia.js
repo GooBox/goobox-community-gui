@@ -57,7 +57,7 @@ export default class Sia extends EventEmitter {
     if (process.platform === "win32") {
       const lib = path.normalize(path.join(this._wd, "../../../libraries"));
       env.PATH = `${lib};${env.PATH}`;
-      env.JAVA_OPTS = `-Djava.library.path="${lib}"`;
+      env.GOOBOX_SYNC_SIA_OPTS = `-Djava.library.path="${lib}"`;
 
     } else {
       env.PATH = `${this._wd}:${env.PATH}`;

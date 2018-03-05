@@ -386,7 +386,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
-          JAVA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
+          GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
         },
         shell: true,
@@ -401,7 +401,7 @@ describe("Sia class", () => {
         env: {
           ...process.env,
           JAVA_HOME: sia._javaHome,
-          JAVA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
+          GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
         },
         shell: true,

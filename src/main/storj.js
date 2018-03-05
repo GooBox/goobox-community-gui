@@ -58,7 +58,7 @@ export default class Storj extends EventEmitter {
 
       const lib = path.normalize(path.join(this._wd, "../../libraries"));
       env.PATH = `${lib};${env.PATH}`;
-      env.JAVA_OPTS = `-Djava.library.path="${this._wd};${lib}"`
+      env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`
 
     } else {
       env.PATH = `${this._wd}:${env.PATH}`;
