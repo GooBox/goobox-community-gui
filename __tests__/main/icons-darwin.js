@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+jest.mock("electron");
 
+import {systemPreferences} from "electron";
 import path from "path";
 
 describe("icons module in Mac", () => {
 
-  let originalPlatform;
+  let originalPlatform, icons;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
       value: "darwin"
     });
+    icons = require("../../src/main/icons").default;
   });
 
   afterAll(() => {
@@ -33,12 +36,25 @@ describe("icons module in Mac", () => {
     });
   });
 
+  beforeEach(() => {
+    systemPreferences.isDarkMode.mockReturnValue(false);
+  });
+
   it("returns white icons", () => {
-    const icons = require("../../src/main/icons").default;
     expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/idle.png"));
     expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/sync.png"));
     expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/paused.png"));
     expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/error.png"));
+    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/mac/warn.png"));
+  });
+
+  it("returns icons for the dark theme if the dark theme is true", () => {
+    systemPreferences.isDarkMode.mockReturnValue(true);
+    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/idle.png"));
+    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/sync.png"));
+    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/paused.png"));
+    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/error.png"));
+    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/warn.png"));
   });
 
 });

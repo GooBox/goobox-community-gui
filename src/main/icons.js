@@ -15,18 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {systemPreferences} from "electron";
 import os from "os";
 import path from "path";
 import semver from "semver";
 
-let idleIcon, syncIcon, pausedIcon, errorIcon;
+export const icons = {};
+
 if (process.platform === 'darwin') {
 
   // mac
-  idleIcon = path.join(__dirname, "../../resources/mac/idle.png");
-  syncIcon = path.join(__dirname, "../../resources/mac/sync.png");
-  pausedIcon = path.join(__dirname, "../../resources/mac/paused.png");
-  errorIcon = path.join(__dirname, "../../resources/mac/error.png");
+  const getIcon = name => {
+    if (systemPreferences.isDarkMode()) {
+      return path.join(__dirname, `../../resources/mac/dark/${name}.png`);
+    }
+    return path.join(__dirname, `../../resources/mac/${name}.png`);
+  };
+  icons.getIdleIcon = () => getIcon("idle");
+  icons.getSyncIcon = () => getIcon("sync");
+  icons.getPausedIcon = () => getIcon("paused");
+  icons.getErrorIcon = () => getIcon("error");
+  icons.getWarnIcon = () => getIcon("warn");
 
 } else {
 
@@ -36,26 +45,29 @@ if (process.platform === 'darwin') {
     version += '.0';
   }
 
+  let idleIcon, syncIcon, pausedIcon, errorIcon, warnIcon;
   if (semver.satisfies(version, '<6.2')) {
     // windows7 or older.
     idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
     syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
     pausedIcon = path.join(__dirname, "../../resources/win7/paused.png");
     errorIcon = path.join(__dirname, "../../resources/win7/error.png");
+    warnIcon = path.join(__dirname, "../../resources/win7/warn.png");
   } else {
     // windows8 or later.
     idleIcon = path.join(__dirname, "../../resources/win/idle.png");
     syncIcon = path.join(__dirname, "../../resources/win/sync.png");
     pausedIcon = path.join(__dirname, "../../resources/win/paused.png");
     errorIcon = path.join(__dirname, "../../resources/win/error.png");
+    warnIcon = path.join(__dirname, "../../resources/win/warn.png");
   }
+
+  icons.getIdleIcon = () => idleIcon;
+  icons.getSyncIcon = () => syncIcon;
+  icons.getPausedIcon = () => pausedIcon;
+  icons.getErrorIcon = () => errorIcon;
+  icons.getWarnIcon = () => warnIcon;
 
 }
 
-export const icons = {
-  getIdleIcon: () => idleIcon,
-  getSyncIcon: () => syncIcon,
-  getPausedIcon: () => pausedIcon,
-  getErrorIcon: () => errorIcon,
-};
 export default icons;
