@@ -22,7 +22,7 @@ jest.mock("../../src/main/handlers");
 jest.useFakeTimers();
 
 import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
-import {menubar, menuberMock} from "menubar";
+import {menubar, menubarMock} from "menubar";
 import path from "path";
 import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
@@ -62,15 +62,15 @@ describe("main process of the core app", () => {
   });
 
   beforeEach(() => {
-    menuberMock.tray.listeners.mockReturnValue([() => null]);
+    menubarMock.tray.listeners.mockReturnValue([() => null]);
   });
 
   afterEach(() => {
     delete global.storj;
     delete global.sia;
     menubar.mockClear();
-    menuberMock.on.mockClear();
-    menuberMock.app.on.mockClear();
+    menubarMock.on.mockClear();
+    menubarMock.app.on.mockClear();
     app.quit.mockClear();
     ipcMain.on.mockClear();
     getConfig.mockReset();
@@ -100,23 +100,23 @@ describe("main process of the core app", () => {
     const handler = "expected handler";
     willQuitHandler.mockReturnValue(handler);
     await core();
-    expect(menuberMock.app.on).toHaveBeenCalledWith("will-quit", handler);
-    expect(willQuitHandler).toHaveBeenCalledWith(menuberMock.app);
+    expect(menubarMock.app.on).toHaveBeenCalledWith("will-quit", handler);
+    expect(willQuitHandler).toHaveBeenCalledWith(menubarMock.app);
   });
 
 
   describe("system tray event handlers", () => {
 
-    const getTrayEventHandler = (event) => getEventHandler(menuberMock.tray, event);
+    const getTrayEventHandler = (event) => getEventHandler(menubarMock.tray, event);
     const menuItems = "sample menue items";
     const onClick = jest.fn();
 
     beforeEach(async () => {
-      menuberMock.tray.on.mockClear();
+      menubarMock.tray.on.mockClear();
       Menu.buildFromTemplate.mockReset();
       Menu.buildFromTemplate.mockReturnValue(menuItems);
       onClick.mockReset();
-      menuberMock.tray.listeners.mockReturnValue([onClick]);
+      menubarMock.tray.listeners.mockReturnValue([onClick]);
       await core();
     });
 
@@ -161,13 +161,13 @@ describe("main process of the core app", () => {
 
       let handler;
       beforeEach(() => {
-        menuberMock.tray.popUpContextMenu.mockReset();
+        menubarMock.tray.popUpContextMenu.mockReset();
         handler = getTrayEventHandler("right-click");
       });
 
       it("shows a context menu which has exit", () => {
         handler();
-        expect(menuberMock.tray.popUpContextMenu).toHaveBeenCalledWith(menuItems);
+        expect(menubarMock.tray.popUpContextMenu).toHaveBeenCalledWith(menuItems);
         expect(Menu.buildFromTemplate).toHaveBeenCalledWith([{
           label: "exit",
           click: expect.any(Function)
@@ -201,7 +201,7 @@ describe("main process of the core app", () => {
     it("registers changeStateHandler", async () => {
       await core();
       expect(addListener).toHaveBeenCalledWith(ipcActionTypes.ChangeState, changeStateHandler());
-      expect(changeStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(changeStateHandler).toHaveBeenCalledWith(menubarMock);
     });
 
     it("registers openSyncFolderHandler", async () => {
@@ -284,7 +284,7 @@ describe("main process of the core app", () => {
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -300,7 +300,7 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(storjStart).not.toHaveBeenCalled();
       expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -324,7 +324,7 @@ describe("main process of the core app", () => {
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -352,7 +352,7 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).not.toHaveBeenCalled();
       expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 

@@ -15,12 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
 import * as desktop from "../../src/main/desktop";
-import {Synchronizing} from "../constants";
+import {Idle, Paused, Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
 import icons from "./icons";
@@ -56,6 +55,7 @@ export const changeStateHandler = mb => async payload => {
     }
     log.debug("[GUI main] Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());
+    mb.appState = Synchronizing;
   } else {
     if (global.storj) {
       await global.storj.close();
@@ -65,6 +65,7 @@ export const changeStateHandler = mb => async payload => {
     }
     log.debug("[GUI main] Update the tray icon to the paused icon");
     mb.tray.setImage(icons.getPausedIcon());
+    mb.appState = Paused;
   }
   return payload;
 };
@@ -271,10 +272,12 @@ export const updateStateHandler = mb => async payload => {
     case "synchronizing":
       log.debug("[GUI main] Set the synchronizing icon");
       mb.tray.setImage(icons.getSyncIcon());
+      mb.appState = Synchronizing;
       break;
     case "idle":
       log.debug("[GUI main] Set the idle icon");
       mb.tray.setImage(icons.getIdleIcon());
+      mb.appState = Idle;
       break;
     default:
       log.debug(`[GUI main] Received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
