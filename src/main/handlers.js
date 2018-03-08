@@ -328,3 +328,17 @@ export const siaFundEventHandler = () => async payload => {
       });
   }
 };
+
+export const themeChangedHandler = mb => async () => {
+  switch (mb.appState) {
+    case Synchronizing:
+      mb.tray.setImage(icons.getSyncIcon());
+      break;
+    case Paused:
+      mb.tray.setImage(icons.getPausedIcon());
+      break;
+    case Idle:
+    default:
+      mb.tray.setImage(icons.getIdleIcon());
+  }
+};

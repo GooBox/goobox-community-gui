@@ -43,8 +43,9 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjLoginHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "../../src/main/handlers";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
@@ -760,3 +761,36 @@ describe("event handlers", () => {
 
 });
 
+describe("AppleInterfaceThemeChangedNotification event handler", () => {
+
+  let handler;
+  beforeEach(() => {
+    menubarMock.appState = null;
+    menubarMock.tray.setImage.mockClear();
+    handler = themeChangedHandler(menubarMock);
+  });
+
+  it("sets idle icon if appState is Idle", async () => {
+    menubarMock.appState = Idle;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+  it("sets synchronizing icon if appState is Synchronizing", async () => {
+    menubarMock.appState = Synchronizing;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+  });
+
+  it("sets paused icon if appState is Paused", async () => {
+    menubarMock.appState = Paused;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+  });
+
+  it("sets idle icon if appState isn't defined", async () => {
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+});

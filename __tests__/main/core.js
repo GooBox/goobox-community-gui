@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+jest.mock("electron");
 jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
@@ -21,9 +22,10 @@ jest.mock("../../src/ipc/receiver");
 jest.mock("../../src/main/handlers");
 jest.useFakeTimers();
 
-import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
+import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
 import path from "path";
+import {Synchronizing} from "../../src/constants";
 import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
@@ -33,9 +35,11 @@ import {
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "../../src/main/handlers";
+import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
@@ -82,7 +86,7 @@ describe("main process of the core app", () => {
       await core();
       expect(menubar).toHaveBeenCalledWith({
         index: "file://" + path.join(__dirname, "../../static/popup.html"),
-        icon: expect.anything(),
+        icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,
         width: 518,
@@ -91,6 +95,7 @@ describe("main process of the core app", () => {
         showDockIcon: false,
       });
       expect(setSkipTaskbar).toHaveBeenCalledWith(true);
+      expect(menubarMock.appState).toEqual(Synchronizing);
     } finally {
       setSkipTaskbar.mockRestore();
     }
@@ -104,6 +109,14 @@ describe("main process of the core app", () => {
     expect(willQuitHandler).toHaveBeenCalledWith(menubarMock.app);
   });
 
+  it("subscribes AppleInterfaceThemeChangedNotification event", async () => {
+    const cb = "cb";
+    themeChangedHandler.mockReset().mockReturnValue(cb);
+
+    await core();
+    expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith("AppleInterfaceThemeChangedNotification", cb);
+    expect(themeChangedHandler).toHaveBeenCalledWith(menubarMock);
+  });
 
   describe("system tray event handlers", () => {
 

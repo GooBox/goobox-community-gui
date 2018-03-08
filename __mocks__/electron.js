@@ -90,4 +90,5 @@ export const dialog = {
 
 export const systemPreferences = {
   isDarkMode: jest.fn(),
+  subscribeNotification: jest.fn(),
 };

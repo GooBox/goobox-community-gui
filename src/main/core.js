@@ -16,10 +16,11 @@
  */
 
 "use strict";
-import {app, dialog, Menu} from "electron";
+import {app, dialog, Menu, systemPreferences} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
+import {Synchronizing} from "../constants";
 import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
@@ -28,8 +29,9 @@ import {
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
@@ -58,6 +60,7 @@ export const core = async () => {
   mb.app.on('window-all-closed', app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
+  mb.appState = Synchronizing;
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
@@ -119,6 +122,10 @@ export const core = async () => {
   addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
   log.debug("[GUI main] Register calculateUsedVolumeHandler");
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
+  if (systemPreferences.subscribeNotification) {
+    log.debug("[GUI main] Register AppleInterfaceThemeChangedNotification event handler");
+    systemPreferences.subscribeNotification("AppleInterfaceThemeChangedNotification", themeChangedHandler(mb));
+  }
 
   // Start back ends.
   try {
