@@ -18,7 +18,7 @@
 import {app, BrowserWindow} from "./electron";
 
 export const menubar = jest.fn();
-export const menuberMock = {
+export const menubarMock = {
   on: jest.fn(),
   app: app,
   showWindow: jest.fn(),
@@ -32,6 +32,6 @@ export const menuberMock = {
   }
 };
 
-menubar.mockReturnValue(menuberMock);
+menubar.mockReturnValue(menubarMock);
 
 export default menubar;

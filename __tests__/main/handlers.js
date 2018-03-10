@@ -24,10 +24,10 @@ jest.mock("../../src/main/core");
 jest.mock("../../src/main/desktop");
 
 import {app} from "electron";
-import {menuberMock} from "menubar";
+import {menubarMock} from "menubar";
 import notifier from "node-notifier";
 import path from "path"
-import {Paused, Synchronizing} from "../../src/constants";
+import {Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
 import * as desktop from "../../src/main/desktop";
@@ -43,8 +43,9 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjLoginHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "../../src/main/handlers";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
@@ -68,8 +69,9 @@ describe("event handlers", () => {
       const dir = "/tmp";
       let handler;
       beforeEach(() => {
-        menuberMock.tray.setImage.mockClear();
-        handler = changeStateHandler(menuberMock);
+        menubarMock.appState = null;
+        menubarMock.tray.setImage.mockClear();
+        handler = changeStateHandler(menubarMock);
         getConfig.mockReset();
         getConfig.mockReturnValue({
           syncFolder: dir,
@@ -78,12 +80,14 @@ describe("event handlers", () => {
 
       it("sets the idle icon when the state is Synchronizing", async () => {
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the paused icon when the state is Paused", async () => {
         await expect(handler(Paused)).resolves.toEqual(Paused);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+        expect(menubarMock.appState).toEqual(Paused);
       });
 
       it("restart the Storj instance if exists when the new state is Synchronizing", async () => {
@@ -639,18 +643,21 @@ describe("event handlers", () => {
 
       let handler;
       beforeEach(async () => {
-        menuberMock.tray.setImage.mockReset();
-        handler = updateStateHandler(menuberMock);
+        menubarMock.appState = null;
+        menubarMock.tray.setImage.mockReset();
+        handler = updateStateHandler(menubarMock);
       });
 
       it("sets the synchronizing icon when receiving a synchronizing event", async () => {
         await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the idle icon when receiving an idle event", async () => {
         await expect(handler({newState: "idle"})).resolves.not.toBeDefined();
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+        expect(menubarMock.appState).toEqual(Idle);
       });
 
     });
@@ -754,3 +761,36 @@ describe("event handlers", () => {
 
 });
 
+describe("AppleInterfaceThemeChangedNotification event handler", () => {
+
+  let handler;
+  beforeEach(() => {
+    menubarMock.appState = null;
+    menubarMock.tray.setImage.mockClear();
+    handler = themeChangedHandler(menubarMock);
+  });
+
+  it("sets idle icon if appState is Idle", async () => {
+    menubarMock.appState = Idle;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+  it("sets synchronizing icon if appState is Synchronizing", async () => {
+    menubarMock.appState = Synchronizing;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+  });
+
+  it("sets paused icon if appState is Paused", async () => {
+    menubarMock.appState = Paused;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+  });
+
+  it("sets idle icon if appState isn't defined", async () => {
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+});
