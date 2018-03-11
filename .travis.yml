@@ -27,7 +27,7 @@ before_cache:
 after_success:
 - npm run coveralls
 - brew upgrade python
-- pip install slack-cli
+- pip install slack-cli || pip3 install slack-cli
 - '[ "$TRAVIS_PULL_REQUEST" != "false" ] && npm run dist && slack-cli -d dev -f dist/Goobox-0.1.5-setup_x64.exe && slack-cli -d dev -f dist/Goobox-0.1.4.dmg'
 before_deploy:
 - NODE_ENV=production npm run build
