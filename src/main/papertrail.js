@@ -35,7 +35,7 @@ export const initPapertrail = () => {
     console.log(err)
   });
 
-  const logger = new winston.Logger({
+  const logger = winston.createLogger({
     transports: [winstonPapertrail]
   });
 
