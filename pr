@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Build dev builds and upload them to Pixeldrain, then posts their links to Slack.
+#
+brew upgrade python
+pip install slack-cli || pip3 install slack-cli
+brew tap jkawamoto/pixeldrain
+brew install pixeldrain
+npm run dist
+
+URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.1.5-setup_x64.exe -n Goobox-0.1.5-setup_x64.exe)
+if [[ -n "$URL_WINDOWS_PACKAGE" ]]; then
+    echo "Windows dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_WINDOWS_PACKAGE" | slack-cli -d dev;
+fi
+
+URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.1.5.dmg -n Goobox-0.1.5.dmg)
+if [[ -n "$URL_MAC_PACKAGE" ]]; then
+    echo "Mac dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_MAC_PACKAGE" | slack-cli -d dev
+fi
+
+
+
