@@ -137,6 +137,7 @@
     "mac": {
       "category": "public.app-category.productivity",
       "icon": "resources/goobox.icns",
+      "type": "development",
       "extraResources": [
         {
           "from": "tmp/mac/goobox-sync-storj",
@@ -145,6 +146,10 @@
         {
           "from": "tmp/mac/goobox-sync-sia",
           "to": "app/goobox-sync-sia"
+        },
+        {
+          "from": "vendor/mac",
+          "to": "../PlugIns/"
         }
       ]
     },
