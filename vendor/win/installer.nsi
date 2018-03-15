@@ -21,10 +21,14 @@
 !macroend
 
 !macro customUnInstall
-    RMDir /r "$LOCALAPPDATA\Goobox\Logs"
-    Delete "$LOCALAPPDATA\Goobox\api.storj.io.json"
-    # For debugging: disable deleting sia directory.
-    # RMDir /r "$LOCALAPPDATA\Goobox\sia"
+    ${if} $isDeleteAppData == "1"
+        RMDir /r "$LOCALAPPDATA\Goobox\Logs"
+        Delete "$LOCALAPPDATA\Goobox\api.storj.io.json"
+        Delete "$LOCALAPPDATA\Goobox\sync.db"
+        Delete "$LOCALAPPDATA\Goobox\sync.sia.db"
+        # For debugging: disable deleting sia directory.
+        # RMDir /r "$LOCALAPPDATA\Goobox\sia"
+    ${endif}
 !macroend
 
 !macro customRemoveFiles

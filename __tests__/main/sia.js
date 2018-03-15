@@ -83,11 +83,10 @@ describe("Sia class", () => {
       sia.start(syncFolder);
       expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
         cwd: sia._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
           PATH: `${sia._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -97,11 +96,10 @@ describe("Sia class", () => {
       sia.start(syncFolder, true);
       expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
         cwd: sia._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
           PATH: `${sia._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -156,11 +154,10 @@ describe("Sia class", () => {
       expect(spawn).toHaveBeenCalledTimes(2);
       expect(spawn).toHaveBeenLastCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
         cwd: sia._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
           PATH: `${sia._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -383,12 +380,11 @@ describe("Sia class", () => {
       sia.start(syncFolder);
       expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
         cwd: sia._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
           GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -398,12 +394,11 @@ describe("Sia class", () => {
       sia.start(syncFolder, true);
       expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
         cwd: sia._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: sia._javaHome,
           GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
           PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });

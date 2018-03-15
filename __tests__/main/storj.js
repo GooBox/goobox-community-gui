@@ -84,11 +84,10 @@ describe("Storj class", () => {
       storj.start(dir);
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
           PATH: `${storj._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -98,11 +97,10 @@ describe("Storj class", () => {
       storj.start(dir, true);
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
           PATH: `${storj._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -178,11 +176,10 @@ describe("Storj class", () => {
       expect(spawn).toHaveBeenCalledTimes(2);
       expect(spawn).toHaveBeenLastCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
           PATH: `${storj._wd}:${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -465,12 +462,11 @@ describe("Storj class", () => {
       storj.start(dir);
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
           GOOBOX_SYNC_STORJ_OPTS: `-Djava.library.path="${storj._wd};${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
           PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });
@@ -480,12 +476,11 @@ describe("Storj class", () => {
       storj.start(dir, true);
       expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
-        env: {
-          ...process.env,
+        env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
           GOOBOX_SYNC_STORJ_OPTS: `-Djava.library.path="${storj._wd};${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
           PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${process.env.PATH}`,
-        },
+        }),
         shell: true,
         windowsHide: true,
       });

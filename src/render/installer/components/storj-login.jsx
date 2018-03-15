@@ -54,9 +54,11 @@ const style = {
     height: "27px",
     marginBottom: 0,
   },
+  // The following components art hidden until Storj resumes registrations. (#116)
   createAccountText: {
     paddingBottom: "9px",
     color: "white",
+    display: "none",
   },
   createAccountButton: {
     fontSize: "9px",
@@ -65,6 +67,7 @@ const style = {
     backgroundColor: "white",
     borderRadius: "5px",
     borderStyle: "none",
+    display: "none",
   },
 };
 

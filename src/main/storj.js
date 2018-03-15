@@ -57,11 +57,11 @@ export default class Storj extends EventEmitter {
     if (process.platform === "win32") {
 
       const lib = path.normalize(path.join(this._wd, "../../libraries"));
-      env.PATH = `${lib};${env.PATH}`;
-      env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`
+      env.PATH = `${lib};${env.PATH || env.Path}`;
+      env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`;
 
     } else {
-      env.PATH = `${this._wd}:${env.PATH}`;
+      env.PATH = `${this._wd}:${env.PATH || env.Path}`;
     }
 
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
