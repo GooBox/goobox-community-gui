@@ -21,7 +21,6 @@ jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("../../src/main/core");
-jest.mock("../../src/main/desktop");
 
 import {app} from "electron";
 import {menubarMock} from "menubar";
@@ -30,7 +29,6 @@ import path from "path"
 import {AppID, Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
-import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -540,9 +538,6 @@ describe("event handlers", () => {
         onWindowAllClosed = installerWindowAllClosedHandler(app);
         core.mockClear();
         core.mockReturnValue(Promise.resolve());
-        desktop.register.mockClear();
-        desktop.register.mockImplementation(() => {
-        });
       });
 
       afterEach(() => {
@@ -585,7 +580,6 @@ describe("event handlers", () => {
           syncFolder: dir,
         }));
         await onWindowAllClosed();
-        expect(desktop.register).toHaveBeenCalledWith(dir);
       });
 
       // TODO: it shows some message to make sure users want to quit the installer.

@@ -24,6 +24,7 @@ import {Synchronizing} from "../constants";
 import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
+import * as desktop from "./desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -133,6 +134,10 @@ export const core = async () => {
 
     const cfg = await getConfig();
     log.verbose(`[GUI main] Config = ${JSON.stringify(cfg)}`);
+
+    // Prepare desktop integration.
+    await desktop.register(cfg.syncFolder);
+
     // Start sync-storj app.
     if (cfg.storj && !global.storj) {
       global.storj = new Storj();

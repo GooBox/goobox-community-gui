@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+jest.mock("child_process");
 jest.mock("electron");
 jest.mock("fs");
 jest.mock("../../src/main/config");
@@ -22,6 +23,7 @@ jest.mock("../../src/ipc/receiver");
 jest.mock("../../src/main/core");
 jest.mock("../../src/main/handlers");
 
+import {execFileSync} from "child_process";
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
 import path from "path";
@@ -51,6 +53,7 @@ describe("installer", () => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     getConfig.mockReset();
     installerWindowAllClosedHandler.mockClear();
+    execFileSync.mockClear();
   });
 
   afterEach(() => {
@@ -136,6 +139,28 @@ describe("installer", () => {
     it("registers stopSyncAppsHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
+    });
+
+  });
+
+  describe("in macOS", () => {
+
+    const oldPlatform = process.platform;
+    beforeAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: "darwin"
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform
+      });
+    });
+
+    it("starts the FinderSync extension", () => {
+      installer();
+      expect(execFileSync).toHaveBeenCalledWith("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
     });
 
   });

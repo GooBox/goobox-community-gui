@@ -22,50 +22,50 @@ import path from "path";
 
 export const register = async dir => {
 
-  if (process.platform !== "win32") {
-    return;
+  if (process.platform === "win32") {
+
+    log.info(`[GUI main] Registering the folder icon to ${dir}`);
+
+    log.verbose(`[GUI main] Set ${path.basename(dir)} as a system directory`);
+    // noinspection SpellCheckingInspection
+    execFileSync("attrib", ["+S", path.basename(dir)], {
+      cwd: path.dirname(dir),
+      windowsHide: true,
+    });
+
+    const resources = ["desktop.ini", "desktop.ico"];
+    return Promise.all(resources.map(async name => {
+
+      return new Promise((resolve, reject) => {
+
+        const src = path.join(__dirname, `../../resources/${name}`);
+        const dest = path.join(dir, name);
+        if (fs.existsSync(dest)) {
+          log.verbose(`[GUI main] ${dest} already exists`);
+          resolve();
+        } else {
+          log.verbose(`[GUI main] Copying ${src} to ${dest}`);
+          fs.createReadStream(src)
+            .pipe(fs.createWriteStream(dest))
+            .on("close", resolve)
+            .on("error", reject);
+        }
+
+      }).then(() => {
+        log.verbose(`[GUI main] Update the attribute of ${name}`);
+        try {
+          execFileSync("attrib", ["+S", "+H", name], {
+            cwd: dir,
+            windowsHide: true,
+          });
+        } catch (err) {
+          return Promise.reject(err);
+        }
+      })
+
+    }));
+
   }
-
-  log.info(`[GUI main] Registering the folder icon to ${dir}`);
-
-  log.verbose(`[GUI main] Set ${path.basename(dir)} as a system directory`);
-  // noinspection SpellCheckingInspection
-  execFileSync("attrib", ["+S", path.basename(dir)], {
-    cwd: path.dirname(dir),
-    windowsHide: true,
-  });
-
-  const resources = ["desktop.ini", "desktop.ico"];
-  return Promise.all(resources.map(async name => {
-
-    return new Promise((resolve, reject) => {
-
-      const src = path.join(__dirname, `../../resources/${name}`);
-      const dest = path.join(dir, name);
-      if (fs.existsSync(dest)) {
-        log.verbose(`[GUI main] ${dest} already exists`);
-        resolve();
-      } else {
-        log.verbose(`[GUI main] Copying ${src} to ${dest}`);
-        fs.createReadStream(src)
-          .pipe(fs.createWriteStream(dest))
-          .on("close", resolve)
-          .on("error", reject);
-      }
-
-    }).then(() => {
-      log.verbose(`[GUI main] Update the attribute of ${name}`);
-      try {
-        execFileSync("attrib", ["+S", "+H", name], {
-          cwd: dir,
-          windowsHide: true,
-        });
-      } catch (err) {
-        return Promise.reject(err);
-      }
-    })
-
-  }));
 
 };
 

@@ -16,6 +16,7 @@
  */
 jest.mock("electron");
 jest.mock("../../src/main/jre");
+jest.mock("../../src/main/desktop");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("../../src/ipc/receiver");
@@ -30,6 +31,7 @@ import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
+import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -51,6 +53,7 @@ function getEventHandler(emitter, event) {
 
 describe("main process of the core app", () => {
 
+  const syncFolder = "/tmp";
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
@@ -67,6 +70,9 @@ describe("main process of the core app", () => {
 
   beforeEach(() => {
     menubarMock.tray.listeners.mockReturnValue([() => null]);
+    desktop.register.mockClear();
+    desktop.register.mockImplementation(() => {
+    });
   });
 
   afterEach(() => {
@@ -116,6 +122,14 @@ describe("main process of the core app", () => {
     await core();
     expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith("AppleInterfaceThemeChangedNotification", cb);
     expect(themeChangedHandler).toHaveBeenCalledWith(menubarMock);
+  });
+
+  it("prepare desktop integration", async () => {
+    getConfig.mockReturnValue(Promise.resolve({
+      syncFolder: syncFolder,
+    }));
+    await core();
+    expect(desktop.register).toHaveBeenCalledWith(syncFolder);
   });
 
   describe("system tray event handlers", () => {
@@ -238,7 +252,6 @@ describe("main process of the core app", () => {
       siaFundEventHandler.mockReturnValue("siaFundEventHandler");
     });
 
-    const syncFolder = "/tmp";
     let storjStart, storjOn, siaStart, siaOn;
     beforeEach(() => {
       storjStart = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {

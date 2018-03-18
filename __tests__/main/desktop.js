@@ -25,6 +25,10 @@ import * as desktop from "../../src/main/desktop";
 
 describe("desktop module", () => {
 
+  beforeEach(() => {
+    execFileSync.mockReset();
+  });
+
   describe("in Windows", () => {
 
     const oldPlatform = process.platform;
@@ -43,7 +47,6 @@ describe("desktop module", () => {
     let dir;
     beforeEach(() => {
       dir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
-      execFileSync.mockReset();
     });
 
     afterEach(() => {
