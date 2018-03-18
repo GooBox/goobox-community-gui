@@ -119,7 +119,7 @@
     }
   },
   "build": {
-    "appId": "com.electron.goobox",
+    "appId": "io.goobox.CommunityGUI",
     "directories": {
       "buildResources": ""
     },

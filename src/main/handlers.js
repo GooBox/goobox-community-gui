@@ -19,7 +19,7 @@ import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
 import * as desktop from "../../src/main/desktop";
-import {Idle, Paused, Synchronizing} from "../constants";
+import {AppID, Idle, Paused, Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
 import icons from "./icons";
@@ -27,8 +27,6 @@ import {installJRE} from "./jre";
 import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
-
-const appID = "com.electron.goobox";
 
 const notifyAsync = async opts => {
   return new Promise(resolve => {
@@ -208,7 +206,7 @@ export const startSynchronizationHandler = () => async payload => {
     icon: path.join(__dirname, "../../resources/goobox.png"),
     sound: true,
     wait: true,
-    appID: appID
+    appID: AppID
   });
 };
 
@@ -294,7 +292,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "InsufficientFunds":
       log.verbose("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
@@ -304,7 +302,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "Allocated":
       log.verbose("[GUI main] Notify the user his/her funds are allocated");
@@ -314,7 +312,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "Error":
       log.error(`[GUI main] siaFundEventHandler received an error: ${payload.message}`);
@@ -324,7 +322,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
   }
 };
