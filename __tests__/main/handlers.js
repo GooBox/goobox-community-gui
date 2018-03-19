@@ -21,6 +21,7 @@ jest.mock("../../src/main/jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("../../src/main/core");
+jest.mock("../../src/main/desktop");
 
 import {app} from "electron";
 import {menubarMock} from "menubar";
@@ -29,6 +30,7 @@ import path from "path"
 import {AppID, Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
+import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -535,9 +537,9 @@ describe("event handlers", () => {
       let onWindowAllClosed;
       beforeEach(() => {
         app.quit.mockReset();
+        desktop.register.mockReturnValue(null);
+        core.mockClear().mockReturnValue(Promise.resolve());
         onWindowAllClosed = installerWindowAllClosedHandler(app);
-        core.mockClear();
-        core.mockReturnValue(Promise.resolve());
       });
 
       afterEach(() => {
@@ -625,6 +627,7 @@ describe("event handlers", () => {
         expect(close).toHaveBeenCalled();
         expect(app.quit).toHaveBeenCalled();
       });
+
     });
 
   });

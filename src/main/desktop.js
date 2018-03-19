@@ -22,9 +22,8 @@ import path from "path";
 
 export const register = async dir => {
 
+  log.info(`[GUI main] Registering the folder icon to ${dir}`);
   if (process.platform === "win32") {
-
-    log.info(`[GUI main] Registering the folder icon to ${dir}`);
 
     log.verbose(`[GUI main] Set ${path.basename(dir)} as a system directory`);
     // noinspection SpellCheckingInspection
@@ -64,6 +63,16 @@ export const register = async dir => {
       })
 
     }));
+
+  } else if (process.platform === "darwin") {
+
+    const wd = path.normalize(path.join(__dirname, "../../"));
+    const icon = path.join(__dirname, "../../resources/mac/folder.icns");
+    execFileSync("fileicon", ["set", dir, icon], {
+      env: {
+        PATH: `${wd}:${process.env.PATH}`,
+      }
+    });
 
   }
 

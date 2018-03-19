@@ -60,6 +60,7 @@
     "electron-log": "^2.2.14",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "fileicon": "^0.2.2",
     "history": "^4.7.2",
     "jest": "^22.4.2",
     "js-yaml": "^3.11.0",
@@ -79,8 +80,8 @@
     "redux-saga": "^0.16.0",
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
-    "webpack": "^3.10.0",
     "svg-url-loader": "^2.3.2",
+    "webpack": "^3.10.0",
     "winston": "^3.0.0-rc2",
     "winston-papertrail": "^1.0.5"
   },
@@ -150,6 +151,10 @@
         {
           "from": "vendor/mac",
           "to": "../PlugIns/"
+        },
+        {
+          "from": "node_modules/fileicon/bin/fileicon",
+          "to": "app/fileicon"
         }
       ]
     },
