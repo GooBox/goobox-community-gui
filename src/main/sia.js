@@ -61,6 +61,7 @@ export default class Sia extends EventEmitter {
 
     } else {
       env.PATH = `${this._wd}:${env.PATH || env.Path}`;
+      env.GOOBOX_SYNC_SIA_OPTS = `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`;
 
     }
 

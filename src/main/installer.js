@@ -16,6 +16,7 @@
  */
 
 "use strict";
+import {execFileSync} from "child_process";
 import {app, BrowserWindow, Menu} from "electron";
 import log from "electron-log";
 import fs from "fs";
@@ -71,8 +72,12 @@ export const installer = () => {
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
 
-  // Create the Application's main menu for mac
   if (process.platform === "darwin") {
+
+    log.info("[GUI main] Checking FinderSync extension");
+    execFileSync("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
+
+    // Create the Application's main menu for macOS
     const template = [{
       label: "Goobox",
       submenu: [

@@ -86,6 +86,7 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
+          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${storj._wd}:${process.env.PATH}`,
         }),
         shell: true,
@@ -99,6 +100,7 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
+          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${storj._wd}:${process.env.PATH}`,
         }),
         shell: true,
@@ -178,6 +180,7 @@ describe("Storj class", () => {
         cwd: storj._wd,
         env: expect.objectContaining({
           JAVA_HOME: storj._javaHome,
+          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
           PATH: `${storj._wd}:${process.env.PATH}`,
         }),
         shell: true,

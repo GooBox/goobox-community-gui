@@ -62,6 +62,8 @@ export default class Storj extends EventEmitter {
 
     } else {
       env.PATH = `${this._wd}:${env.PATH || env.Path}`;
+      env.GOOBOX_SYNC_STORJ_OPTS = `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`;
+
     }
 
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);

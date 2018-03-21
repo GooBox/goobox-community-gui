@@ -27,7 +27,7 @@ import {app} from "electron";
 import {menubarMock} from "menubar";
 import notifier from "node-notifier";
 import path from "path"
-import {Idle, Paused, Synchronizing} from "../../src/constants";
+import {AppID, Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
 import * as desktop from "../../src/main/desktop";
@@ -52,8 +52,6 @@ import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
-
-const appID = "com.electron.goobox";
 
 describe("event handlers", () => {
 
@@ -539,12 +537,9 @@ describe("event handlers", () => {
       let onWindowAllClosed;
       beforeEach(() => {
         app.quit.mockReset();
+        desktop.register.mockReturnValue(null);
+        core.mockClear().mockReturnValue(Promise.resolve());
         onWindowAllClosed = installerWindowAllClosedHandler(app);
-        core.mockClear();
-        core.mockReturnValue(Promise.resolve());
-        desktop.register.mockClear();
-        desktop.register.mockImplementation(() => {
-        });
       });
 
       afterEach(() => {
@@ -587,7 +582,6 @@ describe("event handlers", () => {
           syncFolder: dir,
         }));
         await onWindowAllClosed();
-        expect(desktop.register).toHaveBeenCalledWith(dir);
       });
 
       // TODO: it shows some message to make sure users want to quit the installer.
@@ -633,6 +627,7 @@ describe("event handlers", () => {
         expect(close).toHaveBeenCalled();
         expect(app.quit).toHaveBeenCalled();
       });
+
     });
 
   });
@@ -679,7 +674,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -707,7 +702,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -720,7 +715,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -733,7 +728,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -746,7 +741,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 

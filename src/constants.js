@@ -21,3 +21,5 @@ export const Paused = "paused";
 export const Storj = "Storj";
 export const Sia = "Sia";
 export const ConfigFile = "config";
+
+export const AppID = "io.goobox.CommunityGUI";
