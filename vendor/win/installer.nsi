@@ -7,9 +7,12 @@
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay3Warning_x64.dll"'
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay4Error_x64.dll"'
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxContextMenus_x64.dll"'
-	ExecWait "taskkill /F /IM explorer.exe"
+	Exec "taskkill /F /IM explorer.exe"
 	Sleep 500
-	ExecWait "explorer.exe"
+	Exec "explorer.exe"
+#	ExecWait "taskkill /F /IM explorer.exe"
+#	Sleep 500
+#	ExecWait "explorer.exe"
 !macroend
 
 !macro customUnInit
