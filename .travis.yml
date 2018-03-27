@@ -37,6 +37,7 @@ deploy:
   skip_cleanup: true
   file:
   - dist/Goobox-0.2.0-setup_x64.exe
+  - dist/Goobox-0.2.0.dmg
   on:
     tags: true
     repo: GooBox/goobox-community-gui
