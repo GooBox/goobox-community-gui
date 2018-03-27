@@ -1,5 +1,6 @@
 !macro customInstall
     !include x64.nsh
+    !include UAC.nsh
     ${DisableX64FSRedirection}
     SetOutPath $INSTDIR\resources\libraries
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay1OK_x64.dll"'
@@ -7,12 +8,13 @@
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay3Warning_x64.dll"'
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxOverlay4Error_x64.dll"'
     ExecWait '"$SYSDIR\regsvr32.exe" "-s" "$INSTDIR\resources\libraries\GooboxContextMenus_x64.dll"'
-	Exec "taskkill /F /IM explorer.exe"
-	Sleep 500
-	Exec "explorer.exe"
-#	ExecWait "taskkill /F /IM explorer.exe"
-#	Sleep 500
-#	ExecWait "explorer.exe"
+    ${if} ${UAC_IsAdmin}
+    	ExecWait "taskkill /F /IM explorer.exe"
+	    Sleep 500
+    	ExecWait "explorer.exe"
+    ${else}
+        MessageBox MB_OK "System restart required"
+    ${endif}
 !macroend
 
 !macro customUnInit
