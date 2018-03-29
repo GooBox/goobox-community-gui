@@ -85,14 +85,9 @@ export default class Sia extends EventEmitter {
     });
 
     // Attach a logger to stderr.
-    // readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
+    readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
-    // Until https://github.com/NebulousLabs/Sia/issues/2741 is fixed, expose stderr so that
-    // siaRequestWalletInfoHandler can add an event handler to restart the siad.
-    this.stderr = readLine.createInterface({input: this.proc.stderr});
-    this.stderr.on("line", log.verbose);
-    // --
-
+    // Attach a close event handler.
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {
         log.debug(`[GUI main] sync-sia closed: code = ${code}, signal = ${signal}`);
