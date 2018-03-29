@@ -26,7 +26,7 @@ jest.useFakeTimers();
 import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
 import path from "path";
-import {Synchronizing} from "../../src/constants";
+import {Idle, Synchronizing} from "../../src/constants";
 import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
@@ -340,6 +340,9 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).toHaveBeenCalledWith(syncFolder);
       expect(app.quit).not.toHaveBeenCalled();
+
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+      expect(menubarMock.appState).toEqual(Synchronizing);
     });
 
     it("registers updateStateHandler to the sia instance and listens syncState event", async () => {
@@ -372,6 +375,7 @@ describe("main process of the core app", () => {
       }));
       global.sia = {
         on: siaOn,
+        syncState: Idle,
       };
 
       await core();
@@ -380,6 +384,9 @@ describe("main process of the core app", () => {
       expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
       expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
+
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menubarMock.appState).toEqual(Idle);
     });
 
     it("closes the process if another process is already running", async () => {

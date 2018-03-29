@@ -255,12 +255,12 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 // Handlers for sync-storj/sync-sia apps.
 export const updateStateHandler = mb => async payload => {
   switch (payload.newState) {
-    case "synchronizing":
+    case Synchronizing:
       log.debug("[GUI main] Set the synchronizing icon");
       mb.tray.setImage(icons.getSyncIcon());
       mb.appState = Synchronizing;
       break;
-    case "idle":
+    case Idle:
       log.debug("[GUI main] Set the idle icon");
       mb.tray.setImage(icons.getIdleIcon());
       mb.appState = Idle;

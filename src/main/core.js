@@ -158,6 +158,9 @@ export const core = async () => {
       global.sia.on("syncState", updateStateHandler(mb));
       log.debug("[GUI main] Register siaFundEventHandler");
       global.sia.on("walletInfo", siaFundEventHandler());
+
+      mb.tray.setImage(global.sia.syncState === Synchronizing ? icons.getSyncIcon() : icons.getIdleIcon());
+      mb.appState = global.sia.syncState;
     }
 
   } catch (err) {

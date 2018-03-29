@@ -24,6 +24,7 @@ import path from "path";
 import readLine from "readline";
 import toString from "stream-to-string";
 import util from "util";
+import {Synchronizing} from "../constants";
 
 export default class Sia extends EventEmitter {
 
@@ -35,6 +36,7 @@ export default class Sia extends EventEmitter {
       this._cmd += ".bat";
     }
     this._javaHome = path.join(jre.driver(), "../../");
+    this._state = Synchronizing;
     log.debug(`[GUI main] New sia instance: cmd = ${this._cmd} in ${this._wd}, java-home = ${this._javaHome}`);
   }
 
@@ -87,6 +89,11 @@ export default class Sia extends EventEmitter {
     // Attach a logger to stderr.
     readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
+    // Attach a sync state event handler.
+    this.on("syncState", payload => {
+      this._state = payload.newState;
+    });
+
     // Attach a close event handler.
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {
@@ -96,6 +103,10 @@ export default class Sia extends EventEmitter {
       }
     });
 
+  }
+
+  get syncState() {
+    return this._state;
   }
 
   get closed() {

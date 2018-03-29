@@ -644,13 +644,13 @@ describe("event handlers", () => {
       });
 
       it("sets the synchronizing icon when receiving a synchronizing event", async () => {
-        await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+        await expect(handler({newState: Synchronizing})).resolves.not.toBeDefined();
         expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
         expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the idle icon when receiving an idle event", async () => {
-        await expect(handler({newState: "idle"})).resolves.not.toBeDefined();
+        await expect(handler({newState: Idle})).resolves.not.toBeDefined();
         expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
         expect(menubarMock.appState).toEqual(Idle);
       });
@@ -679,7 +679,7 @@ describe("event handlers", () => {
       });
 
       it("does nothing if newState argument isn't startSynchronization", async () => {
-        await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+        await expect(handler({newState: Synchronizing})).resolves.not.toBeDefined();
         expect(notifier.notify).not.toHaveBeenCalled();
       });
 

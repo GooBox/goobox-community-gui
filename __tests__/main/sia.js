@@ -24,6 +24,7 @@ import yaml from "js-yaml";
 import jre from "node-jre";
 import path from "path";
 import {PassThrough, Readable} from "stream";
+import {Idle, Synchronizing} from "../../src/constants";
 import Sia from "../../src/main/sia";
 
 describe("Sia class", () => {
@@ -176,6 +177,15 @@ describe("Sia class", () => {
       });
       sia.start(syncFolder);
       expect(spawn).toHaveBeenCalledTimes(1);
+    });
+
+    it("starts listening syncState event and updates state property", () => {
+      sia.start(syncFolder);
+      sia.emit("syncState", {newState: Synchronizing});
+      expect(sia.syncState).toEqual(Synchronizing);
+
+      sia.emit("syncState", {newState: Idle});
+      expect(sia.syncState).toEqual(Idle);
     });
 
   });
