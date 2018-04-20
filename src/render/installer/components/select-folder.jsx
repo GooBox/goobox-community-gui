@@ -19,51 +19,24 @@ import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
 import {Sia, Storj} from "../../../constants";
-import downArrowWhiteImage from "../assets/down_arrow_white.svg";
-import leftArrowImage from "../assets/left_arrow.svg";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import rightArrowImage from "../assets/right_arrow.svg";
+import Sidebar from "./sidebar";
 
 const dialog = remote.dialog;
 
-
 const style = {
-  main: {
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "52px auto 0 auto",
+  inputBox: {
+    width: "342px",
+    height: "48px",
   },
   button: {
-    width: "123px",
-    height: "31px",
-    fontSize: "11px",
-    backgroundColor: "white",
-    borderRadius: "5px",
-    borderStyle: "none"
-  },
-  downArrow: {
-    color: "white",
-    fontSize: "30px",
-    textAlign: "center",
-    marginTop: "12px",
-  },
-  browseBtn: {
-    fontSize: "30px",
-    color: "white",
-    textAlign: "center",
-    marginTop: "16px",
-  },
-  selectedFolder: {
-    fontSize: "11px",
-    textAlign: "center",
-    paddingTop: "9px",
-    color: "white",
+    width: "239.1px",
+    height: "47.3px",
+    borderRadius: "3.2px",
+    border: "solid 0.8px #dddddd"
   },
 };
 
-export default class SelectFolder extends React.Component {
+export class SelectFolder extends React.Component {
 
   constructor(props) {
     super(props);
@@ -147,31 +120,29 @@ export default class SelectFolder extends React.Component {
     }
 
     return (
-      <div className="background-gradation">
-        <header><img className="icon" src={leftWhiteIcon}/></header>
-        <main className="left" style={style.main}>
-          <div className="f141">You chose <span className="bold service-name">{service}</span>.</div>
-          <div className="f211 bold">
-            Now, choose the location of your <span className="underlined bold">sync folder</span>.
+      <div className="clearfix">
+        <Sidebar className="float-left"/>
+        <main className="float-right d-flex flex-column">
+          <h1>{`Installing ${service}`}</h1>
+          <p>Choose the folder you want to sync with Goobox</p>
+          <div className="form-row">
+            <input id="folder" type="text" className="form-control mr-2" readOnly={true} style={style.inputBox}
+                   value={this.props.folder}/>
+            <button id="change-folder-btn" type="button" className="btn btn-outline-primary"
+                    onClick={() => this._onClickBrowse().catch(console.debug)}>Change folder
+            </button>
+            <small className="form-text text-muted"> Everything in this folder will be encrypted and safely stored.
+            </small>
+          </div>
+          <div className="mt-auto d-flex justify-content-between">
+            <button id="back-btn" type="button" className="btn btn-light" onClick={this._onClickBack}
+                    style={style.button}> Back
+            </button>
+            <button id="next-btn" type="button" className="btn btn-primary" onClick={this._onClickNext}
+                    style={style.button}> Choose this folder
+            </button>
           </div>
         </main>
-        <main style={style.downArrow}>
-          <img className="up-and-down" src={downArrowWhiteImage} width={17} height={29}/>
-        </main>
-        <main style={style.browseBtn}>
-          <button style={style.button} onClick={() => this._onClickBrowse().catch(console.debug)}>Browse...
-          </button>
-          <br/>
-          <span className="folder" style={style.selectedFolder}>{this.props.folder}</span>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={this._onClickBack} role="button">
-            <img className="arrow" src={leftArrowImage}/> Back
-          </a>
-          <a className="next-btn" onClick={this._onClickNext} role="button">
-            Next <img className="arrow" src={rightArrowImage}/>
-          </a>
-        </footer>
       </div>
     );
   }
@@ -186,3 +157,5 @@ SelectFolder.propsTypes = {
   onClickNext: PropTypes.func.isRequired,
   onSelectFolder: PropTypes.func.isRequired
 };
+
+export default SelectFolder;
