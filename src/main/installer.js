@@ -44,7 +44,7 @@ export const installer = () => {
   }
 
   let width = 600;
-  if ("development" === process.env.NODE_ENV) {
+  if (process.env.DEV_TOOLS) {
     width *= 2;
   }
   // noinspection SpellCheckingInspection
@@ -59,7 +59,7 @@ export const installer = () => {
   });
   mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
 
-  if ("development" === process.env.NODE_ENV) {
+  if (process.env.DEV_TOOLS) {
     mainWindow.toggleDevTools();
   }
 
