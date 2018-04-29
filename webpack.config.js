@@ -21,6 +21,7 @@ const webpack = require("webpack");
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 module.exports = [{
+  mode: "development",
   target: "electron-main",
   node: {
     __dirname: false,
@@ -38,27 +39,29 @@ module.exports = [{
     "node-notifier": "commonjs node-notifier"
   }],
   module: {
-    loaders: [{
-      exclude: /node_modules/,
+    rules: [{
       test: /\.jsx?$/,
+      exclude: /node_modules/,
       loader: "babel-loader",
     }, {
       exclude: /node_modules/,
       test: /\.svg$/,
-      use: {
-        loader: 'svg-url-loader',
+      use: [{
+        loader: "svg-url-loader",
         options: {
           noquotes: true
         }
-      }
+      }]
     }],
   },
   output: {
     path: path.join(__dirname, "lib"),
     filename:
       "[name].js"
-  }
+  },
+  devtool: "source-map"
 }, {
+  mode: "development",
   target: "electron-renderer",
   node: {
     __dirname: false,
@@ -75,26 +78,27 @@ module.exports = [{
     "about-window": "commonjs about-window"
   }],
   module: {
-    loaders: [{
+    rules: [{
       exclude: /node_modules/,
       test: /\.jsx?$/,
       loader: "babel-loader"
     }, {
       exclude: /node_modules/,
       test: /\.svg$/,
-      use: {
+      use: [{
         loader: 'svg-url-loader',
         options: {
           noquotes: true
         }
-      }
+      }]
     }]
   },
   output: {
     path: path.join(__dirname, "lib"),
     filename:
       "[name].js"
-  }
+  },
+  devtool: "source-map"
 }];
 
 

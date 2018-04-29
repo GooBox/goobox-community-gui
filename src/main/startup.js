@@ -43,7 +43,7 @@ export const main = async () => {
     // Pass.
   } else if ("production" !== process.env.NODE_ENV) {
     if (program.devTools) {
-      process.env.NODE_ENV = "development";
+      process.env.DEV_TOOLS = true;
     }
     log.transports.file.level = "debug";
     log.transports.console.level = "debug";
