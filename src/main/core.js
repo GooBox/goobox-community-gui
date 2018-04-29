@@ -43,7 +43,7 @@ import utils from "./utils";
 export const core = async () => {
 
   let width = 518;
-  if ("development" === process.env.NODE_ENV) {
+  if (process.env.DEV_TOOLS) {
     width *= 2;
   }
 
@@ -72,7 +72,7 @@ export const core = async () => {
     return;
   }
   mb.window.setResizable(false);
-  if ("development" === process.env.NODE_ENV) {
+  if (process.env.DEV_TOOLS) {
     mb.window.toggleDevTools();
   }
 
