@@ -34,6 +34,7 @@ import {getConfig} from "../../src/main/config";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
+  openSyncFolderHandler,
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
@@ -105,6 +106,7 @@ describe("installer", () => {
       stopSyncAppsHandler.mockReturnValue("stopSyncAppsHandler");
       storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
       storjLoginHandler.mockReturnValue("storjLoginHandler");
+      openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
     });
 
     beforeEach(() => {
@@ -114,6 +116,7 @@ describe("installer", () => {
       stopSyncAppsHandler.mockClear();
       storjCreateAccountHandler.mockClear();
       storjLoginHandler.mockClear();
+      openSyncFolderHandler.mockClear();
     });
 
     it("registers installJREHandler", () => {
@@ -139,6 +142,11 @@ describe("installer", () => {
     it("registers stopSyncAppsHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
+    });
+
+    it("registers openSyncFolderHandler", () => {
+      installer();
+      expect(addListener).toHaveBeenCalledWith(actionTypes.OpenSyncFolder, openSyncFolderHandler());
     });
 
   });

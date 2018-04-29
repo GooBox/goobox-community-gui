@@ -29,6 +29,7 @@ import {InitialState} from "../../../src/render/installer/reducers";
 import rootSaga from "../../../src/render/installer/sagas";
 import closeWindow from "../../../src/render/installer/sagas/close-window";
 import incrementProgress from "../../../src/render/installer/sagas/increment-progress";
+import openSyncFolder from "../../../src/render/installer/sagas/open-sync-folder";
 import prepareJRE, {prepareJREAsync} from "../../../src/render/installer/sagas/prepare-jre";
 import requestSiaWallet, {requestSiaWalletAsync} from "../../../src/render/installer/sagas/request-sia-wallet";
 import saveConfig from "../../../src/render/installer/sagas/save-config";
@@ -341,6 +342,16 @@ describe("storjLogin", () => {
       warnMsg: err.error,
     })));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
+  });
+
+});
+
+describe("openSyncFolder", () => {
+
+  it("yields sendAsync saga with openSyncFolder action", () => {
+    const saga = openSyncFolder();
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.openSyncFolder()));
+    expect(saga.next().done).toBeTruthy();
   });
 
 });
