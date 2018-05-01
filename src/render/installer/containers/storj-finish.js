@@ -15,32 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
+import {connect} from "react-redux";
+import * as actions from "../actions";
+import Finish from "../components/finish";
 
-describe("mapStateToProps", () => {
+// noinspection SpellCheckingInspection
+export const mapStateToProps = () => ({
 
-  it("set messages", () => {
-    expect(mapStateToProps()).toEqual({
-      header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
-    });
-  });
+  header: "You are ready to go",
 
-});
-
-describe("mapDispatchToProps", () => {
-
-  const dispatch = jest.fn();
-  beforeEach(() => {
-    dispatch.mockReset();
-  });
-
-  it("maps onClick to openSyncFolder action", () => {
-    mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
-  });
+  message: "Happy Gooboxing!"
 
 });
 
+export const mapDispatchToProps = (dispatch) => ({
 
+  onClick: () => dispatch(actions.openSyncFolder()),
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Finish);

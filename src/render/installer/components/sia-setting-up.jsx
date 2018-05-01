@@ -18,20 +18,20 @@
 import classNames from "classnames";
 import PropTypes from "prop-types"
 import React from "react";
-import Logo from "../assets/logo.svg";
+import LogoColor from "../assets/logo-color.svg";
 
-export const Preparation = (props) => {
+export const SiaSettingUp = (props) => {
 
   const barStyle = {
-    width: `${props.progress}%`
+    width: `${props.progress }%`
   };
 
   return (
-    <main className={classNames("full-screen d-flex flex-column align-items-center", {"wait": !props.errorMsg})}>
-      <img className="mb-3" src={Logo} width={110} height={115.2}/>
-      <h1 className="mb-auto">The safest place to store your files</h1>
-      <span id="message" className={classNames("mb-2", {"text-warning": !!props.errorMsg})}>
-        {props.errorMsg || "Getting some tools…"}
+    <main
+      className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !props.errorMsg})}>
+      <img className="mb-5" src={LogoColor} width={110} height={115.2}/>
+      <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!props.errorMsg})}>
+        {props.errorMsg || "We’re setting up your Sia wallet…"}
         </span>
       <div className="meter">
         <span className="bar" style={barStyle}/>
@@ -41,9 +41,9 @@ export const Preparation = (props) => {
 
 };
 
-Preparation.propTypes = {
+SiaSettingUp.propTypes = {
   progress: PropTypes.number.isRequired,
   errorMsg: PropTypes.string,
 };
 
-export default Preparation;
+export default SiaSettingUp;

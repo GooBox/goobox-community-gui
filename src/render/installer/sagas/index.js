@@ -15,22 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {takeEvery} from "redux-saga/effects";
+import {fork, takeEvery} from "redux-saga/effects";
 import * as actionTypes from "../constants/action-types";
 import closeWindow from "./close-window";
+import openSyncFolder from "./open-sync-folder";
 import prepareJRE from "./prepare-jre";
 import requestSiaWallet from "./request-sia-wallet";
 import saveConfig from "./save-config";
 import stopSyncApps from "./stop-sync-apps";
 import storjCreateAccount from "./storj-create-account";
+import storjGenerateMnemonic from "./storj-generate-mnemonic";
 import storjLogin from "./storj-login";
 
 export default function* rootSaga() {
-  yield takeEvery(actionTypes.PrepareJRE, prepareJRE);
+  yield fork(prepareJRE);
   yield takeEvery(actionTypes.StorjLogin, storjLogin);
   yield takeEvery(actionTypes.StorjCreateAccount, storjCreateAccount);
+  yield takeEvery(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonic);
   yield takeEvery(actionTypes.RequestSiaWalletInfo, requestSiaWallet);
   yield takeEvery(actionTypes.SaveConfig, saveConfig);
   yield takeEvery(actionTypes.StopSyncApps, stopSyncApps);
   yield takeEvery(actionTypes.CloseWindow, closeWindow);
+  yield takeEvery(actionTypes.OpenSyncFolder, openSyncFolder);
 }

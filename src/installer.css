@@ -1,0 +1,227 @@
+/*
+ * Copyright (C) 2017-2018 Junpei Kawamoto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "~bootstrap/dist/css/bootstrap.css";
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  box-sizing: border-box;
+}
+
+html {
+  overflow: hidden;
+  text-align: left;
+  color: #0c2543;
+}
+
+#app {
+  height: 600px;
+  width: 800px;
+}
+
+.sidebar {
+  height: 600px;
+  width: 188px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  box-shadow: 0 -3px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.sidebar img {
+  height: 100px;
+  width: 100px;
+}
+
+/*
+ * Normal preparation screen.
+ */
+.full-screen {
+  height: 600px;
+  width: 800px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  color: white;
+  padding-top: 147px;
+  padding-bottom: 147px;
+  text-align: center;
+}
+
+.full-screen h1 {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0;
+}
+
+.full-screen p {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.meter {
+  display: block;
+  background-color: #e8eef4;
+  clear: both;
+  width: 550px;
+  height: 5px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: #26aae1;
+}
+
+/*
+ * White preparation screen.
+ */
+.full-screen-white {
+  background: white;
+  color: #0972ba;
+}
+
+.full-screen-white span {
+  font-size: 22px;
+}
+
+main {
+  font-size: 18px;
+  height: 600px;
+  width: 612px;
+  padding: 50px 60px;
+}
+
+h1 {
+  font-size: 38px;
+  margin-bottom: 39px;
+}
+
+p {
+  margin-bottom: 34px;
+}
+
+::selection {
+  background: transparent;
+}
+
+input::selection {
+  background: lightskyblue;
+}
+
+#seed::selection {
+  background: lightskyblue;
+}
+
+*:hover {
+  cursor: default;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button *:hover {
+  cursor: pointer;
+}
+
+input:hover {
+  cursor: text;
+}
+
+.text:hover {
+  cursor: text;
+}
+
+small {
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #97a4b1;
+  margin-top: 21px;
+}
+
+.form-row {
+  padding-left: 5px;
+}
+
+button:focus {
+  outline: none;
+}
+
+.light {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.left {
+  text-align: left;
+}
+
+::-webkit-input-placeholder {
+  text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  text-align: center;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+  text-align: center;
+}
+
+:-ms-input-placeholder {
+  text-align: center;
+}
+
+.icon {
+  width: 41px;
+  height: 40px;
+}
+
+.errorMsg {
+  color: red;
+}
+
+input.warn::-webkit-input-placeholder {
+  color: red;
+}
+
+.wait {
+  cursor: progress;
+}
+
+.wait *:hover {
+  cursor: progress;
+}
+
+.info-button {
+  color: #26aae1;
+}
+
+textarea {
+  resize: none;
+}

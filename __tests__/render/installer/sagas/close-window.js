@@ -15,32 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
+import {remote} from "electron";
+import {call} from "redux-saga/effects";
+import closeWindow from "../../../../src/render/installer/sagas/close-window";
 
-describe("mapStateToProps", () => {
+describe("closeWindow", () => {
 
-  it("set messages", () => {
-    expect(mapStateToProps()).toEqual({
-      header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
-    });
+  it("yields close method of the current window", () => {
+    const close = jest.fn();
+    remote.getCurrentWindow.mockReturnValue({close: close});
+    const saga = closeWindow();
+    expect(saga.next().value).toEqual(call(remote.getCurrentWindow().close));
+    expect(saga.next().done).toBeTruthy();
   });
 
 });
-
-describe("mapDispatchToProps", () => {
-
-  const dispatch = jest.fn();
-  beforeEach(() => {
-    dispatch.mockReset();
-  });
-
-  it("maps onClick to openSyncFolder action", () => {
-    mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
-  });
-
-});
-
-

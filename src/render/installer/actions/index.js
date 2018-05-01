@@ -19,6 +19,7 @@ import {createAction} from "redux-actions";
 import * as actionTypes from "../constants/action-types";
 
 export const closeWindow = createAction(actionTypes.CloseWindow);
+export const openSyncFolder = createAction(actionTypes.OpenSyncFolder);
 
 export const selectFolder = createAction(actionTypes.SelectFolder);
 export const selectStorj = createAction(actionTypes.SelectStorj);
@@ -31,6 +32,9 @@ export const storjLoginFailure = createAction(actionTypes.StorjLoginFailure);
 export const storjCreateAccount = createAction(actionTypes.StorjCreateAccount);
 export const storjCreateAccountSuccess = createAction(actionTypes.StorjCreateAccountSuccess);
 export const storjCreateAccountFailure = createAction(actionTypes.StorjCreateAccountFailure);
+export const storjGenerateMnemonic = createAction(actionTypes.StorjGenerateMnemonic);
+export const storjGenerateMnemonicSuccess = createAction(actionTypes.StorjGenerateMnemonicSuccess);
+export const storjGenerateMnemonicFailure = createAction(actionTypes.StorjGenerateMnemonicFailure);
 
 export const requestSiaWalletInfo = createAction(actionTypes.RequestSiaWalletInfo);
 export const requestSiaWalletInfoSuccess = createAction(actionTypes.RequestSiaWalletInfoSuccess);

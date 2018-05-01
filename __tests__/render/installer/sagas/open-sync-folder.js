@@ -15,32 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
+import {call} from "redux-saga/effects";
+import * as ipcActions from "../../../../src/ipc/actions";
+import sendAsync from "../../../../src/ipc/send";
+import openSyncFolder from "../../../../src/render/installer/sagas/open-sync-folder";
 
-describe("mapStateToProps", () => {
+describe("openSyncFolder", () => {
 
-  it("set messages", () => {
-    expect(mapStateToProps()).toEqual({
-      header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
-    });
+  it("yields sendAsync saga with openSyncFolder action", () => {
+    const saga = openSyncFolder();
+    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.openSyncFolder()));
+    expect(saga.next().done).toBeTruthy();
   });
 
 });
-
-describe("mapDispatchToProps", () => {
-
-  const dispatch = jest.fn();
-  beforeEach(() => {
-    dispatch.mockReset();
-  });
-
-  it("maps onClick to openSyncFolder action", () => {
-    mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
-  });
-
-});
-
-

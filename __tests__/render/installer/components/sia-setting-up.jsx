@@ -17,15 +17,15 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Preparation from "../../../../src/render/installer/components/preparation.jsx";
+import SiaSettingUp from "../../../../src/render/installer/components/sia-setting-up.jsx";
 
-describe("Preparation component", () => {
+describe("SiaSettingUp component", () => {
 
   const progress = 39;
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<Preparation progress={progress}/>);
+    wrapper = shallow(<SiaSettingUp progress={progress}/>);
   });
 
   it("takes progress prop and shows a progress bar", () => {
@@ -34,11 +34,11 @@ describe("Preparation component", () => {
 
   it("shows an error message instead of the given message if given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SiaSettingUp progress={progress} errorMsg={errorMsg}/>);
 
     const msg = wrapper.find("#message");
     expect(msg.text()).toContain(errorMsg);
-    expect(msg.hasClass("text-warning")).toBeTruthy();
+    expect(msg.hasClass("text-danger")).toBeTruthy();
   });
 
   it("has wait class", () => {
@@ -47,7 +47,7 @@ describe("Preparation component", () => {
 
   it("doesn't have wait class if error message is given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SiaSettingUp progress={progress} errorMsg={errorMsg}/>);
     expect(wrapper.hasClass("wait")).toBeFalsy();
   });
 

@@ -34,9 +34,11 @@ import {getConfig} from "../../src/main/config";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
+  openSyncFolderHandler,
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "../../src/main/handlers";
 import "../../src/main/installer";
@@ -103,8 +105,10 @@ describe("installer", () => {
       installJREHandler.mockReturnValue("installJREHandler");
       siaRequestWalletInfoHandler.mockReturnValue("siaRequestWalletInfoHandler");
       stopSyncAppsHandler.mockReturnValue("stopSyncAppsHandler");
-      storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
+      storjGenerateMnemonicHandler.mockReturnValue("storjGenerateMnemonicHandler");
       storjLoginHandler.mockReturnValue("storjLoginHandler");
+      storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
+      openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
     });
 
     beforeEach(() => {
@@ -114,11 +118,18 @@ describe("installer", () => {
       stopSyncAppsHandler.mockClear();
       storjCreateAccountHandler.mockClear();
       storjLoginHandler.mockClear();
+      openSyncFolderHandler.mockClear();
+      storjGenerateMnemonicHandler.mockClear();
     });
 
     it("registers installJREHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.InstallJRE, installJREHandler());
+    });
+
+    it("registers storjGenerateMnemonicHandler", () => {
+      installer();
+      expect(addListener).toHaveBeenCalledWith(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
     });
 
     it("registers storjLoginHandler", () => {
@@ -139,6 +150,11 @@ describe("installer", () => {
     it("registers stopSyncAppsHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
+    });
+
+    it("registers openSyncFolderHandler", () => {
+      installer();
+      expect(addListener).toHaveBeenCalledWith(actionTypes.OpenSyncFolder, openSyncFolderHandler());
     });
 
   });

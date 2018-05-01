@@ -15,30 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
+import {delay} from "redux-saga";
+import {call, put} from "redux-saga/effects";
+import * as actions from "../../../../src/render/installer/actions/index";
+import incrementProgress from "../../../../src/render/installer/sagas/increment-progress";
 
-describe("mapStateToProps", () => {
+describe("incrementProgress", () => {
 
-  it("set messages", () => {
-    expect(mapStateToProps()).toEqual({
-      header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
-    });
-  });
-
-});
-
-describe("mapDispatchToProps", () => {
-
-  const dispatch = jest.fn();
-  beforeEach(() => {
-    dispatch.mockReset();
-  });
-
-  it("maps onClick to openSyncFolder action", () => {
-    mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
+  it("yields calling delay with 500msec and putting set new progress value action", () => {
+    const saga = incrementProgress();
+    // noinspection JSCheckFunctionSignatures
+    expect(saga.next().value).toEqual(call(delay, 500));
+    expect(saga.next().value).toEqual(put(actions.setProgressValue(expect.any(Number))));
+    // noinspection JSCheckFunctionSignatures
+    expect(saga.next().value).toEqual(call(delay, 500));
   });
 
 });

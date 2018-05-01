@@ -17,99 +17,57 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import downArrowImage from "../assets/down_arrow.svg";
-import leftColorIcon from "../assets/left_color_icon.svg";
 import siaLogo from "../assets/sia_logo.svg";
 import storjAndSiaLogo from "../assets/storj_and_sia_logo.svg";
 import storjLogo from "../assets/storj_logo.svg";
+import Sidebar from "./sidebar";
 
 const style = {
-  main: {
-    color: "rgb(0, 175, 177)",
-    position: "absolute",
-    top: "103px",
-    fontSize: "25px",
-    textAlign: "center",
-    width: "600px",
+  button: {
+    width: "131.5px",
+    height: "131.5px",
+    objectFit: "contain",
+    borderRadius: "5px",
+    border: "solid 1px #dddddd",
+    padding: 0,
   },
-  downArrow: {
-    position: "absolute",
-    top: "158px",
-    textAlign: "center",
-    width: "600px",
-  },
-  options: {
-    position: "absolute",
-    top: "247px",
-    width: "100%",
-    display: "flex",
-    justifyContent: "center"
-  },
-  //
-  // The following configurations will be enabled when Goobox supports Storj & Sia.
-  //
-  // optionStorj: {
-  //   width: "25%",
-  //   border: "none",
-  //   background: "none"
-  // },
-  // optionSia: {
-  //   width: "25%",
-  //   border: "none",
-  //   background: "none"
-  // },
-  // optionBoth: {
-  //   width: "40%",
-  //   border: "none",
-  //   background: "none"
-  // }
   //
   // Currently, Goobox only supports Storj or Sia.
   //
-  optionStorj: {
-    width: "30%",
-    border: "none",
-    background: "none"
-  },
-  optionSia: {
-    width: "30%",
-    border: "none",
-    background: "none"
-  },
-  optionBoth: {
+  disabledButton: {
     display: "none",
-  }
+  },
 };
 
-export default function SelectService(props) {
+const buttonClassName = "btn btn-outline-light mr-2";
+
+export const SelectService = (props) => {
 
   return (
-    <div>
-      <header><img className="icon" src={leftColorIcon}/></header>
-      <main style={style.main}>
-        <span>Please choose your</span> <span className="underlined bold">cloud service</span>
+    <div className="clearfix">
+      <Sidebar className="float-left"/>
+      <main className="float-right">
+        <h1>Let’s get started</h1>
+        <p>Please choose your cloud service</p>
+        <div className="d-flex">
+          <button id="option-storj" type="button" className={buttonClassName} style={style.button}
+                  onClick={() => props.processing || props.onSelectStorj()}>
+            <img src={storjLogo} width={64.7} height={93.2}/>
+          </button>
+          <button id="option-sia" type="button" className={buttonClassName} style={style.button}
+                  onClick={() => props.processing || props.onSelectSia()}>
+            <img src={siaLogo} width={94} height={59}/>
+          </button>
+          <button id="option-both" type="button" className={buttonClassName} style={style.disabledButton}
+                  onClick={() => props.processing || props.onSelectBoth()}>
+            <img src={storjAndSiaLogo} width={140} height={68}/>
+          </button>
+        </div>
       </main>
-      <section style={style.downArrow}>
-        <img className="up-and-down" src={downArrowImage} width={15} height={24}/>
-      </section>
-      <section style={style.options}>
-        <button className="option-storj" style={style.optionStorj}
-                onClick={() => props.processing || props.onSelectStorj()}>
-          <img src={storjLogo} width={56} height={83}/>
-        </button>
-        <button className="option-sia" style={style.optionSia}
-                onClick={() => props.processing || props.onSelectSia()}>
-          <img src={siaLogo} width={78} height={47}/>
-        </button>
-        <button className="option-both" style={style.optionBoth}
-                onClick={() => props.processing || props.onSelectBoth()}>
-          <img src={storjAndSiaLogo} width={140} height={68}/>
-        </button>
-      </section>
     </div>
   );
 
-}
+};
 
 SelectService.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
@@ -118,3 +76,5 @@ SelectService.propTypes = {
   onSelectSia: PropTypes.func.isRequired,
   onSelectBoth: PropTypes.func.isRequired
 };
+
+export default SelectService;

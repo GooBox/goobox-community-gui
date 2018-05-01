@@ -16,6 +16,7 @@
  */
 
 export const CloseWindow = "CloseWindow";
+export const OpenSyncFolder = "OpenSyncFolder";
 export const SelectFolder = "SelectFolder";
 export const SelectStorj = "SelectStorj";
 export const SelectSia = "SelectSia";
@@ -24,6 +25,9 @@ export const SelectBoth = "SelectBoth";
 export const StorjLogin = "StorjLogin";
 export const StorjLoginSuccess = "StorjLoginSuccess";
 export const StorjLoginFailure = "StorjLoginFailure";
+export const StorjGenerateMnemonic = "StorjGenerateMnemonic";
+export const StorjGenerateMnemonicSuccess = "StorjGenerateMnemonicSuccess";
+export const StorjGenerateMnemonicFailure = "StorjGenerateMnemonicFailure";
 export const StorjCreateAccount = "StorjCreateAccount";
 export const StorjCreateAccountSuccess = "StorjCreateAccountSuccess";
 export const StorjCreateAccountFailure = "StorjCreateAccountFailure";

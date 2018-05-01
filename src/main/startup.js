@@ -27,7 +27,7 @@ import {initPapertrail} from "./papertrail";
 
 export const main = async () => {
 
-  if ("production" !== process.env.NODE_ENV && process.env.PAPERTRAIL) {
+  if (process.env.NODE_ENV !== "production" && process.env.PAPERTRAIL) {
     initPapertrail();
   }
 

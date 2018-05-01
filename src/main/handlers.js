@@ -137,6 +137,18 @@ export const stopSyncAppsHandler = () => async () => {
   }
 };
 
+export const storjGenerateMnemonicHandler = () => async payload => {
+
+  log.info(`[GUI main] Generating a mnemonic code`);
+  if (global.storj && global.storj.proc) {
+    await global.storj.close();
+  }
+  global.storj = new Storj();
+  global.storj.start(payload.syncFolder, true);
+
+  return global.storj.generateMnemonic();
+
+};
 
 export const storjLoginHandler = () => async payload => {
 
@@ -146,6 +158,7 @@ export const storjLoginHandler = () => async payload => {
   }
   global.storj = new Storj();
   global.storj.start(payload.syncFolder, true);
+
 
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);

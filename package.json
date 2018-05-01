@@ -39,7 +39,8 @@
     "about-window": "^1.11.0",
     "electron-json-storage": "^4.1.0",
     "node-jre": "jkawamoto/node-jre",
-    "node-notifier": "^5.2.1"
+    "node-notifier": "^5.2.1",
+    "react-copy-to-clipboard": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.46",
@@ -50,9 +51,11 @@
     "babel-jest": "^22.4.3",
     "babel-loader": "^8.0.0-beta.0",
     "babel-minify-webpack-plugin": "^0.3.1",
+    "bootstrap": "^4.1.1",
     "classnames": "^2.2.5",
     "commander": "^2.15.1",
     "coveralls": "^3.0.0",
+    "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
     "electron": "1.8.6",
@@ -60,6 +63,8 @@
     "electron-log": "^2.2.14",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "hoek": "^5.0.3",
     "jest": "^22.4.3",
