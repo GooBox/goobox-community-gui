@@ -15,15 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
 import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
 
 describe("mapStateToProps", () => {
 
-  it("maps nothing", () => {
-    expect(mapStateToProps()).toEqual({});
+  it("set messages", () => {
+    expect(mapStateToProps()).toEqual({
+      header: "We’re preparing your Goobox",
+      message: "We will notify you when we’re done."
+    });
   });
 
 });
@@ -35,14 +36,9 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickBack to push SiaWallet", () => {
-    mapDispatchToProps(dispatch).onClickBack();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaWallet));
-  });
-
-  it("maps onClickClose to closeWindow action", () => {
-    mapDispatchToProps(dispatch).onClickClose();
-    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
+  it("maps onClick to openSyncFolder action", () => {
+    mapDispatchToProps(dispatch).onClick();
+    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
   });
 
 });

@@ -16,6 +16,7 @@
  */
 
 export const CloseWindow = "CloseWindow";
+export const OpenSyncFolder = "OpenSyncFolder";
 export const SelectFolder = "SelectFolder";
 export const SelectStorj = "SelectStorj";
 export const SelectSia = "SelectSia";

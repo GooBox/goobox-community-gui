@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/finish";
-
+import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-finish";
 
 describe("mapStateToProps", () => {
 
-  it("returns nothing", () => {
-    expect(mapStateToProps()).toEqual({});
+  it("set messages", () => {
+    // noinspection SpellCheckingInspection
+    expect(mapStateToProps()).toEqual({
+      header: "You are ready to go",
+      message: "Happy Gooboxing!"
+    });
   });
 
 });
@@ -36,14 +37,9 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickBack to push StorjLogin screen", () => {
-    mapDispatchToProps(dispatch).onClickBack();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
-  });
-
-  it("maps onClickClose to closeWindow action", () => {
-    mapDispatchToProps(dispatch).onClickClose();
-    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
+  it("maps onClick to openSyncFolder action", () => {
+    mapDispatchToProps(dispatch).onClick();
+    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
   });
 
 });
