@@ -31,6 +31,7 @@ import {
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "./handlers";
 
@@ -71,6 +72,7 @@ export const installer = () => {
   // Register event handlers.
   app.on("window-all-closed", installerWindowAllClosedHandler(app));
   addListener(actionTypes.InstallJRE, installJREHandler());
+  addListener(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
   addListener(actionTypes.StorjLogin, storjLoginHandler());
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
@@ -112,3 +114,4 @@ export const installer = () => {
 
 };
 
+export default installer;

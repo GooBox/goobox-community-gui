@@ -42,6 +42,7 @@ import {
   startSynchronizationHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler,
   themeChangedHandler,
   updateStateHandler,
@@ -367,12 +368,78 @@ describe("event handlers", () => {
 
     });
 
+    describe("storjGenerateMnemonic handler", () => {
+
+      const encryptionKey = "sample mnemonic";
+      const dir = "/tmp";
+      const payload = {
+        syncFolder: dir,
+      };
+
+      let handler, start, generateMnemonic;
+      beforeEach(() => {
+        handler = storjGenerateMnemonicHandler();
+        start = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
+          if (global.storj) {
+            global.storj.proc = "a dummy storj instance";
+          }
+        });
+        generateMnemonic = jest.spyOn(Storj.prototype, "generateMnemonic").mockResolvedValue(encryptionKey);
+      });
+
+      afterEach(() => {
+        start.mockRestore();
+        generateMnemonic.mockRestore();
+      });
+
+      it("starts a Storj instance with the reset option if not running", async () => {
+        expect(global.storj).not.toBeDefined();
+        await handler(payload);
+        expect(global.storj).toBeDefined();
+        expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("closes the Storj instance if exists and starts a new Storj instance", async () => {
+        const close = jest.fn().mockResolvedValue(null);
+        global.storj = new Storj();
+        global.storj.proc = {};
+        global.storj.close = close;
+
+        await handler(payload);
+        expect(close).toHaveBeenCalled();
+        expect(global.storj).toBeDefined();
+        expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("calls generateMnemonic", async () => {
+        expect(global.storj).not.toBeDefined();
+        await expect(handler(payload)).resolves.toEqual(encryptionKey);
+        expect(generateMnemonic).toHaveBeenCalledTimes(1);
+      });
+
+      it("returns an error if generateMnemonic fails", async () => {
+        const err = new Error("expected error");
+        generateMnemonic.mockRejectedValue(err);
+        expect(global.storj).not.toBeDefined();
+        await expect(handler(payload)).rejects.toEqual(err);
+        expect(generateMnemonic).toHaveBeenCalledTimes(1);
+      });
+
+    });
+
     describe("storjLogin handler", () => {
 
       const email = "abc@example.com";
       const password = "password";
       const key = "xxx xxx xxx";
       const dir = "/tmp";
+      const payload = {
+        email: email,
+        password: password,
+        encryptionKey: key,
+        syncFolder: dir,
+      };
+
       let handler, start, checkMnemonic, login;
       beforeEach(() => {
         handler = storjLoginHandler();
@@ -381,8 +448,8 @@ describe("event handlers", () => {
             global.storj.proc = "a dummy storj instance";
           }
         });
-        checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockReturnValue(Promise.resolve());
-        login = jest.spyOn(Storj.prototype, "login").mockReturnValue(Promise.resolve());
+        checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockResolvedValue(null);
+        login = jest.spyOn(Storj.prototype, "login").mockResolvedValue(null);
       });
 
       afterEach(() => {
@@ -391,49 +458,36 @@ describe("event handlers", () => {
         login.mockRestore();
       });
 
-      it("starts a Storj instance with reset option and calls checkMnemonic and login methods", async () => {
+      it("starts a Storj instance with the reset option if not running", async () => {
         expect(global.storj).not.toBeDefined();
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).resolves.not.toBeDefined();
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(global.storj).toBeDefined();
         expect(start).toHaveBeenCalledWith(dir, true);
-        expect(checkMnemonic).toHaveBeenCalledWith(key);
-        expect(login).toHaveBeenCalledWith(email, password, key);
       });
 
-      it("closes the Storj instance if exists before starting a new Storj instance", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+      it("closes the Storj instance if exists and starts a new Storj instance", async () => {
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = new Storj();
         global.storj.proc = {};
         global.storj.close = close;
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).resolves.not.toBeDefined();
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(close).toHaveBeenCalled();
         expect(global.storj).toBeDefined();
         expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("calls checkMnemonic and then login methods", async () => {
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(checkMnemonic).toHaveBeenCalledWith(key);
         expect(login).toHaveBeenCalledWith(email, password, key);
       });
 
       it("returns an error message if checkMnemonic fails", async () => {
-        const err = "expected error";
+        const err = new Error("expected error");
         checkMnemonic.mockReturnValue(Promise.reject(err));
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).rejects.toEqual({
+        await expect(handler(payload)).rejects.toEqual({
           error: err,
           email: false,
           password: false,
@@ -445,15 +499,10 @@ describe("event handlers", () => {
       });
 
       it("returns an error message if login fails", async () => {
-        const err = "expected error";
+        const err = new Error("expected error");
         login.mockReturnValue(Promise.reject(err));
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).rejects.toEqual({
+        await expect(handler(payload)).rejects.toEqual({
           error: err,
           email: true,
           password: true,

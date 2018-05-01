@@ -24,12 +24,14 @@ import requestSiaWallet from "./request-sia-wallet";
 import saveConfig from "./save-config";
 import stopSyncApps from "./stop-sync-apps";
 import storjCreateAccount from "./storj-create-account";
+import storjGenerateMnemonic from "./storj-generate-mnemonic";
 import storjLogin from "./storj-login";
 
 export default function* rootSaga() {
   yield fork(prepareJRE);
   yield takeEvery(actionTypes.StorjLogin, storjLogin);
   yield takeEvery(actionTypes.StorjCreateAccount, storjCreateAccount);
+  yield takeEvery(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonic);
   yield takeEvery(actionTypes.RequestSiaWalletInfo, requestSiaWallet);
   yield takeEvery(actionTypes.SaveConfig, saveConfig);
   yield takeEvery(actionTypes.StopSyncApps, stopSyncApps);

@@ -15,12 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeState = "@IPC/ChangeState";
-export const OpenSyncFolder = "@IPC/OpenSyncFolder";
-export const CalculateUsedVolume = "@IPC/CalculateUsedVolume";
-export const InstallJRE = "@IPC/InstallJRE";
-export const StorjGenerateMnemonic = "@IPC/StorjGenerateMnemonic";
-export const StorjLogin = "@IPC/StorjLogin";
-export const StorjCreateAccount = "@IPC/StorjCreateAccount";
-export const SiaRequestWalletInfo = "@IPC/SiaRequestWalletInfo";
-export const StopSyncApps = "＠IPC/StopSyncApps";
+import log from "electron-log";
+import {call, put} from "redux-saga/effects";
+import * as ipcActions from "../../../ipc/actions";
+import sendAsync from "../../../ipc/send";
+import * as actions from "../actions";
+
+export const storjGenerateMnemonic = function* (action) {
+
+  try {
+    const encryptionKey = yield call(sendAsync, ipcActions.storjGenerateMnemonic({
+      syncFolder: action.payload.folder,
+    }));
+    yield put(actions.storjGenerateMnemonicSuccess(encryptionKey));
+
+  } catch (err) {
+    log.error(err);
+  }
+
+};
+
+export default storjGenerateMnemonic;

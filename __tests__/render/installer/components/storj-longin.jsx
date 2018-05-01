@@ -25,13 +25,15 @@ describe("StorjLogin component", () => {
   const samplePassword = "1234567";
   const sampleKey = "abcdefg";
 
-  let wrapper, back, finish, createAccount;
+  let wrapper, back, finish, createAccount, generateSeed;
   beforeEach(() => {
     back = jest.fn();
     finish = jest.fn();
     createAccount = jest.fn();
+    generateSeed = jest.fn();
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount} processing={false}/>
+      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
+                  onClickGenerateSeed={generateSeed} processing={false} encryptionKey={sampleKey}/>
     );
   });
 
@@ -100,13 +102,13 @@ describe("StorjLogin component", () => {
     expect(key.exists()).toBeTruthy();
     expect(key.hasClass("warn")).toBeFalsy();
 
-    const sampleKey = "abcdefg";
+    const anotherKey = "another key";
     key.simulate("change", {
       target: {
-        value: sampleKey
+        value: anotherKey
       }
     });
-    expect(wrapper.state("key")).toEqual(sampleKey);
+    expect(wrapper.state("key")).toEqual(anotherKey);
   });
 
   it("disables updating the input box for the encryption key when processing is true", () => {
@@ -125,6 +127,11 @@ describe("StorjLogin component", () => {
     expect(wrapper.state("key")).toEqual(oldKey);
   });
 
+  it("has encryptionKey property and shows the given key in the input box", () => {
+    const key = wrapper.find("#key");
+    expect(key.prop("value")).toEqual(sampleKey);
+  });
+
   // it("has a button to create an account", () => {
   //   const btn = wrapper.find("#create-account-btn");
   //   expect(btn.exists()).toBeTruthy();
@@ -141,6 +148,19 @@ describe("StorjLogin component", () => {
   //   btn.simulate("click");
   //   expect(createAccount).not.toHaveBeenCalled();
   // });
+
+  it("has a button for generating mnemonic", () => {
+    const btn = wrapper.find("#generate-mnemonic-btn");
+    expect(btn.exists()).toBeTruthy();
+    btn.simulate("click");
+    expect(generateSeed).toHaveBeenCalledTimes(1);
+  });
+
+  it("disables the generate mnemonic button while processing is true", () => {
+    wrapper.setProps({processing: true});
+    wrapper.find("#generate-mnemonic-btn").simulate("click");
+    expect(generateSeed).not.toHaveBeenCalled();
+  });
 
   it("has a back link which invokes onClickBack function", () => {
     const btn = wrapper.find("#back-btn");
@@ -294,7 +314,8 @@ describe("StorjLogin component", () => {
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  emailWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  emailWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
@@ -302,7 +323,8 @@ describe("StorjLogin component", () => {
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  passwordWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  passwordWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
@@ -310,7 +332,8 @@ describe("StorjLogin component", () => {
   it("takes keyWarn prop and sets the given value to keyWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  keyWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  keyWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("keyWarn")).toBeTruthy();
   });

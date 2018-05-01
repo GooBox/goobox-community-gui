@@ -16,69 +16,37 @@
  */
 
 import classNames from "classnames";
-import log from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
-import leftArrowImage from "../assets/left_arrow.svg";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import rightArrowImage from "../assets/right_arrow.svg";
+import Sidebar from "./sidebar";
 
 const style = {
-  msg: {
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "52px auto 0 auto",
-  },
-  accountInfo: {
-    fontSize: "30px",
-    textAlign: "center",
-    marginTop: "20px",
-  },
-  createAccount: {
-    fontSize: "11px",
-    textAlign: "center",
-    marginTop: "10px",
+  input: {
+    width: "489px",
+    height: "48px",
+    borderRadius: "2.9px",
+    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
+    backgroundColor: "#ffffff",
   },
   button: {
-    width: "123px",
-    height: "31px",
-    fontSize: "11px",
-    backgroundColor: "white",
-    borderRadius: "5px",
-    borderStyle: "none",
+    width: "239.1px",
+    height: "47.3px",
+    borderRadius: "3.2px",
+    border: "solid 0.8px #dddddd"
   },
-  input: {
-    width: "198px",
-    height: "27px",
-    marginBottom: 0,
-  },
-  // The following components art hidden until Storj resumes registrations. (#116)
-  createAccountText: {
-    paddingBottom: "9px",
-    color: "white",
-    display: "none",
-  },
-  createAccountButton: {
-    fontSize: "9px",
-    height: "15px",
-    width: "90px",
-    backgroundColor: "white",
-    borderRadius: "5px",
-    borderStyle: "none",
-    display: "none",
-  },
+  genSeedButton: {
+    padding: 0,
+  }
 };
 
-export default class StorjLogin extends React.Component {
+export class StorjLogin extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       email: "",
       password: "",
-      key: "",
+      key: props.encryptionKey,
       emailWarn: props.emailWarn,
       passwordWarn: props.passwordWarn,
       keyWarn: props.keyWarn,
@@ -88,6 +56,7 @@ export default class StorjLogin extends React.Component {
 
   componentWillReceiveProps(props) {
     this.setState({
+      key: props.encryptionKey,
       emailWarn: props.emailWarn,
       passwordWarn: props.passwordWarn,
       keyWarn: props.keyWarn,
@@ -122,73 +91,50 @@ export default class StorjLogin extends React.Component {
   }
 
   render() {
-    log.silly(`StorjLogin(emailWarn: ${this.state.emailWarn}, passwordWarn: ${this.state.passwordWarn}, keyWarn: ${this.state.keyWarn})`);
-    let msg;
-    if (this.state.emailWarn || this.state.passwordWarn || this.state.keyWarn) {
-      if (this.props.warnMsg) {
-        msg = (
-          <main className="warnMsg" style={style.msg}>
-            <div className="f141">Ooops.</div>
-            <div className="f211">{this.props.warnMsg}...</div>
-          </main>
-        );
-      } else {
-        msg = (
-          <main className="warnMsg" style={style.msg}>
-            <div className="f141">Ooops.</div>
-            <div className="f211">Incorrect email or password. <span
-              className="underlined bold">Please try again.</span>
-            </div>
-          </main>
-        );
-      }
-    } else {
-      msg = (
-        <main className="info" style={style.msg}>
-          <div className="f141">One last thing.</div>
-          <div className="f211">Please login to your <span className="underlined bold">Storj account</span></div>
-        </main>
-      )
-    }
 
     return (
-      <div className={classNames("background-gradation", this.props.processing ? "wait" : "")}>
-        <header><img className="icon" src={leftWhiteIcon}/></header>
-        {msg}
-        <main className="account-info" style={style.accountInfo}>
-          <div>
-            <input className={this.state.emailWarn ? "warn" : ""} id="email"
-                   placeholder="e-mail" value={this.state.email} style={style.input}
+      <div className={classNames("clearfix", {wait: this.props.processing})}>
+        <Sidebar className="float-left"/>
+        <main className="float-right d-flex flex-column">
+          <h1>Login to your Storj account</h1>
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input id="email" className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
+                   type="text" style={style.input} value={this.state.email}
                    onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
+            <div className="invalid-feedback">Please enter a valid email address</div>
           </div>
-          <div>
-            <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
-                   placeholder="password" value={this.state.password} style={style.input}
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input id="password" className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
+                   type="password" style={style.input} value={this.state.password}
                    onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
+            <div className="invalid-feedback">Please enter the correct password</div>
           </div>
-          <div>
-            <input className={this.state.keyWarn ? "warn" : ""} id="key" type="password"
-                   placeholder="encryption key" value={this.state.key} style={style.input}
+          <div className="form-group">
+            <div className="d-flex align-self-center justify-content-between">
+              <label htmlFor="key">
+                Encryption Key <i className="fas fa-info-circle info-button"/>
+              </label>
+              <button id="generate-mnemonic-btn" type="button" className="btn btn-link" style={style.genSeedButton}
+                      onClick={() => this.props.processing || this.props.onClickGenerateSeed()}>generate seed
+              </button>
+            </div>
+            <input id="key" className={classNames("form-control", {"is-invalid": this.state.keyWarn})}
+                   type="text" style={style.input} value={this.state.key}
                    onChange={e => this.props.processing || this.setState({key: e.target.value})}/>
+            <div className="invalid-feedback">Please enter the correct encryption key</div>
+          </div>
+          <div className="mt-auto d-flex justify-content-between">
+            <button id="back-btn" type="button" className="btn btn-light"
+                    onClick={() => this.props.processing || this.props.onClickBack()}
+                    style={style.button}> Back
+            </button>
+            <button id="next-btn" type="button" className="btn btn-primary" onClick={this._onClickNext}
+                    style={style.button}> Next
+            </button>
           </div>
         </main>
-        <main className="create-account" style={style.createAccount}>
-          <div style={style.createAccountText}>
-            Don't have an account?
-          </div>
-          <button id="create-account-btn" style={style.createAccountButton}
-                  onClick={() => this.props.processing || this.props.onClickCreateAccount()}>
-            click here to create
-          </button>
-        </main>
-        <footer>
-          <a className="back-btn" onClick={() => this.props.processing || this.props.onClickBack()}>
-            <img className="arrow" src={leftArrowImage}/> Back
-          </a>
-          <a className="next-btn" onClick={this._onClickNext}>
-            Finish <img className="arrow" src={rightArrowImage}/>
-          </a>
-        </footer>
       </div>
     );
   }
@@ -198,11 +144,14 @@ export default class StorjLogin extends React.Component {
 StorjLogin.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
   processing: PropTypes.bool.isRequired,
+  encryptionKey: PropTypes.string.isRequired,
   onClickCreateAccount: PropTypes.func.isRequired,
+  onClickGenerateSeed: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
   keyWarn: PropTypes.bool,
-  warnMsg: PropTypes.string,
 };
+
+export default StorjLogin;

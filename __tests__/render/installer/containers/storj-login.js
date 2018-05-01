@@ -27,6 +27,7 @@ describe("mapStateToProps", () => {
     const main = {
       processing: true,
       storjAccount: {
+        key: "abcdefg",
         emailWarn: false,
         passwordWarn: true,
         keyWarn: false,
@@ -35,7 +36,11 @@ describe("mapStateToProps", () => {
     };
     expect(mapStateToProps({main: main})).toEqual({
       processing: main.processing,
-      ...main.storjAccount,
+      encryptionKey: main.storjAccount.key,
+      emailWarn: main.storjAccount.emailWarn,
+      passwordWarn: main.storjAccount.passwordWarn,
+      keyWarn: main.storjAccount.keyWarn,
+      warnMsg: main.storjAccount.warnMsg,
       mainState: main,
     });
   });
@@ -72,43 +77,61 @@ describe("mapDispatchToProps", () => {
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjRegistration));
   });
 
+  it("maps onClickGenerateMnemonic to StorjGenerateMnemonic action", () => {
+    mapDispatchToProps(dispatch).onClickGenerateSeed(InitialState);
+    expect(dispatch).toHaveBeenCalledWith(actions.storjGenerateMnemonic({
+      folder: InitialState.folder
+    }));
+  });
+
 });
 
 describe("mergeProps", () => {
 
+  const main = {
+    processing: true,
+    storjAccount: {
+      emailWarn: false,
+      passwordWarn: true,
+      keyWarn: false,
+      warnMsg: "warning",
+    }
+  };
+  const stateProps = {
+    processing: main.processing,
+    ...main.storjAccount,
+    mainState: main,
+  };
+  const dispatchProps = {
+    onClickBack: jest.fn(),
+    onClickNext: jest.fn(),
+    onClickCreateAccount: jest.fn(),
+    onClickGenerateSeed: jest.fn(),
+  };
+  const ownProps = {
+    key: "value"
+  };
+
+  beforeEach(() => {
+    for (let m in dispatchProps) {
+      dispatchProps[m].mockClear();
+    }
+  });
+
   it("merges props, bind onClickNext to the main state, and removes that state from the result", () => {
-    const main = {
-      processing: true,
-      storjAccount: {
-        emailWarn: false,
-        passwordWarn: true,
-        keyWarn: false,
-        warnMsg: "warning",
-      }
-    };
-    const stateProps = {
-      processing: main.processing,
-      ...main.storjAccount,
-      mainState: main,
-    };
-    const dispatchProps = {
-      onClickBack: jest.fn(),
-      onClickNext: jest.fn(),
-      onClickCreateAccount: jest.fn(),
-    };
-    const ownProps = {
-      key: "value"
-    };
     const res = mergeProps(stateProps, dispatchProps, ownProps);
     expect(res).toEqual({
       ...ownProps,
       ...stateProps,
       ...dispatchProps,
       onClickNext: expect.any(Function),
+      onClickGenerateSeed: expect.any(Function),
       mainState: undefined,
     });
     res.onClickNext();
     expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main);
+    res.onClickGenerateSeed();
+    expect(dispatchProps.onClickGenerateSeed).toHaveBeenCalledWith(main);
   });
 
 });
