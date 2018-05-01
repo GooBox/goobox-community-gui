@@ -20,7 +20,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import initInstaller from "./main";
 
-webFrame.setZoomLevelLimits(1, 1);
+webFrame.setVisualZoomLevelLimits(1, 1);
 ReactDOM.render(
   initInstaller(),
   document.getElementById("app")
