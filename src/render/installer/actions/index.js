@@ -19,7 +19,6 @@ import {createAction} from "redux-actions";
 import * as actionTypes from "../constants/action-types";
 
 export const closeWindow = createAction(actionTypes.CloseWindow);
-export const openSyncFolder = createAction(actionTypes.OpenSyncFolder);
 
 export const selectFolder = createAction(actionTypes.SelectFolder);
 export const selectStorj = createAction(actionTypes.SelectStorj);

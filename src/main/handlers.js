@@ -230,6 +230,8 @@ export const installerWindowAllClosedHandler = (app) => async () => {
         global.sia.once("syncState", startSynchronizationHandler());
       }
 
+      utils.openDirectory(cfg.syncFolder);
+
       // if the installation process is finished.
       log.info("[GUI main] Installation has been succeeded, now starting synchronization");
       await core();

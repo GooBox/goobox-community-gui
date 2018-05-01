@@ -27,7 +27,6 @@ import addListener from "../ipc/receiver";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
-  openSyncFolderHandler,
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
@@ -77,7 +76,6 @@ export const installer = () => {
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
-  addListener(actionTypes.OpenSyncFolder, openSyncFolderHandler());
 
   if (process.platform === "darwin") {
 

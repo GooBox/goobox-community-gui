@@ -15,14 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("child_process");
-jest.mock("electron");
-jest.mock("fs");
-jest.mock("../../src/main/config");
-jest.mock("../../src/ipc/receiver");
-jest.mock("../../src/main/core");
-jest.mock("../../src/main/handlers");
-
 import {execFileSync} from "child_process";
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
@@ -34,7 +26,6 @@ import {getConfig} from "../../src/main/config";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
-  openSyncFolderHandler,
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
@@ -43,6 +34,14 @@ import {
 } from "../../src/main/handlers";
 import "../../src/main/installer";
 import {installer} from "../../src/main/installer";
+
+jest.mock("child_process");
+jest.mock("electron");
+jest.mock("fs");
+jest.mock("../../src/main/config");
+jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/core");
+jest.mock("../../src/main/handlers");
 
 describe("installer", () => {
 
@@ -108,7 +107,6 @@ describe("installer", () => {
       storjGenerateMnemonicHandler.mockReturnValue("storjGenerateMnemonicHandler");
       storjLoginHandler.mockReturnValue("storjLoginHandler");
       storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
-      openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
     });
 
     beforeEach(() => {
@@ -118,7 +116,6 @@ describe("installer", () => {
       stopSyncAppsHandler.mockClear();
       storjCreateAccountHandler.mockClear();
       storjLoginHandler.mockClear();
-      openSyncFolderHandler.mockClear();
       storjGenerateMnemonicHandler.mockClear();
     });
 
@@ -150,11 +147,6 @@ describe("installer", () => {
     it("registers stopSyncAppsHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
-    });
-
-    it("registers openSyncFolderHandler", () => {
-      installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.OpenSyncFolder, openSyncFolderHandler());
     });
 
   });

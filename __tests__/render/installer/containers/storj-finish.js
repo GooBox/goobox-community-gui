@@ -39,7 +39,7 @@ describe("mapDispatchToProps", () => {
 
   it("maps onClick to openSyncFolder action", () => {
     mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.openSyncFolder());
+    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
   });
 
 });

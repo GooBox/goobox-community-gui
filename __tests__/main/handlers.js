@@ -15,14 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("electron");
-jest.mock("node-notifier");
-jest.mock("../../src/main/jre");
-jest.mock("../../src/main/config");
-jest.mock("../../src/main/utils");
-jest.mock("../../src/main/core");
-jest.mock("../../src/main/desktop");
-
 import {app} from "electron";
 import {menubarMock} from "menubar";
 import notifier from "node-notifier";
@@ -34,6 +26,7 @@ import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
+  closeWindowHandler,
   installerWindowAllClosedHandler,
   installJREHandler,
   openSyncFolderHandler,
@@ -46,13 +39,21 @@ import {
   storjLoginHandler,
   themeChangedHandler,
   updateStateHandler,
-  willQuitHandler,
+  willQuitHandler
 } from "../../src/main/handlers";
 import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
+
+jest.mock("electron");
+jest.mock("node-notifier");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/config");
+jest.mock("../../src/main/utils");
+jest.mock("../../src/main/core");
+jest.mock("../../src/main/desktop");
 
 describe("event handlers", () => {
 
@@ -153,9 +154,9 @@ describe("event handlers", () => {
 
       it("opens the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           syncFolder: syncFolder,
-        }));
+        });
 
         await expect(handler()).resolves.not.toBeDefined();
         expect(getConfig).toHaveBeenCalled();
@@ -174,12 +175,12 @@ describe("event handlers", () => {
 
       it("calculate the volume of the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           syncFolder: syncFolder,
-        }));
+        });
 
         const volume = 1234567;
-        utils.totalVolume.mockReturnValue(Promise.resolve(volume));
+        utils.totalVolume.mockResolvedValue(volume);
 
         await expect(handler()).resolves.toEqual(volume);
         expect(getConfig).toHaveBeenCalled();
@@ -231,7 +232,7 @@ describe("event handlers", () => {
 
       it("prevents default when storj is running, closes the process, and exists", async () => {
         global.storj = {
-          close: jest.fn().mockReturnValue(Promise.resolve())
+          close: jest.fn().mockResolvedValue(null)
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -241,7 +242,7 @@ describe("event handlers", () => {
 
       it("prevents default when sia is running, closes the process, and exists", async () => {
         global.sia = {
-          close: jest.fn().mockReturnValue(Promise.resolve())
+          close: jest.fn().mockResolvedValue(null)
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -264,14 +265,14 @@ describe("event handlers", () => {
 
       it("installs JRE and returns the if the installation succeeds", async () => {
         const res = true;
-        installJRE.mockReturnValue(Promise.resolve(res));
+        installJRE.mockResolvedValue(res);
         await expect(handler()).resolves.toEqual(res);
         expect(installJRE).toHaveBeenCalledWith();
       });
 
       it("installs JRE and returns a rejected promise with an error messages if the installation fails", async () => {
-        const err = "expected error";
-        installJRE.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        installJRE.mockRejectedValue(err);
         await expect(handler()).rejects.toEqual(err);
         expect(installJRE).toHaveBeenCalledWith();
       });
@@ -286,10 +287,10 @@ describe("event handlers", () => {
       let handler, wallet, start, once;
       beforeEach(() => {
         handler = siaRequestWalletInfoHandler();
-        wallet = jest.spyOn(Sia.prototype, "wallet").mockReturnValue(Promise.resolve({
+        wallet = jest.spyOn(Sia.prototype, "wallet").mockResolvedValue({
           "wallet address": address,
           "primary seed": seed,
-        }));
+        });
         start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
         });
         once = jest.spyOn(Sia.prototype, "once");
@@ -331,8 +332,8 @@ describe("event handlers", () => {
       });
 
       it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
-        const error = "expected error";
-        wallet.mockReturnValue(Promise.reject(error));
+        const error = new Error("expected error");
+        wallet.mockRejectedValue(error);
         await expect(handler({syncFolder: dir})).rejects.toEqual(error);
         expect(start).not.toHaveBeenCalled();
       });
@@ -485,7 +486,7 @@ describe("event handlers", () => {
 
       it("returns an error message if checkMnemonic fails", async () => {
         const err = new Error("expected error");
-        checkMnemonic.mockReturnValue(Promise.reject(err));
+        checkMnemonic.mockRejectedValue(err);
 
         await expect(handler(payload)).rejects.toEqual({
           error: err,
@@ -500,7 +501,7 @@ describe("event handlers", () => {
 
       it("returns an error message if login fails", async () => {
         const err = new Error("expected error");
-        login.mockReturnValue(Promise.reject(err));
+        login.mockRejectedValue(err);
 
         await expect(handler(payload)).rejects.toEqual({
           error: err,
@@ -550,7 +551,7 @@ describe("event handlers", () => {
       });
 
       it("closes the Storj instance if exists before starting a new Storj instance", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = new Storj();
         global.storj.proc = {};
         global.storj.close = close;
@@ -567,8 +568,8 @@ describe("event handlers", () => {
       });
 
       it("returns an error message when creating an account fails", async () => {
-        const err = "expected error";
-        createAccount.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        createAccount.mockRejectedValue(err);
 
         await expect(handler({
           email: email,
@@ -583,11 +584,17 @@ describe("event handlers", () => {
 
     describe("installerWindowAllClosedHandler", () => {
 
+      beforeAll(() => {
+        desktop.register.mockResolvedValue(null);
+        core.mockResolvedValue(null);
+      });
+
       let onWindowAllClosed;
       beforeEach(() => {
-        app.quit.mockReset();
-        desktop.register.mockReturnValue(null);
-        core.mockClear().mockReturnValue(Promise.resolve());
+        app.quit.mockClear();
+        desktop.register.mockClear();
+        utils.openDirectory.mockClear();
+        core.mockClear();
         onWindowAllClosed = installerWindowAllClosedHandler(app);
       });
 
@@ -598,23 +605,22 @@ describe("event handlers", () => {
 
       it("starts the core app when all windows are closed after the installation has been finished", async () => {
 
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
-        }));
+        });
 
         await onWindowAllClosed();
         expect(getConfig).toHaveBeenCalled();
-        // This calling of app.on is in main.js.
         expect(core).toHaveBeenCalled();
         expect(app.quit).not.toHaveBeenCalled();
 
       });
 
       it("registers startSynchronizationHandler when the user chooses sia", async () => {
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
           sia: true,
-        }));
+        });
         global.sia = {
           once: jest.fn(),
         };
@@ -624,21 +630,32 @@ describe("event handlers", () => {
         expect(global.sia.once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
       });
 
-      it("registers a folder icon before starting the core app", async () => {
+      it("opens the sync folder", async () => {
         const dir = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
           syncFolder: dir,
-        }));
+        });
         await onWindowAllClosed();
+        expect(utils.openDirectory).toHaveBeenCalledWith(dir);
+      });
+
+      it("registers the folder icon before starting the core app", async () => {
+        const dir = "/tmp";
+        getConfig.mockResolvedValue({
+          installed: true,
+          syncFolder: dir,
+        });
+        await onWindowAllClosed();
+        expect(desktop.register).toHaveBeenCalledWith(dir);
       });
 
       // TODO: it shows some message to make sure users want to quit the installer.
       it("doesn't start the core app when all windows are closed before the installation is finished", async () => {
 
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false,
-        }));
+        });
 
         await onWindowAllClosed();
         expect(getConfig).toHaveBeenCalled();
@@ -648,13 +665,13 @@ describe("event handlers", () => {
       });
 
       it("closes the sync storj app if running in spite of the installation is canceled", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = {
           close: close
         };
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false
-        }));
+        });
 
         await onWindowAllClosed();
         expect(global.storj).not.toBeDefined();
@@ -663,13 +680,13 @@ describe("event handlers", () => {
       });
 
       it("closes the sync sia app if running in spite of the installation is canceled", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.sia = {
           close: close
         };
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false
-        }));
+        });
 
         await onWindowAllClosed();
         expect(global.sia).not.toBeDefined();

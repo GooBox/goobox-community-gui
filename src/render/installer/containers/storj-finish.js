@@ -30,7 +30,7 @@ export const mapStateToProps = () => ({
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClick: () => dispatch(actions.openSyncFolder()),
+  onClick: () => dispatch(actions.closeWindow()),
 
 });
 

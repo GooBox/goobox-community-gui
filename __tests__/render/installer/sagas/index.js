@@ -19,7 +19,6 @@ import {fork, takeEvery} from "redux-saga/effects";
 import * as actionTypes from "../../../../src/render/installer/constants/action-types";
 import closeWindow from "../../../../src/render/installer/sagas/close-window";
 import rootSaga from "../../../../src/render/installer/sagas/index";
-import openSyncFolder from "../../../../src/render/installer/sagas/open-sync-folder";
 import prepareJRE from "../../../../src/render/installer/sagas/prepare-jre";
 import requestSiaWallet from "../../../../src/render/installer/sagas/request-sia-wallet";
 import saveConfig from "../../../../src/render/installer/sagas/save-config";
@@ -40,7 +39,6 @@ describe("rootSaga", () => {
     expect(saga.next().value).toEqual(takeEvery(actionTypes.SaveConfig, saveConfig));
     expect(saga.next().value).toEqual(takeEvery(actionTypes.StopSyncApps, stopSyncApps));
     expect(saga.next().value).toEqual(takeEvery(actionTypes.CloseWindow, closeWindow));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.OpenSyncFolder, openSyncFolder));
     expect(saga.next().done).toBeTruthy();
   });
 

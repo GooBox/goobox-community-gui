@@ -18,7 +18,6 @@
 import {fork, takeEvery} from "redux-saga/effects";
 import * as actionTypes from "../constants/action-types";
 import closeWindow from "./close-window";
-import openSyncFolder from "./open-sync-folder";
 import prepareJRE from "./prepare-jre";
 import requestSiaWallet from "./request-sia-wallet";
 import saveConfig from "./save-config";
@@ -36,5 +35,4 @@ export default function* rootSaga() {
   yield takeEvery(actionTypes.SaveConfig, saveConfig);
   yield takeEvery(actionTypes.StopSyncApps, stopSyncApps);
   yield takeEvery(actionTypes.CloseWindow, closeWindow);
-  yield takeEvery(actionTypes.OpenSyncFolder, openSyncFolder);
 }

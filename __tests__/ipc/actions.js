@@ -23,6 +23,7 @@ import {
   siaRequestWalletInfo,
   stopSyncApps,
   storjCreateAccount,
+  storjGenerateMnemonic,
   storjLogin
 } from "../../src/ipc/actions";
 import * as actionTypes from "../../src/ipc/constants";
@@ -31,60 +32,67 @@ describe("action creators for IPC", () => {
 
   const dummyPayload = "dummyPayload";
 
-  it("has changeState", () => {
+  it("has changeState action", () => {
     expect(changeState(dummyPayload)).toEqual({
       type: actionTypes.ChangeState,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has openSyncFolder", () => {
+  it("has openSyncFolder action", () => {
     expect(openSyncFolder(dummyPayload)).toEqual({
       type: actionTypes.OpenSyncFolder,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has calculateUsedVolume", () => {
+  it("has calculateUsedVolume action", () => {
     expect(calculateUsedVolume(dummyPayload)).toEqual({
       type: actionTypes.CalculateUsedVolume,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has installJRE", () => {
+  it("has installJRE action", () => {
     expect(installJRE(dummyPayload)).toEqual({
       type: actionTypes.InstallJRE,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has storjLogin", () => {
+  it("has storjGenerateMnemonic action", () => {
+    expect(storjGenerateMnemonic(dummyPayload)).toEqual({
+      type: actionTypes.StorjGenerateMnemonic,
+      payload: dummyPayload,
+    });
+  });
+
+  it("has storjLogin action", () => {
     expect(storjLogin(dummyPayload)).toEqual({
       type: actionTypes.StorjLogin,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has storjCreateAccount", () => {
+  it("has storjCreateAccount action", () => {
     expect(storjCreateAccount(dummyPayload)).toEqual({
       type: actionTypes.StorjCreateAccount,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has siaRequestWalletInfo", () => {
+  it("has siaRequestWalletInfo action", () => {
     expect(siaRequestWalletInfo(dummyPayload)).toEqual({
       type: actionTypes.SiaRequestWalletInfo,
       payload: dummyPayload,
-    })
+    });
   });
 
-  it("has stopSyncAppsEvent", () => {
+  it("has stopSyncAppsEvent action", () => {
     expect(stopSyncApps(dummyPayload)).toEqual({
       type: actionTypes.StopSyncApps,
       payload: dummyPayload,
-    })
+    });
   });
 
 });
