@@ -1,13 +1,119 @@
+/*
+ * Copyright (C) 2017-2018 Junpei Kawamoto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 * {
   padding: 0;
   margin: 0;
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
   box-sizing: border-box;
-  font-family: 'Nunito', sans-serif;
+}
+
+html {
+  overflow: hidden;
+  text-align: left;
+  color: #0c2543;
+}
+
+#app {
+  height: 600px;
+  width: 800px;
+}
+
+.sidebar {
+  height: 600px;
+  width: 188px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  box-shadow: 0 -3px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.sidebar img {
+  height: 100px;
+  width: 100px;
+}
+
+/*
+ * Normal preparation screen.
+ */
+.full-screen {
+  height: 600px;
+  width: 800px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  color: white;
+  padding-top: 147px;
+  padding-bottom: 147px;
+  text-align: center;
+}
+
+.full-screen h1 {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0;
+}
+
+.full-screen p {
+  font-size: 18px;
   font-weight: 300;
 }
 
-html, body {
-  overflow: hidden;
+.meter {
+  display: block;
+  background-color: #e8eef4;
+  clear: both;
+  width: 550px;
+  height: 5px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: #26aae1;
+}
+
+/*
+ * White preparation screen.
+ */
+.full-screen-white {
+  background: white;
+  color: #0972ba;
+}
+
+.full-screen-white span {
+  font-size: 22px;
+}
+
+main {
+  font-size: 18px;
+  height: 600px;
+  width: 612px;
+  padding: 50px 60px;
+}
+
+h1 {
+  font-size: 38px;
+  margin-bottom: 39px;
+}
+
+p {
+  margin-bottom: 34px;
 }
 
 ::selection {
@@ -26,15 +132,6 @@ input::selection {
   cursor: default;
 }
 
-a {
-  color: white;
-  text-decoration: none;
-}
-
-a:hover {
-  cursor: pointer;
-}
-
 button:hover {
   cursor: pointer;
 }
@@ -51,84 +148,24 @@ input:hover {
   cursor: text;
 }
 
-#app {
-  background-color: white;
-  width: 600px;
-  height: 400px;
+small {
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #97a4b1;
+  margin-top: 21px;
 }
 
-#app > div {
-  width: 600px;
-  height: 400px;
-}
-
-#app > div > div {
-  width: 600px;
-  height: 400px;
-}
-
-.background-gradation {
-  background: -prefix-linear-gradient(left, #00AFB1, #7A55DE);
-  background: linear-gradient(to right, #00AFB1, #7A55DE);
-}
-
-header {
-  padding-top: 18px;
-  padding-left: 18px;
-  padding-right: 18px;
-  width: 600px;
-}
-
-footer {
-  position: absolute;
-  top: 373px;
-  padding-left: 17px;
-  padding-right: 11px;
-  width: 600px;
-}
-
-.back-btn {
-  float: left;
-  font-size: 12pt;
-}
-
-.back-btn:active {
-  position: relative;
-  transform: scale(0.9);
-}
-
-.next-btn {
-  float: right;
-  font-size: 12pt;
-}
-
-.next-btn:active {
-  position: relative;
-  transform: scale(0.9);
-}
-
-button:active {
-  position: relative;
-  transform: scale(0.9);
+.form-row {
+  padding-left: 5px;
 }
 
 button:focus {
   outline: none;
-}
-
-.underlined:after {
-  content: "";
-  display: block;
-  height: 4px;
-  width: 100%;
-  background: -moz-linear-gradient(left, #7A55DE 0%, #00AFB1 100%);
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #7A55DE), color-stop(100%, #00AFB1));
-  background: -webkit-linear-gradient(left, #7A55DE 0%, #00AFB1 100%);
-  border-radius: 50px
-}
-
-main span {
-  display: inline-block;
 }
 
 .light {
@@ -159,68 +196,17 @@ main span {
   text-align: center;
 }
 
-.arrow {
-  width: 17px;
-  height: 11px;
-  margin-left: 9px;
-  margin-right: 9px;
-}
-
 .icon {
   width: 41px;
   height: 40px;
-}
-
-input {
-  background-color: white;
-  border-radius: 5px;
-  border-style: none;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin-bottom: 9px;
-  text-align: center;
 }
 
 .errorMsg {
   color: red;
 }
 
-/*input.warn {*/
-/*border: 1px solid red;*/
-/*}*/
-
 input.warn::-webkit-input-placeholder {
   color: red;
-}
-
-.up-and-down {
-  animation: up-and-down 1s ease-in-out infinite alternate
-}
-
-@keyframes up-and-down {
-  0% {
-    transform: translateY(0px);
-  }
-  100% {
-    transform: translateY(10px);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.f141 {
-  font-size: 14px;
-}
-
-.f211 {
-  font-size: 21px;
 }
 
 .wait {
@@ -231,19 +217,10 @@ input.warn::-webkit-input-placeholder {
   cursor: progress;
 }
 
-.meter {
-  display: block;
-  border: #F7F7F7 1px solid;
-  clear: both;
-  width: auto;
-  height: 12px;
-  margin-top: 20px;
-  border-radius: 50px;
+.info-button {
+  color: #26aae1;
 }
 
-.meter > span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(to right, #7A55DE, #00AFB1);
-  border-radius: 50px;
+textarea {
+  resize: none;
 }

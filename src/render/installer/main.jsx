@@ -25,17 +25,17 @@ import {applyMiddleware, combineReducers, createStore} from "redux";
 import {createLogger} from "redux-logger";
 import createSagaMiddleware from "redux-saga";
 import * as screens from "./constants/screens";
-import Finish from "./containers/finish";
 import Preparation from "./containers/preparation";
 import SelectFolder from "./containers/select-folder";
 import SelectService from "./containers/select-service";
 import SiaFinish from "./containers/sia-finish";
+import SiaSettingUp from "./containers/sia-setting-up";
 import SiaWallet from "./containers/sia-wallet";
 import StorjEmailConfirmation from "./containers/storj-email-confirmation";
 import StorjEncryptionKey from "./containers/storj-encryption-key";
+import StorjFinish from "./containers/storj-finish";
 import StorjLogin from "./containers/storj-login";
 import StorjRegistration from "./containers/storj-registration";
-import Welcome from "./containers/welcome";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
@@ -75,23 +75,6 @@ const configureStore = () => {
 
 };
 
-const renderJREPreparation = () => {
-  return (
-    <Preparation>
-      Getting some tools.<br/>
-      <span className="bold">Please wait.</span>
-    </Preparation>
-  );
-};
-
-const renderSiaPreparation = () => {
-  return (
-    <Preparation>
-      Setting up your <span className="bold">sia wallet</span>.
-    </Preparation>
-  );
-};
-
 export const routes = () => {
   return (
     <Switch>
@@ -105,10 +88,9 @@ export const routes = () => {
       <Route path={screens.StorjEmailConfirmation} component={StorjEmailConfirmation}/>
       <Route path={screens.SiaWallet} component={SiaWallet}/>
       <Route path={screens.SiaFinish} component={SiaFinish}/>
-      <Route path={screens.FinishAll} component={Finish}/>
-      <Route path={screens.JREPreparation} render={renderJREPreparation}/>
-      <Route path={screens.SiaPreparation} render={renderSiaPreparation}/>
-      <Route path="" exact={true} component={Welcome}/>
+      <Route path={screens.FinishAll} component={StorjFinish}/>
+      <Route path={screens.SiaPreparation} component={SiaSettingUp}/>
+      <Route path="" component={Preparation}/>
     </Switch>
   );
 };
