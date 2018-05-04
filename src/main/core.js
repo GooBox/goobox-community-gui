@@ -40,9 +40,12 @@ import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
 
+export const DefaultWidth = 360;
+export const DefaultHeight = 340;
+
 export const core = async () => {
 
-  let width = 518;
+  let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
     width *= 2;
   }
@@ -53,7 +56,7 @@ export const core = async () => {
     tooltip: app.getName(),
     preloadWindow: true,
     width: width,
-    height: 400,
+    height: DefaultHeight,
     alwaysOnTop: true,
     showDockIcon: false,
   });
@@ -170,3 +173,5 @@ export const core = async () => {
   }
 
 };
+
+export default core;

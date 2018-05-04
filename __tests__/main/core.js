@@ -30,7 +30,7 @@ import {Idle, Synchronizing} from "../../src/constants";
 import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
-import {core} from "../../src/main/core";
+import {core, DefaultHeight, DefaultWidth} from "../../src/main/core";
 import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
@@ -95,8 +95,8 @@ describe("main process of the core app", () => {
         icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,
-        width: 518,
-        height: 400,
+        width: DefaultWidth,
+        height: DefaultHeight,
         alwaysOnTop: true,
         showDockIcon: false,
       });
