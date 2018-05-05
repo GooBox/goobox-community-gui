@@ -41,6 +41,11 @@ a *:hover {
     cursor: pointer;
 }
 
+a:active {
+    position: relative;
+    transform: scale(0.95);
+}
+
 #app {
     background-color: #fbfbfd;
     width: 360px;
@@ -83,17 +88,17 @@ section i {
     font-size: 29px;
 }
 
-a:active {
-    position: relative;
-    transform: scale(0.9);
-}
-
 .pause-sync-btn {
     display: inline-block;
 }
 
 .sync-again-btn {
     display: inline-block;
+}
+
+.info-btn {
+    /*Hide this button until fixing about-window library*/
+    display: none;
 }
 
 .settings-btn {

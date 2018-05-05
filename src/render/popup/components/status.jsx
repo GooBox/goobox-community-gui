@@ -58,12 +58,12 @@ export default function Status(props) {
       </nav>
 
       <section className="d-flex flex-column p-3">
-        <a className="sync-folder d-flex align-items-center mb-3"
+        <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
            onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
           <i className="fas fa-folder-open mr-2"/>
           <span className="bold">Open my folder</span>
         </a>
-        {/*<a id="import-drive" className="d-flex align-items-center"*/}
+        {/*<a id="import-drive" className="btn btn-light d-flex align-items-center"*/}
         {/*onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>*/}
         {/*<i className="fas fa-cloud-upload-alt mr-2"/>*/}
         {/*<span className="bold">Import drive</span>*/}
