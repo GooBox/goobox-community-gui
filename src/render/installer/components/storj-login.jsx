@@ -18,6 +18,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
+import Popover from "react-awesome-popover";
 import Sidebar from "./sidebar";
 
 const style = {
@@ -114,7 +115,11 @@ export class StorjLogin extends React.Component {
           <div className="form-group">
             <div className="d-flex align-self-center justify-content-between">
               <label htmlFor="key">
-                Encryption Key <i className="fas fa-info-circle info-button"/>
+                Encryption Key&nbsp;
+                <Popover>
+                  <i className="fas fa-info-circle info-button"/>
+                  <span>If you already have a encryption key for Goobox please enter it, otherwise click on "Generate".</span>
+                </Popover>
               </label>
               <button id="generate-mnemonic-btn" type="button" className="btn btn-link" style={style.genSeedButton}
                       onClick={() => this.props.processing || this.props.onClickGenerateSeed()}>generate seed

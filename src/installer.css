@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import "~bootstrap/dist/css/bootstrap.css";
+@import "~react-awesome-popover/dest/react-awesome-popover.css";
 
 * {
   padding: 0;
@@ -224,4 +225,11 @@ input.warn::-webkit-input-placeholder {
 
 textarea {
   resize: none;
+}
+
+.rap-popover-content {
+  width: 20em;
+  border: solid 1px #dddddd;
+  padding: 1em;
+  font-size: 14px;
 }

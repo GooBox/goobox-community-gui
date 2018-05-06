@@ -18,9 +18,9 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
+import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Sidebar from "./sidebar";
-
 
 const style = {
   input: {
@@ -95,13 +95,16 @@ export class SiaWallet extends React.Component {
       <div className={classNames("clearfix", {wait: this.props.processing})}>
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
-          <h1>Installing SIA</h1>
+          <h1>Installing Sia</h1>
 
           <div className="form-group mb-3">
             <label htmlFor="address">
               Please save your &nbsp;
-              <span className="font-weight-bold">SIA wallet address</span>&nbsp;
-              <i className="fas fa-info-circle info-button"/>
+              <span className="font-weight-bold">Sia wallet address</span>&nbsp;
+              <Popover>
+                <i className="fas fa-info-circle info-button"/>
+                <span>Send Sia tokens to this address in order to top-up your account.</span>
+              </Popover>
             </label>
             <div className="input-group">
               <input id="address" className="form-control" readOnly={true}
@@ -119,8 +122,11 @@ export class SiaWallet extends React.Component {
           <div className="form-group">
             <label htmlFor="seed">
               And your &nbsp;
-              <span className="font-weight-bold">SIA seed</span>&nbsp;
-              <i className="fas fa-info-circle info-button"/>
+              <span className="font-weight-bold">Sia seed</span>&nbsp;
+              <Popover>
+                <i className="fas fa-info-circle info-button"/>
+                <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
+              </Popover>
             </label>
             <div className="input-group">
               <textarea id="seed" className="form-control" readOnly={true}
