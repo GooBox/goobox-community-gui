@@ -194,8 +194,8 @@
     ],
     "nsis": {
       "perMachine": true,
-      "installerIcon": "resources/goobox.ico",
-      "uninstallerIcon": "resources/goobox.ico",
+      "installerIcon": "resources/installer.ico",
+      "uninstallerIcon": "resources/installer.ico",
       "license": "LICENSE",
       "deleteAppDataOnUninstall": true,
       "artifactName": "${productName}-${version}-setup_x64.${ext}",
