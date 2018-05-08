@@ -198,6 +198,13 @@ As this is a free and open-source app there are plenty of ways you can contribut
 
 4.	If you are a designer, share your ideas with us, have a look at the [design and branding repository]( https://github.com/GooBox/brand-design) on github. Open a issue, get in touch with us or submit a pull request for a design change!
 
+# Roadmap
+
+This is the current roadmap plan:
+
+![](https://i.imgur.com/6zR6n1T.png)
+
+
 # Donations
 
 Every single cent of the received funds will be spent on development to make the app better. All received funds will only be spent on this app alone and will not be spend on any other aspects of this project or adjacent services.
