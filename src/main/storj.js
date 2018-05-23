@@ -50,6 +50,7 @@ export default class Storj extends EventEmitter {
       args.push("--reset-auth-file");
     }
 
+    log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     const env = {
       ...process.env,
       JAVA_HOME: this._javaHome,
@@ -58,19 +59,25 @@ export default class Storj extends EventEmitter {
 
       const lib = path.normalize(path.join(this._wd, "../../libraries"));
       env.PATH = `${lib};${env.PATH || env.Path}`;
-      env.JAVA_OPTS = `-Djava.library.path="${this._wd};${lib}"`
+      env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`;
+      this.proc = spawn(this._cmd, args, {
+        cwd: this._wd,
+        env: env,
+        shell: true,
+        windowsHide: true,
+      });
 
     } else {
-      env.PATH = `${this._wd}:${env.PATH || env.Path}`;
-    }
 
-    log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
-    this.proc = spawn(this._cmd, args, {
-      cwd: this._wd,
-      env: env,
-      shell: true,
-      windowsHide: true,
-    });
+      env.PATH = `${this._wd}:${this._javaHome}/bin:${env.PATH || env.Path}`;
+      this.proc = spawn("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", ...args], {
+        cwd: this._wd,
+        env: env,
+        shell: true,
+        windowsHide: true,
+      });
+
+    }
 
     readLine.createInterface({input: this.proc.stdout}).on("line", line => {
       try {

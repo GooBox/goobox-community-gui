@@ -15,78 +15,146 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import leftArrowImage from "../assets/left_arrow.svg";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import rightArrowImage from "../assets/right_arrow.svg";
+import Popover from "react-awesome-popover";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import Sidebar from "./sidebar";
 
 const style = {
-  wallet: {
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "52px auto 0 auto",
+  input: {
+    height: "52px",
+    border: "solid 0.8px #dddddd",
+    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
+    backgroundColor: "#ffffff",
   },
-  address: {
-    marginTop: "10px",
-    width: "466px",
-    height: "27px",
-    color: "#7f7f7f",
+  textArea: {
+    height: "149px",
+    border: "solid 0.8px #dddddd",
+    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
+    backgroundColor: "#ffffff",
   },
-  seed: {
-    cursor: "text",
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "20px auto 0 auto",
+  copyButton: {
+    width: "65px",
+    border: "solid 0.8px #dddddd",
+    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
+    fontSize: "15px",
+    textAlign: "center",
+    backgroundColor: "#ffffff",
   },
-  seedValue: {
-    display: "block",
-    marginTop: "10px",
-    marginBottom: "0",
-    height: "56px",
-    width: "466px",
-    fontSize: "10px",
-    color: "#7f7f7f",
-    backgroundColor: "white",
-    borderRadius: "5px",
-    padding: "8px",
-    overflowY: "auto"
+  button: {
+    width: "239.1px",
+    height: "47.3px",
+    borderRadius: "3.2px",
+    border: "solid 0.8px #dddddd",
   },
 };
 
 
-export default function SiaWallet(props) {
+export class SiaWallet extends React.Component {
 
-  return (
-    <div className="background-gradation">
-      <header><img className="icon" src={leftWhiteIcon}/></header>
-      <main className="left address" style={style.wallet}>
-        <div className="f141">Sia installation.</div>
-        <div className="f211">
-          Please save your <span className="underlined bold">Sia wallet address</span>.
+  constructor(props) {
+    super(props);
+    this.state = {
+      addressCopied: false,
+      seedCopied: false
+    };
+  }
+
+  render() {
+    let copyAddressBtn, copySeedBtn;
+    if (this.state.addressCopied) {
+      copyAddressBtn = (
+        <div className="text-success">
+          <i className="far fa-check-circle"/>
+          <br/>
+          copied
         </div>
-        <input id="address" type="text" readOnly="readonly" value={props.address} style={style.address}/>
-      </main>
-      <main className="seed" style={style.seed}>
-        <div className="f211">
-          And your <span className="underlined bold">Sia seed</span>.
+      );
+    } else {
+      copyAddressBtn = (
+        <i className="far fa-clone text-black-50"/>
+      );
+    }
+    if (this.state.seedCopied) {
+      copySeedBtn = (
+        <div className="text-success">
+          <i className="far fa-check-circle"/>
+          <br/>
+          copied
         </div>
-        <p id="seed" className="text" style={style.seedValue}>{props.seed}</p>
-      </main>
-      <footer>
-        <a className="back-btn" onClick={props.onClickBack}>
-          <img className="arrow" src={leftArrowImage}/> Back
-        </a>
-        <a className="next-btn" onClick={props.onClickNext}>
-          Next <img className="arrow" src={rightArrowImage}/>
-        </a>
-      </footer>
-    </div>
-  );
+      );
+    } else {
+      copySeedBtn = (
+        <i className="far fa-clone text-black-50"/>
+      );
+    }
+
+    return (
+      <div className={classNames("clearfix", {wait: this.props.processing})}>
+        <Sidebar className="float-left"/>
+        <main className="float-right d-flex flex-column">
+          <h1>Installing Sia</h1>
+
+          <div className="form-group mb-3">
+            <label htmlFor="address">
+              Please save your &nbsp;
+              <span className="font-weight-bold">Sia wallet address</span>&nbsp;
+              <Popover>
+                <i className="fas fa-info-circle info-button"/>
+                <span>Send Sia tokens to this address in order to top-up your account.</span>
+              </Popover>
+            </label>
+            <div className="input-group">
+              <input id="address" className="form-control" readOnly={true}
+                     type="text" style={style.input} value={this.props.address}/>
+              <div className="input-group-append">
+                <CopyToClipboard text={this.props.address} onCopy={() => this.setState({addressCopied: true})}>
+                  <button id="copy-address-btn" className="btn btn-light" type="button" style={style.copyButton}>
+                    {copyAddressBtn}
+                  </button>
+                </CopyToClipboard>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="seed">
+              And your &nbsp;
+              <span className="font-weight-bold">Sia seed</span>&nbsp;
+              <Popover>
+                <i className="fas fa-info-circle info-button"/>
+                <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
+              </Popover>
+            </label>
+            <div className="input-group">
+              <textarea id="seed" className="form-control" readOnly={true}
+                        style={style.textArea} value={this.props.seed}/>
+              <div className="input-group-append">
+                <CopyToClipboard text={this.props.seed} onCopy={() => this.setState({seedCopied: true})}>
+                  <button id="copy-seed-btn" className="btn btn-light" type="button" style={style.copyButton}>
+                    {copySeedBtn}
+                  </button>
+                </CopyToClipboard>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-auto d-flex justify-content-between">
+            <button id="back-btn" type="button" className="btn btn-light" onClick={this.props.onClickBack}
+                    style={style.button}> Back
+            </button>
+            <button id="next-btn" type="button" className="btn btn-primary" onClick={this.props.onClickNext}
+                    style={style.button}> Set-up my Goobox
+            </button>
+          </div>
+
+        </main>
+      </div>
+    );
+
+  }
 
 }
 
@@ -96,3 +164,5 @@ SiaWallet.propTypes = {
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
 };
+
+export default SiaWallet;

@@ -16,20 +16,23 @@
  */
 
 "use strict";
-import {app, dialog, Menu} from "electron";
+import {app, dialog, Menu, systemPreferences} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
+import {Synchronizing} from "../constants";
 import * as ipcActionTypes from "../ipc/constants";
 import addListener from "../ipc/receiver";
 import {getConfig} from "./config";
+import * as desktop from "./desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "./handlers";
 import icons from "./icons";
 import {installJRE} from "./jre";
@@ -37,9 +40,12 @@ import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
 
+export const DefaultWidth = 360;
+export const DefaultHeight = 340;
+
 export const core = async () => {
 
-  let width = 518;
+  let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
     width *= 2;
   }
@@ -50,7 +56,7 @@ export const core = async () => {
     tooltip: app.getName(),
     preloadWindow: true,
     width: width,
-    height: 400,
+    height: DefaultHeight,
     alwaysOnTop: true,
     showDockIcon: false,
   });
@@ -58,6 +64,7 @@ export const core = async () => {
   mb.app.on('window-all-closed', app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
+  mb.appState = Synchronizing;
 
   // Allow running only one instance.
   const shouldQuit = mb.app.makeSingleInstance(() => {
@@ -119,6 +126,10 @@ export const core = async () => {
   addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
   log.debug("[GUI main] Register calculateUsedVolumeHandler");
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
+  if (systemPreferences.subscribeNotification) {
+    log.debug("[GUI main] Register AppleInterfaceThemeChangedNotification event handler");
+    systemPreferences.subscribeNotification("AppleInterfaceThemeChangedNotification", themeChangedHandler(mb));
+  }
 
   // Start back ends.
   try {
@@ -126,6 +137,10 @@ export const core = async () => {
 
     const cfg = await getConfig();
     log.verbose(`[GUI main] Config = ${JSON.stringify(cfg)}`);
+
+    // Prepare desktop integration.
+    await desktop.register(cfg.syncFolder);
+
     // Start sync-storj app.
     if (cfg.storj && !global.storj) {
       global.storj = new Storj();
@@ -146,6 +161,9 @@ export const core = async () => {
       global.sia.on("syncState", updateStateHandler(mb));
       log.debug("[GUI main] Register siaFundEventHandler");
       global.sia.on("walletInfo", siaFundEventHandler());
+
+      mb.tray.setImage(global.sia.syncState === Synchronizing ? icons.getSyncIcon() : icons.getIdleIcon());
+      mb.appState = global.sia.syncState;
     }
 
   } catch (err) {
@@ -155,3 +173,5 @@ export const core = async () => {
   }
 
 };
+
+export default core;

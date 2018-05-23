@@ -15,25 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("electron");
-jest.mock("node-notifier");
-jest.mock("../../src/main/jre");
-jest.mock("../../src/main/config");
-jest.mock("../../src/main/utils");
-jest.mock("../../src/main/core");
-jest.mock("../../src/main/desktop");
-
 import {app} from "electron";
-import {menuberMock} from "menubar";
+import {menubarMock} from "menubar";
 import notifier from "node-notifier";
 import path from "path"
-import {Paused, Synchronizing} from "../../src/constants";
+import {AppID, Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
 import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
+  closeWindowHandler,
   installerWindowAllClosedHandler,
   installJREHandler,
   openSyncFolderHandler,
@@ -42,7 +35,9 @@ import {
   startSynchronizationHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler,
+  themeChangedHandler,
   updateStateHandler,
   willQuitHandler
 } from "../../src/main/handlers";
@@ -52,7 +47,13 @@ import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
 
-const appID = "com.electron.goobox";
+jest.mock("electron");
+jest.mock("node-notifier");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/config");
+jest.mock("../../src/main/utils");
+jest.mock("../../src/main/core");
+jest.mock("../../src/main/desktop");
 
 describe("event handlers", () => {
 
@@ -68,8 +69,9 @@ describe("event handlers", () => {
       const dir = "/tmp";
       let handler;
       beforeEach(() => {
-        menuberMock.tray.setImage.mockClear();
-        handler = changeStateHandler(menuberMock);
+        menubarMock.appState = null;
+        menubarMock.tray.setImage.mockClear();
+        handler = changeStateHandler(menubarMock);
         getConfig.mockReset();
         getConfig.mockReturnValue({
           syncFolder: dir,
@@ -78,12 +80,14 @@ describe("event handlers", () => {
 
       it("sets the idle icon when the state is Synchronizing", async () => {
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the paused icon when the state is Paused", async () => {
         await expect(handler(Paused)).resolves.toEqual(Paused);
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+        expect(menubarMock.appState).toEqual(Paused);
       });
 
       it("restart the Storj instance if exists when the new state is Synchronizing", async () => {
@@ -150,9 +154,9 @@ describe("event handlers", () => {
 
       it("opens the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           syncFolder: syncFolder,
-        }));
+        });
 
         await expect(handler()).resolves.not.toBeDefined();
         expect(getConfig).toHaveBeenCalled();
@@ -171,12 +175,12 @@ describe("event handlers", () => {
 
       it("calculate the volume of the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           syncFolder: syncFolder,
-        }));
+        });
 
         const volume = 1234567;
-        utils.totalVolume.mockReturnValue(Promise.resolve(volume));
+        utils.totalVolume.mockResolvedValue(volume);
 
         await expect(handler()).resolves.toEqual(volume);
         expect(getConfig).toHaveBeenCalled();
@@ -228,7 +232,7 @@ describe("event handlers", () => {
 
       it("prevents default when storj is running, closes the process, and exists", async () => {
         global.storj = {
-          close: jest.fn().mockReturnValue(Promise.resolve())
+          close: jest.fn().mockResolvedValue(null)
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -238,7 +242,7 @@ describe("event handlers", () => {
 
       it("prevents default when sia is running, closes the process, and exists", async () => {
         global.sia = {
-          close: jest.fn().mockReturnValue(Promise.resolve())
+          close: jest.fn().mockResolvedValue(null)
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -261,14 +265,14 @@ describe("event handlers", () => {
 
       it("installs JRE and returns the if the installation succeeds", async () => {
         const res = true;
-        installJRE.mockReturnValue(Promise.resolve(res));
+        installJRE.mockResolvedValue(res);
         await expect(handler()).resolves.toEqual(res);
         expect(installJRE).toHaveBeenCalledWith();
       });
 
       it("installs JRE and returns a rejected promise with an error messages if the installation fails", async () => {
-        const err = "expected error";
-        installJRE.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        installJRE.mockRejectedValue(err);
         await expect(handler()).rejects.toEqual(err);
         expect(installJRE).toHaveBeenCalledWith();
       });
@@ -283,10 +287,10 @@ describe("event handlers", () => {
       let handler, wallet, start, once;
       beforeEach(() => {
         handler = siaRequestWalletInfoHandler();
-        wallet = jest.spyOn(Sia.prototype, "wallet").mockReturnValue(Promise.resolve({
+        wallet = jest.spyOn(Sia.prototype, "wallet").mockResolvedValue({
           "wallet address": address,
           "primary seed": seed,
-        }));
+        });
         start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
         });
         once = jest.spyOn(Sia.prototype, "once");
@@ -328,8 +332,8 @@ describe("event handlers", () => {
       });
 
       it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
-        const error = "expected error";
-        wallet.mockReturnValue(Promise.reject(error));
+        const error = new Error("expected error");
+        wallet.mockRejectedValue(error);
         await expect(handler({syncFolder: dir})).rejects.toEqual(error);
         expect(start).not.toHaveBeenCalled();
       });
@@ -365,12 +369,78 @@ describe("event handlers", () => {
 
     });
 
+    describe("storjGenerateMnemonic handler", () => {
+
+      const encryptionKey = "sample mnemonic";
+      const dir = "/tmp";
+      const payload = {
+        syncFolder: dir,
+      };
+
+      let handler, start, generateMnemonic;
+      beforeEach(() => {
+        handler = storjGenerateMnemonicHandler();
+        start = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
+          if (global.storj) {
+            global.storj.proc = "a dummy storj instance";
+          }
+        });
+        generateMnemonic = jest.spyOn(Storj.prototype, "generateMnemonic").mockResolvedValue(encryptionKey);
+      });
+
+      afterEach(() => {
+        start.mockRestore();
+        generateMnemonic.mockRestore();
+      });
+
+      it("starts a Storj instance with the reset option if not running", async () => {
+        expect(global.storj).not.toBeDefined();
+        await handler(payload);
+        expect(global.storj).toBeDefined();
+        expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("closes the Storj instance if exists and starts a new Storj instance", async () => {
+        const close = jest.fn().mockResolvedValue(null);
+        global.storj = new Storj();
+        global.storj.proc = {};
+        global.storj.close = close;
+
+        await handler(payload);
+        expect(close).toHaveBeenCalled();
+        expect(global.storj).toBeDefined();
+        expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("calls generateMnemonic", async () => {
+        expect(global.storj).not.toBeDefined();
+        await expect(handler(payload)).resolves.toEqual(encryptionKey);
+        expect(generateMnemonic).toHaveBeenCalledTimes(1);
+      });
+
+      it("returns an error if generateMnemonic fails", async () => {
+        const err = new Error("expected error");
+        generateMnemonic.mockRejectedValue(err);
+        expect(global.storj).not.toBeDefined();
+        await expect(handler(payload)).rejects.toEqual(err);
+        expect(generateMnemonic).toHaveBeenCalledTimes(1);
+      });
+
+    });
+
     describe("storjLogin handler", () => {
 
       const email = "abc@example.com";
       const password = "password";
       const key = "xxx xxx xxx";
       const dir = "/tmp";
+      const payload = {
+        email: email,
+        password: password,
+        encryptionKey: key,
+        syncFolder: dir,
+      };
+
       let handler, start, checkMnemonic, login;
       beforeEach(() => {
         handler = storjLoginHandler();
@@ -379,8 +449,8 @@ describe("event handlers", () => {
             global.storj.proc = "a dummy storj instance";
           }
         });
-        checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockReturnValue(Promise.resolve());
-        login = jest.spyOn(Storj.prototype, "login").mockReturnValue(Promise.resolve());
+        checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockResolvedValue(null);
+        login = jest.spyOn(Storj.prototype, "login").mockResolvedValue(null);
       });
 
       afterEach(() => {
@@ -389,49 +459,36 @@ describe("event handlers", () => {
         login.mockRestore();
       });
 
-      it("starts a Storj instance with reset option and calls checkMnemonic and login methods", async () => {
+      it("starts a Storj instance with the reset option if not running", async () => {
         expect(global.storj).not.toBeDefined();
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).resolves.not.toBeDefined();
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(global.storj).toBeDefined();
         expect(start).toHaveBeenCalledWith(dir, true);
-        expect(checkMnemonic).toHaveBeenCalledWith(key);
-        expect(login).toHaveBeenCalledWith(email, password, key);
       });
 
-      it("closes the Storj instance if exists before starting a new Storj instance", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+      it("closes the Storj instance if exists and starts a new Storj instance", async () => {
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = new Storj();
         global.storj.proc = {};
         global.storj.close = close;
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).resolves.not.toBeDefined();
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(close).toHaveBeenCalled();
         expect(global.storj).toBeDefined();
         expect(start).toHaveBeenCalledWith(dir, true);
+      });
+
+      it("calls checkMnemonic and then login methods", async () => {
+        await expect(handler(payload)).resolves.not.toBeDefined();
         expect(checkMnemonic).toHaveBeenCalledWith(key);
         expect(login).toHaveBeenCalledWith(email, password, key);
       });
 
       it("returns an error message if checkMnemonic fails", async () => {
-        const err = "expected error";
-        checkMnemonic.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        checkMnemonic.mockRejectedValue(err);
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).rejects.toEqual({
+        await expect(handler(payload)).rejects.toEqual({
           error: err,
           email: false,
           password: false,
@@ -443,15 +500,10 @@ describe("event handlers", () => {
       });
 
       it("returns an error message if login fails", async () => {
-        const err = "expected error";
-        login.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        login.mockRejectedValue(err);
 
-        await expect(handler({
-          email: email,
-          password: password,
-          encryptionKey: key,
-          syncFolder: dir,
-        })).rejects.toEqual({
+        await expect(handler(payload)).rejects.toEqual({
           error: err,
           email: true,
           password: true,
@@ -499,7 +551,7 @@ describe("event handlers", () => {
       });
 
       it("closes the Storj instance if exists before starting a new Storj instance", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = new Storj();
         global.storj.proc = {};
         global.storj.close = close;
@@ -516,8 +568,8 @@ describe("event handlers", () => {
       });
 
       it("returns an error message when creating an account fails", async () => {
-        const err = "expected error";
-        createAccount.mockReturnValue(Promise.reject(err));
+        const err = new Error("expected error");
+        createAccount.mockRejectedValue(err);
 
         await expect(handler({
           email: email,
@@ -532,15 +584,18 @@ describe("event handlers", () => {
 
     describe("installerWindowAllClosedHandler", () => {
 
+      beforeAll(() => {
+        desktop.register.mockResolvedValue(null);
+        core.mockResolvedValue(null);
+      });
+
       let onWindowAllClosed;
       beforeEach(() => {
-        app.quit.mockReset();
-        onWindowAllClosed = installerWindowAllClosedHandler(app);
-        core.mockClear();
-        core.mockReturnValue(Promise.resolve());
+        app.quit.mockClear();
         desktop.register.mockClear();
-        desktop.register.mockImplementation(() => {
-        });
+        utils.openDirectory.mockClear();
+        core.mockClear();
+        onWindowAllClosed = installerWindowAllClosedHandler(app);
       });
 
       afterEach(() => {
@@ -550,23 +605,22 @@ describe("event handlers", () => {
 
       it("starts the core app when all windows are closed after the installation has been finished", async () => {
 
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
-        }));
+        });
 
         await onWindowAllClosed();
         expect(getConfig).toHaveBeenCalled();
-        // This calling of app.on is in main.js.
         expect(core).toHaveBeenCalled();
         expect(app.quit).not.toHaveBeenCalled();
 
       });
 
       it("registers startSynchronizationHandler when the user chooses sia", async () => {
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
           sia: true,
-        }));
+        });
         global.sia = {
           once: jest.fn(),
         };
@@ -576,12 +630,22 @@ describe("event handlers", () => {
         expect(global.sia.once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
       });
 
-      it("registers a folder icon before starting the core app", async () => {
+      it("opens the sync folder", async () => {
         const dir = "/tmp";
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: true,
           syncFolder: dir,
-        }));
+        });
+        await onWindowAllClosed();
+        expect(utils.openDirectory).toHaveBeenCalledWith(dir);
+      });
+
+      it("registers the folder icon before starting the core app", async () => {
+        const dir = "/tmp";
+        getConfig.mockResolvedValue({
+          installed: true,
+          syncFolder: dir,
+        });
         await onWindowAllClosed();
         expect(desktop.register).toHaveBeenCalledWith(dir);
       });
@@ -589,9 +653,9 @@ describe("event handlers", () => {
       // TODO: it shows some message to make sure users want to quit the installer.
       it("doesn't start the core app when all windows are closed before the installation is finished", async () => {
 
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false,
-        }));
+        });
 
         await onWindowAllClosed();
         expect(getConfig).toHaveBeenCalled();
@@ -601,13 +665,13 @@ describe("event handlers", () => {
       });
 
       it("closes the sync storj app if running in spite of the installation is canceled", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.storj = {
           close: close
         };
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false
-        }));
+        });
 
         await onWindowAllClosed();
         expect(global.storj).not.toBeDefined();
@@ -616,19 +680,20 @@ describe("event handlers", () => {
       });
 
       it("closes the sync sia app if running in spite of the installation is canceled", async () => {
-        const close = jest.fn().mockReturnValue(Promise.resolve());
+        const close = jest.fn().mockResolvedValue(null);
         global.sia = {
           close: close
         };
-        getConfig.mockReturnValue(Promise.resolve({
+        getConfig.mockResolvedValue({
           installed: false
-        }));
+        });
 
         await onWindowAllClosed();
         expect(global.sia).not.toBeDefined();
         expect(close).toHaveBeenCalled();
         expect(app.quit).toHaveBeenCalled();
       });
+
     });
 
   });
@@ -639,18 +704,21 @@ describe("event handlers", () => {
 
       let handler;
       beforeEach(async () => {
-        menuberMock.tray.setImage.mockReset();
-        handler = updateStateHandler(menuberMock);
+        menubarMock.appState = null;
+        menubarMock.tray.setImage.mockReset();
+        handler = updateStateHandler(menubarMock);
       });
 
       it("sets the synchronizing icon when receiving a synchronizing event", async () => {
-        await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        await expect(handler({newState: Synchronizing})).resolves.not.toBeDefined();
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the idle icon when receiving an idle event", async () => {
-        await expect(handler({newState: "idle"})).resolves.not.toBeDefined();
-        expect(menuberMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+        await expect(handler({newState: Idle})).resolves.not.toBeDefined();
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+        expect(menubarMock.appState).toEqual(Idle);
       });
 
     });
@@ -672,12 +740,12 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
       it("does nothing if newState argument isn't startSynchronization", async () => {
-        await expect(handler({newState: "synchronizing"})).resolves.not.toBeDefined();
+        await expect(handler({newState: Synchronizing})).resolves.not.toBeDefined();
         expect(notifier.notify).not.toHaveBeenCalled();
       });
 
@@ -700,7 +768,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -713,7 +781,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -726,7 +794,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -739,7 +807,7 @@ describe("event handlers", () => {
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: appID
+          appID: AppID
         }, expect.any(Function));
       });
 
@@ -754,3 +822,36 @@ describe("event handlers", () => {
 
 });
 
+describe("AppleInterfaceThemeChangedNotification event handler", () => {
+
+  let handler;
+  beforeEach(() => {
+    menubarMock.appState = null;
+    menubarMock.tray.setImage.mockClear();
+    handler = themeChangedHandler(menubarMock);
+  });
+
+  it("sets idle icon if appState is Idle", async () => {
+    menubarMock.appState = Idle;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+  it("sets synchronizing icon if appState is Synchronizing", async () => {
+    menubarMock.appState = Synchronizing;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+  });
+
+  it("sets paused icon if appState is Paused", async () => {
+    menubarMock.appState = Paused;
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+  });
+
+  it("sets idle icon if appState isn't defined", async () => {
+    await expect(handler()).resolves.not.toBeDefined();
+    expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+  });
+
+});

@@ -23,6 +23,7 @@ import * as screens from "../constants/screens";
 
 export const mapStateToProps = (state) => ({
   processing: state.main.processing,
+  encryptionKey: state.main.storjAccount.key,
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
   keyWarn: state.main.storjAccount.keyWarn,
@@ -34,14 +35,16 @@ export const mapDispatchToProps = (dispatch) => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (mainState, accountInfo) => {
-    dispatch(actions.storjLogin({
-      ...mainState,
-      storjAccount: accountInfo,
-    }));
-  },
+  onClickNext: (mainState, accountInfo) => dispatch(actions.storjLogin({
+    ...mainState,
+    storjAccount: accountInfo,
+  })),
 
   onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
+
+  onClickGenerateSeed: (mainState) => dispatch(actions.storjGenerateMnemonic({
+    folder: mainState.folder
+  })),
 
 });
 
@@ -50,6 +53,7 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
   onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
+  onClickGenerateSeed: dispatchProps.onClickGenerateSeed.bind(null, stateProps.mainState),
   mainState: undefined,
 });
 

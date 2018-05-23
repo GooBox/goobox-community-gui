@@ -10,8 +10,6 @@ env:
   global:
   - ELECTRON_CACHE=$HOME/Library/Caches/electron
   - ELECTRON_BUILDER_CACHE=$HOME/Library/Caches/electron-builder
-  - SYNC_STORJ_VERSION=0.0.23
-  - SYNC_SIA_VERSION=0.1.3
   - secure: D/44TBDwD0YEOmHcnKu5qPwcVnksQwLb9D3s2ww/2KS55k0ueO7oawtoGLc7Ogs3HhthAZYwonLLC6beqqWoqSi3VuhBwEtVis6leM27ib2Agb9x+BCbh/Br1vFZI4TFLNSGqdbyswIvg7iVODGuj2HGwStY46ZMhsOyu3i50KH0vewoPNG4JT/Qf6EUKce9/BHRIwaTSriXHfz1VBdznvu24vpfVqxDbJNfh6i1TYkGT8NmEkVRR0iMQFBidQQ9dX7jhy0OSR6kt6dV9z6jvRkcyQrVRqZqc4HdPQWmzqjzNM8nHs8aDoDtqoIbr8h1Lm1tcdkcIPxDQ40Zd2JgN0TpGRb/o5o6cCGXhCT+zTWeq2HtBjPbgT8pQ13feCtB5QNJF8qdT92VqBbs5YXvF+vpK9qx72Wf0+mJasr1inN5VM1Eid4ou3mDPhriQMC9Z1Hg05GWChEwCJPJk+m+DKzKrgLde1gmXY3APQRVtDsfIEmBSv7o2EDoy1/GTJ+sJUXa/Y3fuhR7T0TtFZBhUU5OE0RYLR3AAB8d361wh22QUtGBiXBvisT3Llj8LfUrxHarEBj0rXH57WGOg5spxhcdH6AbgkMNWLJPn++kNs8gyuzj8ZthvaLmSMb0DcsQLq7Zc/93FChda5DidOtTj8DQ4T4qhXpzO4v3dikMyEk=
 cache:
   directories:
@@ -28,7 +26,7 @@ after_success:
 - npm run coveralls
 - '[ "$TRAVIS_PULL_REQUEST" != "false" ] && ./pr'
 before_deploy:
-- npm run build -- --mode production
+- npm run build:production
 - npm run dist
 deploy:
   provider: releases
@@ -36,7 +34,11 @@ deploy:
     secure: NW1GGTAdJQpjlWnRvIXVNWm7bsEb33l+inZu4HpG7oKse73YSE6pr8/p0aDO2DHhq1YpTh8eQ2ulGBk3dhFWNS39dlTEdhN7tRLnZlBmxJe2fwlMVBkeLDlPWFWDVPHP/dZ8IAfaOZ98ehphlM8FYjqkRaVse+dFyOGqC3qfVgaj/4RnJns/wmQtnOapKgMd89GYghnhPsaVec2kT9zO7uu80GpzXG1lIVW0mwFBqdKBlqKynm7K4VdRaze0mwFvLnJWdHc8XRwYZoWUxGsUzuJBw1Hie8FzDTLdTs3SbDJJ4IIRHcU0eYdN+CLWBXfCsgJOReifgWbIHQ48AEn5E5zNN9UbRuUf8ghGtArS6KPymnKAyzj6gT0If3QAeVQtjeRrWhzt8naL9GjrgWv2kLkwDKZNiuoip8eKkfJktBs1vsZi6RUa89lgp9Eb/fWbG0g6KpAn6fZcyZDlch0j5RUUAogc3OItBpilu9PK1CyKs25HhDKpUYuDEWauFQAZeulf+puMUfk+OGQI7I0+hlxN0KdK3A2oixevNn+l6UFil3vPoxBIo89TmLEYLXdQ3PvI7XqpEfpsIP9SOq4psOuOqZ24JqhDo9NIlgFOQjFCX0ul9M4ToGvKMT2OiJQR01W19NceJd/ZTVM1mRlzGtaMPVehKrU9+G14bJ6c9XU=
   skip_cleanup: true
   file:
-  - dist/Goobox-0.1.6-setup_x64.exe
+  - dist/Goobox-0.2.0-setup_x64.exe
+  - dist/Goobox-0.2.0.dmg
   on:
     tags: true
     repo: GooBox/goobox-community-gui
+notifications:
+  slack:
+    secure: diyT8tSsZBoZzLT9I73Rc5lx82jvc4SRvldvPCYCDApFaeyi6FezUij+0W69Z+8Ss2fkKWMGBIpvFoc4xZe/ahiooLuQ0SkM9QzCrCKt19oy2Dn/FLZNYCRd7e1Ji1nr3HPB+ovrQFLwecDisfu3QoO0kFWZtciCcOEBINvxOfcct5bmJ/i0sc9mWF2zGYB4jFYkrTrlPrbIqr8y82nXO4BbvBpJLgJbpMrGEdA5XCmEjEtosDpHhsFVe9imD4iUpnZxsXNG6DU5b3+3oYcQjqpIy1vpk8Z2peJJcnGuAlu0IQuWhBB/TtuAbYHycMbpvdWERoL+1Dt6Bl2dPrXxXIhk6c3teR3eX4hnIbAaZXHc95ePXn+lsBkh1AHkVEYlc7OsiJta13rULVBtgoa7xyyehUrssadZXE/XUVudnYxXoT+WG73wn9QCvJ2eXvjGchYxn+bF+zHKs/b9NjfX+7NE4G+niQ4VNIRKkbeufqonnsNo4kIxi4CTFnQuJaWQl/IH2N+rzEWapTLkLadxKpoYUacJiG4+AXVDbNz2lW+AnpK983dgjuggKWbuWX2kpNs6QTX/LzOMZAJOgdruw+gFVHY66dDRSDFA/znQS7hU6BOfljgfR3tztkcvfSIwFrx7HdMwc7USN/IIjpFNBoMFxan/YQAuxnZkFJUETF0=

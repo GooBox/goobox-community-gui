@@ -17,42 +17,36 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftArrowImage from "../assets/left_arrow.svg";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
+import Logo from "../assets/logo.svg";
 
 const style = {
-  main: {
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "112px auto 0 auto",
-  },
+  button: {
+    width: "212.2px",
+    height: "47.3px",
+    borderRadius: "3.2px",
+    color: "#26aae1",
+  }
 };
 
-export default function Finish(props) {
+export const Finish = (props) => {
 
   return (
-    <div className="background-gradation">
-      <header><img className="icon" src={leftWhiteIcon}/></header>
-      <main style={style.main}>
-        <div className="f141">You're ready to go!</div>
-        <div className="f211">Thank you for trying <span className="underlined bold">Goobox!</span></div>
-      </main>
-      <footer>
-        <a className="back-btn" onClick={props.onClickBack}>
-          <img className="arrow" src={leftArrowImage}/> Back
-        </a>
-        <a className="next-btn" onClick={props.onClickClose}>
-          Close
-        </a>
-      </footer>
-    </div>
+    <main className="full-screen d-flex flex-column justify-content-between align-items-center">
+      <img className="mb-3" src={Logo} width={110} height={115.2}/>
+      <h1>{props.header}</h1>
+      <p>{props.message}</p>
+      <button type="button" className="btn btn-light" style={style.button} onClick={props.onClick}>
+        Open my Goobox
+      </button>
+    </main>
   );
 
-}
+};
 
 Finish.propTypes = {
-  onClickBack: PropTypes.func.isRequired,
-  onClickClose: PropTypes.func.isRequired,
+  header: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
+
+export default Finish;

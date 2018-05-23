@@ -17,8 +17,7 @@
 
 "use strict";
 const path = require("path");
-const webpack = require("webpack");
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = [{
   mode: "development",
@@ -86,7 +85,7 @@ module.exports = [{
       exclude: /node_modules/,
       test: /\.svg$/,
       use: [{
-        loader: 'svg-url-loader',
+        loader: "svg-url-loader",
         options: {
           noquotes: true
         }
@@ -99,18 +98,28 @@ module.exports = [{
       "[name].js"
   },
   devtool: "source-map"
+}, {
+  mode: "development",
+  entry: {
+    "installer": "./src/installer.css",
+    "popup": "./src/popup.css",
+  },
+  module: {
+    rules: [{
+      exclude: /node_modules/,
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        // fallback: "style-loader",
+        use: "css-loader"
+      })
+    }],
+  },
+  output: {
+    path: path.join(__dirname, "lib"),
+    filename:
+      "[name].css.js"
+  },
+  plugins: [
+    new ExtractTextPlugin("./[name].css")
+  ]
 }];
-
-
-if (process.env.NODE_ENV === "production") {
-
-  module.exports.forEach(cfg => {
-    cfg.plugins = [
-      new webpack.DefinePlugin({
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      }),
-      new MinifyPlugin(),
-    ];
-  });
-
-}

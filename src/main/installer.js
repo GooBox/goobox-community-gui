@@ -16,6 +16,7 @@
  */
 
 "use strict";
+import {execFileSync} from "child_process";
 import {app, BrowserWindow, Menu} from "electron";
 import log from "electron-log";
 import fs from "fs";
@@ -29,8 +30,12 @@ import {
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "./handlers";
+
+const DefaultWidth = 800;
+const DefaultHeight = 600;
 
 export const installer = () => {
 
@@ -43,14 +48,14 @@ export const installer = () => {
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 
-  let width = 600;
+  let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
     width *= 2;
   }
   // noinspection SpellCheckingInspection
   const mainWindow = new BrowserWindow({
     width: width,
-    height: 400,
+    height: DefaultHeight,
     useContentSize: true,
     resizable: false,
     fullscreenable: false,
@@ -66,13 +71,18 @@ export const installer = () => {
   // Register event handlers.
   app.on("window-all-closed", installerWindowAllClosedHandler(app));
   addListener(actionTypes.InstallJRE, installJREHandler());
+  addListener(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
   addListener(actionTypes.StorjLogin, storjLoginHandler());
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
 
-  // Create the Application's main menu for mac
   if (process.platform === "darwin") {
+
+    log.info("[GUI main] Checking FinderSync extension");
+    execFileSync("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
+
+    // Create the Application's main menu for macOS
     const template = [{
       label: "Goobox",
       submenu: [
@@ -97,7 +107,9 @@ export const installer = () => {
       ]
     }];
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
   }
 
 };
 
+export default installer;

@@ -25,18 +25,16 @@ describe("StorjLogin component", () => {
   const samplePassword = "1234567";
   const sampleKey = "abcdefg";
 
-  let wrapper, back, finish, createAccount;
+  let wrapper, back, finish, createAccount, generateSeed;
   beforeEach(() => {
     back = jest.fn();
     finish = jest.fn();
     createAccount = jest.fn();
+    generateSeed = jest.fn();
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount} processing={false}/>
+      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
+                  onClickGenerateSeed={generateSeed} processing={false} encryptionKey={sampleKey}/>
     );
-  });
-
-  it("has background-gradation class", () => {
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
   it("has an input box for a user's email address and email state to remember the address", () => {
@@ -104,13 +102,13 @@ describe("StorjLogin component", () => {
     expect(key.exists()).toBeTruthy();
     expect(key.hasClass("warn")).toBeFalsy();
 
-    const sampleKey = "abcdefg";
+    const anotherKey = "another key";
     key.simulate("change", {
       target: {
-        value: sampleKey
+        value: anotherKey
       }
     });
-    expect(wrapper.state("key")).toEqual(sampleKey);
+    expect(wrapper.state("key")).toEqual(anotherKey);
   });
 
   it("disables updating the input box for the encryption key when processing is true", () => {
@@ -129,25 +127,43 @@ describe("StorjLogin component", () => {
     expect(wrapper.state("key")).toEqual(oldKey);
   });
 
-  it("has a button to create an account", () => {
-    const btn = wrapper.find("#create-account-btn");
-    expect(btn.exists()).toBeTruthy();
-
-    btn.simulate("click");
-    expect(createAccount).toHaveBeenCalled();
+  it("has encryptionKey property and shows the given key in the input box", () => {
+    const key = wrapper.find("#key");
+    expect(key.prop("value")).toEqual(sampleKey);
   });
 
-  it("disables the button to create an account when processing is true", () => {
-    wrapper.setProps({processing: true});
-    const btn = wrapper.find("#create-account-btn");
-    expect(btn.exists()).toBeTruthy();
+  // it("has a button to create an account", () => {
+  //   const btn = wrapper.find("#create-account-btn");
+  //   expect(btn.exists()).toBeTruthy();
+  //
+  //   btn.simulate("click");
+  //   expect(createAccount).toHaveBeenCalled();
+  // });
+  //
+  // it("disables the button to create an account when processing is true", () => {
+  //   wrapper.setProps({processing: true});
+  //   const btn = wrapper.find("#create-account-btn");
+  //   expect(btn.exists()).toBeTruthy();
+  //
+  //   btn.simulate("click");
+  //   expect(createAccount).not.toHaveBeenCalled();
+  // });
 
+  it("has a button for generating mnemonic", () => {
+    const btn = wrapper.find("#generate-mnemonic-btn");
+    expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
-    expect(createAccount).not.toHaveBeenCalled();
+    expect(generateSeed).toHaveBeenCalledTimes(1);
+  });
+
+  it("disables the generate mnemonic button while processing is true", () => {
+    wrapper.setProps({processing: true});
+    wrapper.find("#generate-mnemonic-btn").simulate("click");
+    expect(generateSeed).not.toHaveBeenCalled();
   });
 
   it("has a back link which invokes onClickBack function", () => {
-    const btn = wrapper.find(".back-btn");
+    const btn = wrapper.find("#back-btn");
     expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
     expect(back).toHaveBeenCalled();
@@ -155,7 +171,7 @@ describe("StorjLogin component", () => {
 
   it("disables the back link when processing is true", () => {
     wrapper.setProps({processing: true});
-    const btn = wrapper.find(".back-btn");
+    const btn = wrapper.find("#back-btn");
     expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
     expect(back).not.toHaveBeenCalled();
@@ -178,7 +194,7 @@ describe("StorjLogin component", () => {
       }
     });
 
-    const next = wrapper.find(".next-btn");
+    const next = wrapper.find("#next-btn");
     expect(next.exists()).toBeTruthy();
     next.simulate("click");
     expect(finish).toHaveBeenCalledWith({
@@ -205,7 +221,7 @@ describe("StorjLogin component", () => {
         value: sampleKey
       }
     });
-    const next = wrapper.find(".next-btn");
+    const next = wrapper.find("#next-btn");
     expect(next.exists()).toBeTruthy();
     next.simulate("click");
     expect(finish).not.toHaveBeenCalled();
@@ -213,40 +229,17 @@ describe("StorjLogin component", () => {
 
   it("sets warn class if emailWarn state is true", () => {
     wrapper.setState({emailWarn: true});
-    expect(wrapper.find("#email").hasClass("warn")).toBeTruthy();
+    expect(wrapper.find("#email").hasClass("is-invalid")).toBeTruthy();
   });
 
   it("sets warn class if passwordWarn state is true", () => {
     wrapper.setState({passwordWarn: true});
-    expect(wrapper.find("#password").hasClass("warn")).toBeTruthy();
+    expect(wrapper.find("#password").hasClass("is-invalid")).toBeTruthy();
   });
 
   it("sets warn class if keyWarn state is true", () => {
     wrapper.setState({keyWarn: true});
-    expect(wrapper.find("#key").hasClass("warn")).toBeTruthy();
-  });
-
-  it("shows am info message when any warning isn't set", () => {
-    expect(wrapper.find(".info").exists()).toBeTruthy();
-    expect(wrapper.find(".warnMsg").exists()).toBeFalsy();
-  });
-
-  it("shows a warn message when emailWarn is true", () => {
-    wrapper.setState({emailWarn: true});
-    expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
-  });
-
-  it("shows a warn message when passwordWarn is true", () => {
-    wrapper.setState({passwordWarn: true});
-    expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
-  });
-
-  it("shows a warn message when keyWarn is true", () => {
-    wrapper.setState({keyWarn: true});
-    expect(wrapper.find(".info").exists()).toBeFalsy();
-    expect(wrapper.find(".warnMsg").exists()).toBeTruthy();
+    expect(wrapper.find("#key").hasClass("is-invalid")).toBeTruthy();
   });
 
   it("warns when the next button is clicked but email address is empty", () => {
@@ -266,7 +259,7 @@ describe("StorjLogin component", () => {
       }
     });
 
-    const btn = wrapper.find(".next-btn");
+    const btn = wrapper.find("#next-btn");
     btn.simulate("click");
     expect(finish).not.toHaveBeenCalled();
     expect(wrapper.state("emailWarn")).toBeTruthy();
@@ -289,7 +282,7 @@ describe("StorjLogin component", () => {
       }
     });
 
-    const btn = wrapper.find(".next-btn");
+    const btn = wrapper.find("#next-btn");
     btn.simulate("click");
     expect(finish).not.toHaveBeenCalled();
     expect(wrapper.state("passwordWarn")).toBeTruthy();
@@ -312,7 +305,7 @@ describe("StorjLogin component", () => {
       }
     });
 
-    const btn = wrapper.find(".next-btn");
+    const btn = wrapper.find("#next-btn");
     btn.simulate("click");
     expect(finish).not.toHaveBeenCalled();
     expect(wrapper.state("keyWarn")).toBeTruthy();
@@ -321,7 +314,8 @@ describe("StorjLogin component", () => {
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  emailWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  emailWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
@@ -329,7 +323,8 @@ describe("StorjLogin component", () => {
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  passwordWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  passwordWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
@@ -337,18 +332,10 @@ describe("StorjLogin component", () => {
   it("takes keyWarn prop and sets the given value to keyWarn state", () => {
     wrapper = shallow(
       <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  keyWarn={true} processing={false}/>
+                  onClickGenerateSeed={generateSeed}
+                  keyWarn={true} processing={false} encryptionKey={""}/>
     );
     expect(wrapper.state("keyWarn")).toBeTruthy();
-  });
-
-  it("takes a warning message and uses it", () => {
-    const msg = "expected warning";
-    wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  keyWarn={true} warnMsg={msg} processing={false}/>
-    );
-    expect(wrapper.find(".warnMsg").html()).toContain(msg);
   });
 
   it("sets new given props to states by componentWillReceiveProps", () => {

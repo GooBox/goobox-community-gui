@@ -43,6 +43,7 @@ describe("icons module in Windows 7-", () => {
     expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win7/sync.png"));
     expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win7/paused.png"));
     expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win7/error.png"));
+    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/win7/warn.png"));
   });
 
 });

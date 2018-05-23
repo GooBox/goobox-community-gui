@@ -14,28 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+jest.mock("electron");
 jest.mock("../../src/main/jre");
+jest.mock("../../src/main/desktop");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/utils");
 jest.mock("../../src/ipc/receiver");
 jest.mock("../../src/main/handlers");
 jest.useFakeTimers();
 
-import {app, BrowserWindow, dialog, ipcMain, Menu} from "electron";
-import {menubar, menuberMock} from "menubar";
+import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
+import {menubar, menubarMock} from "menubar";
 import path from "path";
+import {Idle, Synchronizing} from "../../src/constants";
 import * as ipcActionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
-import {core} from "../../src/main/core";
+import {core, DefaultHeight, DefaultWidth} from "../../src/main/core";
+import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
   openSyncFolderHandler,
   siaFundEventHandler,
+  themeChangedHandler,
   updateStateHandler,
-  willQuitHandler
+  willQuitHandler,
 } from "../../src/main/handlers";
+import icons from "../../src/main/icons";
 import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
@@ -47,6 +53,7 @@ function getEventHandler(emitter, event) {
 
 describe("main process of the core app", () => {
 
+  const syncFolder = "/tmp";
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
@@ -62,15 +69,18 @@ describe("main process of the core app", () => {
   });
 
   beforeEach(() => {
-    menuberMock.tray.listeners.mockReturnValue([() => null]);
+    menubarMock.tray.listeners.mockReturnValue([() => null]);
+    desktop.register.mockClear();
+    desktop.register.mockImplementation(() => {
+    });
   });
 
   afterEach(() => {
     delete global.storj;
     delete global.sia;
     menubar.mockClear();
-    menuberMock.on.mockClear();
-    menuberMock.app.on.mockClear();
+    menubarMock.on.mockClear();
+    menubarMock.app.on.mockClear();
     app.quit.mockClear();
     ipcMain.on.mockClear();
     getConfig.mockReset();
@@ -82,15 +92,16 @@ describe("main process of the core app", () => {
       await core();
       expect(menubar).toHaveBeenCalledWith({
         index: "file://" + path.join(__dirname, "../../static/popup.html"),
-        icon: expect.anything(),
+        icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,
-        width: 518,
-        height: 400,
+        width: DefaultWidth,
+        height: DefaultHeight,
         alwaysOnTop: true,
         showDockIcon: false,
       });
       expect(setSkipTaskbar).toHaveBeenCalledWith(true);
+      expect(menubarMock.appState).toEqual(Synchronizing);
     } finally {
       setSkipTaskbar.mockRestore();
     }
@@ -100,23 +111,39 @@ describe("main process of the core app", () => {
     const handler = "expected handler";
     willQuitHandler.mockReturnValue(handler);
     await core();
-    expect(menuberMock.app.on).toHaveBeenCalledWith("will-quit", handler);
-    expect(willQuitHandler).toHaveBeenCalledWith(menuberMock.app);
+    expect(menubarMock.app.on).toHaveBeenCalledWith("will-quit", handler);
+    expect(willQuitHandler).toHaveBeenCalledWith(menubarMock.app);
   });
 
+  it("subscribes AppleInterfaceThemeChangedNotification event", async () => {
+    const cb = "cb";
+    themeChangedHandler.mockReset().mockReturnValue(cb);
+
+    await core();
+    expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith("AppleInterfaceThemeChangedNotification", cb);
+    expect(themeChangedHandler).toHaveBeenCalledWith(menubarMock);
+  });
+
+  it("prepare desktop integration", async () => {
+    getConfig.mockReturnValue(Promise.resolve({
+      syncFolder: syncFolder,
+    }));
+    await core();
+    expect(desktop.register).toHaveBeenCalledWith(syncFolder);
+  });
 
   describe("system tray event handlers", () => {
 
-    const getTrayEventHandler = (event) => getEventHandler(menuberMock.tray, event);
+    const getTrayEventHandler = (event) => getEventHandler(menubarMock.tray, event);
     const menuItems = "sample menue items";
     const onClick = jest.fn();
 
     beforeEach(async () => {
-      menuberMock.tray.on.mockClear();
+      menubarMock.tray.on.mockClear();
       Menu.buildFromTemplate.mockReset();
       Menu.buildFromTemplate.mockReturnValue(menuItems);
       onClick.mockReset();
-      menuberMock.tray.listeners.mockReturnValue([onClick]);
+      menubarMock.tray.listeners.mockReturnValue([onClick]);
       await core();
     });
 
@@ -161,13 +188,13 @@ describe("main process of the core app", () => {
 
       let handler;
       beforeEach(() => {
-        menuberMock.tray.popUpContextMenu.mockReset();
+        menubarMock.tray.popUpContextMenu.mockReset();
         handler = getTrayEventHandler("right-click");
       });
 
       it("shows a context menu which has exit", () => {
         handler();
-        expect(menuberMock.tray.popUpContextMenu).toHaveBeenCalledWith(menuItems);
+        expect(menubarMock.tray.popUpContextMenu).toHaveBeenCalledWith(menuItems);
         expect(Menu.buildFromTemplate).toHaveBeenCalledWith([{
           label: "exit",
           click: expect.any(Function)
@@ -201,7 +228,7 @@ describe("main process of the core app", () => {
     it("registers changeStateHandler", async () => {
       await core();
       expect(addListener).toHaveBeenCalledWith(ipcActionTypes.ChangeState, changeStateHandler());
-      expect(changeStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(changeStateHandler).toHaveBeenCalledWith(menubarMock);
     });
 
     it("registers openSyncFolderHandler", async () => {
@@ -225,7 +252,6 @@ describe("main process of the core app", () => {
       siaFundEventHandler.mockReturnValue("siaFundEventHandler");
     });
 
-    const syncFolder = "/tmp";
     let storjStart, storjOn, siaStart, siaOn;
     beforeEach(() => {
       storjStart = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
@@ -284,7 +310,7 @@ describe("main process of the core app", () => {
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -300,7 +326,7 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(storjStart).not.toHaveBeenCalled();
       expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -314,6 +340,9 @@ describe("main process of the core app", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).toHaveBeenCalledWith(syncFolder);
       expect(app.quit).not.toHaveBeenCalled();
+
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+      expect(menubarMock.appState).toEqual(Synchronizing);
     });
 
     it("registers updateStateHandler to the sia instance and listens syncState event", async () => {
@@ -324,7 +353,7 @@ describe("main process of the core app", () => {
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -346,14 +375,18 @@ describe("main process of the core app", () => {
       }));
       global.sia = {
         on: siaOn,
+        syncState: Idle,
       };
 
       await core();
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).not.toHaveBeenCalled();
       expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menuberMock);
+      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
+
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menubarMock.appState).toEqual(Idle);
     });
 
     it("closes the process if another process is already running", async () => {

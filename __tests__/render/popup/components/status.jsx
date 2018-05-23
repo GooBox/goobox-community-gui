@@ -28,13 +28,13 @@ describe("Status component", () => {
 
   it("has a synchronized icon and text when the state is synchronizing", () => {
     const wrapper = shallow(<Status state={Synchronizing}/>);
-    // expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/synchronized.svg");
+    expect(wrapper.find(".state-icon").hasClass("fa-pause-circle")).toBeTruthy();
     expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
   });
 
   it("has a paused icon and text when the state is paused", () => {
     const wrapper = shallow(<Status state={Paused}/>);
-    // expect(wrapper.find(".state-icon").prop("src")).toEqual("../resources/paused.svg");
+    expect(wrapper.find(".state-icon").hasClass("fa-play-circle")).toBeTruthy();
     expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
   });
 
@@ -88,48 +88,22 @@ describe("Status component", () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
-  it("has an import drive button", () => {
-    const fn = jest.fn();
-    const wrapper = shallow(<Status onClickImportDrive={fn}/>);
-    const drive = wrapper.find(".import-drive");
-    expect(drive.exists()).toBeTruthy();
-
-    drive.simulate("click");
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
-
-  it("has a usage text box", () => {
-    const wrapper = shallow(<Status usedVolume={used}/>);
-    const usage = wrapper.find(".usage");
-    expect(usage.exists()).toBeTruthy();
-    expect(usage.text()).toEqual(`Usage: ${used.toFixed(2)}GB`);
-  });
+  // it("has an import drive button", () => {
+  //   const fn = jest.fn();
+  //   const wrapper = shallow(<Status onClickImportDrive={fn}/>);
+  //   const drive = wrapper.find(".import-drive");
+  //   expect(drive.exists()).toBeTruthy();
+  //
+  //   drive.simulate("click");
+  //   expect(fn).toHaveBeenCalledTimes(1);
+  // });
 
   it("has a usage percentage box", () => {
     const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
     const usage = wrapper.find(".usage-rate");
     expect(usage.exists()).toBeTruthy();
-    expect(usage.text()).toEqual(`${Math.round(used / total * 100)}% of ${total}GB`);
+    expect(usage.text()).toEqual(`Using ${Math.round(used / total * 100)}% of ${total}GB`);
   });
-
-  it("has a usage bar", () => {
-    const wrapper = shallow(<Status usedVolume={used} totalVolume={total}/>);
-    const usageBar = wrapper.find(".bar");
-    expect(usageBar.exists()).toBeTruthy();
-    expect(usageBar.prop("style")).toEqual({
-      width: `${Math.round(used / total * 100)}%`
-    });
-  });
-
-  it("ensures the the usage bar doesn't exceed 100%", () => {
-    const wrapper = shallow(<Status usedVolume={total * 2} totalVolume={total}/>);
-    const usageBar = wrapper.find(".bar");
-    expect(usageBar.exists()).toBeTruthy();
-    expect(usageBar.prop("style")).toEqual({
-      width: "100%"
-    });
-  });
-
 
 });
 

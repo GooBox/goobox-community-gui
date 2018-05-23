@@ -15,13 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("electron");
-jest.mock("fs");
-jest.mock("../../src/main/config");
-jest.mock("../../src/ipc/receiver");
-jest.mock("../../src/main/core");
-jest.mock("../../src/main/handlers");
-
+import {execFileSync} from "child_process";
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
 import path from "path";
@@ -35,10 +29,19 @@ import {
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "../../src/main/handlers";
 import "../../src/main/installer";
 import {installer} from "../../src/main/installer";
+
+jest.mock("child_process");
+jest.mock("electron");
+jest.mock("fs");
+jest.mock("../../src/main/config");
+jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/core");
+jest.mock("../../src/main/handlers");
 
 describe("installer", () => {
 
@@ -51,6 +54,7 @@ describe("installer", () => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     getConfig.mockReset();
     installerWindowAllClosedHandler.mockClear();
+    execFileSync.mockClear();
   });
 
   afterEach(() => {
@@ -100,8 +104,9 @@ describe("installer", () => {
       installJREHandler.mockReturnValue("installJREHandler");
       siaRequestWalletInfoHandler.mockReturnValue("siaRequestWalletInfoHandler");
       stopSyncAppsHandler.mockReturnValue("stopSyncAppsHandler");
-      storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
+      storjGenerateMnemonicHandler.mockReturnValue("storjGenerateMnemonicHandler");
       storjLoginHandler.mockReturnValue("storjLoginHandler");
+      storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
     });
 
     beforeEach(() => {
@@ -111,11 +116,17 @@ describe("installer", () => {
       stopSyncAppsHandler.mockClear();
       storjCreateAccountHandler.mockClear();
       storjLoginHandler.mockClear();
+      storjGenerateMnemonicHandler.mockClear();
     });
 
     it("registers installJREHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.InstallJRE, installJREHandler());
+    });
+
+    it("registers storjGenerateMnemonicHandler", () => {
+      installer();
+      expect(addListener).toHaveBeenCalledWith(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
     });
 
     it("registers storjLoginHandler", () => {
@@ -136,6 +147,28 @@ describe("installer", () => {
     it("registers stopSyncAppsHandler", () => {
       installer();
       expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
+    });
+
+  });
+
+  describe("in macOS", () => {
+
+    const oldPlatform = process.platform;
+    beforeAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: "darwin"
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform
+      });
+    });
+
+    it("starts the FinderSync extension", () => {
+      installer();
+      expect(execFileSync).toHaveBeenCalledWith("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
     });
 
   });

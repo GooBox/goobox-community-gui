@@ -15,12 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
 import * as desktop from "../../src/main/desktop";
-import {Synchronizing} from "../constants";
+import {AppID, Idle, Paused, Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
 import icons from "./icons";
@@ -28,8 +27,6 @@ import {installJRE} from "./jre";
 import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
-
-const appID = "com.electron.goobox";
 
 const notifyAsync = async opts => {
   return new Promise(resolve => {
@@ -56,6 +53,7 @@ export const changeStateHandler = mb => async payload => {
     }
     log.debug("[GUI main] Update the tray icon to the idle icon");
     mb.tray.setImage(icons.getSyncIcon());
+    mb.appState = Synchronizing;
   } else {
     if (global.storj) {
       await global.storj.close();
@@ -65,6 +63,7 @@ export const changeStateHandler = mb => async payload => {
     }
     log.debug("[GUI main] Update the tray icon to the paused icon");
     mb.tray.setImage(icons.getPausedIcon());
+    mb.appState = Paused;
   }
   return payload;
 };
@@ -114,18 +113,6 @@ export const siaRequestWalletInfoHandler = () => async payload => {
     const res = await global.sia.wallet();
     global.sia.start(payload.syncFolder, true);
 
-    // Until https://github.com/NebulousLabs/Sia/issues/2741 is fixed, restart sync-sia when wallet scan finishes.
-    if (global.sia.stderr) {
-      global.sia.stderr.on("line", async line => {
-        if (line.indexOf("io.goobox.sync.sia.SiaDaemon - Done!") !== -1) {
-          log.info("Restarting sync-sia");
-          await global.sia.close();
-          global.sia.start(payload.syncFolder);
-        }
-      });
-    }
-    // --
-
     return {
       address: res["wallet address"],
       seed: res["primary seed"],
@@ -150,6 +137,18 @@ export const stopSyncAppsHandler = () => async () => {
   }
 };
 
+export const storjGenerateMnemonicHandler = () => async payload => {
+
+  log.info(`[GUI main] Generating a mnemonic code`);
+  if (global.storj && global.storj.proc) {
+    await global.storj.close();
+  }
+  global.storj = new Storj();
+  global.storj.start(payload.syncFolder, true);
+
+  return global.storj.generateMnemonic();
+
+};
 
 export const storjLoginHandler = () => async payload => {
 
@@ -159,6 +158,7 @@ export const storjLoginHandler = () => async payload => {
   }
   global.storj = new Storj();
   global.storj.start(payload.syncFolder, true);
+
 
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);
@@ -207,7 +207,7 @@ export const startSynchronizationHandler = () => async payload => {
     icon: path.join(__dirname, "../../resources/goobox.png"),
     sound: true,
     wait: true,
-    appID: appID
+    appID: AppID
   });
 };
 
@@ -229,6 +229,8 @@ export const installerWindowAllClosedHandler = (app) => async () => {
         log.debug("[GUI main] Register startSynchronizationHandler");
         global.sia.once("syncState", startSynchronizationHandler());
       }
+
+      utils.openDirectory(cfg.syncFolder);
 
       // if the installation process is finished.
       log.info("[GUI main] Installation has been succeeded, now starting synchronization");
@@ -268,13 +270,15 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 // Handlers for sync-storj/sync-sia apps.
 export const updateStateHandler = mb => async payload => {
   switch (payload.newState) {
-    case "synchronizing":
+    case Synchronizing:
       log.debug("[GUI main] Set the synchronizing icon");
       mb.tray.setImage(icons.getSyncIcon());
+      mb.appState = Synchronizing;
       break;
-    case "idle":
+    case Idle:
       log.debug("[GUI main] Set the idle icon");
       mb.tray.setImage(icons.getIdleIcon());
+      mb.appState = Idle;
       break;
     default:
       log.debug(`[GUI main] Received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
@@ -291,7 +295,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "InsufficientFunds":
       log.verbose("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
@@ -301,7 +305,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "Allocated":
       log.verbose("[GUI main] Notify the user his/her funds are allocated");
@@ -311,7 +315,7 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
     case "Error":
       log.error(`[GUI main] siaFundEventHandler received an error: ${payload.message}`);
@@ -321,7 +325,21 @@ export const siaFundEventHandler = () => async payload => {
         icon: path.join(__dirname, "../../resources/goobox.png"),
         sound: true,
         wait: true,
-        appID: appID
+        appID: AppID
       });
+  }
+};
+
+export const themeChangedHandler = mb => async () => {
+  switch (mb.appState) {
+    case Synchronizing:
+      mb.tray.setImage(icons.getSyncIcon());
+      break;
+    case Paused:
+      mb.tray.setImage(icons.getPausedIcon());
+      break;
+    case Idle:
+    default:
+      mb.tray.setImage(icons.getIdleIcon());
   }
 };

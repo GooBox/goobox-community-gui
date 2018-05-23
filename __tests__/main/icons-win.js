@@ -39,6 +39,7 @@ describe("icons module in Windows 8+", () => {
     expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win/sync.png"));
     expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win/paused.png"));
     expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win/error.png"));
+    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/win/warn.png"));
   });
 
 });

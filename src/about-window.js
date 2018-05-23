@@ -37,6 +37,9 @@ export default async function showInfoWindowAsync() {
         maximizable: false
       }
     });
-    about.on("closed", resolve);
+    about.on("closed", () => {
+      log.debug("[GUI] Closing the info window");
+      resolve();
+    });
   });
 }

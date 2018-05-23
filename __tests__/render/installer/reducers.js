@@ -38,7 +38,6 @@ describe("Initial state", () => {
 
   it("has the sync folder path", () => {
     const oldFolder = process.env.DEFAULT_SYNC_FOLDER;
-    const testFolder = "/tmp";
     process.env.DEFAULT_SYNC_FOLDER = testFolder;
     try {
       expect(InitialState).toHaveProperty("folder", expect.any(String));
@@ -125,6 +124,11 @@ describe("reducer", () => {
       ...state,
       progress: value,
     });
+  });
+
+  it("sets storjAccount.key to the given encryption key if receives storjGenerateMnemonicSuccess action", () => {
+    const encryptionKey = "sample key";
+    expect(reducer(state, actions.storjGenerateMnemonicSuccess(encryptionKey))).toHaveProperty("storjAccount.key", encryptionKey);
   });
 
   it("updates storjAccount by StorjLoginSuccess action", () => {

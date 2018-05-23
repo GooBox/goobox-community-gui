@@ -87,3 +87,8 @@ export const Menu = {
 export const dialog = {
   showErrorBox: jest.fn()
 };
+
+export const systemPreferences = {
+  isDarkMode: jest.fn(),
+  subscribeNotification: jest.fn(),
+};

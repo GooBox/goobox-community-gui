@@ -25,6 +25,16 @@ import * as desktop from "../../src/main/desktop";
 
 describe("desktop module", () => {
 
+  let dir;
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
+    execFileSync.mockReset();
+  });
+
+  afterEach(() => {
+    del.sync(path.join(dir, "**"), {force: true});
+  });
+
   describe("in Windows", () => {
 
     const oldPlatform = process.platform;
@@ -38,16 +48,6 @@ describe("desktop module", () => {
       Object.defineProperty(process, "platform", {
         value: oldPlatform
       });
-    });
-
-    let dir;
-    beforeEach(() => {
-      dir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
-      execFileSync.mockReset();
-    });
-
-    afterEach(() => {
-      del.sync(path.join(dir, "**"), {force: true});
     });
 
     it("has register function which creates desktop.ini and desktop.ico", async () => {
@@ -72,6 +72,35 @@ describe("desktop module", () => {
       expect(execFileSync).toHaveBeenCalledWith("attrib", ["+S", "+H", "desktop.ico"], {
         cwd: dir,
         windowsHide: true,
+      });
+    });
+
+  });
+
+  describe("in macOS", () => {
+
+    const oldPlatform = process.platform;
+    beforeAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: "darwin"
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform
+      });
+    });
+
+    it("starts the FinderSync extension", async () => {
+      const wd = path.normalize(path.join(__dirname, "../../"));
+      const icon = path.join(__dirname, "../../resources/mac/folder.icns");
+
+      await desktop.register(dir);
+      expect(execFileSync).toHaveBeenCalledWith("fileicon", ["set", dir, icon], {
+        env: {
+          PATH: `${wd}:${process.env.PATH}`,
+        }
       });
     });
 

@@ -8,12 +8,12 @@ brew tap jkawamoto/pixeldrain
 brew install pixeldrain
 npm run dist
 
-URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.1.6-setup_x64.exe -n Goobox-0.1.6-setup_x64.exe)
+URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.2.0-setup_x64.exe -n Goobox-0.2.0-setup_x64.exe)
 if [[ -n "$URL_WINDOWS_PACKAGE" ]]; then
     echo "Windows dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_WINDOWS_PACKAGE" | slack-cli -d dev;
 fi
 
-URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.1.6.dmg -n Goobox-0.1.6.dmg)
+URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.2.0.dmg -n Goobox-0.2.0.dmg)
 if [[ -n "$URL_MAC_PACKAGE" ]]; then
     echo "Mac dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_MAC_PACKAGE" | slack-cli -d dev
 fi

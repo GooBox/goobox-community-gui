@@ -20,8 +20,15 @@ import React from "react";
 import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router";
 import configureStore from "redux-mock-store";
+import Preparation from "../../../src/render/installer/components/preparation";
+import SelectFolder from "../../../src/render/installer/components/select-folder";
+import SelectService from "../../../src/render/installer/components/select-service";
+import SiaSettingUp from "../../../src/render/installer/components/sia-setting-up";
+import SiaWallet from "../../../src/render/installer/components/sia-wallet";
+import StorjLogin from "../../../src/render/installer/components/storj-login";
 import * as screens from "../../../src/render/installer/constants/screens";
-import Welcome from "../../../src/render/installer/containers/welcome";
+import SiaFinish from "../../../src/render/installer/containers/sia-finish";
+import StorjFinish from "../../../src/render/installer/containers/storj-finish";
 import {routes} from "../../../src/render/installer/main";
 import {InitialState} from "../../../src/render/installer/reducers";
 
@@ -38,66 +45,56 @@ describe("routes", () => {
     );
   };
 
-  it("renders Welcome at first", () => {
-    expect(createDOM().find("Welcome").exists()).toBeTruthy();
+  it("renders Preparation at first", () => {
+    expect(createDOM().find(Preparation).exists()).toBeTruthy();
   });
 
   it("renders SelectService when path is screens.ChooseCloudService", () => {
-    expect(createDOM(screens.ChooseCloudService).find("SelectService").exists()).toBeTruthy();
+    expect(createDOM(screens.ChooseCloudService).find(SelectService).exists()).toBeTruthy();
   });
 
   it("renders SelectFolder when path is screens.StorjSelected", () => {
-    expect(createDOM(screens.StorjSelected).find("SelectFolder").exists()).toBeTruthy();
+    expect(createDOM(screens.StorjSelected).find(SelectFolder).exists()).toBeTruthy();
   });
 
   it("renders SelectFolder when path is screens.SiaSelected", () => {
-    expect(createDOM(screens.SiaSelected).find("SelectFolder").exists()).toBeTruthy();
+    expect(createDOM(screens.SiaSelected).find(SelectFolder).exists()).toBeTruthy();
   });
 
-  it("renders SelectFolder when path is screens.BothSelected", () => {
-    expect(createDOM(screens.BothSelected).find("SelectFolder").exists()).toBeTruthy();
-  });
+  // it("renders SelectFolder when path is screens.BothSelected", () => {
+  //   expect(createDOM(screens.BothSelected).find("SelectFolder").exists()).toBeTruthy();
+  // });
 
   it("renders StorjLogin when path is screens.StorjLogin", () => {
-    expect(createDOM(screens.StorjLogin).find("StorjLogin").exists()).toBeTruthy();
+    expect(createDOM(screens.StorjLogin).find(StorjLogin).exists()).toBeTruthy();
   });
 
-  it("renders StorjRegistration when path is screens.StorjRegistration", () => {
-    expect(createDOM(screens.StorjRegistration).find("StorjRegistration").exists()).toBeTruthy();
-  });
-
-  it("renders StorjEncryptionKey when path is screens.StorjEncryptionKey", () => {
-    expect(createDOM(screens.StorjEncryptionKey).find("StorjEncryptionKey").exists()).toBeTruthy();
-  });
-
-  it("renders StorjEmailConfirmation when path is screens.StorjEmailConfirmation", () => {
-    expect(createDOM(screens.StorjEmailConfirmation).find("StorjEmailConfirmation").exists()).toBeTruthy();
-  });
+  // it("renders StorjRegistration when path is screens.StorjRegistration", () => {
+  //   expect(createDOM(screens.StorjRegistration).find("StorjRegistration").exists()).toBeTruthy();
+  // });
+  //
+  // it("renders StorjEncryptionKey when path is screens.StorjEncryptionKey", () => {
+  //   expect(createDOM(screens.StorjEncryptionKey).find("StorjEncryptionKey").exists()).toBeTruthy();
+  // });
+  //
+  // it("renders StorjEmailConfirmation when path is screens.StorjEmailConfirmation", () => {
+  //   expect(createDOM(screens.StorjEmailConfirmation).find("StorjEmailConfirmation").exists()).toBeTruthy();
+  // });
 
   it("renders SiaWallet when path is screens.SiaWallet", () => {
-    expect(createDOM(screens.SiaWallet).find("SiaWallet").exists()).toBeTruthy();
+    expect(createDOM(screens.SiaWallet).find(SiaWallet).exists()).toBeTruthy();
   });
 
   it("renders SiaFinish when path is screens.SiaFinish", () => {
-    expect(createDOM(screens.SiaFinish).find("SiaFinish").exists()).toBeTruthy();
+    expect(createDOM(screens.SiaFinish).find(SiaFinish).exists()).toBeTruthy();
   });
 
   it("renders Finish when path is screens.FinishAll", () => {
-    expect(createDOM(screens.FinishAll).find("Finish").exists()).toBeTruthy();
-  });
-
-  it("renders Preparation when path is screens.JREPreparation", () => {
-    const preparation = createDOM(screens.JREPreparation).find("Preparation");
-    expect(preparation.exists()).toBeTruthy();
-    expect(preparation.html()).toContain("Getting some tools.");
-    expect(preparation.html()).toContain("Please wait.");
+    expect(createDOM(screens.FinishAll).find(StorjFinish).exists()).toBeTruthy();
   });
 
   it("renders Preparation when path is screens.SiaPreparation", () => {
-    const preparation = createDOM(screens.SiaPreparation).find("Preparation");
-    expect(preparation.exists()).toBeTruthy();
-    expect(preparation.html()).toContain("Setting up your");
-    expect(preparation.html()).toContain("sia wallet");
+    expect(createDOM(screens.SiaPreparation).find(SiaSettingUp).exists()).toBeTruthy();
   });
 
 });

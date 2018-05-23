@@ -15,8 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export const Idle = "idle";
 export const Synchronizing = "synchronizing";
 export const Paused = "paused";
 export const Storj = "Storj";
 export const Sia = "Sia";
 export const ConfigFile = "config";
+
+export const AppID = "io.goobox.CommunityGUI";
