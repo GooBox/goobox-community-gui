@@ -34,7 +34,7 @@ describe("SelectService component", () => {
   });
 
   it("has a link to choose Storj", () => {
-    const link = wrapper.find(".option-storj");
+    const link = wrapper.find("#option-storj");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(storj).toHaveBeenCalled();
@@ -42,14 +42,14 @@ describe("SelectService component", () => {
 
   it("prevents the storj button when processing is true", () => {
     wrapper.setProps({processing: true});
-    const link = wrapper.find(".option-storj");
+    const link = wrapper.find("#option-storj");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(storj).not.toHaveBeenCalled();
   });
 
   it("has a link to choose sia", () => {
-    const link = wrapper.find(".option-sia");
+    const link = wrapper.find("#option-sia");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(sia).toHaveBeenCalled();
@@ -57,14 +57,14 @@ describe("SelectService component", () => {
 
   it("presents the sia button when processing is true", () => {
     wrapper.setProps({processing: true});
-    const link = wrapper.find(".option-sia");
+    const link = wrapper.find("#option-sia");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(sia).not.toHaveBeenCalled();
   });
 
   it("has a link to choose both storj and sia", () => {
-    const link = wrapper.find(".option-both");
+    const link = wrapper.find("#option-both");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(both).toHaveBeenCalled();
@@ -72,7 +72,7 @@ describe("SelectService component", () => {
 
   it("prevents the storj and sia button when processing is true", () => {
     wrapper.setProps({processing: true});
-    const link = wrapper.find(".option-both");
+    const link = wrapper.find("#option-both");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(both).not.toHaveBeenCalled();

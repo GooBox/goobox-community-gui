@@ -8,10 +8,10 @@ Goobox community edition sync app for sia and storj 🎉🚀
 
 **Upcoming features and fixes:**
 
--	Linux and Mac support.
--	Settings menu with some basic features like auto-start
--	Design update
--	Minor bug fixes
+-	Linux support.
+-	Settings menu with some basic features like auto-start.
+-	Design update.
+-	Bug fixes
 -	Sia file Sharing (once implemented in sia-core).
 
 # QuickStart
@@ -28,23 +28,25 @@ Goobox community edition sync app for sia and storj 🎉🚀
 
 6.	Select your favorite cloud storage provider.
 
-7.	Now select which folder on your computer you want to set as the sync folder. All the files inside this folder are automatically synchronized to the cloud. The default sync folder is located in `USER` -> `Goobox`. You can leave it at default and click next.
+7.	Now select which folder on your computer you want to set as the sync folder. All the files inside this folder are automatically synchronized to your cloud. The default sync folder is located in `USER` -> `Goobox`. You can leave it at default and click next.
 
-8.	In the case Sia was selected, it will generate a wallet address and seed for you automatically, store these in a very safe location and don’t forget them. In the case Storj is selected, either login or register a new account. If registering a Storj account, don’t forget to confirm your account through the email you received before logging in again through the app.
+8.	In the case Sia was selected, it will generate a wallet address and seed for you automatically, store these in a very safe location and don’t forget them. In the case Storj is selected, login to your  account with email, password and encryption key. If you don't have a encryption key, click on "Generate seed", this will generate a encryption key for you.
 
-9.	Regarding funds management, if Sia was selected, make sure you send at least 10$ worth of Sia tokens (excluding transaction fees) to your wallet address given by goobox, this should cover the initial contract negotiation costs and give you some initial funds. In the case of Storj, you are limited by the free tier of 25GB, thus if you want to upload beyond this, make sure you add some credit to [app.storj.io](app.storj.io).
+9.	Regarding funds management, if Sia was selected, make sure you send at least 5-10$ worth of Sia tokens to your wallet address given by goobox, this should cover the initial contract negotiation costs and give you some initial funds. In the case of Storj, you are limited by the free tier of 25GB, thus if you want to upload beyond this, make sure you add some credit to [app.storj.io](app.storj.io).
 
 10.	Click next.
 
-11.	If you selected the Sia service, the app will now prepare your account in the background, if enough funds have been sent to the address there is nothing more you have to do. It will download the blockchain and create the necessary storage contracts. All received funds to this address will automatically be allocated for storage. Once enough funds have been allocated you will be notified about this too. You can already drag and drop the files you want to synchronize to the Goobox sync-directory, they will automatically start synchronizing once the background preparations are completed. Note that depending on your computer resources and internet speed, the first setup can take up to 24h to complete. If the Storj service is selected no waiting time is required and files will immediately start synchronizing to the Storj cloud.
+11.	If you selected the Sia service, the app will now prepare your account in the background. If enough funds have been sent to the address there is nothing more you have to do. It will download the blockchain and create the necessary storage contracts. All received funds to this address will automatically be allocated for storage. Once enough funds have been allocated you will be notified about this too. You can already drag and drop the files you want to synchronize to the Goobox sync-directory, they will automatically start synchronizing once the background preparations are completed. Note that depending on your computer resources and internet speed, the first setup can take up to 24h to complete. If the Storj service is selected no waiting time is required and files will immediately start synchronizing to the Storj cloud.
 
-**Note** that in the case of Sia, you can only sync files on a single machine until seed-based file recovery is implemented by Sia-core. Though, of course you can run the app on more computers. In the case of Storj, you can run the app on as many machines as you like and sync the files between them.
+**Note** that in the case of Sia, you can only sync files on a single machine until seed-based file recovery is implemented in Sia-core. Though, of course you can run the app on more computers. In the case of Storj, you can run the app on as many machines as you like and sync the files between them.
+
 Code issues can be opened [here]( https://github.com/GooBox/goobox-community-gui/issues). For any other information or questions please join our communication channels linked at the end of this page.
 
 
 # Introduction
 
-Goobox-community-gui is a desktop file synchronization application that allows anyone with a minimum amount of blockchain experience to safely store their files on the blockchain based cloud storage platform that they desire. Currently the supported storage providers include(s) Sia and Storj. The application communicates natively and directly with the platform(s) API’s, thus no data or information is ever transmitted to any third party. Only you have access to your files.
+Goobox-community-gui is a desktop file synchronization application that allows anyone with a minimum amount of blockchain experience to safely store their files on the decentralized cloud provider of their choice. Currently the supported storage providers include(s) Sia and Storj. The application communicates natively and directly with the platform(s) API’s, thus no data or information is ever transmitted to any third party. Only you have access to your files. Furthermore the most awesome part is that you are dependent on no-one with regards to storing files.
+
 We hope that with this application we can make these platforms more accessible and in the process help execute the amazing vision that these technologies and their communities brings us.
 Although we highly believe that software should speak for itself, we will walk through the setup of the app step by step and elaborate on each step for those that would like a bit more details.
 
@@ -53,8 +55,9 @@ Although we highly believe that software should speak for itself, we will walk t
 - This app is not a wallet.
 - losing the encryption keys/seed will mean the loss of all files.
 - In the case of Sia the app will not sync any files if no funds are allocated.
-- If Goobox is offline for too long you risk losing your files stored on Sia. At a minimum, turn goobox on a hour or so a month.
+- If Goobox is offline for too long you risk losing your files stored on Sia. At a minimum, turn goobox on a hour or so a week.
 - If you reach the Storj free tier limit, the files will stop synchronizing.
+- The application is continuously in development.
 
 # Downloading and installing Goobox
 
@@ -64,107 +67,74 @@ The latest release can be downloaded from our main github release page [here]( h
 
 On windows, check if you have Dropbox, OneDrive or any other sync application installed that uses file status overlay icons. If so, the overlays of the app will most likely not work, to solve this issue uninstall these programs to free up the overlay registry slots.
 
-After downloading the executable double click on it to launch it. You will be prompted by Microsoft security alert, don’t worry, click on allow. Once we sign the executable in a few weeks this security alert will be gone. It will then prompt for administration privileges.
+After downloading the executable double click on it to launch it. You will be prompted by Microsoft security alert, don’t worry, click on allow. Once we sign the executable this security alert will be gone. It will then prompt for administration privileges.
 
 # Goobox setup
 
-After the installation is completed a setup screen will appear (Figure 1). On the welcome screen press ‘Next’.
+After the installation is completed a setup screen will appear (Figure 1) which will download and install the necessary tools to run the app automatically. This normally only takes a minute or so but it highly dependent on your internet and computer speed.
 
 
-![](https://i.imgur.com/2CQmOAa.png)
+![](https://i.imgur.com/peMQ8He.png)
 
-**Figure 1.** Welcome screen.
-
-
-Goobox will now download and install the necessary tools to run the app (Figure 2). This normally only takes a minute or so but it highly dependent on your internet and computer speed.
-
-
-![](https://i.imgur.com/LqnuruS.png)
-
-**Figure 2.** Installations of the necessary tools to run the app.
+**Figure 1.** Installations of the necessary tools to run the app.
 
 
 Once the tools are downloaded and installed successfully you will now be able to select your favorite cloud storage platforms that you want to sync your files too.
 
 
-![](https://i.imgur.com/lsRbvUc.png)
+![](https://i.imgur.com/6aib3z0.png)
 
 
-**Figure 3.** Select your cloud storage platforms platform.
+**Figure 2.** Select your cloud storage platforms platform.
 
 
-Next select the folder you want to set as your synchronization directory (Figure 4). All files inside of this directory will be synchronized to your favorite cloud storage platform automatically. You can leave it at default and click ‘Next’, this will create a sync folder in your home directory. Goobox will also synchronize your files automatically every time you change or update them.
+Next select the folder you want to set as your synchronization directory (Figure 3). All files inside of this directory will be synchronized to your favorite cloud storage platform automatically. You can leave it at default and click ‘Next’, this will create a sync folder in your home directory. Goobox will also synchronize your files automatically every time you change or update them.
 
 
-![](https://i.imgur.com/J7Y4LBY.png)
+![](https://i.imgur.com/URiFobD.png)
 
 
-**Figure 4.** Select your synchronization directory. You can leave it at default and click ‘next’.
+**Figure 3.** Select your synchronization directory. You can leave it at default and click ‘next’.
 
 
 In the case Sia was selected follow the steps below. In the case Storj was selected skip these steps and head down to the respective Storj section.
-Goobox will now automatically create and configure a unique Sia wallet for you (Figure 5). This can take a minute or two.
+Goobox will now automatically create and configure a unique Sia wallet for you (Figure 4). This can take a minute or two.
 
 
-![](https://i.imgur.com/nrSxl0M.png)
+![](https://i.imgur.com/BrcKbuy.png)
 
 
-**Figure 5.** Setting up your Sia wallet.
+**Figure 4.** Setting up your Sia wallet.
 
 
-After your wallet is configured correctly the app should present the wallet details on screen (Figure 6). Save your wallet address and seed in a secure location that only you have access too. Click ‘Next’.
+After your wallet is configured correctly the app should present the wallet details on screen (Figure 5). Save your wallet address and seed in a secure location that only you have access too. Click ‘Next’.
 
 
-![](https://i.imgur.com/gYwpK2h.png)
+![](https://i.imgur.com/V6Umm8X.png)
 
 
-**Figure 6.** Sia wallet details.
+**Figure 5.** Sia wallet details.
 
-You are all done for the setup part!. Goobox will now start preparing Sia in the background. This first setup depending on your computer normally takes anywhere from 12-24h. You are notified by Goobox when done. In the mean time you can already drop files to your sync folder, furthermore we also advise you to already deposit 10$ worth of Sia tokens to your address provided above, this will ensure the app can automatically start synchronizing your files once Sia is finished with setting up your account. You will be notified once the funds are allocated successfully too. Goobox always keeps you updated on any important implications of your Sia account, this includes when the funds start running out.
+![](https://i.imgur.com/0XxPO4r.png)
 
+**Figure 6.** Open sync folder.
 
-![](https://i.imgur.com/mdPzwHh.png)
+You are all done for the setup part!. Goobox will now start preparing Sia in the background. This first setup depending on your computer normally takes anywhere from 3-24h. You are notified by Goobox when done. In the mean time you can already drop files to your sync folder, furthermore we also advise you to already deposit 5-10$ worth of Sia tokens to your address provided above, this will ensure the app can automatically start synchronizing your files once Sia is finished with setting up your account. You will be notified once the funds are allocated successfully too. Goobox always keeps you updated on any important implications of your Sia account, this includes when the funds start running out.
 
-**Figure 7.** Setup complete, Goobox will now get Sia ready in the background. You are notified when done.
+--------------------------------------------------------------------------------
 
-
-After Storj is selected the login screen will appear. If you already have a Storj account enter your email, password and the encryption key in the respective fields and click ‘Finish’. You are now all done and Goobox will automatically stat synchronizing your files.
-
-
-![](https://i.imgur.com/nOrsOLb.png)
-
-**Figure 8.** Storj login screen.
+If Storj is selected the login screen will appear. If you already have a Storj account enter your email, password and the encryption key in the respective fields and click ‘Finish’. If you don't have a encryption key click on "Generate seed".
 
 
-If on the other hand you do not have a Storj account yet, in the screen above click on ‘click here to create’ to create an account. On the registration screen enter your email address and password and click ‘Next’ (figure 9).
+![](https://i.imgur.com/YkYlI88.png)
 
+**Figure 7.** Storj login screen.
 
-![](https://i.imgur.com/4fWzp9n.png)
+![](https://i.imgur.com/0XxPO4r.png)
 
-**Figure 9.** Storj account registration screen.
+**Figure 8.** Open sync folder.
 
-
-The next screen will return a encryption key, save it to a safe location that only you have access to (Figure 10).
-
-
-![](https://i.imgur.com/FNeT75q.png)
-
-**Figure 10.** save the Storj encryption key to a safe location.
-
-
-Now check your email address and confirm your Storj account by clicking on the provided link in the email. Click on ‘Login’ (Figure 11).
-
-
-![](https://i.imgur.com/lW8l3QR.png)
-
-**Figure 11.** Confirm your Storj account.
-
-
-Now login into to your newly created Storj account by entering your email, password and encryption key into the respective fields.
-
-After successful login you should now see the screen above, you can click on ‘Close’. Congrats!, you are all done and your files will start synchronizing to Storj.
-
-![](https://i.imgur.com/KiXHKkU.png)
+You are now all done and Goobox will automatically stat synchronizing your files.
 
 # Some info for developers
 
@@ -227,6 +197,13 @@ As this is a free and open-source app there are plenty of ways you can contribut
 3.	There are many development tasks that can be tackled, from adding new features, fixing existing bugs to running tests.
 
 4.	If you are a designer, share your ideas with us, have a look at the [design and branding repository]( https://github.com/GooBox/brand-design) on github. Open a issue, get in touch with us or submit a pull request for a design change!
+
+# Roadmap
+
+This is the current roadmap plan:
+
+![](https://i.imgur.com/6zR6n1T.png)
+
 
 # Donations
 

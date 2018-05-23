@@ -113,18 +113,6 @@ export const siaRequestWalletInfoHandler = () => async payload => {
     const res = await global.sia.wallet();
     global.sia.start(payload.syncFolder, true);
 
-    // Until https://github.com/NebulousLabs/Sia/issues/2741 is fixed, restart sync-sia when wallet scan finishes.
-    if (global.sia.stderr) {
-      global.sia.stderr.on("line", async line => {
-        if (line.indexOf("io.goobox.sync.sia.SiaDaemon - Done!") !== -1) {
-          log.info("Restarting sync-sia");
-          await global.sia.close();
-          global.sia.start(payload.syncFolder);
-        }
-      });
-    }
-    // --
-
     return {
       address: res["wallet address"],
       seed: res["primary seed"],
@@ -149,6 +137,18 @@ export const stopSyncAppsHandler = () => async () => {
   }
 };
 
+export const storjGenerateMnemonicHandler = () => async payload => {
+
+  log.info(`[GUI main] Generating a mnemonic code`);
+  if (global.storj && global.storj.proc) {
+    await global.storj.close();
+  }
+  global.storj = new Storj();
+  global.storj.start(payload.syncFolder, true);
+
+  return global.storj.generateMnemonic();
+
+};
 
 export const storjLoginHandler = () => async payload => {
 
@@ -158,6 +158,7 @@ export const storjLoginHandler = () => async payload => {
   }
   global.storj = new Storj();
   global.storj.start(payload.syncFolder, true);
+
 
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);
@@ -229,6 +230,8 @@ export const installerWindowAllClosedHandler = (app) => async () => {
         global.sia.once("syncState", startSynchronizationHandler());
       }
 
+      utils.openDirectory(cfg.syncFolder);
+
       // if the installation process is finished.
       log.info("[GUI main] Installation has been succeeded, now starting synchronization");
       await core();
@@ -267,12 +270,12 @@ export const installerWindowAllClosedHandler = (app) => async () => {
 // Handlers for sync-storj/sync-sia apps.
 export const updateStateHandler = mb => async payload => {
   switch (payload.newState) {
-    case "synchronizing":
+    case Synchronizing:
       log.debug("[GUI main] Set the synchronizing icon");
       mb.tray.setImage(icons.getSyncIcon());
       mb.appState = Synchronizing;
       break;
-    case "idle":
+    case Idle:
       log.debug("[GUI main] Set the idle icon");
       mb.tray.setImage(icons.getIdleIcon());
       mb.appState = Idle;

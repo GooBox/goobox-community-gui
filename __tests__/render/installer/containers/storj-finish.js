@@ -15,15 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
 import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/welcome";
+import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-finish";
 
 describe("mapStateToProps", () => {
 
-  it("maps nothing", () => {
-    expect(mapStateToProps()).toEqual({});
+  it("set messages", () => {
+    // noinspection SpellCheckingInspection
+    expect(mapStateToProps()).toEqual({
+      header: "You are ready to go",
+      message: "Happy Gooboxing!"
+    });
   });
 
 });
@@ -35,10 +37,9 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickNext to push JREPreparation and prepareJRE action", () => {
-    mapDispatchToProps(dispatch).onClickNext();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.JREPreparation));
-    expect(dispatch).toHaveBeenCalledWith(actions.prepareJRE());
+  it("maps onClick to openSyncFolder action", () => {
+    mapDispatchToProps(dispatch).onClick();
+    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
   });
 
 });

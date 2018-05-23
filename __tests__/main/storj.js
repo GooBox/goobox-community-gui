@@ -82,12 +82,10 @@ describe("Storj class", () => {
 
     it("spawns sync-storj", () => {
       storj.start(dir);
-      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
+      expect(spawn).toBeCalledWith("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", "--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: expect.objectContaining({
-          JAVA_HOME: storj._javaHome,
-          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${storj._wd}:${process.env.PATH}`,
+          PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
         }),
         shell: true,
         windowsHide: true,
@@ -96,12 +94,10 @@ describe("Storj class", () => {
 
     it("spawns sync-storj with --reset-db and --reset-auth-file flags when reset is true", () => {
       storj.start(dir, true);
-      expect(spawn).toBeCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
+      expect(spawn).toBeCalledWith("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", "--sync-dir", `"${dir}"`, "--reset-db", "--reset-auth-file"], {
         cwd: storj._wd,
         env: expect.objectContaining({
-          JAVA_HOME: storj._javaHome,
-          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${storj._wd}:${process.env.PATH}`,
+          PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
         }),
         shell: true,
         windowsHide: true,
@@ -176,12 +172,10 @@ describe("Storj class", () => {
       // jest.runOnlyPendingTimers();
       setTimeout.mock.calls[0][0]();
       expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenLastCalledWith(storj._cmd, ["--sync-dir", `"${dir}"`], {
+      expect(spawn).toHaveBeenLastCalledWith("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", "--sync-dir", `"${dir}"`], {
         cwd: storj._wd,
         env: expect.objectContaining({
-          JAVA_HOME: storj._javaHome,
-          GOOBOX_SYNC_STORJ_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${storj._wd}:${process.env.PATH}`,
+          PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
         }),
         shell: true,
         windowsHide: true,

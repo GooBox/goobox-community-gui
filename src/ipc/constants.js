@@ -19,6 +19,7 @@ export const ChangeState = "@IPC/ChangeState";
 export const OpenSyncFolder = "@IPC/OpenSyncFolder";
 export const CalculateUsedVolume = "@IPC/CalculateUsedVolume";
 export const InstallJRE = "@IPC/InstallJRE";
+export const StorjGenerateMnemonic = "@IPC/StorjGenerateMnemonic";
 export const StorjLogin = "@IPC/StorjLogin";
 export const StorjCreateAccount = "@IPC/StorjCreateAccount";
 export const SiaRequestWalletInfo = "@IPC/SiaRequestWalletInfo";

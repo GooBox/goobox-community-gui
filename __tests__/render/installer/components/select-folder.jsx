@@ -36,35 +36,31 @@ describe("SelectFolder component", () => {
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
   });
 
-  it("has background-gradation class", () => {
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
-  });
-
   it("takes flags of used services and shows the name of them", () => {
     wrapper = shallow(
       <SelectFolder storj={true} sia={false} folder={defaultDir}
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
-    expect(wrapper.find(".service-name").text()).toEqual(Storj);
+    expect(wrapper.find("h1").text()).toContain(Storj);
 
     wrapper = shallow(
       <SelectFolder storj={false} sia={true} folder={defaultDir}
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
-    expect(wrapper.find(".service-name").text()).toEqual(Sia);
+    expect(wrapper.find("h1").text()).toContain(Sia);
 
     wrapper = shallow(
       <SelectFolder storj={true} sia={true} folder={defaultDir}
                     onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
-    expect(wrapper.find(".service-name").text()).toEqual(`${Storj} & ${Sia}`);
+    expect(wrapper.find("h1").text()).toContain(`${Storj} & ${Sia}`);
   });
 
   it("shows current selected folder", () => {
-    const c = wrapper.find(".folder");
+    const c = wrapper.find("#folder");
     expect(c.exists()).toBeTruthy();
-    expect(c.text()).toEqual(defaultDir);
+    expect(c.prop("value")).toEqual(defaultDir);
   });
 
   it("has a back link", () => {
-    const link = wrapper.find(".back-btn");
+    const link = wrapper.find("#back-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(back).toHaveBeenCalledTimes(1);
@@ -72,13 +68,13 @@ describe("SelectFolder component", () => {
 
   it("disables the back link while a dialog is open", () => {
     wrapper.instance().selecting = true;
-    const link = wrapper.find(".back-btn");
+    const link = wrapper.find("#back-btn");
     link.simulate("click");
     expect(back).not.toHaveBeenCalled();
   });
 
   it("disables other actions after the back link is clicked", () => {
-    const link = wrapper.find(".back-btn");
+    const link = wrapper.find("#back-btn");
     link.simulate("click");
     expect(wrapper.state("disabled")).toBeTruthy();
     expect(back).toHaveBeenCalled();
@@ -86,13 +82,13 @@ describe("SelectFolder component", () => {
 
   it("disables the back link when the disabled state is true", () => {
     wrapper.setState({disabled: true});
-    const link = wrapper.find(".back-btn");
+    const link = wrapper.find("#back-btn");
     link.simulate("click");
     expect(back).not.toHaveBeenCalled();
   });
 
   it("has a next link", () => {
-    const link = wrapper.find(".next-btn");
+    const link = wrapper.find("#next-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(next).toHaveBeenCalledTimes(1);
@@ -100,13 +96,13 @@ describe("SelectFolder component", () => {
 
   it("disables the next link while a dialog is open", () => {
     wrapper.instance().selecting = true;
-    const link = wrapper.find(".next-btn");
+    const link = wrapper.find("#next-btn");
     link.simulate("click");
     expect(next).not.toHaveBeenCalled();
   });
 
   it("disables other actions after the next link is clicked", () => {
-    const link = wrapper.find(".next-btn");
+    const link = wrapper.find("#next-btn");
     link.simulate("click");
     expect(wrapper.state("disabled")).toBeTruthy();
     expect(next).toHaveBeenCalled();
@@ -114,14 +110,14 @@ describe("SelectFolder component", () => {
 
   it("disables the nect link when disabled state is true", () => {
     wrapper.setState({disabled: true});
-    const link = wrapper.find(".next-btn");
+    const link = wrapper.find("#next-btn");
     link.simulate("click");
     expect(next).not.toHaveBeenCalled();
   });
 
   it("has a button to open a dialog", () => {
     wrapper.instance()._onClickBrowse = jest.fn().mockReturnValue(Promise.resolve());
-    wrapper.find("button").prop("onClick")();
+    wrapper.find("#change-folder-btn").prop("onClick")();
     expect(wrapper.instance()._onClickBrowse).toHaveBeenCalled();
   });
 

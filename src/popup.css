@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2017-2018 Junpei Kawamoto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "~bootstrap/dist/css/bootstrap.css";
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+}
+
+*:hover {
+    cursor: default;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+a *:hover {
+    cursor: pointer;
+}
+
+a:active {
+    position: relative;
+    transform: scale(0.95);
+}
+
+#app {
+    background-color: #fbfbfd;
+    width: 360px;
+    height: 340px;
+}
+
+nav {
+    background: linear-gradient(to bottom, #26AAE1, #0972BA);
+    font-size: 23px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 0.96;
+    letter-spacing: normal;
+    text-align: left;
+    color: #ffffff;
+}
+
+main {
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    background-color: #F7F7FD;
+    text-align: left;
+    width: 360px;
+    height: 340px;
+}
+
+footer {
+    font-size: 12px;
+    color: #aab2b9;
+    background-color: #f7f7f8;
+}
+
+section i {
+    color: #26aae1;
+    font-size: 29px;
+}
+
+.pause-sync-btn {
+    display: inline-block;
+}
+
+.sync-again-btn {
+    display: inline-block;
+}
+
+.info-btn {
+    /*Hide this button until fixing about-window library*/
+    display: none;
+}
+
+.settings-btn {
+    /*Hide this button until setting screen is implemented*/
+    display: none;
+    /*display: inline-block;*/
+}
+
+#import-drive {
+    /*Hide this component until import drive button is implemented*/
+    display: none;
+}
+
+::selection {
+    background: transparent;
+}

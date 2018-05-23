@@ -30,8 +30,12 @@ import {
   siaRequestWalletInfoHandler,
   stopSyncAppsHandler,
   storjCreateAccountHandler,
+  storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "./handlers";
+
+const DefaultWidth = 800;
+const DefaultHeight = 600;
 
 export const installer = () => {
 
@@ -44,14 +48,14 @@ export const installer = () => {
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 
-  let width = 600;
+  let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
     width *= 2;
   }
   // noinspection SpellCheckingInspection
   const mainWindow = new BrowserWindow({
     width: width,
-    height: 400,
+    height: DefaultHeight,
     useContentSize: true,
     resizable: false,
     fullscreenable: false,
@@ -67,6 +71,7 @@ export const installer = () => {
   // Register event handlers.
   app.on("window-all-closed", installerWindowAllClosedHandler(app));
   addListener(actionTypes.InstallJRE, installJREHandler());
+  addListener(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
   addListener(actionTypes.StorjLogin, storjLoginHandler());
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
@@ -102,7 +107,9 @@ export const installer = () => {
       ]
     }];
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
   }
 
 };
 
+export default installer;

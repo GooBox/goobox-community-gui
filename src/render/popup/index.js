@@ -19,7 +19,7 @@ import {webFrame} from "electron";
 import ReactDOM from "react-dom";
 import initPopup from "./main";
 
-webFrame.setZoomLevelLimits(1, 1);
+webFrame.setVisualZoomLevelLimits(1, 1);
 ReactDOM.render(
   initPopup(),
   document.getElementById("app")

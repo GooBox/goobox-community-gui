@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import {initPapertrail} from "./papertrail";
 
 export const main = async () => {
 
-  if ("production" !== process.env.NODE_ENV && process.env.PAPERTRAIL) {
+  if (process.env.NODE_ENV !== "production" && process.env.PAPERTRAIL) {
     initPapertrail();
   }
 
@@ -39,17 +39,23 @@ export const main = async () => {
     .option("--sia", "Overwrite the configuration file and start with Sia")
     .parse(["", "", ...process.argv]);
 
-  if ("test" === process.env.NODE_ENV) {
-    // Pass.
-  } else if ("production" !== process.env.NODE_ENV) {
-    if (program.devTools) {
-      process.env.DEV_TOOLS = true;
+  if (process.env.NODE_ENV !== "test") {
+    if (process.env.NODE_ENV !== "production") {
+      if (program.devTools) {
+        process.env.DEV_TOOLS = true;
+      }
+      log.transports.file.level = "debug";
+      log.transports.console.level = "debug";
+    } else {
+      log.transports.file.level = "verbose";
+      log.transports.console.level = "info";
     }
-    log.transports.file.level = "debug";
-    log.transports.console.level = "debug";
-  } else {
-    log.transports.file.level = "verbose";
-    log.transports.console.level = "info";
+    if (process.platform === "win32") {
+      // By default, log files are stored in %USERPROFILE%\AppData\Roaming\<app name>\log.log on Windows.
+      // To fix https://github.com/GooBox/goobox-community-gui/issues/123,
+      // the following code modifies the directory where the log files are stored.
+      log.transports.file.file = path.join(log.transports.file.findLogPath("Goobox"), "../logs/log.log");
+    }
   }
 
   jre.setJreDir(path.join(app.getPath("userData"), "jre"));

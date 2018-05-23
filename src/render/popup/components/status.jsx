@@ -18,91 +18,64 @@
 import PropTypes from "prop-types";
 import React from "react";
 import {Paused, Synchronizing} from "../../../constants";
-import folderImage from "../assets/folder.svg";
-import importDriveImage from "../assets/import_drive.svg";
-import infoImage from "../assets/info.svg";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import pauseSyncImage from "../assets/pause_sync.svg";
-import pausedImage from "../assets/paused.svg";
-import settingsImage from "../assets/settings.svg";
-import syncAgainImage from "../assets/sync_again.svg";
-import synchronizedImage from "../assets/synchronized.svg";
-import titleImage from "../assets/title.svg";
+import gooboxImage from "../assets/goobox.svg";
 
 export default function Status(props) {
 
   const rate = props.totalVolume && Math.round(props.usedVolume / props.totalVolume * 100);
-  const barStyle = {
-    width: `${rate < 100 ? rate : 100}%`
-  };
-
   let pauseRestartBtn;
-  let stateInfo;
   if (props.state === Synchronizing) {
     pauseRestartBtn = (
       <a className="pause-sync-btn"
          onClick={() => props.onChangeState && props.onChangeState(Paused)}>
-        <img src={pauseSyncImage} width={23} height={23}/>
+        <i className="state-icon far fa-pause-circle"/>
+        &nbsp;
+        <span className="state-text">Goobox is up to date.</span>
       </a>
-    );
-    stateInfo = (
-      <div>
-        <img className="state-icon" src={synchronizedImage} width={81} height={81}/>
-        <p className="state-text bold">Goobox is up to date.</p>
-      </div>
     );
   } else {
     pauseRestartBtn = (
       <a className="sync-again-btn"
          onClick={() => props.onChangeState && props.onChangeState(Synchronizing)}>
-        <img src={syncAgainImage} width={23} height={23}/>
+        <i className="state-icon far fa-play-circle"/>
+        &nbsp;
+        <span className="state-text">File transfers paused.</span>
       </a>
-    );
-    stateInfo = (
-      <div>
-        <img className="state-icon" src={pausedImage} width={81} height={81}/>
-        <p className="state-text bold">File transfers paused.</p>
-      </div>
     );
   }
 
   return (
-    <div style={props.style}>
-      <nav className="background-gradation">
-        <img src={leftWhiteIcon} width={41} height={40}/>
-        {pauseRestartBtn}
-        <a className="settings-btn" onClick={() => props.onClickSettings && props.onClickSettings()}>
-          <img src={settingsImage} width={23} height={23}/>
-        </a>
+    <main style={props.style} className="d-flex flex-column">
+
+      <nav className="d-flex px-3 py-2">
+        <img className="mr-auto" src={gooboxImage} width={81} height={22}/>
         <a className="info-btn" onClick={() => props.onClickInfo && props.onClickInfo()}>
-          <img src={infoImage} width={23} height={23}/>
+          <i className="fas fa-info-circle"/>
         </a>
-        <img className="title" src={titleImage} width={43} height={11}/>
+        <a className="settings-btn ml-2" onClick={() => props.onClickSettings && props.onClickSettings()}>
+          <i className="fas fa-cog"/>
+        </a>
       </nav>
-      <main>
-        {stateInfo}
-        <div className="usage-box">
-          <span className="usage">Usage: {props.usedVolume && props.usedVolume.toFixed(2)}GB</span>
-          <span className="usage-rate">{rate}% of {props.totalVolume}GB</span>
-          <div className="meter">
-            <span className="bar" style={barStyle}/>
-          </div>
-        </div>
-        <div className="links">
-          <a className="sync-folder" onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
-            <img src={folderImage} width={25} height={19}/>
-            <br/>
-            <span className="bold">Sync folder</span>
-          </a>
-          <a className="import-drive"
-             onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>
-            <img src={importDriveImage} height={22}/>
-            <br/>
-            <span className="bold">Import drive</span>
-          </a>
-        </div>
-      </main>
-    </div>
+
+      <section className="d-flex flex-column p-3">
+        <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
+           onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
+          <i className="fas fa-folder-open mr-2"/>
+          <span className="bold">Open my folder</span>
+        </a>
+        {/*<a id="import-drive" className="btn btn-light d-flex align-items-center"*/}
+        {/*onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>*/}
+        {/*<i className="fas fa-cloud-upload-alt mr-2"/>*/}
+        {/*<span className="bold">Import drive</span>*/}
+        {/*</a>*/}
+      </section>
+
+      <footer className="d-flex px-3 py-2 mt-auto">
+        {pauseRestartBtn}
+        <span className="usage-rate ml-auto">Using {rate}% of {props.totalVolume}GB</span>
+      </footer>
+
+    </main>
   );
 }
 

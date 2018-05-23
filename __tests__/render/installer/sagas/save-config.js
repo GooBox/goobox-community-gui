@@ -15,23 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import {push} from "react-router-redux";
-import * as actions from "../actions";
-import Welcome from "../components/welcome";
-import * as screens from "../constants/screens";
+import {call} from "redux-saga/effects";
+import {saveConfig as saveConfigAsync} from "../../../../src/config";
+import {InitialState} from "../../../../src/render/installer/reducers/index";
+import saveConfig from "../../../../src/render/installer/sagas/save-config";
 
-export const mapStateToProps = () => ({});
+describe("saveConfig", () => {
 
-export const mapDispatchToProps = (dispatch) => ({
-
-  onClickNext: () => {
-    dispatch(push(screens.JREPreparation));
-    dispatch(actions.prepareJRE());
-  }
+  it("forks saveConfigAsync with given action's payload", () => {
+    const action = {
+      payload: InitialState
+    };
+    const saga = saveConfig(action);
+    expect(saga.next().value).toEqual(call(saveConfigAsync, {
+      syncFolder: InitialState.folder,
+      installed: true,
+      storj: InitialState.storj,
+      sia: InitialState.sia,
+    }));
+    expect(saga.next().done);
+  });
 
 });
-
-export default connect(mapStateToProps, mapDispatchToProps)(Welcome);
-
-

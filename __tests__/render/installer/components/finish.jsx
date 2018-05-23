@@ -21,29 +21,29 @@ import Finish from "../../../../src/render/installer/components/finish.jsx";
 
 describe("Finish component", () => {
 
-  let wrapper, back, close;
+  const header = "sample header";
+  const message = "sample message";
+  const onClick = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    close = jest.fn();
-    wrapper = shallow(<Finish onClickBack={back} onClickClose={close}/>);
+    onClick.mockClear();
+    wrapper = shallow(<Finish header={header} message={message} onClick={onClick}/>);
   });
 
-  it("has background-gradation class", () => {
-    expect(wrapper.hasClass("background-gradation")).toBeTruthy();
+  it("takes header prop and renders the given text", () => {
+    expect(wrapper.find("h1").text()).toEqual(header);
   });
 
-  it("has a back link", () => {
-    const link = wrapper.find(".back-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(back).toHaveBeenCalledTimes(1);
+  it("takes message prop and renders the given text", () => {
+    expect(wrapper.find("p").text()).toEqual(message);
   });
 
-  it("has a login link", () => {
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(close).toHaveBeenCalledTimes(1);
+  it("has open my goobox button and invokes onClick if clicked", () => {
+    const btn = wrapper.find("button");
+    expect(btn.exists()).toBeTruthy();
+    btn.simulate("click");
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
 });

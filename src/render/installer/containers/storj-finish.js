@@ -16,18 +16,21 @@
  */
 
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
 import Finish from "../components/finish";
-import * as screens from "../constants/screens";
 
-export const mapStateToProps = () => ({});
+// noinspection SpellCheckingInspection
+export const mapStateToProps = () => ({
+
+  header: "You are ready to go",
+
+  message: "Happy Gooboxing!"
+
+});
 
 export const mapDispatchToProps = (dispatch) => ({
 
-  onClickBack: () => dispatch(push(screens.StorjLogin)),
-
-  onClickClose: () => dispatch(actions.closeWindow()),
+  onClick: () => dispatch(actions.closeWindow()),
 
 });
 

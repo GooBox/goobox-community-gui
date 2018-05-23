@@ -16,19 +16,21 @@
  */
 
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
-import SiaFinish from "../components/sia-finish";
-import * as screens from "../constants/screens";
+import Finish from "../components/finish";
 
-export const mapStateToProps = () => ({});
+export const mapStateToProps = () => ({
 
-export const mapDispatchToProps = (dispatch) => ({
+  header: "We’re preparing your Goobox",
 
-  onClickBack: () => dispatch(push(screens.SiaWallet)),
-
-  onClickClose: () => dispatch(actions.closeWindow()),
+  message: "We will notify you when we’re done."
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SiaFinish);
+export const mapDispatchToProps = (dispatch) => ({
+
+  onClick: () => dispatch(actions.closeWindow()),
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Finish);

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import {shallow} from "enzyme";
 import React from "react";
 import Preparation from "../../../../src/render/installer/components/preparation.jsx";
@@ -21,29 +22,23 @@ import Preparation from "../../../../src/render/installer/components/preparation
 describe("Preparation component", () => {
 
   const progress = 39;
-  const children = (
-    <div>
-      <span>abc</span>
-      <span>123</span>
-    </div>
-  );
+
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<Preparation progress={progress}>{children}</Preparation>);
-  });
-
-  it("takes children and renders them as a message", () => {
-    expect(wrapper.find(".msg").contains(children)).toBeTruthy();
+    wrapper = shallow(<Preparation progress={progress}/>);
   });
 
   it("takes progress prop and shows a progress bar", () => {
     expect(wrapper.find(".bar").prop("style").width).toEqual(`${progress}%`);
   });
 
-  it("shows an error message instead of the given children if given", () => {
+  it("shows an error message instead of the given message if given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}>{children}</Preparation>);
-    expect(wrapper.find(".msg").html()).toContain(errorMsg);
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
+
+    const msg = wrapper.find("#message");
+    expect(msg.text()).toContain(errorMsg);
+    expect(msg.hasClass("text-warning")).toBeTruthy();
   });
 
   it("has wait class", () => {
@@ -52,7 +47,7 @@ describe("Preparation component", () => {
 
   it("doesn't have wait class if error message is given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}>{children}</Preparation>);
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
     expect(wrapper.hasClass("wait")).toBeFalsy();
   });
 

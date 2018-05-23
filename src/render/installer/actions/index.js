@@ -31,6 +31,9 @@ export const storjLoginFailure = createAction(actionTypes.StorjLoginFailure);
 export const storjCreateAccount = createAction(actionTypes.StorjCreateAccount);
 export const storjCreateAccountSuccess = createAction(actionTypes.StorjCreateAccountSuccess);
 export const storjCreateAccountFailure = createAction(actionTypes.StorjCreateAccountFailure);
+export const storjGenerateMnemonic = createAction(actionTypes.StorjGenerateMnemonic);
+export const storjGenerateMnemonicSuccess = createAction(actionTypes.StorjGenerateMnemonicSuccess);
+export const storjGenerateMnemonicFailure = createAction(actionTypes.StorjGenerateMnemonicFailure);
 
 export const requestSiaWalletInfo = createAction(actionTypes.RequestSiaWalletInfo);
 export const requestSiaWalletInfoSuccess = createAction(actionTypes.RequestSiaWalletInfoSuccess);
