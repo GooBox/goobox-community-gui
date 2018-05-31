@@ -20,7 +20,8 @@
 # Build dev builds and upload them to Pixeldrain, then posts their links to Slack.
 #
 brew upgrade python
-pip install slack-cli || pip3 install slack-cli
+pip3 install --upgrade pip setuptools wheel
+pip3 install slack-cli
 brew tap jkawamoto/pixeldrain
 brew install pixeldrain
 npm run dist
