@@ -1,0 +1,40 @@
+#!/bin/bash -e
+#
+# Copyright (C) 2018 Junpei Kawamoto
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# Build dev builds and upload them to Pixeldrain, then posts their links to Slack.
+#
+brew upgrade python
+pip3 install --upgrade pip setuptools wheel
+pip3 install slack-cli
+brew tap jkawamoto/pixeldrain
+brew install pixeldrain
+npm run dist
+
+URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.2.0-setup_x64.exe -n Goobox-0.2.0-setup_x64.exe)
+if [[ -n "$URL_WINDOWS_PACKAGE" ]]; then
+    echo "Windows dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_WINDOWS_PACKAGE" | slack-cli -d dev;
+fi
+
+URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.2.0.dmg -n Goobox-0.2.0.dmg)
+if [[ -n "$URL_MAC_PACKAGE" ]]; then
+    echo "Mac dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_MAC_PACKAGE" | slack-cli -d dev
+fi
+
+
+
