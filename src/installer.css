@@ -66,12 +66,14 @@ html {
 }
 
 .full-screen h1 {
+  color: white;
   font-size: 28px;
   font-weight: 300;
   margin: 0;
 }
 
 .full-screen p {
+  color: white;
   font-size: 18px;
   font-weight: 300;
 }
