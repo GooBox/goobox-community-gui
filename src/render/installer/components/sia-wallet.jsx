@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import {SleepTimeToShowCopyButton} from "../constants";
 import Sidebar from "./sidebar";
 
 const style = {
@@ -50,8 +51,6 @@ const style = {
     border: "solid 0.8px #dddddd",
   },
 };
-
-const SleepTimeToShowCopyButton = 2000;
 
 
 export class SiaWallet extends React.Component {
