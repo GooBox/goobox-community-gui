@@ -236,4 +236,5 @@ textarea {
   border: solid 1px #dddddd;
   padding: 1em;
   font-size: 14px;
+  box-shadow: 0 4px 16px 0 rgba(9, 28, 46, 0.3);
 }
