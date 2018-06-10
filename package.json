@@ -258,6 +258,10 @@
           "varsIgnorePattern": "^_",
           "caughtErrors": "none"
         }
+      ],
+      "eol-last": [
+        "error",
+        "always"
       ]
     }
   }
