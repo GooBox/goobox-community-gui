@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import {SleepTimeToShowCopyButton} from "../constants";
 import Sidebar from "./sidebar";
 
 const style = {
@@ -60,6 +61,20 @@ export class SiaWallet extends React.Component {
       addressCopied: false,
       seedCopied: false
     };
+    this._addressCopied = this._addressCopied.bind(this);
+    this._seedCopied = this._seedCopied.bind(this);
+  }
+
+  _addressCopied() {
+    this.setState({addressCopied: true}, () => {
+      setTimeout(() => this.setState({addressCopied: false}), SleepTimeToShowCopyButton);
+    });
+  }
+
+  _seedCopied() {
+    this.setState({seedCopied: true}, () => {
+      setTimeout(() => this.setState({seedCopied: false}), SleepTimeToShowCopyButton);
+    });
   }
 
   render() {
@@ -110,7 +125,7 @@ export class SiaWallet extends React.Component {
               <input id="address" className="form-control" readOnly={true}
                      type="text" style={style.input} value={this.props.address}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.address} onCopy={() => this.setState({addressCopied: true})}>
+                <CopyToClipboard text={this.props.address} onCopy={this._addressCopied}>
                   <button id="copy-address-btn" className="btn btn-light" type="button" style={style.copyButton}>
                     {copyAddressBtn}
                   </button>
@@ -132,7 +147,7 @@ export class SiaWallet extends React.Component {
               <textarea id="seed" className="form-control" readOnly={true}
                         style={style.textArea} value={this.props.seed}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.seed} onCopy={() => this.setState({seedCopied: true})}>
+                <CopyToClipboard text={this.props.seed} onCopy={this._seedCopied}>
                   <button id="copy-seed-btn" className="btn btn-light" type="button" style={style.copyButton}>
                     {copySeedBtn}
                   </button>

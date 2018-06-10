@@ -66,12 +66,14 @@ html {
 }
 
 .full-screen h1 {
+  color: white;
   font-size: 28px;
   font-weight: 300;
   margin: 0;
 }
 
 .full-screen p {
+  color: white;
   font-size: 18px;
   font-weight: 300;
 }
@@ -103,6 +105,7 @@ html {
 }
 
 main {
+  color: #4a4a4a;
   font-size: 18px;
   height: 600px;
   width: 612px;
@@ -110,12 +113,13 @@ main {
 }
 
 h1 {
+  color: #0c2543;
   font-size: 38px;
   margin-bottom: 39px;
 }
 
 p {
-  margin-bottom: 34px;
+  margin-bottom: 18px;
 }
 
 ::selection {
@@ -232,4 +236,5 @@ textarea {
   border: solid 1px #dddddd;
   padding: 1em;
   font-size: 14px;
+  box-shadow: 0 4px 16px 0 rgba(9, 28, 46, 0.3);
 }

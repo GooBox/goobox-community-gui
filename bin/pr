@@ -24,6 +24,8 @@ pip3 install --upgrade pip setuptools wheel
 pip3 install slack-cli
 brew tap jkawamoto/pixeldrain
 brew install pixeldrain
+
+rm -rf /Users/travis/Library/Caches/electron-builder
 npm run dist
 
 URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.2.0-setup_x64.exe -n Goobox-0.2.0-setup_x64.exe)
