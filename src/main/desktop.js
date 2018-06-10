@@ -60,7 +60,7 @@ export const register = async dir => {
         } catch (err) {
           return Promise.reject(err);
         }
-      })
+      });
 
     }));
 

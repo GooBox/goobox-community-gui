@@ -18,7 +18,7 @@
 import {app} from "electron";
 import {menubarMock} from "menubar";
 import notifier from "node-notifier";
-import path from "path"
+import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../../src/constants";
 import {getConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
@@ -26,7 +26,6 @@ import * as desktop from "../../src/main/desktop";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
-  closeWindowHandler,
   installerWindowAllClosedHandler,
   installJREHandler,
   openSyncFolderHandler,

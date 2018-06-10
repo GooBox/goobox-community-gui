@@ -86,7 +86,7 @@ export default class Storj extends EventEmitter {
           log.debug(`[GUI main] Received a storj event: ${e.method}`);
           this.emit(e.method, e.args);
         } else {
-          log.debug(`[GUI main] Received a response from sync-storj`);
+          log.debug("[GUI main] Received a response from sync-storj");
           this.emit("response", e);
         }
       } catch (err) {

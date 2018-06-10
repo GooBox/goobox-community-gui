@@ -31,4 +31,4 @@ export default function* stopSyncApps() {
     // TODO: error handling.
   }
   yield put(actions.processingEnd());
-};
+}

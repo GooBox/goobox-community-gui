@@ -16,7 +16,7 @@
  */
 
 import log from "electron-log";
-import {call, put} from 'redux-saga/effects';
+import {call, put} from "redux-saga/effects";
 import {Synchronizing} from "../../../constants";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";

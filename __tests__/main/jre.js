@@ -73,7 +73,7 @@ describe("installJRE function", () => {
 
     const err = "expected error";
     jre.install.mockImplementationOnce((callback) => {
-      callback(err)
+      callback(err);
     });
 
     await expect(installJRE()).rejects.toEqual(expect.any(String));
@@ -98,7 +98,7 @@ describe("installJRE function", () => {
 
     const err = "expected error";
     jre.install.mockImplementationOnce((callback) => {
-      callback(err)
+      callback(err);
     });
 
     await expect(installJRE()).rejects.toEqual(expect.any(String));

@@ -139,7 +139,7 @@ export const stopSyncAppsHandler = () => async () => {
 
 export const storjGenerateMnemonicHandler = () => async payload => {
 
-  log.info(`[GUI main] Generating a mnemonic code`);
+  log.info("[GUI main] Generating a mnemonic code");
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
@@ -213,7 +213,7 @@ export const startSynchronizationHandler = () => async payload => {
 
 export const installerWindowAllClosedHandler = (app) => async () => {
 
-  log.info(`[GUI main] Loading the config file`);
+  log.info("[GUI main] Loading the config file");
   try {
 
     const cfg = await getConfig();

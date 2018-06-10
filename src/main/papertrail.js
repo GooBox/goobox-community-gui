@@ -15,24 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*eslint no-console: 0*/
 import * as log from "electron-log";
 import util from "util";
-import winston from 'winston';
+import winston from "winston";
 
 export const initPapertrail = () => {
 
   // noinspection BadExpressionStatementJS
-  require('winston-papertrail').Papertrail;
+  require("winston-papertrail").Papertrail;
   const winstonPapertrail = new winston.transports.Papertrail({
-    host: 'logs.papertrailapp.com',
+    host: "logs.papertrailapp.com",
     port: Number.parseInt(process.env.PAPERTRAIL),
     program: "Goobox",
     level: "debug",
   });
 
-  winstonPapertrail.on('error', function (err) {
+  winstonPapertrail.on("error", function (err) {
     // Handle, report, or silently ignore connection errors and failures
-    console.log(err)
+    console.log(err);
   });
 
   const logger = winston.createLogger({
