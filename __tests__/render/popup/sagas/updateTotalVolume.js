@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("../../../../src/config");
 import {call, put} from "redux-saga/effects";
 import {getConfig} from "../../../../src/config";
 import {setTotalVolumeSize} from "../../../../src/render/popup/actions";
 import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVolume";
 
+jest.mock("../../../../src/config");
 
 describe("updateTotalVolume", () => {
 

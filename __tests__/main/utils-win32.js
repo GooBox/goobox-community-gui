@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("child_process");
-
 import {spawn, spawnSync} from "child_process";
 import * as path from "path";
 import {PassThrough} from "stream";
+
+jest.mock("child_process");
 
 describe("utils module in Windows", () => {
 

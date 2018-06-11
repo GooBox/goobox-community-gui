@@ -16,9 +16,6 @@
  */
 
 "use strict";
-jest.mock("child_process");
-jest.useFakeTimers();
-
 import {execSync, spawn} from "child_process";
 import yaml from "js-yaml";
 import jre from "node-jre";
@@ -26,6 +23,9 @@ import path from "path";
 import {PassThrough, Readable} from "stream";
 import {Idle, Synchronizing} from "../../src/constants";
 import Sia from "../../src/main/sia";
+
+jest.mock("child_process");
+jest.useFakeTimers();
 
 describe("Sia class", () => {
 

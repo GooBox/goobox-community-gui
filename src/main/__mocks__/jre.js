@@ -16,3 +16,5 @@
  */
 
 export const installJRE = jest.fn();
+
+export default installJRE;

@@ -67,6 +67,9 @@
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.9.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "font-awesome": "^4.7.0",
@@ -87,6 +90,7 @@
     "redux-logger": "^3.0.6",
     "redux-mock-store": "^1.5.1",
     "redux-saga": "^0.16.0",
+    "rmdir": "^1.2.0",
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
     "svg-url-loader": "^2.3.2",
@@ -218,7 +222,9 @@
       "jsdom": false
     },
     "extends": [
-      "eslint:recommended"
+      "airbnb",
+      "eslint:recommended",
+      "plugin:react/recommended"
     ],
     "parserOptions": {
       "ecmaVersion": 8,
@@ -262,7 +268,15 @@
       "eol-last": [
         "error",
         "always"
-      ]
+      ],
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": true,
+          "optionalDependencies": false
+        }
+      ],
+      "import/no-named-as-default": "off"
     }
   }
 }

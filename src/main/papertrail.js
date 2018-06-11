@@ -49,3 +49,5 @@ export const initPapertrail = () => {
   };
 
 };
+
+export default initPapertrail;

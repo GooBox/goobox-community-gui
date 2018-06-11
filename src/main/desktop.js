@@ -78,4 +78,6 @@ export const register = async dir => {
 
 };
 
+export default register;
+
 

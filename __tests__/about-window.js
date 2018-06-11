@@ -15,18 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("about-window");
-
 import openAboutWindow from "about-window";
 import showInfoWindowAsync from "../src/about-window";
 import icon from "../src/assets/goobox.svg";
 
+jest.mock("about-window");
 
 describe("showInfoWindowAsync function", () => {
 
   const on = jest.fn();
-  openAboutWindow.mockReturnValue({
-    on: on,
+  beforeAll(() => {
+    openAboutWindow.mockReturnValue({
+      on: on,
+    });
   });
 
   beforeEach(() => {

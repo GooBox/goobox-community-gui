@@ -14,14 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("electron");
-jest.mock("../../src/main/jre");
-jest.mock("../../src/main/desktop");
-jest.mock("../../src/main/config");
-jest.mock("../../src/main/utils");
-jest.mock("../../src/ipc/receiver");
-jest.mock("../../src/main/handlers");
-jest.useFakeTimers();
 
 import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
@@ -46,6 +38,15 @@ import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
+
+jest.mock("electron");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/desktop");
+jest.mock("../../src/main/config");
+jest.mock("../../src/main/utils");
+jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/handlers");
+jest.useFakeTimers();
 
 function getEventHandler(emitter, event) {
   return emitter.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];

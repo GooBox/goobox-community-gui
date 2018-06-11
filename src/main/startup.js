@@ -98,6 +98,8 @@ export const main = async () => {
 
 };
 
+export default main;
+
 app.on("ready", () => main().catch(err => {
   log.error(`[GUI main] ${err}`);
   app.quit();

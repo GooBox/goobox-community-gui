@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("os");
-
 import os from "os";
 import path from "path";
+
+jest.mock("os");
 
 describe("icons module in Windows 7-", () => {
 

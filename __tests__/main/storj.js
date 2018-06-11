@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 "use strict";
-jest.mock("child_process");
-jest.useFakeTimers();
-
 import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readLine from "readline";
 import {PassThrough} from "stream";
 import Storj from "../../src/main/storj";
+
+jest.mock("child_process");
+jest.useFakeTimers();
 
 describe("Storj class", () => {
 

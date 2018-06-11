@@ -15,13 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("child_process");
 import {execFileSync} from "child_process";
 import del from "del";
 import fs from "fs";
 import os from "os";
 import path from "path";
 import * as desktop from "../../src/main/desktop";
+
+jest.mock("child_process");
 
 describe("desktop module", () => {
 
