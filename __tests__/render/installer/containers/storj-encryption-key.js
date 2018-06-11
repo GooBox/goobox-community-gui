@@ -27,7 +27,7 @@ describe("mapStateToProps", () => {
         key: "xxx xxx xxxx"
       }
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       encryptionKey: main.storjAccount.key
     });
   });

@@ -14,14 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("electron");
-jest.mock("../../src/main/jre");
-jest.mock("../../src/main/desktop");
-jest.mock("../../src/main/config");
-jest.mock("../../src/main/utils");
-jest.mock("../../src/ipc/receiver");
-jest.mock("../../src/main/handlers");
-jest.useFakeTimers();
 
 import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
@@ -46,6 +38,15 @@ import {installJRE} from "../../src/main/jre";
 import Sia from "../../src/main/sia";
 import Storj from "../../src/main/storj";
 import utils from "../../src/main/utils";
+
+jest.mock("electron");
+jest.mock("../../src/main/jre");
+jest.mock("../../src/main/desktop");
+jest.mock("../../src/main/config");
+jest.mock("../../src/main/utils");
+jest.mock("../../src/ipc/receiver");
+jest.mock("../../src/main/handlers");
+jest.useFakeTimers();
 
 function getEventHandler(emitter, event) {
   return emitter.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];
@@ -91,7 +92,7 @@ describe("main process of the core app", () => {
     try {
       await core();
       expect(menubar).toHaveBeenCalledWith({
-        index: "file://" + path.join(__dirname, "../../static/popup.html"),
+        index: `file://${path.join(__dirname, "../../static/popup.html")}`,
         icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,
@@ -126,7 +127,7 @@ describe("main process of the core app", () => {
 
   it("prepare desktop integration", async () => {
     getConfig.mockReturnValue(Promise.resolve({
-      syncFolder: syncFolder,
+      syncFolder,
     }));
     await core();
     expect(desktop.register).toHaveBeenCalledWith(syncFolder);
@@ -134,7 +135,7 @@ describe("main process of the core app", () => {
 
   describe("system tray event handlers", () => {
 
-    const getTrayEventHandler = (event) => getEventHandler(menubarMock.tray, event);
+    const getTrayEventHandler = event => getEventHandler(menubarMock.tray, event);
     const menuItems = "sample menue items";
     const onClick = jest.fn();
 
@@ -157,7 +158,7 @@ describe("main process of the core app", () => {
         utils.openDirectory.mockReset();
         getConfig.mockReset();
         getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: syncFolder,
+          syncFolder,
         }));
       });
 
@@ -293,7 +294,7 @@ describe("main process of the core app", () => {
     it("starts the storj backend if storj conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         storj: true,
-        syncFolder: syncFolder,
+        syncFolder,
       }));
 
       await core();
@@ -333,7 +334,7 @@ describe("main process of the core app", () => {
     it("starts the sia backend if sia conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         sia: true,
-        syncFolder: syncFolder
+        syncFolder
       }));
 
       await core();

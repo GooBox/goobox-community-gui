@@ -15,4 +15,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*eslint import/prefer-default-export: 0*/
 export const SleepTimeToShowCopyButton = 1000;

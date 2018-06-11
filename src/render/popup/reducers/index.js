@@ -28,19 +28,19 @@ export const InitialState = {
 
 export default handleActions({
 
-  [constants.Pause]: (state) => ({
+  [constants.Pause]: state => ({
     ...state,
     state: Paused
   }),
-  [constants.Restart]: (state) => ({
+  [constants.Restart]: state => ({
     ...state,
     state: Synchronizing
   }),
-  [constants.Enable]: (state) => ({
+  [constants.Enable]: state => ({
     ...state,
     disabled: false
   }),
-  [constants.Disable]: (state) => ({
+  [constants.Disable]: state => ({
     ...state,
     disabled: true
   }),

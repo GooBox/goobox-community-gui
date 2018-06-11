@@ -34,7 +34,7 @@ describe("Status container", () => {
 
     it("passes state state", () => {
       const state = "sample state";
-      expect(mapStateToProps({state: state})).toHaveProperty("state", state);
+      expect(mapStateToProps({state})).toHaveProperty("state", state);
     });
 
     it("sets wait to style.cursor when disabled is true", () => {

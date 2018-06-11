@@ -54,7 +54,7 @@ export const installer = () => {
   }
   // noinspection SpellCheckingInspection
   const mainWindow = new BrowserWindow({
-    width: width,
+    width,
     height: DefaultHeight,
     useContentSize: true,
     resizable: false,
@@ -62,7 +62,7 @@ export const installer = () => {
     title: "Goobox installer",
     // skipTaskbar: true,
   });
-  mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
+  mainWindow.loadURL(`file://${path.join(__dirname, "../../static/installer.html")}`);
 
   if (process.env.DEV_TOOLS) {
     mainWindow.toggleDevTools();

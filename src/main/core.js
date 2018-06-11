@@ -51,17 +51,17 @@ export const core = async () => {
   }
 
   const mb = menubar({
-    index: "file://" + path.join(__dirname, "../../static/popup.html"),
+    index: `file://${path.join(__dirname, "../../static/popup.html")}`,
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
-    width: width,
-    height: DefaultHeight,
     alwaysOnTop: true,
     showDockIcon: false,
+    width,
+    height: DefaultHeight,
   });
   mb.window.setSkipTaskbar(true);
-  mb.app.on('window-all-closed', app.quit);
+  mb.app.on("window-all-closed", app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
   mb.appState = Synchronizing;

@@ -26,7 +26,7 @@ describe("mapStateToProps", () => {
 
   it("maps nothing", () => {
     expect(mapStateToProps()).toEqual({});
-  })
+  });
 
 });
 

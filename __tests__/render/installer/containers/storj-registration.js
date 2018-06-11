@@ -36,7 +36,7 @@ describe("mapStateToProps", () => {
       },
       folder: "/tmp"
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main.storjAccount,
       processing: main.processing,
       syncFolder: main.folder,
@@ -66,7 +66,7 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClickNext(syncFolder, info);
     expect(dispatch).toHaveBeenCalledWith(actions.storjCreateAccount({
       ...info,
-      syncFolder: syncFolder,
+      syncFolder,
     }));
   });
 

@@ -21,7 +21,7 @@ import * as actions from "../actions";
 import StorjRegistration from "../components/storj-registration";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   processing: state.main.processing,
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
@@ -29,13 +29,13 @@ export const mapStateToProps = (state) => ({
   syncFolder: state.main.folder,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
   onClickNext: (syncFolder, accountInfo) => dispatch(actions.storjCreateAccount({
     ...accountInfo,
-    syncFolder: syncFolder,
+    syncFolder,
   })),
 
   onClickLogin: () => dispatch(push(screens.StorjLogin)),

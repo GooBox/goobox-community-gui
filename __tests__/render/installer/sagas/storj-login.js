@@ -39,7 +39,7 @@ describe("storjLogin", () => {
   beforeEach(() => {
     action = {
       payload: {
-        storjAccount: storjAccount,
+        storjAccount,
         sia: true,
         folder: dir,
       }

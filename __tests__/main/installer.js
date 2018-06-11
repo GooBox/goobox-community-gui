@@ -19,7 +19,6 @@ import {execFileSync} from "child_process";
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
 import path from "path";
-import "../../src/ipc/actions";
 import * as actionTypes from "../../src/ipc/constants";
 import addListener from "../../src/ipc/receiver";
 import {getConfig} from "../../src/main/config";
@@ -32,7 +31,6 @@ import {
   storjGenerateMnemonicHandler,
   storjLoginHandler
 } from "../../src/main/handlers";
-import "../../src/main/installer";
 import {installer} from "../../src/main/installer";
 
 jest.mock("child_process");
@@ -89,7 +87,7 @@ describe("installer", () => {
 
   it("loads static/installer.html", () => {
     installer();
-    expect(mockLoadURL).toHaveBeenCalledWith("file://" + path.join(__dirname, "../../static/installer.html"));
+    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../static/installer.html")}`);
   });
 
   it("registers installerWindowAllClosedHandler", () => {

@@ -23,7 +23,7 @@ describe("closeWindow", () => {
 
   it("yields close method of the current window", () => {
     const close = jest.fn();
-    remote.getCurrentWindow.mockReturnValue({close: close});
+    remote.getCurrentWindow.mockReturnValue({close});
     const saga = closeWindow();
     expect(saga.next().value).toEqual(call(remote.getCurrentWindow().close));
     expect(saga.next().done).toBeTruthy();

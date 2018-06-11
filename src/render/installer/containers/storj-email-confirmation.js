@@ -22,7 +22,7 @@ import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjEncryptionKey)),
 

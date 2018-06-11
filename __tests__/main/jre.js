@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-jest.mock("fs");
-jest.mock("del");
-jest.useFakeTimers();
-
 import del from "del";
 import fs from "fs";
 import jre from "node-jre";
 import path from "path";
 import {installJRE} from "../../src/main/jre";
+
+jest.mock("fs");
+jest.mock("del");
+jest.useFakeTimers();
 
 describe("installJRE function", () => {
 
@@ -73,7 +73,7 @@ describe("installJRE function", () => {
 
     const err = "expected error";
     jre.install.mockImplementationOnce((callback) => {
-      callback(err)
+      callback(err);
     });
 
     await expect(installJRE()).rejects.toEqual(expect.any(String));
@@ -98,7 +98,7 @@ describe("installJRE function", () => {
 
     const err = "expected error";
     jre.install.mockImplementationOnce((callback) => {
-      callback(err)
+      callback(err);
     });
 
     await expect(installJRE()).rejects.toEqual(expect.any(String));

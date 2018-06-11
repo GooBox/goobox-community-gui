@@ -32,7 +32,7 @@ describe("mapStateToProps", () => {
       sia: true,
       folder: "/tmp",
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main,
       mainState: main,
     });

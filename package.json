@@ -13,6 +13,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "npm test -- --coverage",
     "coveralls": "cat coverage/lcov.info | coveralls",
+    "check": "eslint src __tests__ __mocks__",
     "check-update": "ncu -u",
     "pack": "electron-builder -wm --dir",
     "dist": "run-s dist:pre dist:build dist:post",
@@ -65,6 +66,11 @@
     "electron-log": "^2.2.14",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.9.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
@@ -84,6 +90,7 @@
     "redux-logger": "^3.0.6",
     "redux-mock-store": "^1.5.1",
     "redux-saga": "^0.16.0",
+    "rmdir": "^1.2.0",
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
     "svg-url-loader": "^2.3.2",
@@ -201,6 +208,93 @@
       "deleteAppDataOnUninstall": true,
       "artifactName": "${productName}-${version}-setup_x64.${ext}",
       "include": "vendor/win/installer.nsi"
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "commonjs": true,
+      "es6": true,
+      "jest": true
+    },
+    "globals": {
+      "jsdom": false
+    },
+    "extends": [
+      "airbnb",
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 8,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true,
+        "jsx": true
+      },
+      "sourceType": "module"
+    },
+    "plugins": [
+      "react"
+    ],
+    "rules": {
+      "indent": [
+        "error",
+        2,
+        {
+          "SwitchCase": 1
+        }
+      ],
+      "linebreak-style": [
+        "error",
+        "unix"
+      ],
+      "quotes": [
+        "error",
+        "double"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ],
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrors": "none"
+        }
+      ],
+      "eol-last": [
+        "error",
+        "always"
+      ],
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": true,
+          "optionalDependencies": false
+        }
+      ],
+      "import/no-named-as-default": "off",
+      "arrow-body-style": "error",
+      "arrow-parens": "error",
+      "arrow-spacing": "error",
+      "generator-star-spacing": "error",
+      "no-duplicate-imports": "error",
+      "no-useless-computed-key": "error",
+      "no-useless-constructor": "error",
+      "no-useless-rename": "error",
+      "no-var": "error",
+      "object-shorthand": "error",
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "prefer-rest-params": "error",
+      "prefer-spread": "error",
+      "prefer-template": "error",
+      "rest-spread-spacing": "error",
+      "template-curly-spacing": "error",
+      "yield-star-spacing": "error"
     }
   }
 }

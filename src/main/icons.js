@@ -22,10 +22,10 @@ import semver from "semver";
 
 export const icons = {};
 
-if (process.platform === 'darwin') {
+if (process.platform === "darwin") {
 
   // mac
-  const getIcon = name => {
+  const getIcon = (name) => {
     if (systemPreferences.isDarkMode()) {
       return path.join(__dirname, `../../resources/mac/dark/${name}.png`);
     }
@@ -41,12 +41,12 @@ if (process.platform === 'darwin') {
 
   // windows
   let version = os.release();
-  if (version.split('.').length === 2) {
-    version += '.0';
+  if (version.split(".").length === 2) {
+    version += ".0";
   }
 
   let idleIcon, syncIcon, pausedIcon, errorIcon, warnIcon;
-  if (semver.satisfies(version, '<6.2')) {
+  if (semver.satisfies(version, "<6.2")) {
     // windows7 or older.
     idleIcon = path.join(__dirname, "../../resources/win7/idle.png");
     syncIcon = path.join(__dirname, "../../resources/win7/sync.png");
