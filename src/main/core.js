@@ -51,14 +51,14 @@ export const core = async () => {
   }
 
   const mb = menubar({
-    index: "file://" + path.join(__dirname, "../../static/popup.html"),
+    index: `file://${path.join(__dirname, "../../static/popup.html")}`,
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
-    width: width,
-    height: DefaultHeight,
     alwaysOnTop: true,
     showDockIcon: false,
+    width,
+    height: DefaultHeight,
   });
   mb.window.setSkipTaskbar(true);
   mb.app.on("window-all-closed", app.quit);

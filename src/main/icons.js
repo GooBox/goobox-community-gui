@@ -25,7 +25,7 @@ export const icons = {};
 if (process.platform === "darwin") {
 
   // mac
-  const getIcon = name => {
+  const getIcon = (name) => {
     if (systemPreferences.isDarkMode()) {
       return path.join(__dirname, `../../resources/mac/dark/${name}.png`);
     }

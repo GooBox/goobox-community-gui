@@ -21,13 +21,13 @@ import * as actions from "../actions";
 import SiaWallet from "../components/sia-wallet";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   address: state.main.siaAccount.address,
   seed: state.main.siaAccount.seed,
   mainState: state.main,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: (mainState) => {
     if (mainState.storj) {

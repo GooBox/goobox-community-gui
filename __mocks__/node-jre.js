@@ -29,9 +29,9 @@ install.mockImplementation((callback) => {
 jreDir.mockReturnValue("/tmp/jre");
 
 const jre = {
-  driver: driver,
-  install: install,
-  jreDir: jreDir,
-  setJreDir: setJreDir,
+  driver,
+  install,
+  jreDir,
+  setJreDir,
 };
 export default jre;

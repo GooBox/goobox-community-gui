@@ -31,7 +31,7 @@ export const initPapertrail = () => {
     level: "debug",
   });
 
-  winstonPapertrail.on("error", function (err) {
+  winstonPapertrail.on("error", (err) => {
     // Handle, report, or silently ignore connection errors and failures
     console.log(err);
   });
@@ -40,8 +40,8 @@ export const initPapertrail = () => {
     transports: [winstonPapertrail]
   });
 
-  log.transports.console = function (msg) {
-    const text = util.format.apply(util, msg.data);
+  log.transports.console = (msg) => {
+    const text = util.format(...msg.data);
     console.log(`${msg.date.toISOString()} [${msg.level}] ${text}`);
     if (logger[msg.level]) {
       logger[msg.level](text);

@@ -26,7 +26,7 @@ describe("mapStateToProps", () => {
     const main = {
       processing: true,
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       processing: true,
     });
   });

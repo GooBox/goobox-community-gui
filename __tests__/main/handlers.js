@@ -154,7 +154,7 @@ describe("event handlers", () => {
       it("opens the sync folder", async () => {
         const syncFolder = "/tmp";
         getConfig.mockResolvedValue({
-          syncFolder: syncFolder,
+          syncFolder,
         });
 
         await expect(handler()).resolves.not.toBeDefined();
@@ -175,7 +175,7 @@ describe("event handlers", () => {
       it("calculate the volume of the sync folder", async () => {
         const syncFolder = "/tmp";
         getConfig.mockResolvedValue({
-          syncFolder: syncFolder,
+          syncFolder,
         });
 
         const volume = 1234567;
@@ -305,8 +305,8 @@ describe("event handlers", () => {
       it("creates a sia instance, calls the wallet method of the sia instance, and returns the result", async () => {
         expect(global.sia).not.toBeDefined();
         await expect(handler({syncFolder: dir})).resolves.toEqual({
-          address: address,
-          seed: seed,
+          address,
+          seed,
         });
         expect(global.sia).toBeDefined();
         expect(wallet).toHaveBeenCalledWith();
@@ -316,8 +316,8 @@ describe("event handlers", () => {
         const sia = new Sia();
         global.sia = sia;
         await expect(handler({syncFolder: dir})).resolves.toEqual({
-          address: address,
-          seed: seed,
+          address,
+          seed,
         });
         expect(global.sia).toBe(sia);
         expect(wallet).toHaveBeenCalledWith();
@@ -349,7 +349,7 @@ describe("event handlers", () => {
       it("calls storj.close and deletes global.storj if exists", async () => {
         const close = jest.fn();
         global.storj = {
-          close: close
+          close
         };
         await expect(handler());
         expect(close).toHaveBeenCalled();
@@ -359,7 +359,7 @@ describe("event handlers", () => {
       it("calls sia.close and deletes global.sia if exists", async () => {
         const close = jest.fn();
         global.sia = {
-          close: close
+          close
         };
         await expect(handler());
         expect(close).toHaveBeenCalled();
@@ -434,8 +434,8 @@ describe("event handlers", () => {
       const key = "xxx xxx xxx";
       const dir = "/tmp";
       const payload = {
-        email: email,
-        password: password,
+        email,
+        password,
         encryptionKey: key,
         syncFolder: dir,
       };
@@ -540,9 +540,9 @@ describe("event handlers", () => {
       it("starts Storj instance with reset option, calls createAccount method, and returns a key", async () => {
         expect(global.storj).not.toBeDefined();
         await expect(handler({
-          email: email,
-          password: password,
-          syncFolder: syncFolder,
+          email,
+          password,
+          syncFolder,
         })).resolves.toEqual(key);
         expect(global.storj).toBeDefined();
         expect(start).toHaveBeenCalledWith(syncFolder, true);
@@ -556,9 +556,9 @@ describe("event handlers", () => {
         global.storj.close = close;
 
         await expect(handler({
-          email: email,
-          password: password,
-          syncFolder: syncFolder,
+          email,
+          password,
+          syncFolder,
         })).resolves.toEqual(key);
         expect(close).toHaveBeenCalled();
         expect(global.storj).toBeDefined();
@@ -571,9 +571,9 @@ describe("event handlers", () => {
         createAccount.mockRejectedValue(err);
 
         await expect(handler({
-          email: email,
-          password: password,
-          syncFolder: syncFolder,
+          email,
+          password,
+          syncFolder,
         })).rejects.toEqual(err);
         expect(start).toHaveBeenCalledWith(syncFolder, true);
         expect(createAccount).toHaveBeenCalledWith(email, password);
@@ -666,7 +666,7 @@ describe("event handlers", () => {
       it("closes the sync storj app if running in spite of the installation is canceled", async () => {
         const close = jest.fn().mockResolvedValue(null);
         global.storj = {
-          close: close
+          close
         };
         getConfig.mockResolvedValue({
           installed: false
@@ -681,7 +681,7 @@ describe("event handlers", () => {
       it("closes the sync sia app if running in spite of the installation is canceled", async () => {
         const close = jest.fn().mockResolvedValue(null);
         global.sia = {
-          close: close
+          close
         };
         getConfig.mockResolvedValue({
           installed: false
@@ -773,10 +773,10 @@ describe("event handlers", () => {
 
       it("notifies the user that his/her funds are insufficient", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "InsufficientFunds", message: message})).resolves.not.toBeDefined();
+        await expect(handler({eventType: "InsufficientFunds", message})).resolves.not.toBeDefined();
         expect(notifier.notify).toHaveBeenCalledWith({
           title: "Goobox",
-          message: message,
+          message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
@@ -786,10 +786,10 @@ describe("event handlers", () => {
 
       it("notifies the user that a fund allocation has been succeeded", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "Allocated", message: message})).resolves.not.toBeDefined();
+        await expect(handler({eventType: "Allocated", message})).resolves.not.toBeDefined();
         expect(notifier.notify).toHaveBeenCalledWith({
           title: "Goobox",
-          message: message,
+          message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,
@@ -799,10 +799,10 @@ describe("event handlers", () => {
 
       it("notifies the user when an error occurs", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "Error", message: message})).resolves.not.toBeDefined();
+        await expect(handler({eventType: "Error", message})).resolves.not.toBeDefined();
         expect(notifier.notify).toHaveBeenCalledWith({
           title: "Goobox",
-          message: message,
+          message,
           icon: path.join(__dirname, "../../resources/goobox.png"),
           sound: true,
           wait: true,

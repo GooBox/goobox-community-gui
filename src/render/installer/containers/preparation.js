@@ -18,7 +18,7 @@
 import {connect} from "react-redux";
 import Preparation from "../components/preparation";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   progress: state.main.progress,
   errorMsg: state.main.errorMsg
 });

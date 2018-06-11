@@ -26,7 +26,7 @@ describe("showInfoWindowAsync function", () => {
   const on = jest.fn();
   beforeAll(() => {
     openAboutWindow.mockReturnValue({
-      on: on,
+      on,
     });
   });
 

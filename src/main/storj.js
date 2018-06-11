@@ -62,7 +62,7 @@ export default class Storj extends EventEmitter {
       env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`;
       this.proc = spawn(this._cmd, args, {
         cwd: this._wd,
-        env: env,
+        env,
         shell: true,
         windowsHide: true,
       });
@@ -72,14 +72,14 @@ export default class Storj extends EventEmitter {
       env.PATH = `${this._wd}:${this._javaHome}/bin:${env.PATH || env.Path}`;
       this.proc = spawn("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", ...args], {
         cwd: this._wd,
-        env: env,
+        env,
         shell: true,
         windowsHide: true,
       });
 
     }
 
-    readLine.createInterface({input: this.proc.stdout}).on("line", line => {
+    readLine.createInterface({input: this.proc.stdout}).on("line", (line) => {
       try {
         const e = JSON.parse(line);
         if (e.method) {
@@ -120,14 +120,14 @@ export default class Storj extends EventEmitter {
     }
 
     return Promise.race([
-      new Promise(resolve => {
+      new Promise((resolve) => {
         this.once("response", resolve);
         const req = JSON.stringify(request);
         log.debug(`[GUI main] Sending a ${name} request to sync storj: ${req}`);
         this.proc.stdin.write(`${req}\n`);
       }),
       new Promise((_, reject) => setTimeout(reject.bind(null, `${name} request timed out`), DefaultTimeout))
-    ]).then(res => {
+    ]).then((res) => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
       }
@@ -140,11 +140,7 @@ export default class Storj extends EventEmitter {
 
     await this._sendRequest("Login", {
       method: "login",
-      args: {
-        email: email,
-        password: password,
-        encryptionKey: encryptionKey,
-      }
+      args: {email, password, encryptionKey}
     });
 
   }
@@ -153,10 +149,7 @@ export default class Storj extends EventEmitter {
 
     const res = await this._sendRequest("Registration", {
       method: "createAccount",
-      args: {
-        email: email,
-        password: password,
-      }
+      args: {email, password}
     });
     return res.encryptionKey;
 
@@ -166,9 +159,7 @@ export default class Storj extends EventEmitter {
 
     await this._sendRequest("Validate the encryption key", {
       method: "checkMnemonic",
-      args: {
-        encryptionKey: encryptionKey,
-      }
+      args: {encryptionKey}
     });
 
   }
@@ -198,7 +189,7 @@ export default class Storj extends EventEmitter {
       this._sendRequest("Quit", {
         method: "quit",
       }),
-      new Promise(resolve => {
+      new Promise((resolve) => {
         this.proc.once("close", () => {
           log.info("[GUI main] Streams of sync-storj are closed");
           resolve();

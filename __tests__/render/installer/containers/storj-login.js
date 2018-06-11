@@ -34,7 +34,7 @@ describe("mapStateToProps", () => {
         warnMsg: "warning",
       }
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       processing: main.processing,
       encryptionKey: main.storjAccount.key,
       emailWarn: main.storjAccount.emailWarn,
@@ -113,7 +113,7 @@ describe("mergeProps", () => {
   };
 
   beforeEach(() => {
-    for (let m in dispatchProps) {
+    for (const m in dispatchProps) {
       dispatchProps[m].mockClear();
     }
   });

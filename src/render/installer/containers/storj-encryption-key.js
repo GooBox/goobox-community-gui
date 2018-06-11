@@ -20,11 +20,11 @@ import {push} from "react-router-redux";
 import StorjEncryptionKey from "../components/storj-encryption-key";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   encryptionKey: state.main.storjAccount.key,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjRegistration)),
 

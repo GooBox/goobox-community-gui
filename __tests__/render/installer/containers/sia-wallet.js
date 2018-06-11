@@ -29,7 +29,7 @@ describe("mapStateToProps", () => {
         seed: "xxx xxx xxx",
       }
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main.siaAccount,
       mainState: main,
     });

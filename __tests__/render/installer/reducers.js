@@ -90,7 +90,7 @@ describe("reducer", () => {
     const folder = "/tmp/dir";
     expect(reducer(state, actions.selectFolder(folder))).toEqual({
       ...state,
-      folder: folder,
+      folder,
     });
   });
 

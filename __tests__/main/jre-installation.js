@@ -26,7 +26,7 @@ describe("JRE installation test on Windows", () => {
 
   if (process.platform === "win32") {
 
-    it("installs JRE", callback => {
+    it("installs JRE", (callback) => {
       rmDir(jre.jreDir(), (err) => {
 
         console.log(`Deleting JRE directory: ${err || "ok"}`);

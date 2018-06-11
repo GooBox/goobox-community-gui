@@ -18,7 +18,7 @@
 import {connect} from "react-redux";
 import SiaSettingUp from "../components/sia-setting-up";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   progress: state.main.progress,
   errorMsg: state.main.errorMsg
 });

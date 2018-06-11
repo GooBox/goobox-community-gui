@@ -92,7 +92,7 @@ describe("main process of the core app", () => {
     try {
       await core();
       expect(menubar).toHaveBeenCalledWith({
-        index: "file://" + path.join(__dirname, "../../static/popup.html"),
+        index: `file://${path.join(__dirname, "../../static/popup.html")}`,
         icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,
@@ -127,7 +127,7 @@ describe("main process of the core app", () => {
 
   it("prepare desktop integration", async () => {
     getConfig.mockReturnValue(Promise.resolve({
-      syncFolder: syncFolder,
+      syncFolder,
     }));
     await core();
     expect(desktop.register).toHaveBeenCalledWith(syncFolder);
@@ -135,7 +135,7 @@ describe("main process of the core app", () => {
 
   describe("system tray event handlers", () => {
 
-    const getTrayEventHandler = (event) => getEventHandler(menubarMock.tray, event);
+    const getTrayEventHandler = event => getEventHandler(menubarMock.tray, event);
     const menuItems = "sample menue items";
     const onClick = jest.fn();
 
@@ -158,7 +158,7 @@ describe("main process of the core app", () => {
         utils.openDirectory.mockReset();
         getConfig.mockReset();
         getConfig.mockReturnValue(Promise.resolve({
-          syncFolder: syncFolder,
+          syncFolder,
         }));
       });
 
@@ -294,7 +294,7 @@ describe("main process of the core app", () => {
     it("starts the storj backend if storj conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         storj: true,
-        syncFolder: syncFolder,
+        syncFolder,
       }));
 
       await core();
@@ -334,7 +334,7 @@ describe("main process of the core app", () => {
     it("starts the sia backend if sia conf is true but not running", async () => {
       getConfig.mockReturnValue(Promise.resolve({
         sia: true,
-        syncFolder: syncFolder
+        syncFolder
       }));
 
       await core();

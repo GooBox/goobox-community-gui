@@ -72,8 +72,8 @@ describe("utils module in Windows", () => {
         }
       });
       spawn.mockReturnValue({
-        stdout: stdout,
-        on: on,
+        stdout,
+        on,
       });
 
       const volume = await utils.totalVolume(dir);

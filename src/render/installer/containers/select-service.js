@@ -21,11 +21,11 @@ import * as actions from "../actions";
 import ServiceSelector from "../components/select-service";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   processing: state.main.processing
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onSelectStorj: () => {
     dispatch(actions.selectStorj());
