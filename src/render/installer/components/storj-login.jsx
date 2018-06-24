@@ -23,9 +23,7 @@ import styled from "styled-components";
 import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar"
 
-const InputBox = styled.input.attrs({
-  type: "text",
-})`
+const InputBox = styled.input`
   width: 489px;
   height: 48px;
   border-radius: 2.9px;
@@ -100,14 +98,16 @@ export class StorjLogin extends React.Component {
           <h1>Login to your Storj account</h1>
           <div className="form-group">
             <label htmlFor="email">Email address</label>
-            <InputBox id="email" className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
+            <InputBox id="email" type="text"
+                      className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
                       value={this.state.email}
                       onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
             <div className="invalid-feedback">Please enter a valid email address</div>
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <InputBox id="password" className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
+            <InputBox id="password" type="password"
+                      className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
                       value={this.state.password}
                       onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
             <div className="invalid-feedback">Please enter the correct password</div>
