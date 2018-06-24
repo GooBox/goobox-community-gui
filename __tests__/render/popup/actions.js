@@ -80,4 +80,16 @@ describe("actions of popup module", () => {
     });
   });
 
+  it("provides open settings action", () => {
+    expect(actions.openSettings()).toEqual({
+      type: constants.OpenSettings,
+    });
+  });
+
+  it("provides import drive action", () => {
+    expect(actions.importDrive()).toEqual({
+      type: constants.ImportDrive,
+    });
+  });
+
 });

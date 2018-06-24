@@ -24,3 +24,5 @@ export const OpenSyncFolder = "OpenSyncFolder";
 export const OpenAboutWindow = "OpenAboutWindow";
 export const Disable = "Disable";
 export const Enable = "Enable";
+export const OpenSettings = "OpenSettings";
+export const ImportDrive = "ImportDrive";
