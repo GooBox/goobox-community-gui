@@ -19,21 +19,26 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
+import styled from "styled-components";
 import {BlueButton, WhiteButton} from "./buttons";
-import Sidebar from "./sidebar";
+import Sidebar from "./sidebar"
 
-const style = {
-  input: {
-    width: "489px",
-    height: "48px",
-    borderRadius: "2.9px",
-    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
-    backgroundColor: "#ffffff",
-  },
-  genSeedButton: {
-    padding: 0,
-  }
-};
+const InputBox = styled.input.attrs({
+  type: "text",
+})`
+  width: 489px;
+  height: 48px;
+  border-radius: 2.9px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
+  background-color: #ffffff;
+`;
+
+const GenSeedButton = styled.button.attrs({
+  className: "btn btn-link",
+  type: "button",
+})`
+  padding: 0;
+`;
 
 export class StorjLogin extends React.Component {
 
@@ -95,16 +100,16 @@ export class StorjLogin extends React.Component {
           <h1>Login to your Storj account</h1>
           <div className="form-group">
             <label htmlFor="email">Email address</label>
-            <input id="email" className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
-                   type="text" style={style.input} value={this.state.email}
-                   onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
+            <InputBox id="email" className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
+                      value={this.state.email}
+                      onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
             <div className="invalid-feedback">Please enter a valid email address</div>
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input id="password" className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
-                   type="password" style={style.input} value={this.state.password}
-                   onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
+            <InputBox id="password" className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
+                      value={this.state.password}
+                      onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
             <div className="invalid-feedback">Please enter the correct password</div>
           </div>
           <div className="form-group">
@@ -116,13 +121,13 @@ export class StorjLogin extends React.Component {
                   <span>If you already have a encryption key for Goobox please enter it, otherwise click on "Generate".</span>
                 </Popover>
               </label>
-              <button id="generate-mnemonic-btn" type="button" className="btn btn-link" style={style.genSeedButton}
-                      onClick={() => this.props.processing || this.props.onClickGenerateSeed()}>generate seed
-              </button>
+              <GenSeedButton id="generate-mnemonic-btn"
+                             onClick={() => this.props.processing || this.props.onClickGenerateSeed()}>generate seed
+              </GenSeedButton>
             </div>
-            <input id="key" className={classNames("form-control", {"is-invalid": this.state.keyWarn})}
-                   type="text" style={style.input} value={this.state.key}
-                   onChange={e => this.props.processing || this.setState({key: e.target.value})}/>
+            <InputBox id="key" className={classNames("form-control", {"is-invalid": this.state.keyWarn})}
+                      value={this.state.key}
+                      onChange={e => this.props.processing || this.setState({key: e.target.value})}/>
             <div className="invalid-feedback">Please enter the correct encryption key</div>
           </div>
           <div className="mt-auto d-flex justify-content-between">
