@@ -17,60 +17,34 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import {Paused, Synchronizing} from "../../../constants";
+import Footer from "./footer";
 import Header from "./header";
 
-export default function Status(props) {
+export const Status = (props) => (
 
-  const rate = props.totalVolume && Math.round(props.usedVolume / props.totalVolume * 100);
-  let pauseRestartBtn;
-  if (props.state === Synchronizing) {
-    pauseRestartBtn = (
-      <a className="pause-sync-btn"
-         onClick={() => props.onChangeState && props.onChangeState(Paused)}>
-        <i className="state-icon far fa-pause-circle"/>
-        &nbsp;
-        <span className="state-text">Goobox is up to date.</span>
+  <main style={props.style} className="d-flex flex-column">
+
+    <Header onClickSettings={props.onClickSettings} onClickInfo={props.onClickInfo}/>
+
+    <section className="d-flex flex-column p-3">
+      <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
+         onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
+        <i className="fas fa-folder-open mr-2"/>
+        <span className="bold">Open my folder</span>
       </a>
-    );
-  } else {
-    pauseRestartBtn = (
-      <a className="sync-again-btn"
-         onClick={() => props.onChangeState && props.onChangeState(Synchronizing)}>
-        <i className="state-icon far fa-play-circle"/>
-        &nbsp;
-        <span className="state-text">File transfers paused.</span>
-      </a>
-    );
-  }
+      {/*<a id="import-drive" className="btn btn-light d-flex align-items-center"*/}
+      {/*onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>*/}
+      {/*<i className="fas fa-cloud-upload-alt mr-2"/>*/}
+      {/*<span className="bold">Import drive</span>*/}
+      {/*</a>*/}
+    </section>
 
-  return (
-    <main style={props.style} className="d-flex flex-column">
+    <Footer usedVolume={props.usedVolume} totalVolume={props.totalVolume} state={props.state}
+            onChangeState={props.onChangeState}/>
 
-      <Header onClickSettings={props.onClickSettings} onClickInfo={props.onClickInfo}/>
+  </main>
 
-      <section className="d-flex flex-column p-3">
-        <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
-           onClick={() => props.onClickSyncFolder && props.onClickSyncFolder()}>
-          <i className="fas fa-folder-open mr-2"/>
-          <span className="bold">Open my folder</span>
-        </a>
-        {/*<a id="import-drive" className="btn btn-light d-flex align-items-center"*/}
-        {/*onClick={() => props.onClickImportDrive && props.onClickImportDrive()}>*/}
-        {/*<i className="fas fa-cloud-upload-alt mr-2"/>*/}
-        {/*<span className="bold">Import drive</span>*/}
-        {/*</a>*/}
-      </section>
-
-      <footer className="d-flex px-3 py-2 mt-auto">
-        {pauseRestartBtn}
-        <span className="usage-rate ml-auto">Using {rate}% of {props.totalVolume}GB</span>
-      </footer>
-
-    </main>
-  );
-}
-
+);
 
 Status.propTypes = {
   usedVolume: PropTypes.number,
@@ -82,3 +56,5 @@ Status.propTypes = {
   onClickSyncFolder: PropTypes.func,
   onClickImportDrive: PropTypes.func,
 };
+
+export default Status;

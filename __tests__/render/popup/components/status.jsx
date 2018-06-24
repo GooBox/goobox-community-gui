@@ -18,6 +18,7 @@
 import {shallow} from "enzyme";
 import React from "react";
 import {Paused, Synchronizing} from "../../../../src/constants";
+import {Footer} from "../../../../src/render/popup/components/footer";
 import {Header} from "../../../../src/render/popup/components/header";
 import Status from "../../../../src/render/popup/components/status";
 
@@ -40,34 +41,6 @@ describe("Status component", () => {
     wrapper = shallow(<Status usedVolume={used} totalVolume={total} state={Synchronizing} onChangeState={onChangeState}
                               onClickSettings={onClickSettings}
                               onClickInfo={onClickInfo} onClickSyncFolder={onClickSyncFolder}/>);
-  });
-
-  it("has a synchronized icon and text when the state is synchronizing", () => {
-    expect(wrapper.find(".state-icon").hasClass("fa-pause-circle")).toBeTruthy();
-    expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
-  });
-
-  it("has a paused icon and text when the state is paused", () => {
-    wrapper.setProps({state: Paused});
-    expect(wrapper.find(".state-icon").hasClass("fa-play-circle")).toBeTruthy();
-    expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
-  });
-
-  it("has a pause button when the state is synchronizing", () => {
-    const pause = wrapper.find(".pause-sync-btn");
-    expect(pause.exists()).toBeTruthy();
-
-    pause.simulate("click");
-    expect(onChangeState).toHaveBeenCalledWith("paused");
-  });
-
-  it("has a restart button when the state is paused", () => {
-    wrapper.setProps({state: Paused});
-    const restart = wrapper.find(".sync-again-btn");
-    expect(restart.exists()).toBeTruthy();
-
-    restart.simulate("click");
-    expect(onChangeState).toHaveBeenCalledWith(Synchronizing);
   });
 
   it("has a header", () => {
@@ -97,10 +70,15 @@ describe("Status component", () => {
   //   expect(fn).toHaveBeenCalledTimes(1);
   // });
 
-  it("has a usage percentage box", () => {
-    const usage = wrapper.find(".usage-rate");
-    expect(usage.exists()).toBeTruthy();
-    expect(usage.text()).toEqual(`Using ${Math.round(used / total * 100)}% of ${total}GB`);
+  it("has a footer", () => {
+    const footer = wrapper.find(Footer);
+    expect(footer.exists()).toBeTruthy();
+    expect(footer.prop("usedVolume")).toEqual(used);
+    expect(footer.prop("totalVolume")).toEqual(total);
+    expect(footer.prop("state")).toEqual(Synchronizing);
+
+    footer.prop("onChangeState")(Paused);
+    expect(onChangeState).toHaveBeenCalledWith(Paused);
   });
 
 });
