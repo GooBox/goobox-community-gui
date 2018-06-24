@@ -20,38 +20,43 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import styled from "styled-components";
 import {SleepTimeToShowCopyButton} from "../constants";
 import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
-const style = {
-  input: {
-    height: "52px",
-    border: "solid 0.8px #dddddd",
-    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
-    backgroundColor: "#ffffff",
-  },
-  textArea: {
-    height: "149px",
-    border: "solid 0.8px #dddddd",
-    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
-    backgroundColor: "#ffffff",
-  },
-  copyButton: {
-    width: "65px",
-    border: "solid 0.8px #dddddd",
-    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
-    fontSize: "15px",
-    textAlign: "center",
-    backgroundColor: "#ffffff",
-  },
-  button: {
-    width: "239.1px",
-    height: "47.3px",
-    borderRadius: "3.2px",
-    border: "solid 0.8px #dddddd",
-  },
-};
+const AddressBox = styled.input.attrs({
+  className: "form-control",
+  type: "text",
+  readOnly: true,
+})`
+  height: 52px;
+  border: solid 0.8px #dddddd;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
+  background-color: #ffffff;
+`;
+
+const SeedBox = styled.textarea.attrs({
+  className: "form-control",
+  readOnly: true,
+})`
+  height: 149px;
+  border: solid 0.8px #dddddd;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
+  background-color: #ffffff;
+`;
+
+const CopyButton = styled.button.attrs({
+  className: "btn btn-light",
+  type: "button",
+})`
+  width: 65px;
+  border: solid 0.8px #dddddd;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
+  font-size: 15px;
+  text-align: center
+  background-color: #ffffff;
+`;
 
 
 export class SiaWallet extends React.Component {
@@ -78,34 +83,37 @@ export class SiaWallet extends React.Component {
     });
   }
 
-  render() {
-    let copyAddressBtn, copySeedBtn;
+  _copyAddressBtn() {
     if (this.state.addressCopied) {
-      copyAddressBtn = (
+      return (
         <div className="text-success">
           <i className="far fa-check-circle"/>
           <br/>
           copied
         </div>
       );
-    } else {
-      copyAddressBtn = (
-        <i className="far fa-clone text-black-50"/>
-      );
     }
+    return (
+      <i className="far fa-clone text-black-50"/>
+    );
+  }
+
+  _copySeedBtn() {
     if (this.state.seedCopied) {
-      copySeedBtn = (
+      return (
         <div className="text-success">
           <i className="far fa-check-circle"/>
           <br/>
           copied
         </div>
       );
-    } else {
-      copySeedBtn = (
-        <i className="far fa-clone text-black-50"/>
-      );
     }
+    return (
+      <i className="far fa-clone text-black-50"/>
+    );
+  }
+
+  render() {
 
     return (
       <div className={classNames("clearfix", {wait: this.props.processing})}>
@@ -123,13 +131,10 @@ export class SiaWallet extends React.Component {
               </Popover>
             </label>
             <div className="input-group">
-              <input id="address" className="form-control" readOnly={true}
-                     type="text" style={style.input} value={this.props.address}/>
+              <AddressBox id="address" value={this.props.address}/>
               <div className="input-group-append">
                 <CopyToClipboard text={this.props.address} onCopy={this._addressCopied}>
-                  <button id="copy-address-btn" className="btn btn-light" type="button" style={style.copyButton}>
-                    {copyAddressBtn}
-                  </button>
+                  <CopyButton id="copy-address-btn">{this._copyAddressBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
             </div>
@@ -145,13 +150,10 @@ export class SiaWallet extends React.Component {
               </Popover>
             </label>
             <div className="input-group">
-              <textarea id="seed" className="form-control" readOnly={true}
-                        style={style.textArea} value={this.props.seed}/>
+              <SeedBox id="seed" value={this.props.seed}/>
               <div className="input-group-append">
                 <CopyToClipboard text={this.props.seed} onCopy={this._seedCopied}>
-                  <button id="copy-seed-btn" className="btn btn-light" type="button" style={style.copyButton}>
-                    {copySeedBtn}
-                  </button>
+                  <CopyButton id="copy-seed-btn">{this._copySeedBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
             </div>
