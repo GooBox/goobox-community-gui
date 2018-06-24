@@ -19,6 +19,7 @@ import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
 import {Sia, Storj} from "../../../constants";
+import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
 const dialog = remote.dialog;
@@ -27,12 +28,6 @@ const style = {
   inputBox: {
     width: "342px",
     height: "48px",
-  },
-  button: {
-    width: "239.1px",
-    height: "47.3px",
-    borderRadius: "3.2px",
-    border: "solid 0.8px #dddddd"
   },
 };
 
@@ -135,12 +130,8 @@ export class SelectFolder extends React.Component {
             </small>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <button id="back-btn" type="button" className="btn btn-light" onClick={this._onClickBack}
-                    style={style.button}> Back
-            </button>
-            <button id="next-btn" type="button" className="btn btn-primary" onClick={this._onClickNext}
-                    style={style.button}> Choose this folder
-            </button>
+            <WhiteButton id="back-btn" onClick={this._onClickBack}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={this._onClickNext}>Choose this folder</BlueButton>
           </div>
         </main>
       </div>

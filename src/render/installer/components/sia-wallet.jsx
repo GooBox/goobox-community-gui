@@ -21,6 +21,7 @@ import React from "react";
 import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import {SleepTimeToShowCopyButton} from "../constants";
+import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
 const style = {
@@ -157,12 +158,8 @@ export class SiaWallet extends React.Component {
           </div>
 
           <div className="mt-auto d-flex justify-content-between">
-            <button id="back-btn" type="button" className="btn btn-light" onClick={this.props.onClickBack}
-                    style={style.button}> Back
-            </button>
-            <button id="next-btn" type="button" className="btn btn-primary" onClick={this.props.onClickNext}
-                    style={style.button}> Set-up my Goobox
-            </button>
+            <WhiteButton id="back-btn" onClick={this.props.onClickBack}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={this.props.onClickNext}>Set-up my Goobox</BlueButton>
           </div>
 
         </main>

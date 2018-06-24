@@ -40,14 +40,14 @@ describe("SiaWallet component", () => {
   });
 
   it("has a back button", () => {
-    const link = wrapper.find("#back-btn");
+    const link = wrapper.find("button#back-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("has a next button", () => {
-    const link = wrapper.find("#next-btn");
+    const link = wrapper.find("button#next-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(next).toHaveBeenCalledTimes(1);

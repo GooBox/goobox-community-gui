@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Finish from "../../../../src/render/installer/components/finish.jsx";
+import Finish, {FinishButton} from "../../../../src/render/installer/components/finish.jsx";
 
 describe("Finish component", () => {
 
@@ -40,7 +40,7 @@ describe("Finish component", () => {
   });
 
   it("has open my goobox button and invokes onClick if clicked", () => {
-    const btn = wrapper.find("button");
+    const btn = wrapper.find(FinishButton);
     expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
     expect(onClick).toHaveBeenCalledTimes(1);

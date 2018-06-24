@@ -19,6 +19,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
+import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
 const style = {
@@ -28,12 +29,6 @@ const style = {
     borderRadius: "2.9px",
     boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.09)",
     backgroundColor: "#ffffff",
-  },
-  button: {
-    width: "239.1px",
-    height: "47.3px",
-    borderRadius: "3.2px",
-    border: "solid 0.8px #dddddd"
   },
   genSeedButton: {
     padding: 0,
@@ -131,13 +126,9 @@ export class StorjLogin extends React.Component {
             <div className="invalid-feedback">Please enter the correct encryption key</div>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <button id="back-btn" type="button" className="btn btn-light"
-                    onClick={() => this.props.processing || this.props.onClickBack()}
-                    style={style.button}> Back
-            </button>
-            <button id="next-btn" type="button" className="btn btn-primary" onClick={this._onClickNext}
-                    style={style.button}> Next
-            </button>
+            <WhiteButton id="back-btn"
+                         onClick={() => this.props.processing || this.props.onClickBack()}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
           </div>
         </main>
       </div>
