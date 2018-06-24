@@ -18,18 +18,21 @@
 import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components"
 import {Sia, Storj} from "../../../constants";
 import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
 const dialog = remote.dialog;
 
-const style = {
-  inputBox: {
-    width: "342px",
-    height: "48px",
-  },
-};
+const ReadOnlyInputBox = styled.input.attrs({
+  className: "form-control mr-2",
+  type: "text",
+  readOnly: true
+})`
+  width: 342px;
+  height: 48px;
+`;
 
 export class SelectFolder extends React.Component {
 
@@ -102,27 +105,26 @@ export class SelectFolder extends React.Component {
 
   }
 
-  render() {
-    let service;
+  _serviceNames() {
     if (this.props.storj) {
       if (this.props.sia) {
-        service = `${Storj} & ${Sia}`;
+        return `${Storj} & ${Sia}`;
       } else {
-        service = Storj;
+        return Storj;
       }
-    } else {
-      service = Sia;
     }
+    return Sia;
+  }
 
+  render() {
     return (
       <div className="clearfix">
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
-          <h1>{`Installing ${service}`}</h1>
+          <h1>{`Installing ${this._serviceNames()}`}</h1>
           <p>Choose the folder you want to sync with Goobox</p>
           <div className="form-row">
-            <input id="folder" type="text" className="form-control mr-2" readOnly={true} style={style.inputBox}
-                   value={this.props.folder}/>
+            <ReadOnlyInputBox id="folder" value={this.props.folder}/>
             <button id="change-folder-btn" type="button" className="btn btn-outline-primary"
                     onClick={() => this._onClickBrowse().catch(console.debug)}>Change folder
             </button>
