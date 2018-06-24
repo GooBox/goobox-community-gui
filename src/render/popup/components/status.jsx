@@ -18,7 +18,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import {Paused, Synchronizing} from "../../../constants";
-import gooboxImage from "../assets/goobox.svg";
+import Header from "./header";
 
 export default function Status(props) {
 
@@ -47,15 +47,7 @@ export default function Status(props) {
   return (
     <main style={props.style} className="d-flex flex-column">
 
-      <nav className="d-flex px-3 py-2">
-        <img className="mr-auto" src={gooboxImage} width={81} height={22}/>
-        <a className="info-btn" onClick={() => props.onClickInfo && props.onClickInfo()}>
-          <i className="fas fa-info-circle"/>
-        </a>
-        <a className="settings-btn ml-2" onClick={() => props.onClickSettings && props.onClickSettings()}>
-          <i className="fas fa-cog"/>
-        </a>
-      </nav>
+      <Header onClickSettings={props.onClickSettings} onClickInfo={props.onClickInfo}/>
 
       <section className="d-flex flex-column p-3">
         <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
@@ -85,8 +77,8 @@ Status.propTypes = {
   totalVolume: PropTypes.number,
   state: PropTypes.string,
   onChangeState: PropTypes.func,
-  onClickSettings: PropTypes.func,
-  onClickInfo: PropTypes.func,
+  onClickSettings: PropTypes.func.isRequired,
+  onClickInfo: PropTypes.func.isRequired,
   onClickSyncFolder: PropTypes.func,
   onClickImportDrive: PropTypes.func,
 };
