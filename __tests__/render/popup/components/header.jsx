@@ -17,33 +17,34 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Finish, {FinishButton} from "../../../../src/render/installer/components/finish.jsx";
+import Header from "../../../../src/render/popup/components/header";
 
-describe("Finish component", () => {
+describe("Header component", () => {
 
-  const header = "sample header";
-  const message = "sample message";
-  const onClick = jest.fn();
+  const onClickSettings = jest.fn();
+  const onClickInfo = jest.fn();
 
   let wrapper;
   beforeEach(() => {
-    onClick.mockClear();
-    wrapper = shallow(<Finish header={header} message={message} onClick={onClick}/>);
+    onClickSettings.mockClear();
+    onClickInfo.mockClear();
+    wrapper = shallow(<Header onClickSettings={onClickSettings} onClickInfo={onClickInfo}/>);
   });
 
-  it("takes header prop and renders the given text", () => {
-    expect(wrapper.find("h1").text()).toEqual(header);
+  it("has a settings button", () => {
+    const settings = wrapper.find("a#settings-btn");
+    expect(settings.exists()).toBeTruthy();
+
+    settings.simulate("click");
+    expect(onClickSettings).toHaveBeenCalledTimes(1);
   });
 
-  it("takes message prop and renders the given text", () => {
-    expect(wrapper.find("p").text()).toEqual(message);
-  });
+  it("has an info button", () => {
+    const info = wrapper.find("a#info-btn");
+    expect(info.exists()).toBeTruthy();
 
-  it("has open my goobox button and invokes onClick if clicked", () => {
-    const btn = wrapper.find(FinishButton);
-    expect(btn.exists()).toBeTruthy();
-    btn.simulate("click");
-    expect(onClick).toHaveBeenCalledTimes(1);
+    info.simulate("click");
+    expect(onClickInfo).toHaveBeenCalledTimes(1);
   });
 
 });

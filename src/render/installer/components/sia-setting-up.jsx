@@ -20,26 +20,20 @@ import PropTypes from "prop-types"
 import React from "react";
 import LogoColor from "../assets/logo-color.svg";
 
-export const SiaSettingUp = (props) => {
+export const SiaSettingUp = ({progress, errorMsg}) => (
 
-  const barStyle = {
-    width: `${props.progress }%`
-  };
-
-  return (
-    <main
-      className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !props.errorMsg})}>
-      <img className="mb-5" src={LogoColor} width={110} height={115.2}/>
-      <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!props.errorMsg})}>
-        {props.errorMsg || "We’re setting up your Sia wallet…"}
+  <main
+    className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !errorMsg})}>
+    <img className="mb-5" src={LogoColor} width={110} height={115.2}/>
+    <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!errorMsg})}>
+        {errorMsg || "We’re setting up your Sia wallet…"}
         </span>
-      <div className="meter">
-        <span className="bar" style={barStyle}/>
-      </div>
-    </main>
-  );
+    <div className="meter">
+      <span className="bar" style={{width: `${progress }%`}}/>
+    </div>
+  </main>
 
-};
+);
 
 SiaSettingUp.propTypes = {
   progress: PropTypes.number.isRequired,

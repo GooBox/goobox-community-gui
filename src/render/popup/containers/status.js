@@ -36,6 +36,10 @@ export const mapDispatchToProps = dispatch => ({
 
   onClickInfo: () => dispatch(actions.openAboutWindow()),
 
+  onClickSettings: () => dispatch(actions.openSettings()),
+
+  onClickImportDrive: () => dispatch(actions.importDrive()),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Status);

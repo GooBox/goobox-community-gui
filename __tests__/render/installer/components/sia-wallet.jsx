@@ -24,30 +24,33 @@ describe("SiaWallet component", () => {
 
   const address = "address:12345678901234567890";
   const seed = "seed:12345678901234567890";
-  let wrapper, back, next;
+  const back = jest.fn();
+  const next = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    next = jest.fn();
+    back.mockClear();
+    next.mockClear();
     wrapper = mount(<SiaWallet address={address} seed={seed} onClickBack={back} onClickNext={next}/>);
   });
 
   it("shows a wallet address given via wallet prop", () => {
-    expect(wrapper.find("#address").prop("value")).toEqual(address);
+    expect(wrapper.find("input#address").prop("value")).toEqual(address);
   });
 
   it("shows a seed given via seed prop", () => {
-    expect(wrapper.find("#seed").prop("value")).toEqual(seed);
+    expect(wrapper.find("textarea#seed").prop("value")).toEqual(seed);
   });
 
   it("has a back button", () => {
-    const link = wrapper.find("#back-btn");
+    const link = wrapper.find("button#back-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(back).toHaveBeenCalledTimes(1);
   });
 
   it("has a next button", () => {
-    const link = wrapper.find("#next-btn");
+    const link = wrapper.find("button#next-btn");
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(next).toHaveBeenCalledTimes(1);

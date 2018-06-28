@@ -17,26 +17,25 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import Logo from "../assets/logo.svg";
-import {WhiteButton} from "./buttons";
+import GooboxImage from "../assets/goobox.svg";
 
-export const FinishButton = WhiteButton.extend`
-  color: #26aae1;
-`;
+export const Header = ({onClickSettings, onClickInfo}) => (
 
-export const Finish = ({header, message, onClick}) => (
-  <main className="full-screen d-flex flex-column justify-content-between align-items-center">
-    <img className="mb-3" src={Logo} width={110} height={115.2}/>
-    <h1>{header}</h1>
-    <p>{message}</p>
-    <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>
-  </main>
+  <nav className="d-flex align-items-center px-3 py-2">
+    <img className="mr-auto" src={GooboxImage} width={81} height={22}/>
+    <a id="info-btn" onClick={() => onClickInfo()}>
+      <i className="fas fa-info-circle"/>
+    </a>
+    <a id="settings-btn" className="ml-4" onClick={() => onClickSettings()}>
+      <i className="fas fa-cog"/>
+    </a>
+  </nav>
+
 );
 
-Finish.propTypes = {
-  header: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+Header.propTypes = {
+  onClickSettings: PropTypes.func.isRequired,
+  onClickInfo: PropTypes.func.isRequired,
 };
 
-export default Finish;
+export default Header;

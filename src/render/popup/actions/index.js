@@ -27,3 +27,5 @@ export const openSyncFolder = createAction(constants.OpenSyncFolder);
 export const openAboutWindow = createAction(constants.OpenAboutWindow);
 export const enable = createAction(constants.Enable);
 export const disable = createAction(constants.Disable);
+export const openSettings = createAction(constants.OpenSettings);
+export const importDrive = createAction(constants.ImportDrive);

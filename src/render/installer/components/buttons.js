@@ -15,14 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeState = "ChangeState";
-export const Pause = "Pause";
-export const Restart = "Restart";
-export const SetVolumeSize = "SetVolumeSize";
-export const SetTotalVolumeSize = "SetTotalVolumeSize";
-export const OpenSyncFolder = "OpenSyncFolder";
-export const OpenAboutWindow = "OpenAboutWindow";
-export const Disable = "Disable";
-export const Enable = "Enable";
-export const OpenSettings = "OpenSettings";
-export const ImportDrive = "ImportDrive";
+import styled from "styled-components";
+
+export const Button = styled.button.attrs({
+  type: "button",
+})`
+  width: 239.1px;
+  height: 47.3px;
+  border-radius: 3.2px;
+  border: solid 0.8px #dddddd;
+`;
+
+
+export const WhiteButton = Button.extend.attrs({
+  className: "btn btn-light",
+})`
+/* this component doesn't extend styles but attributes */
+`;
+
+export const BlueButton = Button.extend.attrs({
+  className: "btn btn-primary",
+})`
+/* this component doesn't extend styles but attributes */
+`;
+

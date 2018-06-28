@@ -18,23 +18,21 @@
 import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components"
 import {Sia, Storj} from "../../../constants";
+import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
 
 const dialog = remote.dialog;
 
-const style = {
-  inputBox: {
-    width: "342px",
-    height: "48px",
-  },
-  button: {
-    width: "239.1px",
-    height: "47.3px",
-    borderRadius: "3.2px",
-    border: "solid 0.8px #dddddd"
-  },
-};
+const ReadOnlyInputBox = styled.input.attrs({
+  className: "form-control mr-2",
+  type: "text",
+  readOnly: true
+})`
+  width: 342px;
+  height: 48px;
+`;
 
 export class SelectFolder extends React.Component {
 
@@ -107,27 +105,26 @@ export class SelectFolder extends React.Component {
 
   }
 
-  render() {
-    let service;
+  _serviceNames() {
     if (this.props.storj) {
       if (this.props.sia) {
-        service = `${Storj} & ${Sia}`;
+        return `${Storj} & ${Sia}`;
       } else {
-        service = Storj;
+        return Storj;
       }
-    } else {
-      service = Sia;
     }
+    return Sia;
+  }
 
+  render() {
     return (
       <div className="clearfix">
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
-          <h1>{`Installing ${service}`}</h1>
+          <h1>{`Installing ${this._serviceNames()}`}</h1>
           <p>Choose the folder you want to sync with Goobox</p>
           <div className="form-row">
-            <input id="folder" type="text" className="form-control mr-2" readOnly={true} style={style.inputBox}
-                   value={this.props.folder}/>
+            <ReadOnlyInputBox id="folder" value={this.props.folder}/>
             <button id="change-folder-btn" type="button" className="btn btn-outline-primary"
                     onClick={() => this._onClickBrowse().catch(console.debug)}>Change folder
             </button>
@@ -135,12 +132,8 @@ export class SelectFolder extends React.Component {
             </small>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <button id="back-btn" type="button" className="btn btn-light" onClick={this._onClickBack}
-                    style={style.button}> Back
-            </button>
-            <button id="next-btn" type="button" className="btn btn-primary" onClick={this._onClickNext}
-                    style={style.button}> Choose this folder
-            </button>
+            <WhiteButton id="back-btn" onClick={this._onClickBack}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={this._onClickNext}>Choose this folder</BlueButton>
           </div>
         </main>
       </div>

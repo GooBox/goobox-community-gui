@@ -18,14 +18,10 @@
 import React from "react";
 import Logo from "../assets/logo.svg";
 
-export const Sidebar = (props) => {
-
-  return (
-    <aside className={`sidebar d-flex justify-content-center align-items-center ${props.className}`}>
-      <img src={Logo}/>
-    </aside>
-  );
-
-};
+export const Sidebar = ({className}) => (
+  <aside className={`sidebar d-flex justify-content-center align-items-center ${className}`}>
+    <img src={Logo}/>
+  </aside>
+);
 
 export default Sidebar;

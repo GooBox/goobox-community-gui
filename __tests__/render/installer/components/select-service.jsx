@@ -21,11 +21,14 @@ import SelectService from "../../../../src/render/installer/components/select-se
 
 describe("SelectService component", () => {
 
-  let wrapper, storj, sia, both;
+  const storj = jest.fn();
+  const sia = jest.fn();
+  const both = jest.fn();
+  let wrapper;
   beforeEach(() => {
-    storj = jest.fn();
-    sia = jest.fn();
-    both = jest.fn();
+    storj.mockClear();
+    sia.mockClear();
+    both.mockClear();
     wrapper = shallow(<SelectService onSelectStorj={storj} onSelectSia={sia} onSelectBoth={both} processing={false}/>);
   });
 
