@@ -23,11 +23,14 @@
     "dist:build": "run-s dist:build:*",
     "dist:build:mac": "electron-builder -m --x64",
     "dist:build:win": "electron-builder -w --x64",
+    "dist:build:linux": "electron-builder -l --x64",
     "dist:pre": "SYNC_STORJ_VERSION=0.0.27 SYNC_SIA_VERSION=0.2.4 run-p dist:pre:*:*",
     "dist:pre:storj:mac": "mkdir -p tmp/mac/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-darwin.zip -o storj-mac.zip && unzip storj-mac.zip -d tmp/mac/goobox-sync-storj && rm storj-mac.zip",
     "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-win64.zip -o storj-win.zip && unzip storj-win.zip -d tmp/win/goobox-sync-storj && rm storj-win.zip",
+    "dist:pre:storj:linux": "mkdir -p tmp/linux/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-linux64.zip -o storj-linux.zip && unzip storj-linux.zip -d tmp/linux/goobox-sync-storj && rm storj-linux.zip",
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
+    "dist:pre:sia:linux": "mkdir -p tmp/linux/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-linux.tar.gz | tar -zxv -C tmp/linux/goobox-sync-sia --strip-components 1",
     "dist:post": "del tmp"
   },
   "repository": {
@@ -138,167 +141,6 @@
     },
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
-    }
-  },
-  "build": {
-    "appId": "io.goobox.CommunityGUI",
-    "directories": {
-      "buildResources": ""
-    },
-    "files": [
-      "!__mocks__",
-      "!__tests__",
-      "!coverage",
-      "!Docs",
-      "!node_modules/node-jre/jre",
-      "!goobox-sync-*",
-      "!src",
-      "!tmp",
-      "!vendor"
-    ],
-    "mac": {
-      "category": "public.app-category.productivity",
-      "icon": "resources/goobox.icns",
-      "type": "development",
-      "extraResources": [
-        {
-          "from": "tmp/mac/goobox-sync-storj",
-          "to": "app/goobox-sync-storj"
-        },
-        {
-          "from": "tmp/mac/goobox-sync-sia",
-          "to": "app/goobox-sync-sia"
-        },
-        {
-          "from": "vendor/mac",
-          "to": "../PlugIns/"
-        },
-        {
-          "from": "node_modules/fileicon/bin/fileicon",
-          "to": "app/fileicon"
-        }
-      ]
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "resources/goobox.ico",
-      "extraResources": [
-        {
-          "from": "tmp/win/goobox-sync-storj",
-          "to": "app/goobox-sync-storj"
-        },
-        {
-          "from": "tmp/win/goobox-sync-sia",
-          "to": "app/goobox-sync-sia"
-        },
-        {
-          "from": "vendor/win",
-          "to": "libraries",
-          "filter": "*.dll"
-        }
-      ],
-      "publisherName": "Goobox"
-    },
-    "asar": false,
-    "asarUnpack": [
-      "node_modules/node-jre",
-      "node_modules/node-notifier"
-    ],
-    "nsis": {
-      "perMachine": true,
-      "installerIcon": "resources/installer.ico",
-      "uninstallerIcon": "resources/installer.ico",
-      "license": "LICENSE",
-      "deleteAppDataOnUninstall": true,
-      "artifactName": "${productName}-${version}-setup_x64.${ext}",
-      "include": "vendor/win/installer.nsi"
-    }
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "node": true,
-      "commonjs": true,
-      "es6": true,
-      "jest": true
-    },
-    "globals": {
-      "jsdom": false
-    },
-    "extends": [
-      "airbnb",
-      "eslint:recommended",
-      "plugin:react/recommended"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 8,
-      "ecmaFeatures": {
-        "experimentalObjectRestSpread": true,
-        "jsx": true
-      },
-      "sourceType": "module"
-    },
-    "plugins": [
-      "react"
-    ],
-    "rules": {
-      "indent": [
-        "error",
-        2,
-        {
-          "SwitchCase": 1
-        }
-      ],
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "double"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ],
-      "no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "caughtErrors": "none"
-        }
-      ],
-      "eol-last": [
-        "error",
-        "always"
-      ],
-      "import/no-extraneous-dependencies": [
-        "error",
-        {
-          "devDependencies": true,
-          "optionalDependencies": false
-        }
-      ],
-      "import/no-named-as-default": "off",
-      "arrow-body-style": "error",
-      "arrow-parens": "error",
-      "arrow-spacing": "error",
-      "generator-star-spacing": "error",
-      "no-duplicate-imports": "error",
-      "no-useless-computed-key": "error",
-      "no-useless-constructor": "error",
-      "no-useless-rename": "error",
-      "no-var": "error",
-      "object-shorthand": "error",
-      "prefer-arrow-callback": "error",
-      "prefer-const": "error",
-      "prefer-rest-params": "error",
-      "prefer-spread": "error",
-      "prefer-template": "error",
-      "rest-spread-spacing": "error",
-      "template-curly-spacing": "error",
-      "yield-star-spacing": "error"
     }
   }
 }

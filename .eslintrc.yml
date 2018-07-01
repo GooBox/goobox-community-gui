@@ -1,0 +1,81 @@
+#
+# Copyright (C) 2017-2018 Junpei Kawamoto
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+env:
+  browser: true
+  node: true
+  commonjs: true
+  es6: true
+  jest: true
+globals:
+  jsdom: false
+extends:
+  - "airbnb"
+  - "eslint:recommended"
+  - "plugin:react/recommended"
+parserOptions:
+  ecmaVersion: 8
+  ecmaFeatures:
+    experimentalObjectRestSpread: true
+    jsx: true
+  sourceType: "module"
+plugins:
+  - "react"
+rules:
+  indent:
+    - "error"
+    - 2
+    - SwitchCase: 1
+  linebreak-style:
+    - "error"
+    - "unix"
+  quotes:
+    - "error"
+    - "double"
+  semi:
+    - "error"
+    - "always"
+  no-unused-vars:
+    - "error"
+    - argsIgnorePattern: "^_"
+      varsIgnorePattern: "^_"
+      caughtErrors: "none"
+  eol-last:
+    - "error"
+    - "always"
+  import/no-extraneous-dependencies:
+    - "error"
+    - devDependencies: true
+      optionalDependencies: false
+  import/no-named-as-default: "off"
+  arrow-body-style: "error"
+  arrow-parens: "error"
+  arrow-spacing: "error"
+  generator-star-spacing: "error"
+  no-duplicate-imports: "error"
+  no-useless-computed-key: "error"
+  no-useless-constructor: "error"
+  no-useless-rename: "error"
+  no-var: "error"
+  object-shorthand: "error"
+  prefer-arrow-callback: "error"
+  prefer-const: "error"
+  prefer-rest-params: "error"
+  prefer-spread: "error"
+  prefer-template: "error"
+  rest-spread-spacing: "error"
+  template-curly-spacing: "error"
+  yield-star-spacing: "error"
