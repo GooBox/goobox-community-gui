@@ -28,12 +28,12 @@ brew install pixeldrain
 rm -rf /Users/travis/Library/Caches/electron-builder
 npm run dist
 
-URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.2.0-setup_x64.exe -n Goobox-0.2.0-setup_x64.exe)
+URL_WINDOWS_PACKAGE=$(pd upload dist/Goobox-0.2.1-setup_x64.exe -n Goobox-0.2.1-setup_x64.exe)
 if [[ -n "$URL_WINDOWS_PACKAGE" ]]; then
     echo "Windows dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_WINDOWS_PACKAGE" | slack-cli -d dev;
 fi
 
-URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.2.0.dmg -n Goobox-0.2.0.dmg)
+URL_MAC_PACKAGE=$(pd upload dist/Goobox-0.2.1.dmg -n Goobox-0.2.1.dmg)
 if [[ -n "$URL_MAC_PACKAGE" ]]; then
     echo "Mac dev build for $TRAVIS_PULL_REQUEST_BRANCH was uploaded to $URL_MAC_PACKAGE" | slack-cli -d dev
 fi
