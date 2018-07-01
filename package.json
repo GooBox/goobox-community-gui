@@ -23,7 +23,7 @@
     "dist:build": "run-s dist:build:*",
     "dist:build:mac": "electron-builder -m --x64",
     "dist:build:win": "electron-builder -w --x64",
-    "dist:pre": "SYNC_STORJ_VERSION=0.0.27 SYNC_SIA_VERSION=0.2.3 run-p dist:pre:*:*",
+    "dist:pre": "SYNC_STORJ_VERSION=0.0.27 SYNC_SIA_VERSION=0.2.4 run-p dist:pre:*:*",
     "dist:pre:storj:mac": "mkdir -p tmp/mac/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-darwin.zip -o storj-mac.zip && unzip storj-mac.zip -d tmp/mac/goobox-sync-storj && rm storj-mac.zip",
     "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-win64.zip -o storj-win.zip && unzip storj-win.zip -d tmp/win/goobox-sync-storj && rm storj-win.zip",
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
