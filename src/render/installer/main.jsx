@@ -16,14 +16,13 @@
  */
 
 import {ConnectedRouter, connectRouter, routerMiddleware} from "connected-react-router";
-import electronLog from "electron-log";
 import createHistory from "history/createBrowserHistory";
 import React from "react";
 import {Provider} from "react-redux";
 import {Route, Switch} from "react-router";
 import {applyMiddleware, combineReducers, createStore} from "redux";
-import {createLogger} from "redux-logger";
 import createSagaMiddleware from "redux-saga";
+import {createLogger} from "../logger";
 import * as screens from "./constants/screens";
 import Preparation from "./containers/preparation";
 import SelectFolder from "./containers/select-folder";
@@ -39,24 +38,6 @@ import StorjRegistration from "./containers/storj-registration";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
-let logger;
-if ("development" === process.env.NODE_ENV) {
-  logger = createLogger();
-} else {
-  logger = createLogger({
-    logger: {
-      log: electronLog.silly,
-      colors: {
-        title: false,
-        prevState: false,
-        action: false,
-        nextState: false,
-        error: false,
-      }
-    }
-  });
-}
-
 const configureStore = () => {
 
   const sagaMiddleware = createSagaMiddleware();
@@ -68,7 +49,7 @@ const configureStore = () => {
       combineReducers({
         main: reducer,
       })),
-    applyMiddleware(sagaMiddleware, historyMiddleware, logger),
+    applyMiddleware(sagaMiddleware, historyMiddleware, createLogger()),
   );
   sagaMiddleware.run(rootSaga);
   return {store: store, history: history};

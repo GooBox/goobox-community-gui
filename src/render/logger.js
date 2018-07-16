@@ -15,33 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
-import {Provider} from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import createSagaMiddleware from "redux-saga";
-import {createLogger} from "../logger";
-import Status from "./containers/status";
-import reducer from "./reducers";
-import rootSaga from "./sagas";
+import electronLog from "electron-log";
+import {createLogger as _createLogger} from "redux-logger";
 
-const configureStore = () => {
-  const sagaMiddleware = createSagaMiddleware();
-  const store = createStore(
-    reducer,
-    applyMiddleware(sagaMiddleware, createLogger())
-  );
-  sagaMiddleware.run(rootSaga);
-  return store;
+export const createLogger = () => {
+
+  if (process.env.NODE_ENV === "development") {
+    return _createLogger();
+  }
+
+  return _createLogger({
+    logger: {
+      log: electronLog.silly,
+      colors: {
+        title: false,
+        prevState: false,
+        action: false,
+        nextState: false,
+        error: false,
+      }
+    }
+  });
+
 };
 
-export default function initPopup() {
-
-  const store = configureStore();
-  return (
-    <Provider store={store}>
-      <Status/>
-    </Provider>
-  );
-
-}
-
+export default createLogger;
