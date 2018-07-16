@@ -17,7 +17,6 @@
     "coveralls": "cat coverage/lcov.info | coveralls",
     "check": "eslint src __tests__ __mocks__",
     "check:fix": "eslint --fix src __tests__ __mocks__",
-    "check-update": "ncu -u",
     "pack": "electron-builder -wm --dir",
     "dist": "run-s dist:pre dist:build dist:post",
     "dist:build": "run-s dist:build:*",
@@ -31,7 +30,8 @@
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:linux": "mkdir -p tmp/linux/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-linux.tar.gz | tar -zxv -C tmp/linux/goobox-sync-sia --strip-components 1",
-    "dist:post": "del tmp"
+    "dist:post": "del tmp",
+    "update": "updates -u"
   },
   "repository": {
     "type": "git",
@@ -101,6 +101,7 @@
     "stream-to-string": "^1.1.0",
     "styled-components": "^3.3.3",
     "svg-url-loader": "^2.3.2",
+    "updates": "^3.2.2",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8",
     "winston": "^3.0.0",
