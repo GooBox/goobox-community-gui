@@ -18,10 +18,10 @@
 import log from "electron-log";
 import notifier from "node-notifier";
 import path from "path";
-import * as desktop from "../../src/main/desktop";
 import {AppID, Idle, Paused, Synchronizing} from "../constants";
 import {getConfig} from "./config";
 import {core} from "./core";
+import * as desktop from "./desktop";
 import icons from "./icons";
 import {installJRE} from "./jre";
 import Sia from "./sia";

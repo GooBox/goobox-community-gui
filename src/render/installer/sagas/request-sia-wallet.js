@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import log from "electron-log";
-import {push} from "react-router-redux";
 import {delay} from "redux-saga";
 import {call, fork, put} from "redux-saga/effects";
 import * as ipcActions from "../../../ipc/actions";

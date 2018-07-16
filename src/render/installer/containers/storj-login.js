@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
 import StorjLogin from "../components/storj-login";
 import * as screens from "../constants/screens";
