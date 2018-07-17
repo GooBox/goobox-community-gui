@@ -20,10 +20,10 @@ import notifier from "node-notifier";
 import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../constants";
 import {getConfig} from "./config";
-import {core} from "./core";
 import * as desktop from "./desktop";
 import icons from "./icons";
 import {installJRE} from "./jre";
+import popup from "./popup";
 import Sia from "./sia";
 import Storj from "./storj";
 import utils from "./utils";
@@ -238,7 +238,7 @@ export const installerWindowAllClosedHandler = app => async () => {
 
       // if the installation process is finished.
       log.info("[GUI main] Installation has been succeeded, now starting synchronization");
-      await core();
+      await popup();
 
     } else {
 

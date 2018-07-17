@@ -38,7 +38,7 @@ jest.mock("electron");
 jest.mock("fs");
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/ipc/receiver");
-jest.mock("../../../src/main/core");
+jest.mock("../../../src/main/popup");
 jest.mock("../../../src/main/handlers");
 
 describe("installer", () => {
