@@ -30,7 +30,7 @@ import {
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
   storjLoginHandler
-} from "../../../src/main/handlers";
+} from "../../../src/main/installer/handlers";
 import installer from "../../../src/main/installer/index";
 
 jest.mock("child_process");
@@ -39,7 +39,7 @@ jest.mock("fs");
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/ipc/receiver");
 jest.mock("../../../src/main/popup");
-jest.mock("../../../src/main/handlers");
+jest.mock("../../../src/main/installer/handlers");
 
 describe("installer", () => {
 
@@ -51,8 +51,7 @@ describe("installer", () => {
   beforeEach(() => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     getConfig.mockReset();
-    installerWindowAllClosedHandler.mockClear();
-    execFileSync.mockClear();
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -109,12 +108,6 @@ describe("installer", () => {
 
     beforeEach(() => {
       addListener.mockReset();
-      installJREHandler.mockClear();
-      siaRequestWalletInfoHandler.mockClear();
-      stopSyncAppsHandler.mockClear();
-      storjCreateAccountHandler.mockClear();
-      storjLoginHandler.mockClear();
-      storjGenerateMnemonicHandler.mockClear();
     });
 
     it("registers installJREHandler", () => {

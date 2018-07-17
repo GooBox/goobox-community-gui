@@ -25,6 +25,11 @@ import * as ipcActionTypes from "../../ipc/constants";
 import addListener from "../../ipc/receiver";
 import {getConfig} from "../config";
 import * as desktop from "../desktop";
+import icons from "../icons";
+import {installJRE} from "../jre";
+import Sia from "../sia";
+import Storj from "../storj";
+import utils from "../utils";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -33,12 +38,7 @@ import {
   themeChangedHandler,
   updateStateHandler,
   willQuitHandler,
-} from "../handlers";
-import icons from "../icons";
-import {installJRE} from "../jre";
-import Sia from "../sia";
-import Storj from "../storj";
-import utils from "../utils";
+} from "./handlers";
 
 export const DefaultWidth = 360;
 export const DefaultHeight = 340;
@@ -115,6 +115,7 @@ export const popup = async () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
+  // noinspection JSUnresolvedFunction
   mb.on("focus-lost", () => {
     mb.hideWindow();
   });

@@ -15,31 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const log = () => {
-};
-export const info = () => {
-};
-export const debug = () => {
-};
-export const verbose = () => {
-};
-export const warn = () => {
-};
-export const error = () => {
-};
-export const silly = () => {
-};
-// export const log = (msg) => console.log(msg);
-// export const info = (msg) => console.log(`info: ${msg}`);
-// export const debug = (msg) => console.log(`debug: ${msg}`);
-// export const verbose = (msg) => console.log(`verbose: ${msg}`);
-// export const error = (msg) => console.log(`error: ${msg}`);
-export default {
-  log,
-  info,
-  debug,
-  verbose,
-  warn,
-  error,
-  silly,
-};
+import log from "electron-log";
+import notifier from "node-notifier";
+
+export const notifyAsync = async opts => new Promise((resolve, reject) => {
+
+  // noinspection JSUnresolvedFunction
+  notifier.notify(opts, (err, res) => {
+    if (err) {
+      log.warn(`Notification failed; the user might cancel it: ${err}`);
+      reject(err);
+    } else {
+      resolve(res);
+    }
+  });
+
+});
+
+
+export default notifyAsync;

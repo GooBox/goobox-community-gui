@@ -16,90 +16,16 @@
  */
 
 import log from "electron-log";
-import notifier from "node-notifier";
-import path from "path";
-import {AppID, Idle, Paused, Synchronizing} from "../constants";
-import {getConfig} from "./config";
-import * as desktop from "./desktop";
-import icons from "./icons";
-import {installJRE} from "./jre";
-import popup from "./popup";
-import Sia from "./sia";
-import Storj from "./storj";
-import utils from "./utils";
+import {AppID} from "../../constants";
+import {getConfig} from "../config";
+import * as desktop from "../desktop";
+import {installJRE} from "../jre";
+import {notifyAsync} from "../notify";
+import popup from "../popup";
+import Sia from "../sia";
+import Storj from "../storj";
+import utils from "../utils";
 
-const notifyAsync = async opts => new Promise((resolve) => {
-
-  // noinspection JSUnresolvedFunction
-  notifier.notify(opts, (err, res) => {
-    if (err) {
-      log.warn(`Notification failed, maybe the user canceled it: ${err}`);
-    } else {
-      resolve(res);
-    }
-  });
-
-});
-
-// Handlers for the main app.
-export const changeStateHandler = mb => async (payload) => {
-  if (payload === Synchronizing) {
-    const cfg = await getConfig();
-    if (global.storj) {
-      global.storj.start(cfg.syncFolder);
-    }
-    if (global.sia) {
-      global.sia.start(cfg.syncFolder);
-    }
-    log.debug("[GUI main] Update the tray icon to the idle icon");
-    mb.tray.setImage(icons.getSyncIcon());
-    mb.appState = Synchronizing;
-  } else {
-    if (global.storj) {
-      await global.storj.close();
-    }
-    if (global.sia) {
-      await global.sia.close();
-    }
-    log.debug("[GUI main] Update the tray icon to the paused icon");
-    mb.tray.setImage(icons.getPausedIcon());
-    mb.appState = Paused;
-  }
-  return payload;
-};
-
-export const openSyncFolderHandler = () => async () => {
-  const cfg = await getConfig();
-  log.info(`[GUI main] Open sync folder ${cfg.syncFolder}`);
-  utils.openDirectory(cfg.syncFolder);
-};
-
-export const calculateUsedVolumeHandler = () => async () => {
-  const cfg = await getConfig();
-  const volume = await utils.totalVolume(cfg.syncFolder);
-  log.info(`[GUI main] Calculating volume size of ${cfg.syncFolder}: ${volume}GB`);
-  return volume;
-};
-
-export const willQuitHandler = app => async (event) => {
-
-  if ((!global.storj || global.storj.closed) && (!global.sia || global.sia.closed)) {
-    return;
-  }
-  log.info("[GUI main] Goobox will quit but synchronization processes are still running");
-  event.preventDefault();
-
-  if (global.storj) {
-    await global.storj.close();
-  }
-  if (global.sia) {
-    await global.sia.close();
-  }
-  app.exit();
-
-};
-
-// Handlers for the installer.
 export const installJREHandler = () => async () => installJRE();
 
 export const siaRequestWalletInfoHandler = () => async (payload) => {
@@ -269,87 +195,4 @@ export const installerWindowAllClosedHandler = app => async () => {
     app.quit();
   }
 
-};
-
-// Handlers for sync-storj/sync-sia apps.
-export const updateStateHandler = mb => async (payload) => {
-
-  switch (payload.newState) {
-    case Synchronizing:
-      log.debug("[GUI main] Set the synchronizing icon");
-      mb.tray.setImage(icons.getSyncIcon());
-      mb.appState = Synchronizing;
-      break;
-
-    case Idle:
-      log.debug("[GUI main] Set the idle icon");
-      mb.tray.setImage(icons.getIdleIcon());
-      mb.appState = Idle;
-      break;
-
-    default:
-      log.debug(`[GUI main] Received argument ${JSON.stringify(payload)} is not handled in updateStateHandler`);
-
-  }
-};
-
-export const siaFundEventHandler = () => async (payload) => {
-
-  switch (payload.eventType) {
-    case "NoFunds":
-      log.verbose("[GUI main] Notify the user his/her wallet doesn't have sia coins");
-      return await notifyAsync({
-        title: "Goobox",
-        message: "Your wallet doesn't have sia coins",
-        icon: path.join(__dirname, "../../resources/goobox.png"),
-        sound: true,
-        wait: true,
-        appID: AppID
-      });
-    case "InsufficientFunds":
-      log.verbose("[GUI main] Notify the user his/her wallet doesn't have sufficient funds");
-      return await notifyAsync({
-        title: "Goobox",
-        message: payload.message,
-        icon: path.join(__dirname, "../../resources/goobox.png"),
-        sound: true,
-        wait: true,
-        appID: AppID
-      });
-    case "Allocated":
-      log.verbose("[GUI main] Notify the user his/her funds are allocated");
-      return await notifyAsync({
-        title: "Goobox",
-        message: payload.message,
-        icon: path.join(__dirname, "../../resources/goobox.png"),
-        sound: true,
-        wait: true,
-        appID: AppID
-      });
-    case "Error":
-      log.error(`[GUI main] siaFundEventHandler received an error: ${payload.message}`);
-      return await notifyAsync({
-        title: "Goobox",
-        message: payload.message,
-        icon: path.join(__dirname, "../../resources/goobox.png"),
-        sound: true,
-        wait: true,
-        appID: AppID
-      });
-  }
-
-};
-
-export const themeChangedHandler = mb => async () => {
-  switch (mb.appState) {
-    case Synchronizing:
-      mb.tray.setImage(icons.getSyncIcon());
-      break;
-    case Paused:
-      mb.tray.setImage(icons.getPausedIcon());
-      break;
-    case Idle:
-    default:
-      mb.tray.setImage(icons.getIdleIcon());
-  }
 };

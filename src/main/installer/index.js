@@ -32,7 +32,7 @@ import {
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
   storjLoginHandler
-} from "../handlers";
+} from "./handlers";
 
 const DefaultWidth = 800;
 const DefaultHeight = 600;

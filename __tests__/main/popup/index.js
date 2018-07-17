@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {app, BrowserWindow, dialog, ipcMain, Menu, systemPreferences} from "electron";
+import {app, BrowserWindow, dialog, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
 import path from "path";
 import {Idle, Synchronizing} from "../../../src/constants";
@@ -23,6 +23,8 @@ import * as ipcActionTypes from "../../../src/ipc/constants";
 import addListener from "../../../src/ipc/receiver";
 import {getConfig} from "../../../src/main/config";
 import * as desktop from "../../../src/main/desktop";
+import icons from "../../../src/main/icons";
+import {installJRE} from "../../../src/main/jre";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -31,9 +33,7 @@ import {
   themeChangedHandler,
   updateStateHandler,
   willQuitHandler,
-} from "../../../src/main/handlers";
-import icons from "../../../src/main/icons";
-import {installJRE} from "../../../src/main/jre";
+} from "../../../src/main/popup/handlers";
 import popup, {DefaultHeight, DefaultWidth} from "../../../src/main/popup/index";
 import Sia from "../../../src/main/sia";
 import Storj from "../../../src/main/storj";
@@ -45,7 +45,7 @@ jest.mock("../../../src/main/desktop");
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/main/utils");
 jest.mock("../../../src/ipc/receiver");
-jest.mock("../../../src/main/handlers");
+jest.mock("../../../src/main/popup/handlers");
 jest.useFakeTimers();
 
 function getEventHandler(emitter, event) {
@@ -61,6 +61,8 @@ describe("main process of the popup app", () => {
     Object.defineProperty(process, "platform", {
       value: "darwin"
     });
+    desktop.register.mockImplementation(() => {
+    });
   });
 
   afterAll(() => {
@@ -71,19 +73,12 @@ describe("main process of the popup app", () => {
 
   beforeEach(() => {
     menubarMock.tray.listeners.mockReturnValue([() => null]);
-    desktop.register.mockClear();
-    desktop.register.mockImplementation(() => {
-    });
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
     delete global.storj;
     delete global.sia;
-    menubar.mockClear();
-    menubarMock.on.mockClear();
-    menubarMock.app.on.mockClear();
-    app.quit.mockClear();
-    ipcMain.on.mockClear();
     getConfig.mockReset();
   });
 
@@ -140,7 +135,6 @@ describe("main process of the popup app", () => {
     const onClick = jest.fn();
 
     beforeEach(async () => {
-      menubarMock.tray.on.mockClear();
       Menu.buildFromTemplate.mockReset();
       Menu.buildFromTemplate.mockReturnValue(menuItems);
       onClick.mockReset();
@@ -221,9 +215,6 @@ describe("main process of the popup app", () => {
 
     beforeEach(() => {
       addListener.mockReset();
-      changeStateHandler.mockClear();
-      openSyncFolderHandler.mockClear();
-      calculateUsedVolumeHandler.mockClear();
     });
 
     it("registers changeStateHandler", async () => {
@@ -265,8 +256,6 @@ describe("main process of the popup app", () => {
       });
       installJRE.mockReset();
       dialog.showErrorBox.mockReset();
-      updateStateHandler.mockClear();
-      siaFundEventHandler.mockClear();
     });
 
     afterEach(() => {
