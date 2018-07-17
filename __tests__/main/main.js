@@ -21,7 +21,7 @@ import path from "path";
 import {getConfig, saveConfig} from "../../src/main/config";
 import popup from "../../src/main/popup";
 import installer from "../../src/main/installer";
-import {main} from "../../src/main/startup";
+import {main} from "../../src/main/index";
 
 jest.mock("electron");
 jest.mock("node-jre");
