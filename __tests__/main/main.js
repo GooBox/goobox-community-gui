@@ -20,7 +20,7 @@ import jre from "node-jre";
 import path from "path";
 import {getConfig, saveConfig} from "../../src/main/config";
 import {core} from "../../src/main/core";
-import {installer} from "../../src/main/installer";
+import installer from "../../src/main/installer";
 import {main} from "../../src/main/startup";
 
 jest.mock("electron");
@@ -44,11 +44,7 @@ describe("main", () => {
   });
 
   beforeEach(() => {
-    installer.mockClear();
-    core.mockClear();
-    getConfig.mockClear();
-    saveConfig.mockClear();
-    app.quit.mockClear();
+    jest.clearAllMocks();
   });
 
   it("starts the installer when there are no config file", async () => {

@@ -21,9 +21,9 @@ import {app, BrowserWindow, Menu} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
-import showInfoWindowAsync from "../about-window";
-import * as actionTypes from "../ipc/constants";
-import addListener from "../ipc/receiver";
+import showInfoWindowAsync from "../../about-window";
+import * as actionTypes from "../../ipc/constants";
+import addListener from "../../ipc/receiver";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
@@ -32,7 +32,7 @@ import {
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
   storjLoginHandler
-} from "./handlers";
+} from "../handlers";
 
 const DefaultWidth = 800;
 const DefaultHeight = 600;

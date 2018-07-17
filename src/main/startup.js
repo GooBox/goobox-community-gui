@@ -22,7 +22,7 @@ import * as jre from "node-jre";
 import path from "path";
 import {getConfig, saveConfig} from "./config";
 import {core} from "./core";
-import {installer} from "./installer";
+import installer from "./installer";
 import {initPapertrail} from "./papertrail";
 
 export const main = async () => {
