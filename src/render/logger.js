@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("./lib/main");
+import electronLog from "electron-log";
+import {createLogger as _createLogger} from "redux-logger";
+
+export const createLogger = () => {
+
+  if (process.env.NODE_ENV === "development") {
+    return _createLogger();
+  }
+
+  return _createLogger({
+    logger: {
+      log: electronLog.silly,
+      colors: {
+        title: false,
+        prevState: false,
+        action: false,
+        nextState: false,
+        error: false,
+      }
+    }
+  });
+
+};
+
+export default createLogger;

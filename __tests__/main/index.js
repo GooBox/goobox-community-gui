@@ -19,22 +19,22 @@ import {app} from "electron";
 import jre from "node-jre";
 import path from "path";
 import {getConfig, saveConfig} from "../../src/main/config";
-import {core} from "../../src/main/core";
-import {installer} from "../../src/main/installer";
-import {main} from "../../src/main/startup";
+import popup from "../../src/main/popup";
+import installer from "../../src/main/installer";
+import {main} from "../../src/main/index";
 
 jest.mock("electron");
 jest.mock("node-jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
-jest.mock("../../src/main/core");
+jest.mock("../../src/main/popup");
 jest.mock("../../src/main/papertrail");
 
 describe("main", () => {
 
   let oldArgs;
   beforeAll(() => {
-    core.mockReturnValue(Promise.resolve());
+    popup.mockReturnValue(Promise.resolve());
     saveConfig.mockReturnValue(Promise.resolve());
     oldArgs = process.argv;
   });
@@ -44,18 +44,14 @@ describe("main", () => {
   });
 
   beforeEach(() => {
-    installer.mockClear();
-    core.mockClear();
-    getConfig.mockClear();
-    saveConfig.mockClear();
-    app.quit.mockClear();
+    jest.clearAllMocks();
   });
 
   it("starts the installer when there are no config file", async () => {
     getConfig.mockReturnValue(Promise.reject("not fund"));
     await main();
     expect(installer).toHaveBeenCalled();
-    expect(core).not.toHaveBeenCalled();
+    expect(popup).not.toHaveBeenCalled();
     expect(app.quit).not.toHaveBeenCalled();
   });
 
@@ -65,7 +61,7 @@ describe("main", () => {
     }));
     await main();
     expect(installer).toHaveBeenCalled();
-    expect(core).not.toHaveBeenCalled();
+    expect(popup).not.toHaveBeenCalled();
     expect(app.quit).not.toHaveBeenCalled();
   });
 
@@ -74,7 +70,7 @@ describe("main", () => {
       installed: true
     }));
     await main();
-    expect(core).toHaveBeenCalled();
+    expect(popup).toHaveBeenCalled();
     expect(installer).not.toHaveBeenCalled();
     expect(app.quit).not.toHaveBeenCalled();
   });
@@ -83,7 +79,7 @@ describe("main", () => {
     process.argv = ["--installer"];
     await main();
     expect(installer).toHaveBeenCalled();
-    expect(core).not.toHaveBeenCalled();
+    expect(popup).not.toHaveBeenCalled();
     expect(app.quit).not.toHaveBeenCalled();
   });
 
@@ -96,7 +92,7 @@ describe("main", () => {
     getConfig.mockReturnValue(Promise.resolve(cfg));
     process.argv = ["--storj"];
     await main();
-    expect(core).toHaveBeenCalled();
+    expect(popup).toHaveBeenCalled();
     expect(saveConfig).toHaveBeenCalledWith({
       ...cfg,
       storj: true,
@@ -114,7 +110,7 @@ describe("main", () => {
     getConfig.mockReturnValue(Promise.resolve(cfg));
     process.argv = ["--sia"];
     await main();
-    expect(core).toHaveBeenCalled();
+    expect(popup).toHaveBeenCalled();
     expect(saveConfig).toHaveBeenCalledWith({
       ...cfg,
       storj: false,

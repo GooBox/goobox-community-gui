@@ -19,9 +19,9 @@ import {execFileSync} from "child_process";
 import {app, BrowserWindow} from "electron";
 import fs from "fs";
 import path from "path";
-import * as actionTypes from "../../src/ipc/constants";
-import addListener from "../../src/ipc/receiver";
-import {getConfig} from "../../src/main/config";
+import * as actionTypes from "../../../src/ipc/constants";
+import addListener from "../../../src/ipc/receiver";
+import {getConfig} from "../../../src/main/config";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
@@ -30,16 +30,16 @@ import {
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
   storjLoginHandler
-} from "../../src/main/handlers";
-import {installer} from "../../src/main/installer";
+} from "../../../src/main/installer/handlers";
+import installer from "../../../src/main/installer/index";
 
 jest.mock("child_process");
 jest.mock("electron");
 jest.mock("fs");
-jest.mock("../../src/main/config");
-jest.mock("../../src/ipc/receiver");
-jest.mock("../../src/main/core");
-jest.mock("../../src/main/handlers");
+jest.mock("../../../src/main/config");
+jest.mock("../../../src/ipc/receiver");
+jest.mock("../../../src/main/popup");
+jest.mock("../../../src/main/installer/handlers");
 
 describe("installer", () => {
 
@@ -51,8 +51,7 @@ describe("installer", () => {
   beforeEach(() => {
     mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
     getConfig.mockReset();
-    installerWindowAllClosedHandler.mockClear();
-    execFileSync.mockClear();
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -87,7 +86,7 @@ describe("installer", () => {
 
   it("loads static/installer.html", () => {
     installer();
-    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../static/installer.html")}`);
+    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../../src/static/installer.html")}`);
   });
 
   it("registers installerWindowAllClosedHandler", () => {
@@ -109,12 +108,6 @@ describe("installer", () => {
 
     beforeEach(() => {
       addListener.mockReset();
-      installJREHandler.mockClear();
-      siaRequestWalletInfoHandler.mockClear();
-      stopSyncAppsHandler.mockClear();
-      storjCreateAccountHandler.mockClear();
-      storjLoginHandler.mockClear();
-      storjGenerateMnemonicHandler.mockClear();
     });
 
     it("registers installJREHandler", () => {
