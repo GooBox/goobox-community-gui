@@ -171,6 +171,10 @@ export default class Sia extends EventEmitter {
       stderr.on("line", log.verbose);
 
       this.walletProc.on("error", (err) => {
+        if (!err) {
+          log.warn("[GUI main] wallet command returned an empty error");
+          return;
+        }
         log.error(`[GUI main] Failed to obtain the wallet information: ${err}`);
         this.walletProc = null;
         reject(util.isString(err) ? err : "Failed to obtain the wallet information");
@@ -179,6 +183,7 @@ export default class Sia extends EventEmitter {
       toString(this.walletProc.stdout).then((res) => {
         this.walletProc = null;
         const info = yaml.safeLoad(res);
+        log.debug(`[GUI main] wallet info: ${res}`);
         if (!info || !info["wallet address"]) {
           log.error(`[GUI main] Failed to obtain the wallet information: ${info}`);
           reject("Failed to obtain the wallet information");
