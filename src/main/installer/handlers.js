@@ -16,6 +16,7 @@
  */
 
 import log from "electron-log";
+import path from "path";
 import {AppID} from "../../constants";
 import {getConfig} from "../config";
 import * as desktop from "../desktop";

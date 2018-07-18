@@ -27,7 +27,7 @@ describe("notify module", () => {
 
   let err;
   beforeAll(() => {
-    notifier.notify.mockImplementation((opt, cb) => cb(err, result))
+    notifier.notify.mockImplementation((opt, cb) => cb(err, result));
   });
 
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe("notify module", () => {
 
   it("returns the error if notifier.notify returns an error", async () => {
     err = new Error("test error");
-    await expect(notifyAsync(option)).rejects.toEqual(err)
+    await expect(notifyAsync(option)).rejects.toEqual(err);
   });
 
 
