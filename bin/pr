@@ -30,8 +30,9 @@ npm run dist
 
 WIN_ID=$(basename $(pd upload dist/Goobox-0.2.1-setup_x64.exe -n Goobox-0.2.1-setup_x64.exe))
 MAC_ID=$(basename $(pd upload dist/Goobox-0.2.1.dmg -n Goobox-0.2.1.dmg))
-LINUX_ID=$(basename $(pd upload dist/Goobox-0.2.1-x86_64.AppImage -n Goobox-0.2.1-x86_64.AppImage))
+# LINUX_ID=$(basename $(pd upload dist/Goobox-0.2.1-x86_64.AppImage -n Goobox-0.2.1-x86_64.AppImage))
 
-LIST_URL=$(pd create-list -t "Goobox v0.2.1" ${WIN_ID}:Goobox-0.2.1-setup_x64.exe ${MAC_ID}:Goobox-0.2.1.dmg ${LINUX_ID}:Goobox-0.2.1-x86_64.AppImage)
+LIST_URL=$(pd create-list -t "Goobox v0.2.1" ${WIN_ID}:Goobox-0.2.1-setup_x64.exe ${MAC_ID}:Goobox-0.2.1.dmg)
+# LIST_URL=$(pd create-list -t "Goobox v0.2.1" ${WIN_ID}:Goobox-0.2.1-setup_x64.exe ${MAC_ID}:Goobox-0.2.1.dmg ${LINUX_ID}:Goobox-0.2.1-x86_64.AppImage)
 
 echo "Dev builds for $TRAVIS_PULL_REQUEST_BRANCH are available at $LIST_URL" | slack-cli -d dev;
