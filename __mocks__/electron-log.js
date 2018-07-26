@@ -23,6 +23,8 @@ export const debug = () => {
 };
 export const verbose = () => {
 };
+export const warn = () => {
+};
 export const error = () => {
 };
 export const silly = () => {
@@ -37,6 +39,7 @@ export default {
   info,
   debug,
   verbose,
+  warn,
   error,
   silly,
 };
