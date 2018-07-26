@@ -1,11 +1,13 @@
 {
   "name": "Goobox",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Goobox community edition sync app for sia and storj 🎉🚀",
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "start:installer": "electron . --installer",
+    "start:debug": "electron . --dev-tools",
+    "installer": "electron . --installer",
+    "installer:debug": "electron . --installer --dev-tools",
     "build": "webpack",
     "build:watch": "webpack -w",
     "build:production": "webpack --mode production",
@@ -13,18 +15,20 @@
     "test:watch": "jest --watch",
     "test:coverage": "npm test -- --coverage",
     "coveralls": "cat coverage/lcov.info | coveralls",
-    "check-update": "ncu -u",
+    "check": "eslint src __tests__ __mocks__",
+    "check:fix": "eslint --fix src __tests__ __mocks__",
     "pack": "electron-builder -wm --dir",
     "dist": "run-s dist:pre dist:build dist:post",
-    "dist:build": "run-p dist:build:*",
-    "dist:build:mac": "electron-builder -m --x64",
-    "dist:build:win": "electron-builder -w --x64",
-    "dist:pre": "SYNC_STORJ_VERSION=0.0.27 SYNC_SIA_VERSION=0.2.2 run-p dist:pre:*:*",
-    "dist:pre:storj:mac": "mkdir -p tmp/mac/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-darwin.zip -o storj-mac.zip && unzip storj-mac.zip -d tmp/mac/goobox-sync-storj && rm storj-mac.zip",
-    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-win64.zip -o storj-win.zip && unzip storj-win.zip -d tmp/win/goobox-sync-storj && rm storj-win.zip",
+    "dist:build": "run-s dist:build:*",
+    "dist:build:mac": "electron-builder -m --x64 --publish=never",
+    "dist:build:win": "electron-builder -w --x64 --publish=never",
+    "dist:pre": "SYNC_STORJ_VERSION=0.0.28 SYNC_SIA_VERSION=0.2.4 run-p dist:pre:*:*",
+    "dist:pre:storj:mac": "mkdir -p tmp/mac/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-darwin.zip -o storj-mac.zip && unzip -u storj-mac.zip -d tmp/mac/goobox-sync-storj && rm storj-mac.zip",
+    "dist:pre:storj:win": "mkdir -p tmp/win/goobox-sync-storj && curl -sSL https://github.com/GooBox/goobox-sync-storj/releases/download/${SYNC_STORJ_VERSION}/goobox-sync-storj-${SYNC_STORJ_VERSION}-win64.zip -o storj-win.zip && unzip -u storj-win.zip -d tmp/win/goobox-sync-storj && rm storj-win.zip",
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
-    "dist:post": "del tmp"
+    "dist:post": "del tmp",
+    "update": "updates -u"
   },
   "repository": {
     "type": "git",
@@ -37,59 +41,67 @@
   },
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
-    "about-window": "^1.11.0",
-    "core-js": "^2.5.6",
-    "electron-json-storage": "^4.1.0",
+    "about-window": "^1.12.1",
+    "core-js": "^2.5.7",
+    "electron-json-storage": "^4.1.1",
     "node-jre": "jkawamoto/node-jre",
     "node-notifier": "^5.2.1",
     "react-copy-to-clipboard": "^5.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.47",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.47",
-    "@babel/preset-env": "^7.0.0-beta.47",
-    "@babel/preset-react": "^7.0.0-beta.47",
+    "@babel/core": "^7.0.0-beta.53",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.53",
+    "@babel/preset-env": "^7.0.0-beta.53",
+    "@babel/preset-react": "^7.0.0-beta.53",
     "babel-core": "^7.0.0-0",
-    "babel-jest": "^22.4.4",
+    "babel-jest": "^23.4.0",
     "babel-loader": "^8.0.0-beta.0",
     "babel-minify-webpack-plugin": "^0.3.1",
-    "bootstrap": "^4.1.1",
-    "classnames": "^2.2.5",
-    "commander": "^2.15.1",
-    "coveralls": "^3.0.1",
-    "css-loader": "^0.28.11",
+    "bootstrap": "^4.1.2",
+    "classnames": "^2.2.6",
+    "commander": "^2.16.0",
+    "connected-react-router": "^4.3.0",
+    "coveralls": "^3.0.2",
+    "css-loader": "^1.0.0",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
-    "electron": "2.0.1",
-    "electron-builder": "^20.13.4",
-    "electron-log": "^2.2.14",
+    "electron": "2.0.5",
+    "electron-builder": "^20.21.2",
+    "electron-log": "^2.2.16",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^5.1.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.10.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
-    "jest": "^22.4.4",
-    "js-yaml": "^3.11.0",
+    "jest": "^23.4.1",
+    "js-yaml": "^3.12.0",
     "menubar": "^5.2.3",
     "npm-run-all": "^4.1.3",
-    "prop-types": "^15.6.1",
-    "react": "^16.3.2",
-    "react-awesome-popover": "^2.0.5",
-    "react-dom": "^16.3.2",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.1",
+    "react-awesome-popover": "^2.0.6",
+    "react-dom": "^16.4.1",
     "react-redux": "^5.0.7",
-    "react-router": "^4.2.0",
-    "react-router-redux": "^5.0.0-alpha.9",
+    "react-router": "^4.3.1",
     "redux": "^4.0.0",
-    "redux-actions": "^2.3.2",
+    "redux-actions": "^2.4.0",
     "redux-logger": "^3.0.6",
-    "redux-mock-store": "^1.5.1",
+    "redux-mock-store": "^1.5.3",
     "redux-saga": "^0.16.0",
+    "rmdir": "^1.2.0",
     "semver": "^5.5.0",
     "stream-to-string": "^1.1.0",
+    "styled-components": "^3.3.3",
     "svg-url-loader": "^2.3.2",
-    "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.3",
-    "winston": "^3.0.0-rc2",
+    "updates": "^3.2.2",
+    "webpack": "^4.16.0",
+    "webpack-cli": "^3.0.8",
+    "winston": "^3.0.0",
     "winston-papertrail": "^1.0.5"
   },
   "optionalDependencies": {
@@ -103,7 +115,7 @@
         {
           "targets": {
             "node": "current",
-            "electron": "2.0.1"
+            "electron": "2.0.5"
           },
           "useBuiltIns": "usage"
         }
@@ -127,80 +139,6 @@
     },
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
-    }
-  },
-  "build": {
-    "appId": "io.goobox.CommunityGUI",
-    "directories": {
-      "buildResources": ""
-    },
-    "files": [
-      "!__mocks__",
-      "!__tests__",
-      "!coverage",
-      "!Docs",
-      "!node_modules/node-jre/jre",
-      "!goobox-sync-*",
-      "!src",
-      "!tmp",
-      "!vendor"
-    ],
-    "mac": {
-      "category": "public.app-category.productivity",
-      "icon": "resources/goobox.icns",
-      "type": "development",
-      "extraResources": [
-        {
-          "from": "tmp/mac/goobox-sync-storj",
-          "to": "app/goobox-sync-storj"
-        },
-        {
-          "from": "tmp/mac/goobox-sync-sia",
-          "to": "app/goobox-sync-sia"
-        },
-        {
-          "from": "vendor/mac",
-          "to": "../PlugIns/"
-        },
-        {
-          "from": "node_modules/fileicon/bin/fileicon",
-          "to": "app/fileicon"
-        }
-      ]
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "resources/goobox.ico",
-      "extraResources": [
-        {
-          "from": "tmp/win/goobox-sync-storj",
-          "to": "app/goobox-sync-storj"
-        },
-        {
-          "from": "tmp/win/goobox-sync-sia",
-          "to": "app/goobox-sync-sia"
-        },
-        {
-          "from": "vendor/win",
-          "to": "libraries",
-          "filter": "*.dll"
-        }
-      ],
-      "publisherName": "Goobox"
-    },
-    "asar": false,
-    "asarUnpack": [
-      "node_modules/node-jre",
-      "node_modules/node-notifier"
-    ],
-    "nsis": {
-      "perMachine": true,
-      "installerIcon": "resources/installer.ico",
-      "uninstallerIcon": "resources/installer.ico",
-      "license": "LICENSE",
-      "deleteAppDataOnUninstall": true,
-      "artifactName": "${productName}-${version}-setup_x64.${ext}",
-      "include": "vendor/win/installer.nsi"
     }
   }
 }

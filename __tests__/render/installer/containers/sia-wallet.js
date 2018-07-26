@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
+import {push} from "connected-react-router";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {mapDispatchToProps, mapStateToProps, mergeProps} from "../../../../src/render/installer/containers/sia-wallet";
@@ -29,7 +29,7 @@ describe("mapStateToProps", () => {
         seed: "xxx xxx xxx",
       }
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main.siaAccount,
       mainState: main,
     });

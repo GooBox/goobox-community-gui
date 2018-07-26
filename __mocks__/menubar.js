@@ -20,7 +20,7 @@ import {app, BrowserWindow} from "./electron";
 export const menubar = jest.fn();
 export const menubarMock = {
   on: jest.fn(),
-  app: app,
+  app,
   showWindow: jest.fn(),
   window: new BrowserWindow(),
   tray: {

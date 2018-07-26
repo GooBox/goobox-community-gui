@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("electron");
 
 import {systemPreferences} from "electron";
 import path from "path";
+
+jest.mock("electron");
 
 describe("icons module in Mac", () => {
 

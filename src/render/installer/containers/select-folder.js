@@ -15,20 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
 import SelectFolder from "../components/select-folder";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   storj: state.main.storj,
   sia: state.main.sia,
   folder: state.main.folder,
   mainState: state.main,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => {
     dispatch(actions.stopSyncApps());
@@ -46,7 +46,7 @@ export const mapDispatchToProps = (dispatch) => ({
     }
   },
 
-  onSelectFolder: (folder) => dispatch(actions.selectFolder(folder)),
+  onSelectFolder: folder => dispatch(actions.selectFolder(folder)),
 
 });
 

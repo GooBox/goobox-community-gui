@@ -1,0 +1,75 @@
+#
+# Copyright (C) 2017-2018 Junpei Kawamoto
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+appId: "io.goobox.CommunityGUI"
+directories:
+  buildResources: ""
+files:
+  - "!__mocks__"
+  - "!__tests__"
+  - "!coverage"
+  - "!Docs"
+  - "!node_modules/node-jre/jre"
+  - "!goobox-sync-*"
+  - "!src"
+  - "!tmp"
+  - "!vendor"
+mac:
+  category: "public.app-category.productivity"
+  icon: "resources/goobox.icns"
+  type: "development"
+  extraResources:
+    - from: "tmp/mac/goobox-sync-storj"
+      to: "app/goobox-sync-storj"
+    - from: "tmp/mac/goobox-sync-sia"
+      to: "app/goobox-sync-sia"
+    - from: "vendor/mac"
+      to: "../PlugIns/"
+    - from: "node_modules/fileicon/bin/fileicon"
+      to: "app/fileicon"
+win:
+  target: "nsis"
+  icon: "resources/goobox.ico"
+  extraResources:
+    - from: "tmp/win/goobox-sync-storj"
+      to: "app/goobox-sync-storj"
+    - from: "tmp/win/goobox-sync-sia"
+      to: "app/goobox-sync-sia"
+    - from: "vendor/win"
+      to: "libraries"
+      filter: "*.dll"
+  publisherName: "Goobox"
+linux:
+  target: "AppImage"
+  icon: "resources/goobox.icns"
+  category: "System"
+  extraResources:
+    - from: "tmp/linux/goobox-sync-storj"
+      to: "app/goobox-sync-storj"
+    - from: "tmp/linux/goobox-sync-sia"
+      to: "app/goobox-sync-sia"
+asar: false
+asarUnpack:
+  - "node_modules/node-jre"
+  - "node_modules/node-notifier"
+nsis:
+  perMachine: true
+  installerIcon: "resources/installer.ico"
+  uninstallerIcon: "resources/installer.ico"
+  license: "LICENSE"
+  deleteAppDataOnUninstall: true
+  artifactName: "${productName}-${version}-setup_x64.${ext}"
+  include: "vendor/win/installer.nsi"

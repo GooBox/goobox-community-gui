@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,4 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const installJRE = jest.fn();
+import log from "electron-log";
+import notifier from "node-notifier";
+
+export const notifyAsync = async opts => new Promise((resolve, reject) => {
+
+  // noinspection JSUnresolvedFunction
+  notifier.notify(opts, (err, res) => {
+    if (err) {
+      log.warn(`Notification failed; the user might cancel it: ${err}`);
+      reject(err);
+    } else {
+      resolve(res);
+    }
+  });
+
+});
+
+
+export default notifyAsync;

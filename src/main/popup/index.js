@@ -20,11 +20,16 @@ import {app, dialog, Menu, systemPreferences} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
 import path from "path";
-import {Synchronizing} from "../constants";
-import * as ipcActionTypes from "../ipc/constants";
-import addListener from "../ipc/receiver";
-import {getConfig} from "./config";
-import * as desktop from "./desktop";
+import {Synchronizing} from "../../constants";
+import * as ipcActionTypes from "../../ipc/constants";
+import addListener from "../../ipc/receiver";
+import {getConfig} from "../config";
+import * as desktop from "../desktop";
+import icons from "../icons";
+import {installJRE} from "../jre";
+import Sia from "../sia";
+import Storj from "../storj";
+import utils from "../utils";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -34,16 +39,11 @@ import {
   updateStateHandler,
   willQuitHandler,
 } from "./handlers";
-import icons from "./icons";
-import {installJRE} from "./jre";
-import Sia from "./sia";
-import Storj from "./storj";
-import utils from "./utils";
 
 export const DefaultWidth = 360;
 export const DefaultHeight = 340;
 
-export const core = async () => {
+export const popup = async () => {
 
   let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
@@ -51,17 +51,17 @@ export const core = async () => {
   }
 
   const mb = menubar({
-    index: "file://" + path.join(__dirname, "../../static/popup.html"),
+    index: `file://${path.join(__dirname, "../../static/popup.html")}`,
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
-    width: width,
-    height: DefaultHeight,
     alwaysOnTop: true,
     showDockIcon: false,
+    width,
+    height: DefaultHeight,
   });
   mb.window.setSkipTaskbar(true);
-  mb.app.on('window-all-closed', app.quit);
+  mb.app.on("window-all-closed", app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
   mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
   mb.appState = Synchronizing;
@@ -115,6 +115,7 @@ export const core = async () => {
     mb.tray.popUpContextMenu(ctxMenu);
   });
 
+  // noinspection JSUnresolvedFunction
   mb.on("focus-lost", () => {
     mb.hideWindow();
   });
@@ -174,4 +175,4 @@ export const core = async () => {
 
 };
 
-export default core;
+export default popup;

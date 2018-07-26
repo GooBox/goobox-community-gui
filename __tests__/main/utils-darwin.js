@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-jest.mock("child_process");
 
 import {execFile, spawnSync} from "child_process";
+
+jest.mock("child_process");
 
 describe("utils module for mac", () => {
 

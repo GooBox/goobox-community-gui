@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
+import {push} from "connected-react-router";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {
@@ -36,7 +36,7 @@ describe("mapStateToProps", () => {
       },
       folder: "/tmp"
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main.storjAccount,
       processing: main.processing,
       syncFolder: main.folder,
@@ -66,7 +66,7 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClickNext(syncFolder, info);
     expect(dispatch).toHaveBeenCalledWith(actions.storjCreateAccount({
       ...info,
-      syncFolder: syncFolder,
+      syncFolder,
     }));
   });
 

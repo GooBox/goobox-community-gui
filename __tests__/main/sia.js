@@ -16,9 +16,6 @@
  */
 
 "use strict";
-jest.mock("child_process");
-jest.useFakeTimers();
-
 import {execSync, spawn} from "child_process";
 import yaml from "js-yaml";
 import jre from "node-jre";
@@ -26,6 +23,9 @@ import path from "path";
 import {PassThrough, Readable} from "stream";
 import {Idle, Synchronizing} from "../../src/constants";
 import Sia from "../../src/main/sia";
+
+jest.mock("child_process");
+jest.useFakeTimers();
 
 describe("Sia class", () => {
 
@@ -53,10 +53,10 @@ describe("Sia class", () => {
     on = jest.fn();
     spawn.mockClear();
     spawn.mockReturnValue({
-      stdin: stdin,
-      stdout: stdout,
-      stderr: stderr,
-      on: on,
+      stdin,
+      stdout,
+      stderr,
+      on,
     });
   });
 
@@ -133,9 +133,9 @@ describe("Sia class", () => {
       expect(sia.proc).not.toBeDefined();
       sia.start(syncFolder);
       expect(sia.proc).toEqual({
-        stdin: stdin,
-        stdout: stdout,
-        stderr: stderr,
+        stdin,
+        stdout,
+        stderr,
         on: expect.any(Function),
       });
     });
@@ -258,9 +258,9 @@ describe("Sia class", () => {
       on = jest.fn();
       spawn.mockReset();
       spawn.mockReturnValue({
-        stdout: stdout,
-        stderr: stderr,
-        on: on,
+        stdout,
+        stderr,
+        on,
       });
     });
 
@@ -298,9 +298,9 @@ describe("Sia class", () => {
       }));
       stdout.push(null);
       spawn.mockReturnValue({
-        stdout: stdout,
-        stderr: stderr,
-        on: on,
+        stdout,
+        stderr,
+        on,
       });
       await expect(sia.wallet()).rejects.toEqual(expect.any(String));
     });
@@ -308,9 +308,9 @@ describe("Sia class", () => {
     it("adds process object for the wallet command as walletProc attribute, and deletes it after the command ends", async () => {
       stdout = new Readable();
       spawn.mockReturnValue({
-        stdout: stdout,
-        stderr: stderr,
-        on: on,
+        stdout,
+        stderr,
+        on,
       });
       expect(sia.walletProc).not.toBeDefined();
 

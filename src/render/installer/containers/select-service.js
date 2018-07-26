@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
 import ServiceSelector from "../components/select-service";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   processing: state.main.processing
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onSelectStorj: () => {
     dispatch(actions.selectStorj());

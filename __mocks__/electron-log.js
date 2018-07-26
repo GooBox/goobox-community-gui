@@ -23,6 +23,8 @@ export const debug = () => {
 };
 export const verbose = () => {
 };
+export const warn = () => {
+};
 export const error = () => {
 };
 export const silly = () => {
@@ -33,10 +35,11 @@ export const silly = () => {
 // export const verbose = (msg) => console.log(`verbose: ${msg}`);
 // export const error = (msg) => console.log(`error: ${msg}`);
 export default {
-  log: log,
-  info: info,
-  debug: debug,
-  verbose: verbose,
-  error: error,
-  silly: silly,
+  log,
+  info,
+  debug,
+  verbose,
+  warn,
+  error,
+  silly,
 };

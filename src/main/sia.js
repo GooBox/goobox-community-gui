@@ -70,13 +70,13 @@ export default class Sia extends EventEmitter {
     log.info(`[GUI main] Starting ${this._cmd} in ${this._wd} with ${args}`);
     this.proc = spawn(this._cmd, args, {
       cwd: this._wd,
-      env: env,
+      env,
       shell: true,
       windowsHide: true,
     });
 
     // Attach a root event handler to stdout.
-    readLine.createInterface({input: this.proc.stdout}).on("line", line => {
+    readLine.createInterface({input: this.proc.stdout}).on("line", (line) => {
       log.debug(`[GUI main] Received a sia event: ${line}`);
       try {
         const e = JSON.parse(line);
@@ -90,7 +90,7 @@ export default class Sia extends EventEmitter {
     readLine.createInterface({input: this.proc.stderr}).on("line", log.verbose);
 
     // Attach a sync state event handler.
-    this.on("syncState", payload => {
+    this.on("syncState", (payload) => {
       this._state = payload.newState;
     });
 
@@ -125,20 +125,20 @@ export default class Sia extends EventEmitter {
 
     this[proc]._closing = true;
     return Promise.all([
-      new Promise(resolve => {
+      new Promise((resolve) => {
         this[proc].once("exit", () => {
           log.info("[GUI main] sync-sia app is exited");
           this[proc] = null;
           resolve();
         });
       }),
-      new Promise(resolve => {
+      new Promise((resolve) => {
         this[proc].once("close", () => {
           log.info("[GUI main] Streams of sync-sia app are closed");
           resolve();
         });
       }),
-      new Promise(resolve => {
+      new Promise((resolve) => {
         log.info("[GUI main] Closing the sync-sia app");
         if (process.platform === "win32") {
           // noinspection SpellCheckingInspection
@@ -176,7 +176,7 @@ export default class Sia extends EventEmitter {
         reject(util.isString(err) ? err : "Failed to obtain the wallet information");
       });
 
-      toString(this.walletProc.stdout).then(res => {
+      toString(this.walletProc.stdout).then((res) => {
         this.walletProc = null;
         const info = yaml.safeLoad(res);
         if (!info || !info["wallet address"]) {

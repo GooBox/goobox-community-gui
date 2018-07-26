@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
+import {push} from "connected-react-router";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {
@@ -32,7 +32,7 @@ describe("mapStateToProps", () => {
       sia: true,
       folder: "/tmp",
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       ...main,
       mainState: main,
     });

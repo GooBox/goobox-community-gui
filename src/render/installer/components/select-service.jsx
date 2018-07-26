@@ -17,57 +17,46 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components";
 import siaLogo from "../assets/sia_logo.svg";
 import storjAndSiaLogo from "../assets/storj_and_sia_logo.svg";
 import storjLogo from "../assets/storj_logo.svg";
 import Sidebar from "./sidebar";
 
-const style = {
-  button: {
-    width: "131.5px",
-    height: "131.5px",
-    objectFit: "contain",
-    borderRadius: "5px",
-    border: "solid 1px #dddddd",
-    padding: 0,
-  },
-  //
-  // Currently, Goobox only supports Storj or Sia.
-  //
-  disabledButton: {
-    display: "none",
-  },
-};
+const ServiceButton = styled.button.attrs({
+  className: "btn btn-outline-light mr-2",
+  type: "button",
+})`
+  width: 131.5px;
+  height: 131.5px;
+  object-fit: contain;
+  border-radius: 5px;
+  border: solid 1px #dddddd;
+  padding: 0;
+`;
 
-const buttonClassName = "btn btn-outline-light mr-2";
-
-export const SelectService = (props) => {
-
-  return (
-    <div className="clearfix">
-      <Sidebar className="float-left"/>
-      <main className="float-right">
-        <h1>Let’s get started</h1>
-        <p>Please choose your cloud service</p>
-        <div className="d-flex">
-          <button id="option-storj" type="button" className={buttonClassName} style={style.button}
-                  onClick={() => props.processing || props.onSelectStorj()}>
-            <img src={storjLogo} width={64.7} height={93.2}/>
-          </button>
-          <button id="option-sia" type="button" className={buttonClassName} style={style.button}
-                  onClick={() => props.processing || props.onSelectSia()}>
-            <img src={siaLogo} width={94} height={59}/>
-          </button>
-          <button id="option-both" type="button" className={buttonClassName} style={style.disabledButton}
-                  onClick={() => props.processing || props.onSelectBoth()}>
-            <img src={storjAndSiaLogo} width={140} height={68}/>
-          </button>
-        </div>
-      </main>
-    </div>
-  );
-
-};
+export const SelectService = ({processing, onSelectStorj, onSelectSia, onSelectBoth}) => (
+  <div className="clearfix">
+    <Sidebar className="float-left"/>
+    <main className="float-right">
+      <h1>Let’s get started</h1>
+      <p>Please choose your cloud service</p>
+      <div className="d-flex">
+        <ServiceButton id="option-storj" onClick={() => processing || onSelectStorj()}>
+          <img src={storjLogo} width={64.7} height={93.2}/>
+        </ServiceButton>
+        <ServiceButton id="option-sia" onClick={() => processing || onSelectSia()}>
+          <img src={siaLogo} width={94} height={59}/>
+        </ServiceButton>
+        {/* Goobox only supports either Storj or Sia currently */}
+        <ServiceButton id="option-both" style={{display: "none"}}
+                       onClick={() => processing || onSelectBoth()}>
+          <img src={storjAndSiaLogo} width={140} height={68}/>
+        </ServiceButton>
+      </div>
+    </main>
+  </div>
+);
 
 SelectService.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.

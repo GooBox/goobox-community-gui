@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
+import {push} from "connected-react-router";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-encryption-key";
 
@@ -27,7 +27,7 @@ describe("mapStateToProps", () => {
         key: "xxx xxx xxxx"
       }
     };
-    expect(mapStateToProps({main: main})).toEqual({
+    expect(mapStateToProps({main})).toEqual({
       encryptionKey: main.storjAccount.key
     });
   });

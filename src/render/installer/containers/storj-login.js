@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import * as actions from "../actions";
 import StorjLogin from "../components/storj-login";
 import * as screens from "../constants/screens";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   processing: state.main.processing,
   encryptionKey: state.main.storjAccount.key,
   emailWarn: state.main.storjAccount.emailWarn,
@@ -31,7 +31,7 @@ export const mapStateToProps = (state) => ({
   mainState: state.main,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
@@ -42,7 +42,7 @@ export const mapDispatchToProps = (dispatch) => ({
 
   onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
 
-  onClickGenerateSeed: (mainState) => dispatch(actions.storjGenerateMnemonic({
+  onClickGenerateSeed: mainState => dispatch(actions.storjGenerateMnemonic({
     folder: mainState.folder
   })),
 

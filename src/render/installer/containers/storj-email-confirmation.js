@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import {push} from "react-router-redux";
 import StorjEmailConfirmation from "../components/storj-email-confirmation";
 import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjEncryptionKey)),
 

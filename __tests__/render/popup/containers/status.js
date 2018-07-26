@@ -34,7 +34,7 @@ describe("Status container", () => {
 
     it("passes state state", () => {
       const state = "sample state";
-      expect(mapStateToProps({state: state})).toHaveProperty("state", state);
+      expect(mapStateToProps({state})).toHaveProperty("state", state);
     });
 
     it("sets wait to style.cursor when disabled is true", () => {
@@ -70,10 +70,16 @@ describe("Status container", () => {
       expect(dispatch).toHaveBeenCalledWith(actions.openAboutWindow());
     });
 
-  });
+    it("maps dispatch of open settings actions to onClickSettings", () => {
+      mapDispatchToProps(dispatch).onClickSettings();
+      expect(dispatch).toHaveBeenCalledWith(actions.openSettings());
+    });
 
-  // it("is connected mapStateToProps and mapDispatchToProps", () => {
-  //   expect(ConnectedStatus).toEqual(connect(mapStateToProps, mapDispatchToProps)(Status));
-  // });
+    it("maps dispatch of import drive action to onClickImportDrive", () => {
+      mapDispatchToProps(dispatch).onClickImportDrive();
+      expect(dispatch).toHaveBeenCalledWith(actions.importDrive());
+    });
+
+  });
 
 });

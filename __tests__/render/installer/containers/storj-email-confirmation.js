@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "react-router-redux";
+import {push} from "connected-react-router";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {
   mapDispatchToProps,
@@ -26,7 +26,7 @@ describe("mapStateToProps", () => {
 
   it("maps nothing", () => {
     expect(mapStateToProps()).toEqual({});
-  })
+  });
 
 });
 

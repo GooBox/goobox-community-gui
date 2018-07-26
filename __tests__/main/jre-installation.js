@@ -15,31 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*eslint no-console: 0*/
+import jre from "node-jre";
+import rmDir from "rmdir";
+
 jest.unmock("node-jre");
 jest.setTimeout(9 * 60 * 1000);
-import jre from "node-jre";
-import rmdir from "rmdir";
 
-describe("JRE installation test in Windows", () => {
+describe("JRE installation test on Windows", () => {
 
-  if (process.platform !== "win32") {
-    it = it.skip;
-  }
+  if (process.platform === "win32") {
 
-  it("installs JRE", callback => {
-    rmdir(jre.jreDir(), (err) => {
+    it("installs JRE", (callback) => {
+      rmDir(jre.jreDir(), (err) => {
 
-      console.log(`Deleting JRE directory: ${err || "ok"}`);
-      expect(err).toBeNull();
+        console.log(`Deleting JRE directory: ${err || "ok"}`);
+        expect(err).toBeNull();
 
-      jre.install((err) => {
-        console.log(`Installing JRE: ${err || "ok"}`);
-        expect(err === null || err === "Smoketest failed.").toBeTruthy();
-        callback();
+        jre.install((err) => {
+          console.log(`Installing JRE: ${err || "ok"}`);
+          expect(err === null || err === "Smoketest failed.").toBeTruthy();
+          callback();
+        });
+
       });
 
     });
 
-  });
+  } else {
+
+    it("runs a dummy test on other platforms", () => {
+    });
+
+  }
 
 });

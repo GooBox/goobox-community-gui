@@ -64,3 +64,5 @@ export async function installJRE() {
   ]);
 
 }
+
+export default installJRE;

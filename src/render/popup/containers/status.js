@@ -19,7 +19,7 @@ import {connect} from "react-redux";
 import * as actions from "../actions";
 import Status from "../components/status";
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = state => ({
   style: {
     cursor: state.disabled ? "wait" : "auto"
   },
@@ -28,13 +28,17 @@ export const mapStateToProps = (state) => ({
   state: state.state,
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
-  onChangeState: (args) => dispatch(actions.changeState(args)),
+  onChangeState: args => dispatch(actions.changeState(args)),
 
   onClickSyncFolder: () => dispatch(actions.openSyncFolder()),
 
   onClickInfo: () => dispatch(actions.openAboutWindow()),
+
+  onClickSettings: () => dispatch(actions.openSettings()),
+
+  onClickImportDrive: () => dispatch(actions.importDrive()),
 
 });
 

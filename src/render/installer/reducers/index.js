@@ -57,19 +57,19 @@ export default handleActions({
     folder: action.payload
   }),
 
-  [actionTypes.SelectStorj]: (state) => ({
+  [actionTypes.SelectStorj]: state => ({
     ...state,
     storj: true,
     sia: false,
   }),
 
-  [actionTypes.SelectSia]: (state) => ({
+  [actionTypes.SelectSia]: state => ({
     ...state,
     storj: false,
     sia: true,
   }),
 
-  [actionTypes.SelectBoth]: (state) => ({
+  [actionTypes.SelectBoth]: state => ({
     ...state,
     storj: true,
     sia: true,
@@ -116,12 +116,12 @@ export default handleActions({
     errorMsg: action.payload
   }),
 
-  [actionTypes.ProcessingStart]: (state) => ({
+  [actionTypes.ProcessingStart]: state => ({
     ...state,
     processing: true,
   }),
 
-  [actionTypes.ProcessingEnd]: (state) => ({
+  [actionTypes.ProcessingEnd]: state => ({
     ...state,
     processing: false,
   }),

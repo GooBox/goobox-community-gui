@@ -18,30 +18,20 @@
 import PropTypes from "prop-types";
 import React from "react";
 import Logo from "../assets/logo.svg";
+import {WhiteButton} from "./buttons";
 
-const style = {
-  button: {
-    width: "212.2px",
-    height: "47.3px",
-    borderRadius: "3.2px",
-    color: "#26aae1",
-  }
-};
+export const FinishButton = WhiteButton.extend`
+  color: #26aae1;
+`;
 
-export const Finish = (props) => {
-
-  return (
-    <main className="full-screen d-flex flex-column justify-content-between align-items-center">
-      <img className="mb-3" src={Logo} width={110} height={115.2}/>
-      <h1>{props.header}</h1>
-      <p>{props.message}</p>
-      <button type="button" className="btn btn-light" style={style.button} onClick={props.onClick}>
-        Open my Goobox
-      </button>
-    </main>
-  );
-
-};
+export const Finish = ({header, message, onClick}) => (
+  <main className="full-screen d-flex flex-column justify-content-between align-items-center">
+    <img className="mb-3" src={Logo} width={110} height={115.2}/>
+    <h1>{header}</h1>
+    <p>{message}</p>
+    <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>
+  </main>
+);
 
 Finish.propTypes = {
   header: PropTypes.string.isRequired,

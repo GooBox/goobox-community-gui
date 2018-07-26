@@ -27,7 +27,7 @@ export const app = {
   exit: jest.fn(),
 };
 
-app.makeSingleInstance.mockImplementation(callback => {
+app.makeSingleInstance.mockImplementation((callback) => {
   callback();
 });
 

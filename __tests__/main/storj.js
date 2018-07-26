@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 "use strict";
-jest.mock("child_process");
-jest.useFakeTimers();
-
 import {spawn} from "child_process";
 import jre from "node-jre";
 import path from "path";
 import readLine from "readline";
 import {PassThrough} from "stream";
 import Storj from "../../src/main/storj";
+
+jest.mock("child_process");
+jest.useFakeTimers();
 
 describe("Storj class", () => {
 
@@ -50,10 +50,10 @@ describe("Storj class", () => {
     on = jest.fn();
     spawn.mockClear();
     spawn.mockReturnValue({
-      stdin: stdin,
-      stdout: stdout,
-      stderr: stderr,
-      on: on,
+      stdin,
+      stdout,
+      stderr,
+      on,
     });
   });
 
@@ -132,7 +132,7 @@ describe("Storj class", () => {
       };
       storj.start(dir);
       return new Promise((resolve, reject) => {
-        storj.on("response", res => {
+        storj.on("response", (res) => {
           try {
             expect(res).toEqual(event);
             resolve();
@@ -147,9 +147,9 @@ describe("Storj class", () => {
     it("adds proc field which is the returned value of spawn", () => {
       storj.start(dir);
       expect(storj.proc).toEqual({
-        stdin: stdin,
-        stdout: stdout,
-        stderr: stderr,
+        stdin,
+        stdout,
+        stderr,
         on: expect.any(Function),
       });
     });
@@ -327,8 +327,8 @@ describe("Storj class", () => {
       expect(storj._sendRequest).toHaveBeenCalledWith("Login", {
         method: "login",
         args: {
-          email: email,
-          password: password,
+          email,
+          password,
           encryptionKey: key,
         }
       });
@@ -356,8 +356,8 @@ describe("Storj class", () => {
       expect(storj._sendRequest).toHaveBeenCalledWith("Registration", {
         method: "createAccount",
         args: {
-          email: email,
-          password: password,
+          email,
+          password,
         }
       });
     });

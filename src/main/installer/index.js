@@ -21,9 +21,9 @@ import {app, BrowserWindow, Menu} from "electron";
 import log from "electron-log";
 import fs from "fs";
 import path from "path";
-import showInfoWindowAsync from "../about-window";
-import * as actionTypes from "../ipc/constants";
-import addListener from "../ipc/receiver";
+import showInfoWindowAsync from "../../about-window";
+import * as actionTypes from "../../ipc/constants";
+import addListener from "../../ipc/receiver";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
@@ -54,7 +54,7 @@ export const installer = () => {
   }
   // noinspection SpellCheckingInspection
   const mainWindow = new BrowserWindow({
-    width: width,
+    width,
     height: DefaultHeight,
     useContentSize: true,
     resizable: false,
@@ -62,7 +62,7 @@ export const installer = () => {
     title: "Goobox installer",
     // skipTaskbar: true,
   });
-  mainWindow.loadURL("file://" + path.join(__dirname, "../../static/installer.html"));
+  mainWindow.loadURL(`file://${path.join(__dirname, "../../static/installer.html")}`);
 
   if (process.env.DEV_TOOLS) {
     mainWindow.toggleDevTools();

@@ -24,12 +24,12 @@ describe("mapStateToProps", () => {
     const errorMsg = "expected error";
     expect(mapStateToProps({
       main: {
-        progress: progress,
-        errorMsg: errorMsg,
+        progress,
+        errorMsg,
       }
     })).toEqual({
-      progress: progress,
-      errorMsg: errorMsg,
+      progress,
+      errorMsg,
     });
   });
 

@@ -28,7 +28,7 @@ export const mapStateToProps = () => ({
 
 });
 
-export const mapDispatchToProps = (dispatch) => ({
+export const mapDispatchToProps = dispatch => ({
 
   onClick: () => dispatch(actions.closeWindow()),
 

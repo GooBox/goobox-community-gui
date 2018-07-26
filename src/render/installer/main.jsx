@@ -15,15 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import electronLog from "electron-log";
+import {ConnectedRouter, connectRouter, routerMiddleware} from "connected-react-router";
 import createHistory from "history/createBrowserHistory";
 import React from "react";
 import {Provider} from "react-redux";
 import {Route, Switch} from "react-router";
-import {ConnectedRouter, routerMiddleware, routerReducer} from "react-router-redux";
 import {applyMiddleware, combineReducers, createStore} from "redux";
-import {createLogger} from "redux-logger";
 import createSagaMiddleware from "redux-saga";
+import {createLogger} from "../logger";
 import * as screens from "./constants/screens";
 import Preparation from "./containers/preparation";
 import SelectFolder from "./containers/select-folder";
@@ -39,24 +38,6 @@ import StorjRegistration from "./containers/storj-registration";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
-let logger;
-if ("development" === process.env.NODE_ENV) {
-  logger = createLogger();
-} else {
-  logger = createLogger({
-    logger: {
-      log: electronLog.silly,
-      colors: {
-        title: false,
-        prevState: false,
-        action: false,
-        nextState: false,
-        error: false,
-      }
-    }
-  });
-}
-
 const configureStore = () => {
 
   const sagaMiddleware = createSagaMiddleware();
@@ -64,36 +45,34 @@ const configureStore = () => {
   const historyMiddleware = routerMiddleware(history);
 
   const store = createStore(
-    combineReducers({
-      main: reducer,
-      router: routerReducer
-    }),
-    applyMiddleware(sagaMiddleware, historyMiddleware, logger),
+    connectRouter(history)(
+      combineReducers({
+        main: reducer,
+      })),
+    applyMiddleware(sagaMiddleware, historyMiddleware, createLogger()),
   );
   sagaMiddleware.run(rootSaga);
   return {store: store, history: history};
 
 };
 
-export const routes = () => {
-  return (
-    <Switch>
-      <Route path={screens.ChooseCloudService} component={SelectService}/>
-      <Route path={screens.StorjSelected} component={SelectFolder}/>
-      <Route path={screens.SiaSelected} component={SelectFolder}/>
-      <Route path={screens.BothSelected} component={SelectFolder}/>
-      <Route path={screens.StorjLogin} component={StorjLogin}/>
-      <Route path={screens.StorjRegistration} component={StorjRegistration}/>
-      <Route path={screens.StorjEncryptionKey} component={StorjEncryptionKey}/>
-      <Route path={screens.StorjEmailConfirmation} component={StorjEmailConfirmation}/>
-      <Route path={screens.SiaWallet} component={SiaWallet}/>
-      <Route path={screens.SiaFinish} component={SiaFinish}/>
-      <Route path={screens.FinishAll} component={StorjFinish}/>
-      <Route path={screens.SiaPreparation} component={SiaSettingUp}/>
-      <Route path="" component={Preparation}/>
-    </Switch>
-  );
-};
+export const routes = () => (
+  <Switch>
+    <Route path={screens.ChooseCloudService} component={SelectService}/>
+    <Route path={screens.StorjSelected} component={SelectFolder}/>
+    <Route path={screens.SiaSelected} component={SelectFolder}/>
+    <Route path={screens.BothSelected} component={SelectFolder}/>
+    <Route path={screens.StorjLogin} component={StorjLogin}/>
+    <Route path={screens.StorjRegistration} component={StorjRegistration}/>
+    <Route path={screens.StorjEncryptionKey} component={StorjEncryptionKey}/>
+    <Route path={screens.StorjEmailConfirmation} component={StorjEmailConfirmation}/>
+    <Route path={screens.SiaWallet} component={SiaWallet}/>
+    <Route path={screens.SiaFinish} component={SiaFinish}/>
+    <Route path={screens.FinishAll} component={StorjFinish}/>
+    <Route path={screens.SiaPreparation} component={SiaSettingUp}/>
+    <Route path="" component={Preparation}/>
+  </Switch>
+);
 
 
 export default function initInstaller() {
