@@ -35,6 +35,8 @@ export default class Sia extends EventEmitter {
     this._cmd = "goobox-sync-sia";
     if (process.platform === "win32") {
       this._cmd += ".bat";
+    } else if (process.platform !== "darwin") {
+      this._cmd = `./${this._cmd}`;
     }
     this._javaHome = path.join(jre.driver(), "../../");
     this._state = Synchronizing;
