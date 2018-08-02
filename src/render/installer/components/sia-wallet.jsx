@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
@@ -87,14 +88,14 @@ export class SiaWallet extends React.Component {
     if (this.state.addressCopied) {
       return (
         <div className="text-success">
-          <i className="far fa-check-circle"/>
+          <FontAwesomeIcon icon={["far", "check-circle"]}/>
           <br/>
           copied
         </div>
       );
     }
     return (
-      <i className="far fa-clone text-black-50"/>
+      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
     );
   }
 
@@ -102,14 +103,14 @@ export class SiaWallet extends React.Component {
     if (this.state.seedCopied) {
       return (
         <div className="text-success">
-          <i className="far fa-check-circle"/>
+          <FontAwesomeIcon icon={["far", "check-circle"]}/>
           <br/>
           copied
         </div>
       );
     }
     return (
-      <i className="far fa-clone text-black-50"/>
+      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
     );
   }
 
@@ -126,7 +127,7 @@ export class SiaWallet extends React.Component {
               Please save your &nbsp;
               <span className="font-weight-bold">Sia wallet address</span>&nbsp;
               <Popover>
-                <i className="fas fa-info-circle info-button"/>
+                <FontAwesomeIcon icon="info-circle" className="info-button"/>
                 <span>Send Sia tokens to this address in order to top-up your account.</span>
               </Popover>
             </label>
@@ -145,7 +146,7 @@ export class SiaWallet extends React.Component {
               And your &nbsp;
               <span className="font-weight-bold">Sia seed</span>&nbsp;
               <Popover>
-                <i className="fas fa-info-circle info-button"/>
+                <FontAwesomeIcon icon="info-circle" className="info-button"/>
                 <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
               </Popover>
             </label>

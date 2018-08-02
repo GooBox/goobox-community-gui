@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import React from "react";
 import Footer from "./footer";
@@ -29,12 +30,12 @@ export const Status = (props) => (
     <section className="d-flex flex-column p-3">
       <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
          onClick={() => props.onClickSyncFolder()}>
-        <i className="fas fa-folder-open mr-2"/>
+        <FontAwesomeIcon icon="folder-open" className="mr-2"/>
         <span className="bold">Open my folder</span>
       </a>
       <a id="import-drive" className="btn btn-light d-flex align-items-center invisible"
          onClick={() => props.onClickImportDrive()}>
-        <i className="fas fa-cloud-upload-alt mr-2"/>
+        <FontAwesomeIcon icon="cloud-upload-alt" className="mr-2"/>
         <span className="bold">Import drive</span>
       </a>
     </section>

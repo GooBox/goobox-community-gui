@@ -15,10 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faCheckCircle, faClone,} from "@fortawesome/free-regular-svg-icons";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {webFrame} from "electron";
 import ReactDOM from "react-dom";
 import initInstaller from "./main";
 
+library.add(faCheckCircle, faClone, faInfoCircle);
 webFrame.setVisualZoomLevelLimits(1, 1);
 ReactDOM.render(
   initInstaller(),

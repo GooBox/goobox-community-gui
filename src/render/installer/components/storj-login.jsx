@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
@@ -117,7 +118,7 @@ export class StorjLogin extends React.Component {
               <label htmlFor="key">
                 Encryption Key&nbsp;
                 <Popover>
-                  <i className="fas fa-info-circle info-button"/>
+                  <FontAwesomeIcon icon="info-circle" className="info-button"/>
                   <span>If you already have a encryption key for Goobox please enter it, otherwise click on "Generate".</span>
                 </Popover>
               </label>

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {mount} from "enzyme";
 import React from "react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
@@ -58,12 +59,12 @@ describe("SiaWallet component", () => {
 
   it("shows fa-clone icon in copy address button if addressCopied is false", () => {
     wrapper.setState({addressCopied: false});
-    expect(wrapper.find("#copy-address-btn").find(".fa-clone").exists()).toBeTruthy();
+    expect(wrapper.find("#copy-address-btn").find(FontAwesomeIcon).prop("icon")).toEqual(["far", "clone"]);
   });
 
   it("shows fa-check-circle icon in copy address button if addressCopied is true", () => {
     wrapper.setState({addressCopied: true});
-    expect(wrapper.find("#copy-address-btn").find(".fa-check-circle").exists()).toBeTruthy();
+    expect(wrapper.find("#copy-address-btn").find(FontAwesomeIcon).prop("icon")).toEqual(["far", "check-circle"]);
   });
 
   it("copies the given address and set true to addressCopied if the button is clicked", () => {
@@ -76,12 +77,12 @@ describe("SiaWallet component", () => {
 
   it("shows fa-clone icon in copy address button if seedCopied is false", () => {
     wrapper.setState({seedCopied: false});
-    expect(wrapper.find("#copy-seed-btn").find(".fa-clone").exists()).toBeTruthy();
+    expect(wrapper.find("#copy-seed-btn").find(FontAwesomeIcon).prop("icon")).toEqual(["far", "clone"]);
   });
 
   it("shows fa-check-circle icon in copy address button if seedCopied is true", () => {
     wrapper.setState({seedCopied: true});
-    expect(wrapper.find("#copy-seed-btn").find(".fa-check-circle").exists()).toBeTruthy();
+    expect(wrapper.find("#copy-seed-btn").find(FontAwesomeIcon).prop("icon")).toEqual(["far", "check-circle"]);
   });
 
   it("copies the given seed and set true to seedCopied if the button is clicked", () => {
