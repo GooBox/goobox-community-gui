@@ -10,7 +10,7 @@
     "installer:debug": "electron . --installer --dev-tools",
     "build": "webpack",
     "build:watch": "webpack -w",
-    "build:production": "webpack --mode production",
+    "build:production": "webpack --mode production --display-used-exports",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "npm test -- --coverage",
@@ -121,7 +121,8 @@
             "node": "current",
             "electron": "2.0.5"
           },
-          "useBuiltIns": "usage"
+          "useBuiltIns": "usage",
+          "modules": false
         }
       ],
       "@babel/preset-react"
