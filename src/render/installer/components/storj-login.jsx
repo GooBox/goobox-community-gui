@@ -117,7 +117,7 @@ export class StorjLogin extends React.Component {
             <div className="d-flex align-self-center justify-content-between">
               <label htmlFor="key">
                 Encryption Key&nbsp;
-                <Popover>
+                <Popover contentClass="rap-popover-content">
                   <FontAwesomeIcon icon="info-circle" className="info-button"/>
                   <span>If you already have a encryption key for Goobox please enter it, otherwise click on "Generate".</span>
                 </Popover>
