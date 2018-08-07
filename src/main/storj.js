@@ -37,7 +37,7 @@ export default class Storj extends EventEmitter {
     log.debug(
       `[GUI main] New storj instance: cmd = ${this._cmd}, wd = ${
         this._wd
-        }, java-home = ${this._javaHome}`
+      }, java-home = ${this._javaHome}`
     );
   }
 
@@ -75,11 +75,10 @@ export default class Storj extends EventEmitter {
         ...args,
       ];
       if (process.platform !== "darwin") {
-        opts.unshift(
-          `-Djava.library.path="${this._wd}:/lib:/usr/lib:${
-            env.LD_LIBRARY_PATH
-            }"`
-        );
+        env.LD_LIBRARY_PATH = `${this._wd}:/lib:/usr/lib:${
+          env.LD_LIBRARY_PATH
+        }`;
+        opts.unshift(`-Djava.library.path="${env.LD_LIBRARY_PATH}"`);
       }
       env.PATH = `${this._wd}:${this._javaHome}/bin:${env.PATH || env.Path}`;
       this.proc = spawn("java", opts, {

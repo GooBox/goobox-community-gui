@@ -558,29 +558,22 @@ describe("Storj class", () => {
 
     it("spawns sync-storj", () => {
       storj.start(dir);
-
-      expect(spawn).toBeCalledWith(
-        "java",
-        [
-          `-Djava.library.path="${storj._wd}:/lib:/usr/lib:${libPath}"`,
-          `-Dgoobox.resource="${path.resolve(
-            __dirname,
-            "../../resources/mac"
-          )}"`,
-          "-jar",
-          "*.jar",
-          "--sync-dir",
-          `"${dir}"`,
-        ],
-        {
-          cwd: storj._wd,
-          env: expect.objectContaining({
-            PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
-          }),
-          shell: true,
-          windowsHide: true,
-        }
-      );
+      expect(spawn).toBeCalledWith("java", [
+        `-Djava.library.path="${storj._wd}:/lib:/usr/lib:${libPath}"`,
+        `-Dgoobox.resource="${path.resolve(__dirname, "../../resources/mac")}"`,
+        "-jar",
+        "*.jar",
+        "--sync-dir",
+        `"${dir}"`
+      ], {
+        cwd: storj._wd,
+        env: expect.objectContaining({
+          PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
+          LD_LIBRARY_PATH: `${storj._wd}:/lib:/usr/lib:${libPath}`,
+        }),
+        shell: true,
+        windowsHide: true,
+      });
     });
   });
 });
