@@ -17,6 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
+import {BlueButton, WhiteButton} from "../../../../src/render/installer/components/buttons";
 import StorjRegistration from "../../../../src/render/installer/components/storj-registration";
 
 describe("StorjRegistration component", () => {
@@ -24,11 +25,13 @@ describe("StorjRegistration component", () => {
   const sampleEmail = "test@example.com";
   const samplePassword = "1234567";
 
-  let wrapper, login, back, next;
+  const login = jest.fn();
+  const back = jest.fn();
+  const next = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    login = jest.fn();
-    back = jest.fn();
-    next = jest.fn();
+    jest.clearAllMocks();
     wrapper = shallow(
       <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next} processing={false}/>
     );
@@ -116,19 +119,13 @@ describe("StorjRegistration component", () => {
   });
 
   it("has a back link", () => {
-    const link = wrapper.find(".back-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(WhiteButton).prop("onClick")();
     expect(back).toHaveBeenCalled();
   });
 
   it("disables the back link when processing is ture", () => {
     wrapper.setProps({processing: true});
-    const link = wrapper.find(".back-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(WhiteButton).prop("onClick")();
     expect(back).not.toHaveBeenCalled();
   });
 
@@ -138,10 +135,7 @@ describe("StorjRegistration component", () => {
       password: samplePassword,
     });
 
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(BlueButton).prop("onClick")();
     expect(next).toHaveBeenCalledWith({
       email: sampleEmail,
       password: samplePassword,
@@ -155,10 +149,7 @@ describe("StorjRegistration component", () => {
       password: samplePassword,
     });
 
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(BlueButton).prop("onClick")();
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -194,10 +185,7 @@ describe("StorjRegistration component", () => {
       password: samplePassword,
     });
 
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(BlueButton).prop("onClick")();
     expect(next).not.toHaveBeenCalled();
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
@@ -207,52 +195,24 @@ describe("StorjRegistration component", () => {
       email: sampleEmail,
     });
 
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-
-    link.simulate("click");
+    wrapper.find(BlueButton).prop("onClick")();
     expect(next).not.toHaveBeenCalled();
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
-    wrapper = shallow(
-      <StorjRegistration
-        onClickLogin={login}
-        onClickBack={back}
-        onClickNext={next}
-        emailWarn
-        processing={false}
-      />
-    );
+    wrapper.setProps({emailWarn: true});
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
 
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
-    wrapper = shallow(
-      <StorjRegistration
-        onClickLogin={login}
-        onClickBack={back}
-        onClickNext={next}
-        passwordWarn
-        processing={false}
-      />
-    );
+    wrapper.setProps({passwordWarn: true});
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 
   it("takes a warning message and uses it", () => {
     const msg = "expected warning";
-    wrapper = shallow(
-      <StorjRegistration
-        onClickLogin={login}
-        onClickBack={back}
-        onClickNext={next}
-        passwordWarn
-        warnMsg={msg}
-        processing={false}
-      />
-    );
+    wrapper.setProps({passwordWarn: true, warnMsg: msg});
     expect(wrapper.find(".warnMsg").html()).toContain(msg);
   });
 

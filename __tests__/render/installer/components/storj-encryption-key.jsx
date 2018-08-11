@@ -17,16 +17,23 @@
 
 import {shallow} from "enzyme";
 import React from "react";
+import {BlueButton, WhiteButton} from "../../../../src/render/installer/components/buttons";
 import StorjEncryptionKey from "../../../../src/render/installer/components/storj-encryption-key";
 
 describe("StorjEncryptionKey component", () => {
 
   const encryptionKey = "1234567890abcdefghijklmn";
-  let wrapper, back, next;
+  const onClickBack = jest.fn();
+  const onClickNext = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    next = jest.fn();
-    wrapper = shallow(<StorjEncryptionKey encryptionKey={encryptionKey} onClickBack={back} onClickNext={next}/>);
+    jest.clearAllMocks();
+    wrapper = shallow(<StorjEncryptionKey
+      encryptionKey={encryptionKey}
+      onClickBack={onClickBack}
+      onClickNext={onClickNext}
+    />);
   });
 
   it("has background-gradation class", () => {
@@ -38,17 +45,11 @@ describe("StorjEncryptionKey component", () => {
   });
 
   it("has a back link", () => {
-    const link = wrapper.find(".back-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(back).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(WhiteButton).prop("onClick")).toEqual(onClickBack);
   });
 
   it("has a next link", () => {
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(next).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(BlueButton).prop("onClick")).toEqual(onClickNext);
   });
 
 });

@@ -17,9 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftArrowImage from "../assets/left_arrow.svg";
 import leftWhiteIcon from "../assets/left_white_icon.svg";
-import rightArrowImage from "../assets/right_arrow.svg";
+import {BlueButton, WhiteButton} from "./buttons";
 
 const style = {
   msg: {
@@ -57,7 +56,7 @@ const style = {
   },
 };
 
-export default class StorjRegistration extends React.Component {
+export class StorjRegistration extends React.Component {
 
   constructor(props) {
     super(props);
@@ -161,20 +160,16 @@ export default class StorjRegistration extends React.Component {
           </div>
           <button
             id="login-btn"
-            style={style.button}
             type="button"
+            style={style.button}
             onClick={() => processing || onClickLogin()}
           >
             Click here to login
           </button>
         </main>
         <footer>
-          <button className="back-btn btn btn-link" type="button" onClick={() => processing || onClickBack()}>
-            <img className="arrow" src={leftArrowImage} alt="Back"/> Back
-          </button>
-          <button className="next-btn btn btn-link" type="button" onClick={this._onClickNext}>
-            Next <img className="arrow" src={rightArrowImage} alt="Next"/>
-          </button>
+          <WhiteButton id="back-btn" onClick={() => processing || onClickBack()}>Back </WhiteButton>
+          <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
         </footer>
       </div>
     );
@@ -198,3 +193,5 @@ StorjRegistration.defaultProps = {
   passwordWarn: false,
   warnMsg: "",
 };
+
+export default StorjRegistration;

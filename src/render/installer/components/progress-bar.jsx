@@ -20,7 +20,7 @@ import React from "react";
 
 export const ProgressBar = ({progress}) => (
   <div className="meter">
-    <span className="bar" style={{width: `${progress}%`}} />
+    <span className="bar" style={{width: `${progress}%`}}/>
   </div>
 );
 

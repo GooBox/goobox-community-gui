@@ -26,11 +26,13 @@ const dialog = remote.dialog;
 describe("SelectFolder component", () => {
 
   const defaultDir = "/home/someone/Goobox";
-  let wrapper, back, next, selectFolder;
+  const back = jest.fn();
+  const next = jest.fn();
+  const selectFolder = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    next = jest.fn();
-    selectFolder = jest.fn();
+    jest.clearAllMocks();
     wrapper = shallow(
       <SelectFolder
         storj
@@ -42,38 +44,17 @@ describe("SelectFolder component", () => {
       />);
   });
 
-  it("takes flags of used services and shows the name of them", () => {
-    wrapper = shallow(
-      <SelectFolder
-        storj
-        sia={false}
-        folder={defaultDir}
-        onClickBack={back}
-        onClickNext={next}
-        onSelectFolder={selectFolder}
-      />);
+  it("shows Storj as the service name if only storj is true", () => {
     expect(wrapper.find("h1").text()).toContain(Storj);
+  });
 
-    wrapper = shallow(
-      <SelectFolder
-        storj={false}
-        sia
-        folder={defaultDir}
-        onClickBack={back}
-        onClickNext={next}
-        onSelectFolder={selectFolder}
-      />);
+  it("shows Sia as the service name if only sia is true", () => {
+    wrapper.setProps({storj: false, sia: true});
     expect(wrapper.find("h1").text()).toContain(Sia);
+  });
 
-    wrapper = shallow(
-      <SelectFolder
-        storj
-        sia
-        folder={defaultDir}
-        onClickBack={back}
-        onClickNext={next}
-        onSelectFolder={selectFolder}
-      />);
+  it("shows Storj and Sia as the service name if both storj and sia is true", () => {
+    wrapper.setProps({storj: true, sia: true});
     expect(wrapper.find("h1").text()).toContain(`${Storj} & ${Sia}`);
   });
 

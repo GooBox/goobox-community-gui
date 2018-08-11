@@ -25,12 +25,14 @@ describe("StorjLogin component", () => {
   const samplePassword = "1234567";
   const sampleKey = "abcdefg";
 
-  let wrapper, back, finish, createAccount, generateSeed;
+  const back = jest.fn();
+  const finish = jest.fn();
+  const createAccount = jest.fn();
+  const generateSeed = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    finish = jest.fn();
-    createAccount = jest.fn();
-    generateSeed = jest.fn();
+    jest.clearAllMocks();
     wrapper = shallow(
       <StorjLogin
         onClickBack={back}
@@ -318,47 +320,17 @@ describe("StorjLogin component", () => {
   });
 
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
-    wrapper = shallow(
-      <StorjLogin
-        onClickBack={back}
-        onClickNext={finish}
-        onClickCreateAccount={createAccount}
-        onClickGenerateSeed={generateSeed}
-        emailWarn
-        processing={false}
-        encryptionKey=""
-      />
-    );
+    wrapper.setProps({emailWarn: true});
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
 
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
-    wrapper = shallow(
-      <StorjLogin
-        onClickBack={back}
-        onClickNext={finish}
-        onClickCreateAccount={createAccount}
-        onClickGenerateSeed={generateSeed}
-        passwordWarn
-        processing={false}
-        encryptionKey=""
-      />
-    );
+    wrapper.setProps({passwordWarn: true});
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 
   it("takes keyWarn prop and sets the given value to keyWarn state", () => {
-    wrapper = shallow(
-      <StorjLogin
-        onClickBack={back}
-        onClickNext={finish}
-        onClickCreateAccount={createAccount}
-        onClickGenerateSeed={generateSeed}
-        keyWarn
-        processing={false}
-        encryptionKey=""
-      />
-    );
+    wrapper.setProps({keyWarn: true});
     expect(wrapper.state("keyWarn")).toBeTruthy();
   });
 

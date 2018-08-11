@@ -17,15 +17,18 @@
 
 import {shallow} from "enzyme";
 import React from "react";
+import {BlueButton, WhiteButton} from "../../../../src/render/installer/components/buttons";
 import StorjEmailConfirmation from "../../../../src/render/installer/components/storj-email-confirmation";
 
 describe("StorjEmailConfirmation", () => {
 
-  let wrapper, back, next;
+  const onClickBack = jest.fn();
+  const onClickNext = jest.fn();
+
+  let wrapper;
   beforeEach(() => {
-    back = jest.fn();
-    next = jest.fn();
-    wrapper = shallow(<StorjEmailConfirmation onClickBack={back} onClickNext={next}/>);
+    jest.clearAllMocks();
+    wrapper = shallow(<StorjEmailConfirmation onClickBack={onClickBack} onClickNext={onClickNext}/>);
   });
 
   it("has background-gradation class", () => {
@@ -33,17 +36,11 @@ describe("StorjEmailConfirmation", () => {
   });
 
   it("has a back link", () => {
-    const link = wrapper.find(".back-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(back).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(WhiteButton).prop("onClick")).toEqual(onClickBack);
   });
 
   it("has a login link", () => {
-    const link = wrapper.find(".next-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(next).toHaveBeenCalledTimes(1);
+    expect(wrapper.find(BlueButton).prop("onClick")).toEqual(onClickNext);
   });
 
 });

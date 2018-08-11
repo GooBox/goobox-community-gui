@@ -17,6 +17,7 @@
 /* eslint no-console: 0 */
 
 import {remote} from "electron";
+import logger from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
@@ -34,6 +35,17 @@ const ReadOnlyInputBox = styled.input.attrs({
   width: 342px;
   height: 48px;
 `;
+
+const serviceNames = (storj, sia) => {
+  if (storj) {
+    if (sia) {
+      return `${Storj} & ${Sia}`;
+    } else {
+      return Storj;
+    }
+  }
+  return Sia;
+};
 
 export class SelectFolder extends React.Component {
 
@@ -113,41 +125,40 @@ export class SelectFolder extends React.Component {
 
   }
 
-  _serviceNames() {
-    const {storj, sia} = this.props;
-    if (storj) {
-      if (sia) {
-        return `${Storj} & ${Sia}`;
-      } else {
-        return Storj;
-      }
-    }
-    return Sia;
-  }
-
   render() {
-    const {folder} = this.props;
+
+    const {folder, storj, sia} = this.props;
     return (
       <div className="clearfix">
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
-          <h1>{`Installing ${this._serviceNames()}`}</h1>
-          <p>Choose the folder you want to sync with Goobox</p>
+          <h1>
+            {`Installing ${serviceNames(storj, sia)}`}
+          </h1>
+          <p>
+            Choose the folder you want to sync with Goobox
+          </p>
           <div className="form-row">
             <ReadOnlyInputBox id="folder" value={folder}/>
             <button
               id="change-folder-btn"
               type="button"
               className="btn btn-outline-primary"
-              onClick={() => this._onClickBrowse().catch(console.debug)}
-            >Change folder
+              onClick={() => this._onClickBrowse().catch(logger.debug)}
+            >
+              Change folder
             </button>
-            <small className="form-text text-muted"> Everything in this folder will be encrypted and safely stored.
+            <small className="form-text text-muted">
+              Everything in this folder will be encrypted and safely stored.
             </small>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={this._onClickBack}>Back</WhiteButton>
-            <BlueButton id="next-btn" onClick={this._onClickNext}>Choose this folder</BlueButton>
+            <WhiteButton id="back-btn" onClick={this._onClickBack}>
+              Back
+            </WhiteButton>
+            <BlueButton id="next-btn" onClick={this._onClickNext}>
+              Choose this folder
+            </BlueButton>
           </div>
         </main>
       </div>

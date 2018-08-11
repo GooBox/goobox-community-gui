@@ -26,9 +26,7 @@ describe("SelectService component", () => {
   const both = jest.fn();
   let wrapper;
   beforeEach(() => {
-    storj.mockClear();
-    sia.mockClear();
-    both.mockClear();
+    jest.clearAllMocks();
     wrapper = shallow(<SelectService onSelectStorj={storj} onSelectSia={sia} onSelectBoth={both} processing={false}/>);
   });
 

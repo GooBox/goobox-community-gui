@@ -30,8 +30,7 @@ describe("SiaWallet component", () => {
 
   let wrapper;
   beforeEach(() => {
-    back.mockClear();
-    next.mockClear();
+    jest.clearAllMocks();
     wrapper = mount(<SiaWallet address={address} seed={seed} onClickBack={back} onClickNext={next}/>);
   });
 

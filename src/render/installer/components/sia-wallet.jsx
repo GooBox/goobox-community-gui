@@ -130,8 +130,8 @@ export class SiaWallet extends React.Component {
             <label htmlFor="address">
               Please save your &nbsp;
               <span className="font-weight-bold">Sia wallet address</span>&nbsp;
-              <Popover>
-                <FontAwesomeIcon className="info-button" icon="info-circle"/>
+              <Popover contentClass="rap-popover-content">
+                <FontAwesomeIcon icon="info-circle" className="info-button"/>
                 <span>Send Sia tokens to this address in order to top-up your account.</span>
               </Popover>
             </label>
@@ -149,8 +149,8 @@ export class SiaWallet extends React.Component {
             <label htmlFor="seed">
               And your &nbsp;
               <span className="font-weight-bold">Sia seed</span>&nbsp;
-              <Popover>
-                <FontAwesomeIcon className="info-button" icon="info-circle"/>
+              <Popover contentClass="rap-popover-content">
+                <FontAwesomeIcon icon="info-circle" className="info-button"/>
                 <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
               </Popover>
             </label>

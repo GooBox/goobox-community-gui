@@ -17,9 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftArrowImage from "../assets/left_arrow.svg";
 import leftWhiteIcon from "../assets/left_white_icon.svg";
-import rightArrowImage from "../assets/right_arrow.svg";
+import {BlueButton, WhiteButton} from "./buttons";
 
 const style = {
   main: {
@@ -60,12 +59,8 @@ export const StorjEncryptionKey = ({encryptionKey, onClickBack, onClickNext}) =>
       </div>
     </main>
     <footer>
-      <button className="back-btn btn btn-link" type="button" onClick={onClickBack}>
-        <img className="arrow" src={leftArrowImage} alt="Back"/> Back
-      </button>
-      <button className="next-btn btn btn-link" type="button" onClick={onClickNext}>
-        Next <img className="arrow" src={rightArrowImage} alt="Next"/>
-      </button>
+      <WhiteButton id="back-btn" onClick={onClickBack}>Back </WhiteButton>
+      <BlueButton id="next-btn" onClick={onClickNext}>Next</BlueButton>
     </footer>
   </div>
 );

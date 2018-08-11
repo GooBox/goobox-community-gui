@@ -92,7 +92,7 @@ export class StorjLogin extends React.Component {
   render() {
 
     const {processing, onClickGenerateSeed, onClickBack} = this.props;
-    const {email, password, key, emailWarn, passwordWarn, keyWarn} = this.state;
+    const {email, emailWarn, password, passwordWarn, key, keyWarn} = this.state;
     return (
       <div className={classNames("clearfix", {wait: processing})}>
         <Sidebar className="float-left"/>
@@ -124,8 +124,8 @@ export class StorjLogin extends React.Component {
             <div className="d-flex align-self-center justify-content-between">
               <label htmlFor="key">
                 Encryption Key&nbsp;
-                <Popover>
-                  <FontAwesomeIcon className="info-button" icon="info-circle"/>
+                <Popover contentClass="rap-popover-content">
+                  <FontAwesomeIcon icon="info-circle" className="info-button"/>
                   <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
                 </Popover>
               </label>
@@ -144,11 +144,7 @@ export class StorjLogin extends React.Component {
             <div className="invalid-feedback">Please enter the correct encryption key</div>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton
-              id="back-btn"
-              onClick={() => processing || onClickBack()}
-            >Back
-            </WhiteButton>
+            <WhiteButton id="back-btn" onClick={() => processing || onClickBack()}>Back </WhiteButton>
             <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
           </div>
         </main>

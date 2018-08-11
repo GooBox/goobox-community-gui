@@ -26,7 +26,6 @@ export const Button = styled.button.attrs({
   border: solid 0.8px #dddddd;
 `;
 
-
 export const WhiteButton = styled(Button).attrs({
   className: "btn btn-light",
 })`

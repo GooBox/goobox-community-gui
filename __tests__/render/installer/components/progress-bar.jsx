@@ -25,7 +25,7 @@ describe("ProgressBar component", () => {
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<ProgressBar progress={progress} />);
+    wrapper = shallow(<ProgressBar progress={progress}/>);
   });
 
   it("renders a parent element which has meter class", () => {
