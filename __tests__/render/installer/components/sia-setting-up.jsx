@@ -17,6 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
+import {ProgressBar} from "../../../../src/render/installer/components/progress-bar";
 import SiaSettingUp from "../../../../src/render/installer/components/sia-setting-up";
 
 describe("SiaSettingUp component", () => {
@@ -29,7 +30,7 @@ describe("SiaSettingUp component", () => {
   });
 
   it("takes progress prop and shows a progress bar", () => {
-    expect(wrapper.find(".bar").prop("style").width).toEqual(`${progress}%`);
+    expect(wrapper.find(ProgressBar).prop("progress")).toEqual(progress);
   });
 
   it("shows an error message instead of the given message if given", () => {

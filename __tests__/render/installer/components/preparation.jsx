@@ -18,6 +18,7 @@
 import {shallow} from "enzyme";
 import React from "react";
 import Preparation from "../../../../src/render/installer/components/preparation";
+import {ProgressBar} from "../../../../src/render/installer/components/progress-bar";
 
 describe("Preparation component", () => {
 
@@ -29,7 +30,7 @@ describe("Preparation component", () => {
   });
 
   it("takes progress prop and shows a progress bar", () => {
-    expect(wrapper.find(".bar").prop("style").width).toEqual(`${progress}%`);
+    expect(wrapper.find(ProgressBar).prop("progress")).toEqual(progress);
   });
 
   it("shows an error message instead of the given message if given", () => {

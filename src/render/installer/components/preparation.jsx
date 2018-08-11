@@ -19,17 +19,18 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Logo from "../assets/logo.svg";
+import ProgressBar from "./progress-bar";
 
 export const Preparation = ({progress, errorMsg}) => (
   <main className={classNames("full-screen d-flex flex-column align-items-center", {"wait": !errorMsg})}>
     <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
-    <h1 className="mb-auto">The safest place to store your files</h1>
+    <h1 className="mb-auto">
+      The safest place to store your files
+    </h1>
     <span id="message" className={classNames("mb-2", {"text-warning": !!errorMsg})}>
       {errorMsg || "Getting some tools…"}
     </span>
-    <div className="meter">
-      <span className="bar" style={{width: `${progress}%`}}/>
-    </div>
+    <ProgressBar progress={progress}/>
   </main>
 );
 

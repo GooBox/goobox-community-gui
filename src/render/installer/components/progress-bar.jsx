@@ -15,31 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import LogoColor from "../assets/logo-color.svg";
-import ProgressBar from "./progress-bar";
 
-export const SiaSettingUp = ({progress, errorMsg}) => (
-  <main
-    className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !errorMsg})}
-  >
-    <img className="mb-5" src={LogoColor} width={110} height={115.2} alt="Goobox"/>
-    <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!errorMsg})}>
-      {errorMsg || "We’re setting up your Sia wallet…"}
-    </span>
-    <ProgressBar progress={progress}/>
-  </main>
+export const ProgressBar = ({progress}) => (
+  <div className="meter">
+    <span className="bar" style={{width: `${progress}%`}} />
+  </div>
 );
 
-SiaSettingUp.propTypes = {
+ProgressBar.propTypes = {
   progress: PropTypes.number.isRequired,
-  errorMsg: PropTypes.string,
 };
 
-SiaSettingUp.defaultProps = {
-  errorMsg: "",
-};
-
-export default SiaSettingUp;
+export default ProgressBar;
