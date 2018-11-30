@@ -34,14 +34,11 @@ const configureStore = () => {
   return store;
 };
 
-export default function initPopup() {
+export const initPopup = () => (
+  <Provider store={configureStore()}>
+    <Status/>
+  </Provider>
+);
 
-  const store = configureStore();
-  return (
-    <Provider store={store}>
-      <Status/>
-    </Provider>
-  );
-
-}
+export default initPopup;
 

@@ -74,8 +74,7 @@ export const routes = () => (
   </Switch>
 );
 
-
-export default function initInstaller() {
+export const initInstaller = () => {
 
   const {store, history} = configureStore();
   return (
@@ -86,4 +85,6 @@ export default function initInstaller() {
     </Provider>
   );
 
-}
+};
+
+export default initInstaller;
