@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjEmailConfirmation from "../../../../src/render/installer/components/storj-email-confirmation.jsx";
+import StorjEmailConfirmation from "../../../../src/render/installer/components/storj-email-confirmation";
 
 describe("StorjEmailConfirmation", () => {
 

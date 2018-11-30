@@ -20,33 +20,45 @@ import React from "react";
 import Footer from "./footer";
 import Header from "./header";
 
-export const Status = (props) => (
+export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, onClickInfo, onClickSyncFolder, onClickImportDrive, onChangeState}) => (
 
-  <main style={props.style} className="d-flex flex-column">
+  <main style={style} className="d-flex flex-column">
 
-    <Header onClickSettings={props.onClickSettings} onClickInfo={props.onClickInfo}/>
+    <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo}/>
 
     <section className="d-flex flex-column p-3">
-      <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
-         onClick={() => props.onClickSyncFolder()}>
+      <button
+        className="btn btn-light sync-folder d-flex align-items-center mb-3"
+        type="button"
+        onClick={onClickSyncFolder}
+      >
         <i className="fas fa-folder-open mr-2"/>
         <span className="bold">Open my folder</span>
-      </a>
-      <a id="import-drive" className="btn btn-light d-flex align-items-center invisible"
-         onClick={() => props.onClickImportDrive()}>
+      </button>
+      <button
+        id="import-drive"
+        className="btn btn-light d-flex align-items-center invisible"
+        type="button"
+        onClick={onClickImportDrive}
+      >
         <i className="fas fa-cloud-upload-alt mr-2"/>
         <span className="bold">Import drive</span>
-      </a>
+      </button>
     </section>
 
-    <Footer usedVolume={props.usedVolume} totalVolume={props.totalVolume} state={props.state}
-            onChangeState={props.onChangeState}/>
+    <Footer
+      usedVolume={usedVolume}
+      totalVolume={totalVolume}
+      state={state}
+      onChangeState={onChangeState}
+    />
 
   </main>
 
 );
 
 Status.propTypes = {
+  /* eslint-disable react/forbid-prop-types */
   style: PropTypes.object.isRequired,
   usedVolume: PropTypes.number.isRequired,
   totalVolume: PropTypes.number.isRequired,

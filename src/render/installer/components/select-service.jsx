@@ -43,15 +43,18 @@ export const SelectService = ({processing, onSelectStorj, onSelectSia, onSelectB
       <p>Please choose your cloud service</p>
       <div className="d-flex">
         <ServiceButton id="option-storj" onClick={() => processing || onSelectStorj()}>
-          <img src={storjLogo} width={64.7} height={93.2}/>
+          <img src={storjLogo} width={64.7} height={93.2} alt="Storj"/>
         </ServiceButton>
         <ServiceButton id="option-sia" onClick={() => processing || onSelectSia()}>
-          <img src={siaLogo} width={94} height={59}/>
+          <img src={siaLogo} width={94} height={59} alt="Sia"/>
         </ServiceButton>
         {/* Goobox only supports either Storj or Sia currently */}
-        <ServiceButton id="option-both" style={{display: "none"}}
-                       onClick={() => processing || onSelectBoth()}>
-          <img src={storjAndSiaLogo} width={140} height={68}/>
+        <ServiceButton
+          id="option-both"
+          style={{display: "none"}}
+          onClick={() => processing || onSelectBoth()}
+        >
+          <img src={storjAndSiaLogo} width={140} height={68} alt="Storj and Sia"/>
         </ServiceButton>
       </div>
     </main>

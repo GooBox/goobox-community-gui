@@ -34,7 +34,7 @@ import {InitialState} from "../../../src/render/installer/reducers";
 
 describe("routes", () => {
 
-  const createDOM = (path = '/') => {
+  const createDOM = (path = "/") => {
     const store = configureStore()({main: InitialState});
     return mount(
       <Provider store={store}>

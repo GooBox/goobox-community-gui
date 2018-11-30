@@ -52,7 +52,7 @@ const configureStore = () => {
     applyMiddleware(sagaMiddleware, historyMiddleware, createLogger()),
   );
   sagaMiddleware.run(rootSaga);
-  return {store: store, history: history};
+  return {store, history};
 
 };
 

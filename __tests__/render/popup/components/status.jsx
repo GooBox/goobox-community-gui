@@ -38,9 +38,15 @@ describe("Status component", () => {
     onClickInfo.mockClear();
     onClickSettings.mockClear();
     onClickSyncFolder.mockClear();
-    wrapper = shallow(<Status usedVolume={used} totalVolume={total} state={Synchronizing} onChangeState={onChangeState}
-                              onClickSettings={onClickSettings}
-                              onClickInfo={onClickInfo} onClickSyncFolder={onClickSyncFolder}/>);
+    wrapper = shallow(<Status
+      usedVolume={used}
+      totalVolume={total}
+      state={Synchronizing}
+      onChangeState={onChangeState}
+      onClickSettings={onClickSettings}
+      onClickInfo={onClickInfo}
+      onClickSyncFolder={onClickSyncFolder}
+    />);
   });
 
   it("has a header", () => {

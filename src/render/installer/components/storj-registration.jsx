@@ -78,35 +78,36 @@ export default class StorjRegistration extends React.Component {
   }
 
   _onClickNext() {
-    if (this.props.processing) {
+    const {processing, onClickNext} = this.props;
+    const {email, password} = this.state;
+    if (processing) {
       return;
     }
 
     let warn = false;
-    if (!this.state.email) {
+    if (!email) {
       warn = true;
       this.setState({emailWarn: true});
     }
-    if (!this.state.password) {
+    if (!password) {
       warn = true;
       this.setState({passwordWarn: true});
     }
     if (!warn) {
-      this.props.onClickNext({
-        email: this.state.email,
-        password: this.state.password,
-      });
+      onClickNext({email, password});
     }
   }
 
   render() {
     let msg;
-    if (this.state.emailWarn || this.state.passwordWarn) {
-      if (this.props.warnMsg) {
+    const {processing, warnMsg, onClickLogin, onClickBack} = this.props;
+    const {email, password, emailWarn, passwordWarn} = this.state;
+    if (emailWarn || passwordWarn) {
+      if (warnMsg) {
         msg = (
           <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
-            <div className="f211">{this.props.warnMsg}...</div>
+            <div className="f211">{warnMsg}...</div>
           </main>
         );
       } else {
@@ -129,36 +130,51 @@ export default class StorjRegistration extends React.Component {
 
     return (
       <div className="background-gradation">
-        <header><img className="icon" src={leftWhiteIcon}/></header>
+        <header><img className="icon" src={leftWhiteIcon} alt="Goobox"/></header>
         {msg}
         <main style={style.accountInfo}>
           <div>
-            <input className={this.state.emailWarn ? "warn" : ""} id="email"
-                   placeholder="e-mail" value={this.state.email} style={style.input}
-                   onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
+            <input
+              className={emailWarn ? "warn" : ""}
+              id="email"
+              placeholder="e-mail"
+              value={email}
+              style={style.input}
+              onChange={e => processing || this.setState({email: e.target.value})}
+            />
           </div>
           <div>
-            <input className={this.state.passwordWarn ? "warn" : ""} id="password" type="password"
-                   placeholder="password" value={this.state.password} style={style.input}
-                   onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
+            <input
+              className={passwordWarn ? "warn" : ""}
+              id="password"
+              type="password"
+              placeholder="password"
+              value={password}
+              style={style.input}
+              onChange={e => processing || this.setState({password: e.target.value})}
+            />
           </div>
         </main>
         <main style={style.storjLogin}>
           <div style={style.storjLoginText}>
             Already have an account?
           </div>
-          <button id="login-btn" style={style.button}
-                  onClick={() => this.props.processing || this.props.onClickLogin()}>
+          <button
+            id="login-btn"
+            style={style.button}
+            type="button"
+            onClick={() => processing || onClickLogin()}
+          >
             Click here to login
           </button>
         </main>
         <footer>
-          <a className="back-btn" onClick={() => this.props.processing || this.props.onClickBack()}>
-            <img className="arrow" src={leftArrowImage}/> Back
-          </a>
-          <a className="next-btn" onClick={this._onClickNext}>
-            Next <img className="arrow" src={rightArrowImage}/>
-          </a>
+          <button className="back-btn btn btn-link" type="button" onClick={() => processing || onClickBack()}>
+            <img className="arrow" src={leftArrowImage} alt="Back"/> Back
+          </button>
+          <button className="next-btn btn btn-link" type="button" onClick={this._onClickNext}>
+            Next <img className="arrow" src={rightArrowImage} alt="Next"/>
+          </button>
         </footer>
       </div>
     );
@@ -175,4 +191,10 @@ StorjRegistration.propTypes = {
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
   warnMsg: PropTypes.string,
+};
+
+StorjRegistration.defaultProps = {
+  emailWarn: false,
+  passwordWarn: false,
+  warnMsg: "",
 };

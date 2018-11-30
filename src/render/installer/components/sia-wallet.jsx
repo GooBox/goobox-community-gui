@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint jsx-a11y/label-has-associated-control: 0 */
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -84,7 +85,8 @@ export class SiaWallet extends React.Component {
   }
 
   _copyAddressBtn() {
-    if (this.state.addressCopied) {
+    const {addressCopied} = this.state;
+    if (addressCopied) {
       return (
         <div className="text-success">
           <i className="far fa-check-circle"/>
@@ -99,7 +101,8 @@ export class SiaWallet extends React.Component {
   }
 
   _copySeedBtn() {
-    if (this.state.seedCopied) {
+    const {seedCopied} = this.state;
+    if (seedCopied) {
       return (
         <div className="text-success">
           <i className="far fa-check-circle"/>
@@ -115,8 +118,9 @@ export class SiaWallet extends React.Component {
 
   render() {
 
+    const {address, seed, processing, onClickBack, onClickNext} = this.props;
     return (
-      <div className={classNames("clearfix", {wait: this.props.processing})}>
+      <div className={classNames("clearfix", {wait: processing})}>
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
           <h1>Installing Sia</h1>
@@ -131,9 +135,9 @@ export class SiaWallet extends React.Component {
               </Popover>
             </label>
             <div className="input-group">
-              <AddressBox id="address" value={this.props.address}/>
+              <AddressBox id="address" value={address}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.address} onCopy={this._addressCopied}>
+                <CopyToClipboard text={address} onCopy={this._addressCopied}>
                   <CopyButton id="copy-address-btn">{this._copyAddressBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
@@ -150,9 +154,9 @@ export class SiaWallet extends React.Component {
               </Popover>
             </label>
             <div className="input-group">
-              <SeedBox id="seed" value={this.props.seed}/>
+              <SeedBox id="seed" value={seed}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.seed} onCopy={this._seedCopied}>
+                <CopyToClipboard text={seed} onCopy={this._seedCopied}>
                   <CopyButton id="copy-seed-btn">{this._copySeedBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
@@ -160,8 +164,8 @@ export class SiaWallet extends React.Component {
           </div>
 
           <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={this.props.onClickBack}>Back</WhiteButton>
-            <BlueButton id="next-btn" onClick={this.props.onClickNext}>Set-up my Goobox</BlueButton>
+            <WhiteButton id="back-btn" onClick={onClickBack}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={onClickNext}>Set-up my Goobox</BlueButton>
           </div>
 
         </main>
@@ -177,6 +181,11 @@ SiaWallet.propTypes = {
   seed: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
+  processing: PropTypes.bool,
+};
+
+SiaWallet.defaultProps = {
+  processing: false,
 };
 
 export default SiaWallet;

@@ -19,7 +19,7 @@ import {remote} from "electron";
 import {shallow} from "enzyme";
 import React from "react";
 import {Sia, Storj} from "../../../../src/constants";
-import SelectFolder from "../../../../src/render/installer/components/select-folder.jsx";
+import SelectFolder from "../../../../src/render/installer/components/select-folder";
 
 const dialog = remote.dialog;
 
@@ -32,24 +32,48 @@ describe("SelectFolder component", () => {
     next = jest.fn();
     selectFolder = jest.fn();
     wrapper = shallow(
-      <SelectFolder storj={true} sia={false} folder={defaultDir}
-                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+      <SelectFolder
+        storj
+        sia={false}
+        folder={defaultDir}
+        onClickBack={back}
+        onClickNext={next}
+        onSelectFolder={selectFolder}
+      />);
   });
 
   it("takes flags of used services and shows the name of them", () => {
     wrapper = shallow(
-      <SelectFolder storj={true} sia={false} folder={defaultDir}
-                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+      <SelectFolder
+        storj
+        sia={false}
+        folder={defaultDir}
+        onClickBack={back}
+        onClickNext={next}
+        onSelectFolder={selectFolder}
+      />);
     expect(wrapper.find("h1").text()).toContain(Storj);
 
     wrapper = shallow(
-      <SelectFolder storj={false} sia={true} folder={defaultDir}
-                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+      <SelectFolder
+        storj={false}
+        sia
+        folder={defaultDir}
+        onClickBack={back}
+        onClickNext={next}
+        onSelectFolder={selectFolder}
+      />);
     expect(wrapper.find("h1").text()).toContain(Sia);
 
     wrapper = shallow(
-      <SelectFolder storj={true} sia={true} folder={defaultDir}
-                    onClickBack={back} onClickNext={next} onSelectFolder={selectFolder}/>);
+      <SelectFolder
+        storj
+        sia
+        folder={defaultDir}
+        onClickBack={back}
+        onClickNext={next}
+        onSelectFolder={selectFolder}
+      />);
     expect(wrapper.find("h1").text()).toContain(`${Storj} & ${Sia}`);
   });
 

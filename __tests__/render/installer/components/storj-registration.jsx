@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjRegistration from "../../../../src/render/installer/components/storj-registration.jsx";
+import StorjRegistration from "../../../../src/render/installer/components/storj-registration";
 
 describe("StorjRegistration component", () => {
 
@@ -217,16 +217,26 @@ describe("StorjRegistration component", () => {
 
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
     wrapper = shallow(
-      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next}
-                         emailWarn={true} processing={false}/>
+      <StorjRegistration
+        onClickLogin={login}
+        onClickBack={back}
+        onClickNext={next}
+        emailWarn
+        processing={false}
+      />
     );
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
 
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
     wrapper = shallow(
-      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next}
-                         passwordWarn={true} processing={false}/>
+      <StorjRegistration
+        onClickLogin={login}
+        onClickBack={back}
+        onClickNext={next}
+        passwordWarn
+        processing={false}
+      />
     );
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
@@ -234,8 +244,14 @@ describe("StorjRegistration component", () => {
   it("takes a warning message and uses it", () => {
     const msg = "expected warning";
     wrapper = shallow(
-      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next}
-                         passwordWarn={true} warnMsg={msg} processing={false}/>
+      <StorjRegistration
+        onClickLogin={login}
+        onClickBack={back}
+        onClickNext={next}
+        passwordWarn
+        warnMsg={msg}
+        processing={false}
+      />
     );
     expect(wrapper.find(".warnMsg").html()).toContain(msg);
   });

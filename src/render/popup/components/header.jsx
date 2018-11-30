@@ -22,13 +22,13 @@ import GooboxImage from "../assets/goobox.svg";
 export const Header = ({onClickSettings, onClickInfo}) => (
 
   <nav className="d-flex align-items-center px-3 py-2">
-    <img className="mr-auto" src={GooboxImage} width={81} height={22}/>
-    <a id="info-btn" onClick={() => onClickInfo()}>
+    <img className="mr-auto" src={GooboxImage} width={81} height={22} alt="Goobox"/>
+    <button id="info-btn" className="btn btn-link" type="button" onClick={() => onClickInfo()}>
       <i className="fas fa-info-circle"/>
-    </a>
-    <a id="settings-btn" className="ml-4" onClick={() => onClickSettings()}>
+    </button>
+    <button id="settings-btn" className="ml-4 btn btn-link" type="button" onClick={() => onClickSettings()}>
       <i className="fas fa-cog"/>
-    </a>
+    </button>
   </nav>
 
 );

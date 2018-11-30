@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Preparation from "../../../../src/render/installer/components/preparation.jsx";
+import Preparation from "../../../../src/render/installer/components/preparation";
 
 describe("Preparation component", () => {
 
