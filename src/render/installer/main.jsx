@@ -45,10 +45,10 @@ const configureStore = () => {
   const historyMiddleware = routerMiddleware(history);
 
   const store = createStore(
-    connectRouter(history)(
-      combineReducers({
-        main: reducer,
-      })),
+    combineReducers({
+      main: reducer,
+      router: connectRouter(history),
+    }),
     applyMiddleware(sagaMiddleware, historyMiddleware, createLogger()),
   );
   sagaMiddleware.run(rootSaga);
