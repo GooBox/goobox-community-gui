@@ -31,6 +31,7 @@ describe("Status component", () => {
   const onClickSettings = jest.fn();
   const onClickInfo = jest.fn();
   const onClickSyncFolder = jest.fn();
+  const onClickImportDrive = jest.fn();
 
   let wrapper;
   beforeEach(() => {
@@ -46,6 +47,7 @@ describe("Status component", () => {
       onClickSettings={onClickSettings}
       onClickInfo={onClickInfo}
       onClickSyncFolder={onClickSyncFolder}
+      onClickImportDrive={onClickImportDrive}
     />);
   });
 

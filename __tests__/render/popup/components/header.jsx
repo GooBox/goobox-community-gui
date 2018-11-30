@@ -32,7 +32,7 @@ describe("Header component", () => {
   });
 
   it("has a settings button", () => {
-    const settings = wrapper.find("a#settings-btn");
+    const settings = wrapper.find("#settings-btn");
     expect(settings.exists()).toBeTruthy();
 
     settings.simulate("click");
@@ -40,7 +40,7 @@ describe("Header component", () => {
   });
 
   it("has an info button", () => {
-    const info = wrapper.find("a#info-btn");
+    const info = wrapper.find("#info-btn");
     expect(info.exists()).toBeTruthy();
 
     info.simulate("click");

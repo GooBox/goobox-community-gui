@@ -59,7 +59,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
 
 Status.propTypes = {
   /* eslint-disable react/forbid-prop-types */
-  style: PropTypes.object.isRequired,
+  style: PropTypes.object,
   usedVolume: PropTypes.number.isRequired,
   totalVolume: PropTypes.number.isRequired,
   state: PropTypes.string.isRequired,
@@ -68,6 +68,10 @@ Status.propTypes = {
   onClickInfo: PropTypes.func.isRequired,
   onClickSyncFolder: PropTypes.func.isRequired,
   onClickImportDrive: PropTypes.func.isRequired,
+};
+
+Status.defaultProps = {
+  style: null,
 };
 
 export default Status;

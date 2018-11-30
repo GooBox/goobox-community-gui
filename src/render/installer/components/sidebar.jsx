@@ -26,7 +26,11 @@ export const Sidebar = ({className}) => (
 );
 
 Sidebar.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
+
+Sidebar.defaultProps = {
+  className: "",
 };
 
 export default Sidebar;
