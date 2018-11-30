@@ -17,10 +17,11 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import {WhiteButton} from "./buttons";
 
-export const FinishButton = WhiteButton.extend`
+export const FinishButton = styled(WhiteButton)`
   color: #26aae1;
 `;
 
