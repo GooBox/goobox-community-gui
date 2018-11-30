@@ -101,9 +101,7 @@
     "svg-url-loader": "^2.3.2",
     "updates": "^5.4.2",
     "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2",
-    "winston": "^3.1.0",
-    "winston-papertrail": "^1.0.5"
+    "webpack-cli": "^3.1.2"
   },
   "optionalDependencies": {
     "fileicon": "^0.2.2"
