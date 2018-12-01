@@ -27,7 +27,7 @@ import Sidebar from "./sidebar";
 const dialog = remote.dialog;
 
 const ReadOnlyInputBox = styled.input.attrs({
-  className: "form-control mr-2",
+  className: "form-control mr-2 col-8",
   type: "text",
   readOnly: true
 })`
