@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import React from "react";
 import Footer from "./footer";
@@ -32,7 +33,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
         type="button"
         onClick={onClickSyncFolder}
       >
-        <i className="fas fa-folder-open mr-2"/>
+        <FontAwesomeIcon className="mr-2" icon="folder-open"/>
         <span className="bold">Open my folder</span>
       </button>
       <button
@@ -41,7 +42,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
         type="button"
         onClick={onClickImportDrive}
       >
-        <i className="fas fa-cloud-upload-alt mr-2"/>
+        <FontAwesomeIcon className="mr-2" icon="cloud-upload-alt"/>
         <span className="bold">Import drive</span>
       </button>
     </section>

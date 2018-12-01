@@ -16,6 +16,7 @@
  */
 /* eslint jsx-a11y/label-has-associated-control: 0 */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
@@ -124,7 +125,7 @@ export class StorjLogin extends React.Component {
               <label htmlFor="key">
                 Encryption Key&nbsp;
                 <Popover>
-                  <i className="fas fa-info-circle info-button"/>
+                  <FontAwesomeIcon className="info-button" icon="info-circle"/>
                   <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
                 </Popover>
               </label>
