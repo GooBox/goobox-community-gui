@@ -83,7 +83,7 @@ describe("main process of the popup app", () => {
   });
 
   it("create a menu bar instance", async () => {
-    const setSkipTaskbar = jest.spyOn(BrowserWindow.prototype, "setSkipTaskbar");
+    const setSkipTaskBar = jest.spyOn(BrowserWindow.prototype, "setSkipTaskbar");
     try {
       await popup();
       expect(menubar).toHaveBeenCalledWith({
@@ -96,10 +96,10 @@ describe("main process of the popup app", () => {
         alwaysOnTop: true,
         showDockIcon: false,
       });
-      expect(setSkipTaskbar).toHaveBeenCalledWith(true);
+      expect(setSkipTaskBar).toHaveBeenCalledWith(true);
       expect(menubarMock.appState).toEqual(Synchronizing);
     } finally {
-      setSkipTaskbar.mockRestore();
+      setSkipTaskBar.mockRestore();
     }
   });
 
@@ -380,7 +380,7 @@ describe("main process of the popup app", () => {
     });
 
     it("closes the process if another process is already running", async () => {
-      app.makeSingleInstance.mockReturnValueOnce(true);
+      app.requestSingleInstanceLock.mockReturnValueOnce(true);
       await popup();
       expect(app.quit).toHaveBeenCalled();
     });
