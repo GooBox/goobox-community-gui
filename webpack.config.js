@@ -19,7 +19,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-module.exports = [{
+const configs = [{
   mode: "development",
   target: "electron-main",
   node: {
@@ -118,3 +118,9 @@ module.exports = [{
   ],
   devtool: "source-map"
 }];
+
+if (process.env.NODE_ENV === "production") {
+  configs.forEach(c => c.devtool = false);
+}
+
+module.exports = configs;
