@@ -28,7 +28,7 @@ library.add(
 );
 
 webFrame.setVisualZoomLevelLimits(1, 1);
-ReactDOM.render(
-  initInstaller(),
-  document.getElementById("app")
-);
+
+const app = document.createElement("div");
+document.body.appendChild(app);
+ReactDOM.render(initInstaller(), app);

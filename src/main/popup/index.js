@@ -51,7 +51,7 @@ export const popup = async () => {
   }
 
   const mb = menubar({
-    index: `file://${path.join(__dirname, "../../static/popup.html")}`,
+    index: `file://${path.join(__dirname, "../popup.html")}`,
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,

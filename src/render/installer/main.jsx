@@ -35,6 +35,7 @@ import StorjEncryptionKey from "./containers/storj-encryption-key";
 import StorjFinish from "./containers/storj-finish";
 import StorjLogin from "./containers/storj-login";
 import StorjRegistration from "./containers/storj-registration";
+import "./main.css";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 

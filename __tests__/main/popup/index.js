@@ -87,7 +87,7 @@ describe("main process of the popup app", () => {
     try {
       await popup();
       expect(menubar).toHaveBeenCalledWith({
-        index: `file://${path.join(__dirname, "../../../src/static/popup.html")}`,
+        index: `file://${path.join(__dirname, "../../../src/main/popup.html")}`,
         icon: icons.getSyncIcon(),
         tooltip: app.getName(),
         preloadWindow: true,

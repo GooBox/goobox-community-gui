@@ -21,6 +21,7 @@ import {applyMiddleware, createStore} from "redux";
 import createSagaMiddleware from "redux-saga";
 import {createLogger} from "../logger";
 import Status from "./containers/status";
+import "./main.css";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
