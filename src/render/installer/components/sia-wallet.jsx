@@ -32,20 +32,20 @@ const AddressBox = styled.input.attrs({
   type: "text",
   readOnly: true,
 })`
-  height: 52px;
-  border: solid 0.8px #dddddd;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
-  background-color: #ffffff;
+  height: 52px !important;
+  border: solid 0.8px #dddddd !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09) !important;
+  background-color: #ffffff !important;
 `;
 
 const SeedBox = styled.textarea.attrs({
   className: "form-control",
   readOnly: true,
 })`
-  height: 149px;
-  border: solid 0.8px #dddddd;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
-  background-color: #ffffff;
+  height: 149px !important;
+  border: solid 0.8px #dddddd !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09) !important;
+  background-color: #ffffff !important;
 `;
 
 const CopyButton = styled.button.attrs({
