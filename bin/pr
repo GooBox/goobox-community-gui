@@ -26,13 +26,18 @@ brew tap jkawamoto/pixeldrain
 brew install pixeldrain
 
 rm -rf /Users/travis/Library/Caches/electron-builder
-npm run dist
+yarn run dist
 
 WIN_ID=$(basename $(pd upload dist/Goobox-0.2.2-setup_x64.exe -n Goobox-0.2.2-setup_x64.exe))
+echo "Dev build for Windows has been uploaded at ${WIN_ID}"
+
 MAC_ID=$(basename $(pd upload dist/Goobox-0.2.2.dmg -n Goobox-0.2.2.dmg))
+echo "Dev build for MacOS has been uploaded at ${MAC_ID}"
+
 # LINUX_ID=$(basename $(pd upload dist/Goobox-0.2.2-x86_64.AppImage -n Goobox-0.2.2-x86_64.AppImage))
 
 LIST_URL=$(pd create-list -t "Goobox-0.2.2" ${WIN_ID}:Goobox-0.2.2-setup_x64.exe ${MAC_ID}:Goobox-0.2.2.dmg)
 # LIST_URL=$(pd create-list -t "Goobox-0.2.2" ${WIN_ID}:Goobox-0.2.2-setup_x64.exe ${MAC_ID}:Goobox-0.2.2.dmg ${LINUX_ID}:Goobox-0.2.2-x86_64.AppImage)
+echo "Download page for the dev builds are set up at ${LIST_URL}"
 
 echo "Dev builds for $TRAVIS_PULL_REQUEST_BRANCH are available at $LIST_URL" | slack-cli -d dev;
