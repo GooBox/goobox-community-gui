@@ -16,15 +16,16 @@
  */
 
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faCheckCircle, faClone,} from "@fortawesome/free-regular-svg-icons";
+import {faCheckCircle, faClone} from "@fortawesome/free-regular-svg-icons";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {webFrame} from "electron";
 import ReactDOM from "react-dom";
 import initInstaller from "./main";
 
 library.add(faCheckCircle, faClone, faInfoCircle);
+
 webFrame.setVisualZoomLevelLimits(1, 1);
-ReactDOM.render(
-  initInstaller(),
-  document.getElementById("app")
-);
+
+const app = document.createElement("div");
+document.body.appendChild(app);
+ReactDOM.render(initInstaller(), app);

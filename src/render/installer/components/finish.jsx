@@ -17,16 +17,17 @@
 
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 import {WhiteButton} from "./buttons";
 
-export const FinishButton = WhiteButton.extend`
+export const FinishButton = styled(WhiteButton)`
   color: #26aae1;
 `;
 
 export const Finish = ({header, message, onClick}) => (
   <main className="full-screen d-flex flex-column justify-content-between align-items-center">
-    <img className="mb-3" src={Logo} width={110} height={115.2}/>
+    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
     <h1>{header}</h1>
     <p>{message}</p>
     <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>

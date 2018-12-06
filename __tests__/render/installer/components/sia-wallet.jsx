@@ -19,7 +19,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {mount} from "enzyme";
 import React from "react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import SiaWallet from "../../../../src/render/installer/components/sia-wallet.jsx";
+import SiaWallet from "../../../../src/render/installer/components/sia-wallet";
 
 describe("SiaWallet component", () => {
 

@@ -21,11 +21,11 @@ import React from "react";
 import {Paused, Synchronizing} from "../../../constants";
 
 const PauseBtn = ({onChangeState}) => (
-  <a className="pause-sync-btn" onClick={() => onChangeState(Paused)}>
+  <button className="pause-sync-btn btn btn-link" type="button" onClick={() => onChangeState(Paused)}>
     <FontAwesomeIcon className="state-icon" icon={["far", "pause-circle"]}/>
     &nbsp;
     <span className="state-text">Goobox is up to date.</span>
-  </a>
+  </button>
 );
 
 PauseBtn.propTypes = {
@@ -33,11 +33,11 @@ PauseBtn.propTypes = {
 };
 
 const RestartBtn = ({onChangeState}) => (
-  <a className="sync-again-btn" onClick={() => onChangeState(Synchronizing)}>
+  <button className="sync-again-btn btn btn-link" type="button" onClick={() => onChangeState(Synchronizing)}>
     <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]}/>
     &nbsp;
     <span className="state-text">File transfers paused.</span>
-  </a>
+  </button>
 );
 
 RestartBtn.propTypes = {
@@ -60,4 +60,4 @@ Footer.propTypes = {
   onChangeState: PropTypes.func.isRequired,
 };
 
-export default Footer
+export default Footer;

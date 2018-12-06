@@ -21,34 +21,46 @@ import React from "react";
 import Footer from "./footer";
 import Header from "./header";
 
-export const Status = (props) => (
+export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, onClickInfo, onClickSyncFolder, onClickImportDrive, onChangeState}) => (
 
-  <main style={props.style} className="d-flex flex-column">
+  <main style={style} className="d-flex flex-column">
 
-    <Header onClickSettings={props.onClickSettings} onClickInfo={props.onClickInfo}/>
+    <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo}/>
 
     <section className="d-flex flex-column p-3">
-      <a className="btn btn-light sync-folder d-flex align-items-center mb-3"
-         onClick={() => props.onClickSyncFolder()}>
-        <FontAwesomeIcon icon="folder-open" className="mr-2"/>
+      <button
+        className="btn btn-light sync-folder d-flex align-items-center mb-3"
+        type="button"
+        onClick={onClickSyncFolder}
+      >
+        <FontAwesomeIcon className="mr-2" icon="folder-open"/>
         <span className="bold">Open my folder</span>
-      </a>
-      <a id="import-drive" className="btn btn-light d-flex align-items-center invisible"
-         onClick={() => props.onClickImportDrive()}>
-        <FontAwesomeIcon icon="cloud-upload-alt" className="mr-2"/>
+      </button>
+      <button
+        id="import-drive"
+        className="btn btn-light d-flex align-items-center invisible"
+        type="button"
+        onClick={onClickImportDrive}
+      >
+        <FontAwesomeIcon className="mr-2" icon="cloud-upload-alt"/>
         <span className="bold">Import drive</span>
-      </a>
+      </button>
     </section>
 
-    <Footer usedVolume={props.usedVolume} totalVolume={props.totalVolume} state={props.state}
-            onChangeState={props.onChangeState}/>
+    <Footer
+      usedVolume={usedVolume}
+      totalVolume={totalVolume}
+      state={state}
+      onChangeState={onChangeState}
+    />
 
   </main>
 
 );
 
 Status.propTypes = {
-  style: PropTypes.object.isRequired,
+  /* eslint-disable react/forbid-prop-types */
+  style: PropTypes.object,
   usedVolume: PropTypes.number.isRequired,
   totalVolume: PropTypes.number.isRequired,
   state: PropTypes.string.isRequired,
@@ -57,6 +69,10 @@ Status.propTypes = {
   onClickInfo: PropTypes.func.isRequired,
   onClickSyncFolder: PropTypes.func.isRequired,
   onClickImportDrive: PropTypes.func.isRequired,
+};
+
+Status.defaultProps = {
+  style: null,
 };
 
 export default Status;

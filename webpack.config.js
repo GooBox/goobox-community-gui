@@ -17,9 +17,9 @@
 
 "use strict";
 const path = require("path");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-module.exports = [{
+const configs = [{
   mode: "development",
   target: "electron-main",
   node: {
@@ -71,7 +71,7 @@ module.exports = [{
     "render/installer": "./src/render/installer/index.js",
   },
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: [".js", ".jsx", ".css"]
   },
   externals: [{
     "about-window": "commonjs about-window"
@@ -90,6 +90,13 @@ module.exports = [{
           noquotes: true
         }
       }]
+    }, {
+      test: /\.css$/,
+      exclude: "/node_modules/",
+      use: [
+        "style-loader",
+        "css-loader"
+      ],
     }]
   },
   output: {
@@ -97,29 +104,23 @@ module.exports = [{
     filename:
       "[name].js"
   },
-  devtool: "source-map"
-}, {
-  mode: "development",
-  entry: {
-    "installer": "./src/installer.css",
-    "popup": "./src/popup.css",
-  },
-  module: {
-    rules: [{
-      exclude: /node_modules/,
-      test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        // fallback: "style-loader",
-        use: "css-loader"
-      })
-    }],
-  },
-  output: {
-    path: path.join(__dirname, "lib"),
-    filename:
-      "[name].css.js"
-  },
   plugins: [
-    new ExtractTextPlugin("./[name].css")
-  ]
+    new HtmlWebpackPlugin({
+      title: "Goobox Installer",
+      filename: "installer.html",
+      chunks: ["render/installer"],
+    }),
+    new HtmlWebpackPlugin({
+      title: "Goobox",
+      filename: "popup.html",
+      chunks: ["render/popup"],
+    }),
+  ],
+  devtool: "source-map"
 }];
+
+if (process.env.NODE_ENV === "production") {
+  configs.forEach(c => c.devtool = false);
+}
+
+module.exports = configs;

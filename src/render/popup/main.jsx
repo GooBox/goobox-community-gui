@@ -21,6 +21,7 @@ import {applyMiddleware, createStore} from "redux";
 import createSagaMiddleware from "redux-saga";
 import {createLogger} from "../logger";
 import Status from "./containers/status";
+import "./main.css";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
@@ -34,14 +35,11 @@ const configureStore = () => {
   return store;
 };
 
-export default function initPopup() {
+export const initPopup = () => (
+  <Provider store={configureStore()}>
+    <Status/>
+  </Provider>
+);
 
-  const store = configureStore();
-  return (
-    <Provider store={store}>
-      <Status/>
-    </Provider>
-  );
-
-}
+export default initPopup;
 

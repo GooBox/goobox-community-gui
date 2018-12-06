@@ -29,8 +29,12 @@ describe("Footer component", () => {
   let wrapper;
   beforeEach(() => {
     onChangeState.mockClear();
-    wrapper = mount(<Footer usedVolume={used} totalVolume={total} state={Synchronizing}
-                            onChangeState={onChangeState}/>);
+    wrapper = mount(<Footer
+      usedVolume={used}
+      totalVolume={total}
+      state={Synchronizing}
+      onChangeState={onChangeState}
+    />);
   });
 
   it("has a synchronized icon and text when the state is synchronizing", () => {

@@ -19,16 +19,15 @@ import {app} from "electron";
 import jre from "node-jre";
 import path from "path";
 import {getConfig, saveConfig} from "../../src/main/config";
-import popup from "../../src/main/popup";
-import installer from "../../src/main/installer";
 import {main} from "../../src/main/index";
+import installer from "../../src/main/installer";
+import popup from "../../src/main/popup";
 
 jest.mock("electron");
 jest.mock("node-jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
 jest.mock("../../src/main/popup");
-jest.mock("../../src/main/papertrail");
 
 describe("main", () => {
 
