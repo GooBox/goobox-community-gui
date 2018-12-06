@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjEncryptionKey from "../../../../src/render/installer/components/storj-encryption-key.jsx";
+import StorjEncryptionKey from "../../../../src/render/installer/components/storj-encryption-key";
 
 describe("StorjEncryptionKey component", () => {
 

@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint jsx-a11y/label-has-associated-control: 0 */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import styled from "styled-components";
 import {BlueButton, WhiteButton} from "./buttons";
-import Sidebar from "./sidebar"
+import Sidebar from "./sidebar";
 
 const InputBox = styled.input`
   width: 489px;
@@ -63,53 +65,59 @@ export class StorjLogin extends React.Component {
   }
 
   _onClickNext() {
-    if (this.props.processing) {
-      return
+    const {processing, onClickNext} = this.props;
+    const {email, password, key} = this.state;
+    if (processing) {
+      return;
     }
 
     let warn = false;
-    if (!this.state.email) {
+    if (!email) {
       warn = true;
       this.setState({emailWarn: true});
     }
-    if (!this.state.password) {
+    if (!password) {
       warn = true;
       this.setState({passwordWarn: true});
     }
-    if (!this.state.key) {
+    if (!key) {
       warn = true;
       this.setState({keyWarn: true});
     }
     if (!warn) {
-      this.props.onClickNext({
-        email: this.state.email,
-        password: this.state.password,
-        key: this.state.key,
-      });
+      onClickNext({email, password, key});
     }
   }
 
   render() {
 
+    const {processing, onClickGenerateSeed, onClickBack} = this.props;
+    const {email, password, key, emailWarn, passwordWarn, keyWarn} = this.state;
     return (
-      <div className={classNames("clearfix", {wait: this.props.processing})}>
+      <div className={classNames("clearfix", {wait: processing})}>
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
           <h1>Login to your Storj account</h1>
           <div className="form-group">
             <label htmlFor="email">Email address</label>
-            <InputBox id="email" type="text"
-                      className={classNames("form-control", {"is-invalid": this.state.emailWarn})}
-                      value={this.state.email}
-                      onChange={e => this.props.processing || this.setState({email: e.target.value})}/>
+            <InputBox
+              id="email"
+              type="text"
+              className={classNames("form-control", {"is-invalid": emailWarn})}
+              value={email}
+              onChange={e => processing || this.setState({email: e.target.value})}
+            />
             <div className="invalid-feedback">Please enter a valid email address</div>
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <InputBox id="password" type="password"
-                      className={classNames("form-control", {"is-invalid": this.state.passwordWarn})}
-                      value={this.state.password}
-                      onChange={e => this.props.processing || this.setState({password: e.target.value})}/>
+            <InputBox
+              id="password"
+              type="password"
+              className={classNames("form-control", {"is-invalid": passwordWarn})}
+              value={password}
+              onChange={e => processing || this.setState({password: e.target.value})}
+            />
             <div className="invalid-feedback">Please enter the correct password</div>
           </div>
           <div className="form-group">
@@ -117,22 +125,30 @@ export class StorjLogin extends React.Component {
               <label htmlFor="key">
                 Encryption Key&nbsp;
                 <Popover>
-                  <i className="fas fa-info-circle info-button"/>
-                  <span>If you already have a encryption key for Goobox please enter it, otherwise click on "Generate".</span>
+                  <FontAwesomeIcon className="info-button" icon="info-circle"/>
+                  <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
                 </Popover>
               </label>
-              <GenSeedButton id="generate-mnemonic-btn"
-                             onClick={() => this.props.processing || this.props.onClickGenerateSeed()}>generate seed
+              <GenSeedButton
+                id="generate-mnemonic-btn"
+                onClick={() => processing || onClickGenerateSeed()}
+              >generate seed
               </GenSeedButton>
             </div>
-            <InputBox id="key" className={classNames("form-control", {"is-invalid": this.state.keyWarn})}
-                      value={this.state.key}
-                      onChange={e => this.props.processing || this.setState({key: e.target.value})}/>
+            <InputBox
+              id="key"
+              className={classNames("form-control", {"is-invalid": keyWarn})}
+              value={key}
+              onChange={e => processing || this.setState({key: e.target.value})}
+            />
             <div className="invalid-feedback">Please enter the correct encryption key</div>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn"
-                         onClick={() => this.props.processing || this.props.onClickBack()}>Back</WhiteButton>
+            <WhiteButton
+              id="back-btn"
+              onClick={() => processing || onClickBack()}
+            >Back
+            </WhiteButton>
             <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
           </div>
         </main>
@@ -146,13 +162,19 @@ StorjLogin.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
   processing: PropTypes.bool.isRequired,
   encryptionKey: PropTypes.string.isRequired,
-  onClickCreateAccount: PropTypes.func.isRequired,
+  // onClickCreateAccount: PropTypes.func.isRequired,
   onClickGenerateSeed: PropTypes.func.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
   keyWarn: PropTypes.bool,
+};
+
+StorjLogin.defaultProps = {
+  emailWarn: false,
+  passwordWarn: false,
+  keyWarn: false
 };
 
 export default StorjLogin;

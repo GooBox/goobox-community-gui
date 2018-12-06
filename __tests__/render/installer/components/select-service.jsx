@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import SelectService from "../../../../src/render/installer/components/select-service.jsx";
+import SelectService from "../../../../src/render/installer/components/select-service";
 
 describe("SelectService component", () => {
 

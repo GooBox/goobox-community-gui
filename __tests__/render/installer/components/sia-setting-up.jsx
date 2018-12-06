@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import SiaSettingUp from "../../../../src/render/installer/components/sia-setting-up.jsx";
+import SiaSettingUp from "../../../../src/render/installer/components/sia-setting-up";
 
 describe("SiaSettingUp component", () => {
 

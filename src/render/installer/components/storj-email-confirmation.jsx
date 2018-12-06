@@ -31,32 +31,32 @@ const style = {
   }
 };
 
-export default function StorjEmailConfirmation(props) {
-
-  return (
-    <div className="background-gradation">
-      <header><img className="icon" src={leftWhiteIcon}/></header>
-      <main style={style.main}>
-        <div className="f141">Storj new account.</div>
-        <div className="f211">
-          Please confirm your <span className="underlined bold">Storj account <span
-          className="light">in your email</span></span>
-        </div>
-      </main>
-      <footer>
-        <a className="back-btn" onClick={() => props.onClickBack && props.onClickBack()}>
-          <img className="arrow" src={leftArrowImage}/> Back
-        </a>
-        <a className="next-btn" onClick={() => props.onClickNext && props.onClickNext()}>
-          Next <img className="arrow" src={rightArrowImage}/>
-        </a>
-      </footer>
-    </div>
-  );
-
-}
+export const StorjEmailConfirmation = ({onClickBack, onClickNext}) => (
+  <div className="background-gradation">
+    <header>
+      <img className="icon" src={leftWhiteIcon} alt="Goobox"/>
+    </header>
+    <main style={style.main}>
+      <div className="f141">Storj new account.</div>
+      <div className="f211">
+        Please confirm your
+        <span className="underlined bold">Storj account <span className="light">in your email</span></span>
+      </div>
+    </main>
+    <footer>
+      <button className="back-btn btn btn-link" type="button" onClick={onClickBack}>
+        <img className="arrow" src={leftArrowImage} alt="Back"/> Back
+      </button>
+      <button className="next-btn btn btn-link" type="button" onClick={onClickNext}>
+        Next <img className="arrow" src={rightArrowImage} alt="Next"/>
+      </button>
+    </footer>
+  </div>
+);
 
 StorjEmailConfirmation.propTypes = {
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
 };
+
+export default StorjEmailConfirmation;

@@ -15,12 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faPauseCircle, faPlayCircle} from "@fortawesome/free-regular-svg-icons";
+import {faCloudUploadAlt, faCog, faFolderOpen, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {webFrame} from "electron";
 import ReactDOM from "react-dom";
-import initPopup from "./main";
+import {initPopup} from "./main";
+
+library.add(
+  faPauseCircle, faPlayCircle,
+  faInfoCircle, faCog, faFolderOpen, faCloudUploadAlt
+);
 
 webFrame.setVisualZoomLevelLimits(1, 1);
-ReactDOM.render(
-  initPopup(),
-  document.getElementById("app")
-);
+
+const app = document.createElement("div");
+document.body.appendChild(app);
+ReactDOM.render(initPopup(), app);

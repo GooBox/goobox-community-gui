@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint no-console: 0 */
 
 import {remote} from "electron";
 import PropTypes from "prop-types";
 import React from "react";
-import styled from "styled-components"
+import styled from "styled-components";
 import {Sia, Storj} from "../../../constants";
 import {BlueButton, WhiteButton} from "./buttons";
 import Sidebar from "./sidebar";
@@ -26,7 +27,7 @@ import Sidebar from "./sidebar";
 const dialog = remote.dialog;
 
 const ReadOnlyInputBox = styled.input.attrs({
-  className: "form-control mr-2",
+  className: "form-control mr-2 col-8",
   type: "text",
   readOnly: true
 })`
@@ -48,26 +49,31 @@ export class SelectFolder extends React.Component {
   }
 
   _onClickBack() {
-    if (this.state.disabled) {
+    const {onClickBack} = this.props;
+    const {disabled} = this.state;
+    if (disabled) {
       return;
     }
-    if (this.props.onClickBack && !this.selecting) {
-      this.setState({disabled: true}, this.props.onClickBack);
+    if (onClickBack && !this.selecting) {
+      this.setState({disabled: true}, onClickBack);
     }
   }
 
   _onClickNext() {
-    if (this.state.disabled) {
+    const {onClickNext} = this.props;
+    const {disabled} = this.state;
+    if (disabled) {
       return;
     }
-    if (this.props.onClickNext && !this.selecting) {
-      this.setState({disabled: true}, this.props.onClickNext);
+    if (onClickNext && !this.selecting) {
+      this.setState({disabled: true}, onClickNext);
     }
   }
 
   async _onClickBrowse() {
 
-    if (this.state.disabled) {
+    const {disabled} = this.state;
+    if (disabled) {
       throw "disabled";
     }
 
@@ -77,24 +83,26 @@ export class SelectFolder extends React.Component {
 
     let err;
     this.selecting = true;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
 
+      const {folder} = this.props;
       dialog.showOpenDialog(null, {
-        defaultPath: this.props.folder,
+        defaultPath: folder,
         properties: ["openDirectory", "createDirectory"]
       }, resolve);
 
-    }).then(selected => {
+    }).then((selected) => {
 
-      if (selected && selected.length > 0 && this.props.onSelectFolder) {
+      const {onSelectFolder} = this.props;
+      if (selected && selected.length > 0) {
         let dir = selected[0];
         if (dir.endsWith("\\")) {
           dir = dir.substr(0, dir.length - 1);
         }
-        this.props.onSelectFolder(dir);
+        onSelectFolder(dir);
       }
 
-    }).catch(reason => {
+    }).catch((reason) => {
       err = reason;
     }).then(() => {
       this.selecting = false;
@@ -106,8 +114,9 @@ export class SelectFolder extends React.Component {
   }
 
   _serviceNames() {
-    if (this.props.storj) {
-      if (this.props.sia) {
+    const {storj, sia} = this.props;
+    if (storj) {
+      if (sia) {
         return `${Storj} & ${Sia}`;
       } else {
         return Storj;
@@ -117,6 +126,7 @@ export class SelectFolder extends React.Component {
   }
 
   render() {
+    const {folder} = this.props;
     return (
       <div className="clearfix">
         <Sidebar className="float-left"/>
@@ -124,9 +134,13 @@ export class SelectFolder extends React.Component {
           <h1>{`Installing ${this._serviceNames()}`}</h1>
           <p>Choose the folder you want to sync with Goobox</p>
           <div className="form-row">
-            <ReadOnlyInputBox id="folder" value={this.props.folder}/>
-            <button id="change-folder-btn" type="button" className="btn btn-outline-primary"
-                    onClick={() => this._onClickBrowse().catch(console.debug)}>Change folder
+            <ReadOnlyInputBox id="folder" value={folder}/>
+            <button
+              id="change-folder-btn"
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => this._onClickBrowse().catch(console.debug)}
+            >Change folder
             </button>
             <small className="form-text text-muted"> Everything in this folder will be encrypted and safely stored.
             </small>
@@ -142,7 +156,7 @@ export class SelectFolder extends React.Component {
 
 }
 
-SelectFolder.propsTypes = {
+SelectFolder.propTypes = {
   storj: PropTypes.bool.isRequired,
   sia: PropTypes.bool.isRequired,
   folder: PropTypes.string.isRequired,

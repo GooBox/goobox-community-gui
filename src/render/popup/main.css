@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import "~bootstrap/dist/css/bootstrap.css";
+@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
 
 * {
   padding: 0;
@@ -46,6 +47,19 @@ a:active {
   transform: scale(0.95);
 }
 
+button {
+  text-decoration: none !important;
+}
+
+button *:hover {
+  cursor: pointer;
+}
+
+button:active {
+  position: relative;
+  transform: scale(0.95);
+}
+
 #app {
   background-color: #fbfbfd;
   width: 360px;
@@ -65,6 +79,10 @@ nav {
   color: #ffffff;
 }
 
+nav * {
+  color: #ffffff;
+}
+
 main {
   font-size: 16px;
   font-weight: normal;
@@ -78,7 +96,7 @@ main {
   height: 340px;
 }
 
-footer {
+footer * {
   font-size: 12px;
   color: #aab2b9;
   background-color: #f7f7f8;

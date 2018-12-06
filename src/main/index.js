@@ -22,14 +22,9 @@ import * as jre from "node-jre";
 import path from "path";
 import {getConfig, saveConfig} from "./config";
 import installer from "./installer";
-import {initPapertrail} from "./papertrail";
 import popup from "./popup";
 
 export const main = async () => {
-
-  if (process.env.NODE_ENV !== "production" && process.env.PAPERTRAIL) {
-    initPapertrail();
-  }
 
   const program = new Command();
   program

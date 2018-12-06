@@ -86,7 +86,7 @@ describe("installer", () => {
 
   it("loads static/installer.html", () => {
     installer();
-    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../../src/static/installer.html")}`);
+    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../../src/main/installer.html")}`);
   });
 
   it("registers installerWindowAllClosedHandler", () => {

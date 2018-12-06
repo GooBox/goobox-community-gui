@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjLogin from "../../../../src/render/installer/components/storj-login.jsx";
+import StorjLogin from "../../../../src/render/installer/components/storj-login";
 
 describe("StorjLogin component", () => {
 
@@ -32,8 +32,14 @@ describe("StorjLogin component", () => {
     createAccount = jest.fn();
     generateSeed = jest.fn();
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  onClickGenerateSeed={generateSeed} processing={false} encryptionKey={sampleKey}/>
+      <StorjLogin
+        onClickBack={back}
+        onClickNext={finish}
+        onClickCreateAccount={createAccount}
+        onClickGenerateSeed={generateSeed}
+        processing={false}
+        encryptionKey={sampleKey}
+      />
     );
   });
 
@@ -313,27 +319,45 @@ describe("StorjLogin component", () => {
 
   it("takes emailWarn prop and sets the given value to emailWarn state", () => {
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  onClickGenerateSeed={generateSeed}
-                  emailWarn={true} processing={false} encryptionKey={""}/>
+      <StorjLogin
+        onClickBack={back}
+        onClickNext={finish}
+        onClickCreateAccount={createAccount}
+        onClickGenerateSeed={generateSeed}
+        emailWarn
+        processing={false}
+        encryptionKey=""
+      />
     );
     expect(wrapper.state("emailWarn")).toBeTruthy();
   });
 
   it("takes passowrdWarn prop and sets the given value to passwordWarn state", () => {
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  onClickGenerateSeed={generateSeed}
-                  passwordWarn={true} processing={false} encryptionKey={""}/>
+      <StorjLogin
+        onClickBack={back}
+        onClickNext={finish}
+        onClickCreateAccount={createAccount}
+        onClickGenerateSeed={generateSeed}
+        passwordWarn
+        processing={false}
+        encryptionKey=""
+      />
     );
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
 
   it("takes keyWarn prop and sets the given value to keyWarn state", () => {
     wrapper = shallow(
-      <StorjLogin onClickBack={back} onClickNext={finish} onClickCreateAccount={createAccount}
-                  onClickGenerateSeed={generateSeed}
-                  keyWarn={true} processing={false} encryptionKey={""}/>
+      <StorjLogin
+        onClickBack={back}
+        onClickNext={finish}
+        onClickCreateAccount={createAccount}
+        onClickGenerateSeed={generateSeed}
+        keyWarn
+        processing={false}
+        encryptionKey=""
+      />
     );
     expect(wrapper.state("keyWarn")).toBeTruthy();
   });

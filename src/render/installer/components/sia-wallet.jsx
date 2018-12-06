@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint jsx-a11y/label-has-associated-control: 0 */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
@@ -30,20 +32,20 @@ const AddressBox = styled.input.attrs({
   type: "text",
   readOnly: true,
 })`
-  height: 52px;
-  border: solid 0.8px #dddddd;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
-  background-color: #ffffff;
+  height: 52px !important;
+  border: solid 0.8px #dddddd !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09) !important;
+  background-color: #ffffff !important;
 `;
 
 const SeedBox = styled.textarea.attrs({
   className: "form-control",
   readOnly: true,
 })`
-  height: 149px;
-  border: solid 0.8px #dddddd;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
-  background-color: #ffffff;
+  height: 149px !important;
+  border: solid 0.8px #dddddd !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09) !important;
+  background-color: #ffffff !important;
 `;
 
 const CopyButton = styled.button.attrs({
@@ -84,39 +86,42 @@ export class SiaWallet extends React.Component {
   }
 
   _copyAddressBtn() {
-    if (this.state.addressCopied) {
+    const {addressCopied} = this.state;
+    if (addressCopied) {
       return (
         <div className="text-success">
-          <i className="far fa-check-circle"/>
+          <FontAwesomeIcon icon={["far", "check-circle"]}/>
           <br/>
           copied
         </div>
       );
     }
     return (
-      <i className="far fa-clone text-black-50"/>
+      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
     );
   }
 
   _copySeedBtn() {
-    if (this.state.seedCopied) {
+    const {seedCopied} = this.state;
+    if (seedCopied) {
       return (
         <div className="text-success">
-          <i className="far fa-check-circle"/>
+          <FontAwesomeIcon icon={["far", "check-circle"]}/>
           <br/>
           copied
         </div>
       );
     }
     return (
-      <i className="far fa-clone text-black-50"/>
+      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
     );
   }
 
   render() {
 
+    const {address, seed, processing, onClickBack, onClickNext} = this.props;
     return (
-      <div className={classNames("clearfix", {wait: this.props.processing})}>
+      <div className={classNames("clearfix", {wait: processing})}>
         <Sidebar className="float-left"/>
         <main className="float-right d-flex flex-column">
           <h1>Installing Sia</h1>
@@ -126,14 +131,14 @@ export class SiaWallet extends React.Component {
               Please save your &nbsp;
               <span className="font-weight-bold">Sia wallet address</span>&nbsp;
               <Popover>
-                <i className="fas fa-info-circle info-button"/>
+                <FontAwesomeIcon className="info-button" icon="info-circle"/>
                 <span>Send Sia tokens to this address in order to top-up your account.</span>
               </Popover>
             </label>
             <div className="input-group">
-              <AddressBox id="address" value={this.props.address}/>
+              <AddressBox id="address" value={address}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.address} onCopy={this._addressCopied}>
+                <CopyToClipboard text={address} onCopy={this._addressCopied}>
                   <CopyButton id="copy-address-btn">{this._copyAddressBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
@@ -145,14 +150,14 @@ export class SiaWallet extends React.Component {
               And your &nbsp;
               <span className="font-weight-bold">Sia seed</span>&nbsp;
               <Popover>
-                <i className="fas fa-info-circle info-button"/>
+                <FontAwesomeIcon className="info-button" icon="info-circle"/>
                 <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
               </Popover>
             </label>
             <div className="input-group">
-              <SeedBox id="seed" value={this.props.seed}/>
+              <SeedBox id="seed" value={seed}/>
               <div className="input-group-append">
-                <CopyToClipboard text={this.props.seed} onCopy={this._seedCopied}>
+                <CopyToClipboard text={seed} onCopy={this._seedCopied}>
                   <CopyButton id="copy-seed-btn">{this._copySeedBtn()}</CopyButton>
                 </CopyToClipboard>
               </div>
@@ -160,8 +165,8 @@ export class SiaWallet extends React.Component {
           </div>
 
           <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={this.props.onClickBack}>Back</WhiteButton>
-            <BlueButton id="next-btn" onClick={this.props.onClickNext}>Set-up my Goobox</BlueButton>
+            <WhiteButton id="back-btn" onClick={onClickBack}>Back</WhiteButton>
+            <BlueButton id="next-btn" onClick={onClickNext}>Set-up my Goobox</BlueButton>
           </div>
 
         </main>
@@ -177,6 +182,11 @@ SiaWallet.propTypes = {
   seed: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
+  processing: PropTypes.bool,
+};
+
+SiaWallet.defaultProps = {
+  processing: false,
 };
 
 export default SiaWallet;

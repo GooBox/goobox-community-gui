@@ -35,6 +35,7 @@ import StorjEncryptionKey from "./containers/storj-encryption-key";
 import StorjFinish from "./containers/storj-finish";
 import StorjLogin from "./containers/storj-login";
 import StorjRegistration from "./containers/storj-registration";
+import "./main.css";
 import reducer from "./reducers";
 import rootSaga from "./sagas";
 
@@ -45,14 +46,14 @@ const configureStore = () => {
   const historyMiddleware = routerMiddleware(history);
 
   const store = createStore(
-    connectRouter(history)(
-      combineReducers({
-        main: reducer,
-      })),
+    combineReducers({
+      main: reducer,
+      router: connectRouter(history),
+    }),
     applyMiddleware(sagaMiddleware, historyMiddleware, createLogger()),
   );
   sagaMiddleware.run(rootSaga);
-  return {store: store, history: history};
+  return {store, history};
 
 };
 
@@ -74,8 +75,7 @@ export const routes = () => (
   </Switch>
 );
 
-
-export default function initInstaller() {
+export const initInstaller = () => {
 
   const {store, history} = configureStore();
   return (
@@ -86,4 +86,6 @@ export default function initInstaller() {
     </Provider>
   );
 
-}
+};
+
+export default initInstaller;

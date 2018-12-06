@@ -62,7 +62,7 @@ export const installer = () => {
     title: "Goobox installer",
     // skipTaskbar: true,
   });
-  mainWindow.loadURL(`file://${path.join(__dirname, "../../static/installer.html")}`);
+  mainWindow.loadURL(`file://${path.join(__dirname, "../installer.html")}`);
 
   if (process.env.DEV_TOOLS) {
     mainWindow.toggleDevTools();

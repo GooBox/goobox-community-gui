@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* eslint-disable no-console */
 
 import {configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 
 configure({adapter: new Adapter()});
 
+// Disable console object.
+console.error = (message) => {
+  if (/(Failed prop type)/.test(message)) {
+    throw new Error(message);
+  }
+};
+
+process.env.DEFAULT_SYNC_FOLDER = "/tmp/";

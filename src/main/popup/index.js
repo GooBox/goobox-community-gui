@@ -51,7 +51,7 @@ export const popup = async () => {
   }
 
   const mb = menubar({
-    index: `file://${path.join(__dirname, "../../static/popup.html")}`,
+    index: `file://${path.join(__dirname, "../popup.html")}`,
     icon: icons.getSyncIcon(),
     tooltip: app.getName(),
     preloadWindow: true,
@@ -67,13 +67,14 @@ export const popup = async () => {
   mb.appState = Synchronizing;
 
   // Allow running only one instance.
-  const shouldQuit = mb.app.makeSingleInstance(() => {
-    mb.showWindow();
-  });
-  if (shouldQuit) {
+  if (!mb.app.requestSingleInstanceLock()) {
     mb.app.quit();
     return;
   }
+  mb.app.on("second-instance", () => {
+    mb.showWindow();
+  });
+
   mb.window.setResizable(false);
   if (process.env.DEV_TOOLS) {
     mb.window.toggleDevTools();

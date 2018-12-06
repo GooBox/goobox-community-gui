@@ -15,13 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import PropTypes from "prop-types";
 import React from "react";
 import Logo from "../assets/logo.svg";
 
 export const Sidebar = ({className}) => (
   <aside className={`sidebar d-flex justify-content-center align-items-center ${className}`}>
-    <img src={Logo}/>
+    <img src={Logo} alt="Goobox"/>
   </aside>
 );
+
+Sidebar.propTypes = {
+  className: PropTypes.string,
+};
+
+Sidebar.defaultProps = {
+  className: "",
+};
 
 export default Sidebar;

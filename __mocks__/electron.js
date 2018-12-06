@@ -23,13 +23,9 @@ export const app = {
   getPath: jest.fn().mockReturnValue("."),
   isReady: jest.fn(),
   quit: jest.fn(),
-  makeSingleInstance: jest.fn(),
+  requestSingleInstanceLock: jest.fn().mockReturnValue(true),
   exit: jest.fn(),
 };
-
-app.makeSingleInstance.mockImplementation((callback) => {
-  callback();
-});
 
 export class BrowserWindow {
 

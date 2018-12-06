@@ -29,18 +29,22 @@ describe("Footer component", () => {
   let wrapper;
   beforeEach(() => {
     onChangeState.mockClear();
-    wrapper = mount(<Footer usedVolume={used} totalVolume={total} state={Synchronizing}
-                            onChangeState={onChangeState}/>);
+    wrapper = mount(<Footer
+      usedVolume={used}
+      totalVolume={total}
+      state={Synchronizing}
+      onChangeState={onChangeState}
+    />);
   });
 
   it("has a synchronized icon and text when the state is synchronizing", () => {
-    expect(wrapper.find(".state-icon").hasClass("fa-pause-circle")).toBeTruthy();
+    expect(wrapper.find(".state-icon").prop("icon")).toEqual(["far", "pause-circle"]);
     expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
   });
 
   it("has a paused icon and text when the state is paused", () => {
     wrapper.setProps({state: Paused});
-    expect(wrapper.find(".state-icon").hasClass("fa-play-circle")).toBeTruthy();
+    expect(wrapper.find(".state-icon").prop("icon")).toEqual(["far", "play-circle"]);
     expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
   });
 
