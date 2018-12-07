@@ -8,11 +8,12 @@ Goobox community edition sync app for sia and storj 🎉🚀
 
 **Upcoming features and fixes:**
 
--	Linux support.
+-	Linux support (In progress).
 -	Settings menu with some basic features like auto-start.
 -	Design update.
--	Bug fixes
+-	Bug fixes.
 -	Sia file Sharing (once implemented in sia-core).
+- 	Storj V3 integration.
 
 # QuickStart
 
@@ -164,7 +165,7 @@ Done
 Goobox stores configuration and log files in two important places on windows:
 
 - `C:\Users\USER\AppData\Local\Goobox`
-- `C:\Users\meije\AppData\Roaming\Goobox`
+- `C:\Users\USER\AppData\Roaming\Goobox`
 
 In case any errors or unexpected app behavior occurs like for example crashes, missing overlay icons... please either open a [issue on github](https://github.com/GooBox/goobox-community-gui/issues/new) or provide us with the following logs through one of our support channels (linked at the bottom of this page):
 
