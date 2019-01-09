@@ -110,39 +110,5 @@
   },
   "optionalDependencies": {
     "fileicon": "^0.2.2"
-  },
-  "babel": {
-    "sourceMaps": "inline",
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current",
-            "electron": "3.0.10"
-          },
-          "useBuiltIns": "usage"
-        }
-      ],
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
-  },
-  "jest": {
-    "setupFiles": [
-      "raf/polyfill",
-      "./setupTests.js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/dist"
-    ],
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    },
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|svg|css)$": "<rootDir>/__mocks__/fileMock.js"
-    }
   }
 }
