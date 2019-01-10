@@ -10,16 +10,16 @@ env:
   global:
     - ELECTRON_CACHE=$HOME/Library/Caches/electron
     - ELECTRON_BUILDER_CACHE=$HOME/Library/Caches/electron-builder
-    - secure: D/44TBDwD0YEOmHcnKu5qPwcVnksQwLb9D3s2ww/2KS55k0ueO7oawtoGLc7Ogs3HhthAZYwonLLC6beqqWoqSi3VuhBwEtVis6leM27ib2Agb9x+BCbh/Br1vFZI4TFLNSGqdbyswIvg7iVODGuj2HGwStY46ZMhsOyu3i50KH0vewoPNG4JT/Qf6EUKce9/BHRIwaTSriXHfz1VBdznvu24vpfVqxDbJNfh6i1TYkGT8NmEkVRR0iMQFBidQQ9dX7jhy0OSR6kt6dV9z6jvRkcyQrVRqZqc4HdPQWmzqjzNM8nHs8aDoDtqoIbr8h1Lm1tcdkcIPxDQ40Zd2JgN0TpGRb/o5o6cCGXhCT+zTWeq2HtBjPbgT8pQ13feCtB5QNJF8qdT92VqBbs5YXvF+vpK9qx72Wf0+mJasr1inN5VM1Eid4ou3mDPhriQMC9Z1Hg05GWChEwCJPJk+m+DKzKrgLde1gmXY3APQRVtDsfIEmBSv7o2EDoy1/GTJ+sJUXa/Y3fuhR7T0TtFZBhUU5OE0RYLR3AAB8d361wh22QUtGBiXBvisT3Llj8LfUrxHarEBj0rXH57WGOg5spxhcdH6AbgkMNWLJPn++kNs8gyuzj8ZthvaLmSMb0DcsQLq7Zc/93FChda5DidOtTj8DQ4T4qhXpzO4v3dikMyEk=
+    - secure: tkInSF4UT6PO8SydezSNcaMYhGygtN9q/pTV+jprrGeJ1LAZJrhuytwdlopCl9/BAcOBDATOh02PX5Oa8pZAl84ARhOTLbKYdGycXtW65PGXsGzx4ORJ4fVAp2N684NNNPFxVqHrkG6DKjKhDoeHILysVJN2ZTfzYI6wCaFsW9Jzelc5xzz3/ELzUM9TjUTLW5rlIW9awtkonlKA3LBiWDZBPke7ch9VrhDyV9V8EStJPFnq6lqSLz1sNzf1bbz8x3cYVH5YhKhkbutugTMedsWJ+kp1HAVn0Gz52Wg11D32d91ym9HuvQuQoTbIge+HLj5uky6+CbNp0GIK0adOZdBAXITLrk1TilNHEz74XwLWWfYcLGV06qFgzXhHIxDR/qx5SNsBLLVefdbpw1JzGmp0cIre9ahUbfm4GrmZODW2JzHHBd8w+QEzxrpYZaFeXoqN3qvX7mmK3tN1sI1Ylm8A16AjpECoDZoFQb6ikVdV9McjtlJ6QwFZUqg0IKQIxB+OEnQ8dl1vFP37jjx1nNLh9qYmUCw7Gug0o2CQ7hFgmgqCh1ik36e6GfDowhgRdsPkCI8yKB/hBT8f6z2kuVFQQ7f3Dz3vHCeKntEtdNnUR1AwqrMIWr8dye/wSbgsLtCKlQPXDQkWUrFKvHWvo7bguWYIClvyEVr+D1XmLvQ=
 before_install:
   - brew update
 script:
   - yarn run test:coverage
   - yarn run check
   - yarn run build
+  - '[ "$TRAVIS_PULL_REQUEST" = "false" ] || ./bin/pr'
 after_success:
   - yarn run coveralls
-  - '[ "$TRAVIS_PULL_REQUEST" != "false" ] && ./bin/pr'
 before_deploy:
   - yarn run build:production
   - yarn run dist
@@ -29,11 +29,11 @@ deploy:
     secure: NW1GGTAdJQpjlWnRvIXVNWm7bsEb33l+inZu4HpG7oKse73YSE6pr8/p0aDO2DHhq1YpTh8eQ2ulGBk3dhFWNS39dlTEdhN7tRLnZlBmxJe2fwlMVBkeLDlPWFWDVPHP/dZ8IAfaOZ98ehphlM8FYjqkRaVse+dFyOGqC3qfVgaj/4RnJns/wmQtnOapKgMd89GYghnhPsaVec2kT9zO7uu80GpzXG1lIVW0mwFBqdKBlqKynm7K4VdRaze0mwFvLnJWdHc8XRwYZoWUxGsUzuJBw1Hie8FzDTLdTs3SbDJJ4IIRHcU0eYdN+CLWBXfCsgJOReifgWbIHQ48AEn5E5zNN9UbRuUf8ghGtArS6KPymnKAyzj6gT0If3QAeVQtjeRrWhzt8naL9GjrgWv2kLkwDKZNiuoip8eKkfJktBs1vsZi6RUa89lgp9Eb/fWbG0g6KpAn6fZcyZDlch0j5RUUAogc3OItBpilu9PK1CyKs25HhDKpUYuDEWauFQAZeulf+puMUfk+OGQI7I0+hlxN0KdK3A2oixevNn+l6UFil3vPoxBIo89TmLEYLXdQ3PvI7XqpEfpsIP9SOq4psOuOqZ24JqhDo9NIlgFOQjFCX0ul9M4ToGvKMT2OiJQR01W19NceJd/ZTVM1mRlzGtaMPVehKrU9+G14bJ6c9XU=
   skip_cleanup: true
   file:
-    - dist/Goobox-0.2.2-setup_x64.exe
-    - dist/Goobox-0.2.2.dmg
+    - dist/Goobox-0.2.3-setup_x64.exe
+    - dist/Goobox-0.2.3.dmg
   on:
     tags: true
     repo: GooBox/goobox-community-gui
 notifications:
-  slack:
-    secure: diyT8tSsZBoZzLT9I73Rc5lx82jvc4SRvldvPCYCDApFaeyi6FezUij+0W69Z+8Ss2fkKWMGBIpvFoc4xZe/ahiooLuQ0SkM9QzCrCKt19oy2Dn/FLZNYCRd7e1Ji1nr3HPB+ovrQFLwecDisfu3QoO0kFWZtciCcOEBINvxOfcct5bmJ/i0sc9mWF2zGYB4jFYkrTrlPrbIqr8y82nXO4BbvBpJLgJbpMrGEdA5XCmEjEtosDpHhsFVe9imD4iUpnZxsXNG6DU5b3+3oYcQjqpIy1vpk8Z2peJJcnGuAlu0IQuWhBB/TtuAbYHycMbpvdWERoL+1Dt6Bl2dPrXxXIhk6c3teR3eX4hnIbAaZXHc95ePXn+lsBkh1AHkVEYlc7OsiJta13rULVBtgoa7xyyehUrssadZXE/XUVudnYxXoT+WG73wn9QCvJ2eXvjGchYxn+bF+zHKs/b9NjfX+7NE4G+niQ4VNIRKkbeufqonnsNo4kIxi4CTFnQuJaWQl/IH2N+rzEWapTLkLadxKpoYUacJiG4+AXVDbNz2lW+AnpK983dgjuggKWbuWX2kpNs6QTX/LzOMZAJOgdruw+gFVHY66dDRSDFA/znQS7hU6BOfljgfR3tztkcvfSIwFrx7HdMwc7USN/IIjpFNBoMFxan/YQAuxnZkFJUETF0=
+  webhooks:
+    secure: FJWJxvMFJlCJLW1IcQH/+LkEVoeDXYtZMQ6gfuq2catWrOmmkj/ucmG1vqOhELUeAAdhD+Z6Sl/FdoSuFCcUSvTqX/nxEAWzCFERd6JZ3Tdr5IE0HH4RQdDt1Z98RZpUNZCiHxEWhVWFyci14v5ZL7IhtyNlxr+7LXrugK2+KVdVOWilwtA0Va3knGjay5b8fZjyPwogqB2VSn/T8BLEib5vbRL99DSqqfQl5nsoFyqPt7lIyUhngTwrjSD79/WVH8I328kOfsIVvYl2zh0qft+J0ULP+VxmRhH7djCR/WQJJGyqoGhlPkMSP1uzt02MYuLka+agU4dlYAV3JCU+D3s7TtsN54ofUoCEwI+8NNZF4FqGLSP9QqTCVdiOmWK2rlD2T22jPWYApNH8KPpmkbF92KlaMUm5rld/JeRmhN8E1gN0bRukhDsYBA0IuALZBkk3aa+P33QSaS0XCPQDJ+iVNqLJB6ail8Bf2mHnRANdDgU5JoHYVhnLY5y7C4/67k0wxPQhxfD4jCO66HSRPmXBmW0lXY8MO7rx6TE9wznRA3j/eGlmnDSIvbN4FmERj//H2MW4PW/ObxLg43+HPgczTnjjDU2NcLG/vDDhYe1aJVjtoYDH6gsbYJLt9LPTVKZ4oYGNaQXpO5zgTHjcSYM4HPpSBxtUlztgTbPpbF0=

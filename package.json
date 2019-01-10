@@ -1,6 +1,6 @@
 {
   "name": "Goobox",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Goobox community edition sync app for sia and storj 🎉🚀",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,11 @@
     "dist:pre:sia:mac": "mkdir -p tmp/mac/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-mac.tar.gz | tar -zxv -C tmp/mac/goobox-sync-sia --strip-components 1",
     "dist:pre:sia:win": "mkdir -p tmp/win/goobox-sync-sia && curl -sSL https://github.com/GooBox/goobox-sync-sia/releases/download/v${SYNC_SIA_VERSION}/goobox-sync-sia-${SYNC_SIA_VERSION}-win64.tar.gz | tar -zxv -C tmp/win/goobox-sync-sia --strip-components 1",
     "dist:post": "del tmp",
-    "update": "updates -u"
+    "update": "run-s update:check update:fix update:install update:commit",
+    "update:check": "updates -u",
+    "update:fix": "sed -i -e 's/\"babel-core\": \".*\"/\"babel-core\": \"^7.0.0-bridge.0\"/g' package.json",
+    "update:install": "yarn install",
+    "update:commit": "git commit -m \"chore: update dependencies\" -- package.json yarn.lock"
   },
   "repository": {
     "type": "git",
@@ -42,56 +46,56 @@
   "homepage": "https://github.com/GooBox/goobox-community-gui",
   "dependencies": {
     "about-window": "^1.12.1",
-    "core-js": "^2.5.7",
-    "electron-json-storage": "^4.1.4",
+    "core-js": "^2.6.1",
+    "electron-json-storage": "^4.1.5",
     "node-jre": "jkawamoto/node-jre",
     "node-notifier": "^5.3.0",
     "react-copy-to-clipboard": "^5.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.1.6",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
-    "@fortawesome/fontawesome-svg-core": "^1.2.8",
-    "@fortawesome/free-regular-svg-icons": "^5.5.0",
-    "@fortawesome/free-solid-svg-icons": "^5.5.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.12",
+    "@fortawesome/free-regular-svg-icons": "^5.6.3",
+    "@fortawesome/free-solid-svg-icons": "^5.6.3",
     "@fortawesome/react-fontawesome": "^0.1.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
-    "babel-loader": "^8.0.4",
+    "babel-loader": "^8.0.5",
     "babel-minify-webpack-plugin": "^0.3.1",
-    "bootstrap": "^4.1.3",
+    "bootstrap": "^4.2.1",
     "classnames": "^2.2.6",
     "commander": "^2.19.0",
-    "connected-react-router": "^5.0.1",
+    "connected-react-router": "^6.1.0",
     "coveralls": "^3.0.2",
-    "css-loader": "^1.0.1",
+    "css-loader": "^2.1.0",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
-    "electron": "^3.0.10",
-    "electron-builder": "^20.38.2",
+    "electron": "^4.0.1",
+    "electron-builder": "^20.38.4",
     "electron-log": "^2.2.17",
-    "enzyme": "^3.7.0",
-    "enzyme-adapter-react-16": "^1.7.0",
-    "eslint": "^5.9.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
+    "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.12.3",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",
-    "js-yaml": "^3.12.0",
+    "js-yaml": "^3.12.1",
     "menubar": "^5.2.3",
     "npm-run-all": "^4.1.5",
     "prop-types": "^15.6.2",
-    "react": "^16.6.3",
+    "react": "^16.7.0",
     "react-awesome-popover": "^3.0.0",
-    "react-dom": "^16.6.3",
-    "react-redux": "^5.1.1",
+    "react-dom": "^16.7.0",
+    "react-redux": "^6.0.0",
     "react-router": "^4.3.1",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.4",
@@ -102,47 +106,13 @@
     "semver": "^5.6.0",
     "stream-to-string": "^1.1.0",
     "style-loader": "^0.23.1",
-    "styled-components": "^4.1.2",
+    "styled-components": "^4.1.3",
     "svg-url-loader": "^2.3.2",
-    "updates": "^5.4.2",
-    "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2"
+    "updates": "^6.0.3",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.1"
   },
   "optionalDependencies": {
     "fileicon": "^0.2.2"
-  },
-  "babel": {
-    "sourceMaps": "inline",
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current",
-            "electron": "3.0.10"
-          },
-          "useBuiltIns": "usage"
-        }
-      ],
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
-  },
-  "jest": {
-    "setupFiles": [
-      "raf/polyfill",
-      "./setupTests.js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/dist"
-    ],
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    },
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|svg|css)$": "<rootDir>/__mocks__/fileMock.js"
-    }
   }
 }
