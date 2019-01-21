@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../../actions";
 import Wallet from "../../components/sia/wallet";
@@ -25,21 +24,14 @@ export const mapStateToProps = state => ({
   address: state.main.siaAccount.address,
   seed: state.main.siaAccount.seed,
   mainState: state.main,
+  next: screens.SiaFinish,
+  prev: state.main.storj ? screens.StorjLogin : screens.SiaSelected,
 });
 
 export const mapDispatchToProps = dispatch => ({
 
-  onClickBack: (mainState) => {
-    if (mainState.storj) {
-      dispatch(push(screens.StorjLogin));
-    } else {
-      dispatch(push(screens.SiaSelected));
-    }
-  },
-
   onClickNext: (mainState) => {
     dispatch(actions.saveConfig(mainState));
-    dispatch(push(screens.SiaFinish));
   }
 
 });
@@ -48,7 +40,6 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...ownProps,
   ...stateProps,
   ...dispatchProps,
-  onClickBack: dispatchProps.onClickBack.bind(null, stateProps.mainState),
   onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
   mainState: undefined,
 });

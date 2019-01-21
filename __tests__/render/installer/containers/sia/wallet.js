@@ -15,12 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import * as actions from "../../../../../src/render/installer/actions";
 import * as screens from "../../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps, mergeProps} from "../../../../../src/render/installer/containers/sia/wallet";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+  mergeProps
+} from "../../../../../src/render/installer/containers/sia/wallet";
 
 describe("mapStateToProps", () => {
+
+  it("maps storj configuration", () => {
+    const main = {
+      storj: true,
+      siaAccount: {
+        address: "",
+        seed: "",
+      }
+    };
+    expect(mapStateToProps({main})).toEqual({
+      ...main.siaAccount,
+      mainState: main,
+      next: screens.SiaFinish,
+      prev: screens.StorjLogin,
+    });
+  });
 
   it("maps siaAccount and main state", () => {
     const main = {
@@ -32,6 +51,8 @@ describe("mapStateToProps", () => {
     expect(mapStateToProps({main})).toEqual({
       ...main.siaAccount,
       mainState: main,
+      next: screens.SiaFinish,
+      prev: screens.SiaSelected,
     });
   });
 
@@ -41,23 +62,12 @@ describe("mapDispatchToProps", () => {
 
   const dispatch = jest.fn();
   beforeEach(() => {
-    dispatch.mockReset();
+    jest.clearAllMocks();
   });
 
-  it("maps onClickBack to push Login if storj is true", () => {
-    mapDispatchToProps(dispatch).onClickBack({storj: true});
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
-  });
-
-  it("maps onClickBack to push SiaSelected if storj is false", () => {
-    mapDispatchToProps(dispatch).onClickBack({storj: false});
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaSelected));
-  });
-
-  it("maos onClickNext to push SiaFinish", () => {
+  it("maps onClickNext to push SiaFinish", () => {
     mapDispatchToProps(dispatch).onClickNext();
     expect(dispatch).toHaveBeenCalledWith(actions.saveConfig());
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaFinish));
   });
 
 });
@@ -76,7 +86,6 @@ describe("mergeProps", () => {
       mainState: main,
     };
     const dispatchProps = {
-      onClickBack: jest.fn(),
       onClickNext: jest.fn(),
     };
     const ownProps = {
@@ -87,11 +96,8 @@ describe("mergeProps", () => {
       ...main.siaAccount,
       ...dispatchProps,
       ...ownProps,
-      onClickBack: expect.any(Function),
       onClickNext: expect.any(Function),
     });
-    res.onClickBack();
-    expect(dispatchProps.onClickBack).toHaveBeenCalledWith(main);
     res.onClickNext();
     expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main);
   });

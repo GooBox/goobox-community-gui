@@ -17,15 +17,12 @@
 /* eslint jsx-a11y/label-has-associated-control: 0 */
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
-import {CopyToClipboard} from "react-copy-to-clipboard";
 import styled from "styled-components";
-import {SleepTimeToShowCopyButton} from "../../constants";
-import {BlueButton, WhiteButton} from "../buttons";
-import Sidebar from "../sidebar";
+import {CopyButton} from "../buttons";
+import Main from "../main";
 
 const AddressBox = styled.input.attrs({
   className: "form-control",
@@ -48,141 +45,52 @@ const SeedBox = styled.textarea.attrs({
   background-color: #ffffff !important;
 `;
 
-const CopyButton = styled.button.attrs({
-  className: "btn btn-light",
-  type: "button",
-})`
-  width: 65px;
-  border: solid 0.8px #dddddd;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
-  font-size: 15px;
-  text-align: center
-  background-color: #ffffff;
-`;
 
-
-export class Wallet extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      addressCopied: false,
-      seedCopied: false
-    };
-    this._addressCopied = this._addressCopied.bind(this);
-    this._seedCopied = this._seedCopied.bind(this);
-  }
-
-  _addressCopied() {
-    this.setState({addressCopied: true}, () => {
-      setTimeout(() => this.setState({addressCopied: false}), SleepTimeToShowCopyButton);
-    });
-  }
-
-  _seedCopied() {
-    this.setState({seedCopied: true}, () => {
-      setTimeout(() => this.setState({seedCopied: false}), SleepTimeToShowCopyButton);
-    });
-  }
-
-  _copyAddressBtn() {
-    const {addressCopied} = this.state;
-    if (addressCopied) {
-      return (
-        <div className="text-success">
-          <FontAwesomeIcon icon={["far", "check-circle"]}/>
-          <br/>
-          copied
+export const Wallet = ({address, seed, processing, next, prev, onClickNext}) => (
+  <Main processing={processing} next={next} prev={prev} onClickNext={onClickNext} nextCaption="Set-up my Goobox">
+    <h1>Installing Sia</h1>
+    <div className="form-group mb-3">
+      <label htmlFor="address">
+        Please save your &nbsp;
+        <span className="font-weight-bold">Sia wallet address</span>&nbsp;
+        <Popover contentClass="rap-popover-content">
+          <FontAwesomeIcon icon="info-circle" className="info-button"/>
+          <span>Send Sia tokens to this address in order to top-up your account.</span>
+        </Popover>
+      </label>
+      <div className="input-group">
+        <AddressBox id="address" value={address}/>
+        <div className="input-group-append">
+          <CopyButton id="copy-address-btn" text={address}/>
         </div>
-      );
-    }
-    return (
-      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
-    );
-  }
-
-  _copySeedBtn() {
-    const {seedCopied} = this.state;
-    if (seedCopied) {
-      return (
-        <div className="text-success">
-          <FontAwesomeIcon icon={["far", "check-circle"]}/>
-          <br/>
-          copied
-        </div>
-      );
-    }
-    return (
-      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
-    );
-  }
-
-  render() {
-
-    const {address, seed, processing, onClickBack, onClickNext} = this.props;
-    return (
-      <div className={classNames("clearfix", {wait: processing})}>
-        <Sidebar className="float-left"/>
-        <main className="float-right d-flex flex-column">
-          <h1>Installing Sia</h1>
-
-          <div className="form-group mb-3">
-            <label htmlFor="address">
-              Please save your &nbsp;
-              <span className="font-weight-bold">Sia wallet address</span>&nbsp;
-              <Popover contentClass="rap-popover-content">
-                <FontAwesomeIcon icon="info-circle" className="info-button"/>
-                <span>Send Sia tokens to this address in order to top-up your account.</span>
-              </Popover>
-            </label>
-            <div className="input-group">
-              <AddressBox id="address" value={address}/>
-              <div className="input-group-append">
-                <CopyToClipboard text={address} onCopy={this._addressCopied}>
-                  <CopyButton id="copy-address-btn">{this._copyAddressBtn()}</CopyButton>
-                </CopyToClipboard>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="seed">
-              And your &nbsp;
-              <span className="font-weight-bold">Sia seed</span>&nbsp;
-              <Popover contentClass="rap-popover-content">
-                <FontAwesomeIcon icon="info-circle" className="info-button"/>
-                <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
-              </Popover>
-            </label>
-            <div className="input-group">
-              <SeedBox id="seed" value={seed}/>
-              <div className="input-group-append">
-                <CopyToClipboard text={seed} onCopy={this._seedCopied}>
-                  <CopyButton id="copy-seed-btn">{this._copySeedBtn()}</CopyButton>
-                </CopyToClipboard>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={onClickBack}>Back</WhiteButton>
-            <BlueButton id="next-btn" onClick={onClickNext}>Set-up my Goobox</BlueButton>
-          </div>
-
-        </main>
       </div>
-    );
-
-  }
-
-}
+    </div>
+    <div className="form-group">
+      <label htmlFor="seed">
+        And your &nbsp;
+        <span className="font-weight-bold">Sia seed</span>&nbsp;
+        <Popover contentClass="rap-popover-content">
+          <FontAwesomeIcon icon="info-circle" className="info-button"/>
+          <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
+        </Popover>
+      </label>
+      <div className="input-group">
+        <SeedBox id="seed" value={seed}/>
+        <div className="input-group-append">
+          <CopyButton id="copy-seed-btn" text={seed}/>
+        </div>
+      </div>
+    </div>
+  </Main>
+);
 
 Wallet.propTypes = {
   address: PropTypes.string.isRequired,
   seed: PropTypes.string.isRequired,
-  onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
   processing: PropTypes.bool,
+  next: PropTypes.string.isRequired,
+  prev: PropTypes.string.isRequired,
 };
 
 Wallet.defaultProps = {
