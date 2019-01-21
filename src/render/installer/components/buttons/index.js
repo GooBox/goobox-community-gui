@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 
 import styled from "styled-components";
+import CopyButton from "./copy-button";
 
 export const Button = styled.button.attrs({
   type: "button",
@@ -38,3 +39,6 @@ export const BlueButton = styled(Button).attrs({
 /* this component doesn't extend styles but attributes */
 `;
 
+export {
+  CopyButton
+}
