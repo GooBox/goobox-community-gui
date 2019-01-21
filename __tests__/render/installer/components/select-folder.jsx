@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,13 +71,6 @@ describe("SelectFolder component", () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
-  it("disables the back link while a dialog is open", () => {
-    wrapper.instance().selecting = true;
-    const link = wrapper.find("#back-btn");
-    link.simulate("click");
-    expect(back).not.toHaveBeenCalled();
-  });
-
   it("disables other actions after the back link is clicked", () => {
     const link = wrapper.find("#back-btn");
     link.simulate("click");
@@ -97,13 +90,6 @@ describe("SelectFolder component", () => {
     expect(link.exists()).toBeTruthy();
     link.simulate("click");
     expect(next).toHaveBeenCalledTimes(1);
-  });
-
-  it("disables the next link while a dialog is open", () => {
-    wrapper.instance().selecting = true;
-    const link = wrapper.find("#next-btn");
-    link.simulate("click");
-    expect(next).not.toHaveBeenCalled();
   });
 
   it("disables other actions after the next link is clicked", () => {
@@ -133,20 +119,17 @@ describe("SelectFolder component", () => {
 
   describe("_onClickBrowse", () => {
 
-    beforeEach(() => {
-      dialog.showOpenDialog.mockClear();
-    });
-
     it("shows a dialog with showOpenDialog and notifies chosen folder via onSelectFolder", async () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([defaultDir]);
       });
       await wrapper.instance()._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(defaultDir);
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
         properties: ["openDirectory", "createDirectory"]
       }, expect.any(Function));
+      expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
 
     it("shows a dialog and does nothing if the dialog is canceled", async () => {
@@ -155,25 +138,11 @@ describe("SelectFolder component", () => {
       });
       await wrapper.instance()._onClickBrowse();
       expect(selectFolder).not.toHaveBeenCalled();
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
         properties: ["openDirectory", "createDirectory"]
       }, expect.any(Function));
-    });
-
-    it("disables all buttons on the screen until the dialog is closed", async () => {
-      dialog.showOpenDialog.mockImplementation((window, opts, cb) => {
-        expect(wrapper.instance().selecting).toBeTruthy();
-        cb(null);
-      });
-      expect(wrapper.instance().selecting).toBeFalsy();
-      await wrapper.instance()._onClickBrowse();
-      expect(wrapper.instance().selecting).toBeFalsy();
-    });
-
-    it("is disabled if another dialog is already open", async () => {
-      wrapper.instance().selecting = true;
-      await expect(wrapper.instance()._onClickBrowse()).rejects.toBeDefined();
+      expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
 
     it("removes trailing back slashes in chosen paths", async () => {
@@ -183,10 +152,11 @@ describe("SelectFolder component", () => {
       });
       await wrapper.instance()._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(dir);
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith(null, {
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
         properties: ["openDirectory", "createDirectory"]
       }, expect.any(Function));
+      expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
 
   });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,6 @@ export class SelectFolder extends React.Component {
     this._onClickBack = this._onClickBack.bind(this);
     this._onClickNext = this._onClickNext.bind(this);
     this._onClickBrowse = this._onClickBrowse.bind(this);
-    this.selecting = false;
     this.state = {
       disabled: false,
     };
@@ -66,7 +65,7 @@ export class SelectFolder extends React.Component {
     if (disabled) {
       return;
     }
-    if (onClickBack && !this.selecting) {
+    if (onClickBack) {
       this.setState({disabled: true}, onClickBack);
     }
   }
@@ -77,7 +76,7 @@ export class SelectFolder extends React.Component {
     if (disabled) {
       return;
     }
-    if (onClickNext && !this.selecting) {
+    if (onClickNext) {
       this.setState({disabled: true}, onClickNext);
     }
   }
@@ -89,16 +88,11 @@ export class SelectFolder extends React.Component {
       throw "disabled";
     }
 
-    if (this.selecting) {
-      throw "already opened";
-    }
-
     let err;
-    this.selecting = true;
     return new Promise((resolve) => {
 
       const {folder} = this.props;
-      dialog.showOpenDialog(null, {
+      dialog.showOpenDialog(remote.getCurrentWindow(), {
         defaultPath: folder,
         properties: ["openDirectory", "createDirectory"]
       }, resolve);
@@ -117,7 +111,6 @@ export class SelectFolder extends React.Component {
     }).catch((reason) => {
       err = reason;
     }).then(() => {
-      this.selecting = false;
       if (err) {
         return Promise.reject(err);
       }
