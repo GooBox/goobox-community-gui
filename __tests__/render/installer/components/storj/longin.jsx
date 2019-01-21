@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import StorjLogin from "../../../../src/render/installer/components/storj-login";
+import Login from "../../../../../src/render/installer/components/storj/login";
 
-describe("StorjLogin component", () => {
+describe("Login component", () => {
 
   const sampleEmail = "test@example.com";
   const samplePassword = "1234567";
@@ -34,7 +34,7 @@ describe("StorjLogin component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallow(
-      <StorjLogin
+      <Login
         onClickBack={back}
         onClickNext={finish}
         onClickCreateAccount={createAccount}

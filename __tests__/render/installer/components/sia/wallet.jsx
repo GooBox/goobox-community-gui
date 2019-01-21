@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {mount} from "enzyme";
 import React from "react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import SiaWallet from "../../../../src/render/installer/components/sia-wallet";
+import Wallet from "../../../../../src/render/installer/components/sia/wallet";
 
-describe("SiaWallet component", () => {
+describe("Wallet component", () => {
 
   const address = "address:12345678901234567890";
   const seed = "seed:12345678901234567890";
@@ -31,7 +31,7 @@ describe("SiaWallet component", () => {
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = mount(<SiaWallet address={address} seed={seed} onClickBack={back} onClickNext={next}/>);
+    wrapper = mount(<Wallet address={address} seed={seed} onClickBack={back} onClickNext={next}/>);
   });
 
   it("shows a wallet address given via wallet prop", () => {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,12 +53,12 @@ describe("mapDispatchToProps", () => {
     expect(dispatch).toHaveBeenCalledWith(push(screens.ChooseCloudService));
   });
 
-  it("maps onClickNext to push StorjLogin if storj is true", () => {
+  it("maps onClickNext to push Login if storj is true", () => {
     mapDispatchToProps(dispatch).onClickNext({storj: true});
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
   });
 
-  it("maps onClickNext to push SiaWallet if storj is false and siaAccount has address", () => {
+  it("maps onClickNext to push Wallet if storj is false and siaAccount has address", () => {
     mapDispatchToProps(dispatch).onClickNext({storj: false, siaAccount: {address: "xxx xxx xxx"}});
     expect(dispatch).toHaveBeenCalledWith(push(screens.SiaWallet));
   });

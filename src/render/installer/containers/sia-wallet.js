@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../actions";
-import SiaWallet from "../components/sia-wallet";
+import Wallet from "../components/sia/wallet";
 import * as screens from "../constants/screens";
 
 export const mapStateToProps = state => ({
@@ -53,5 +53,5 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SiaWallet);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Wallet);
 

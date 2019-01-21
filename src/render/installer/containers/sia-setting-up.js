@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  */
 
 import {connect} from "react-redux";
-import SiaSettingUp from "../components/sia-setting-up";
+import SettingUp from "../components/sia/setting-up";
 
 export const mapStateToProps = state => ({
   progress: state.main.progress,
   errorMsg: state.main.errorMsg
 });
 
-export default connect(mapStateToProps)(SiaSettingUp);
+export default connect(mapStateToProps)(SettingUp);

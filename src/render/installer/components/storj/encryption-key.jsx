@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import {BlueButton, WhiteButton} from "./buttons";
+import leftWhiteIcon from "../../assets/left_white_icon.svg";
+import {BlueButton, WhiteButton} from "../buttons";
 
 const style = {
   main: {
@@ -40,7 +40,7 @@ const style = {
   }
 };
 
-export const StorjEncryptionKey = ({encryptionKey, onClickBack, onClickNext}) => (
+export const EncryptionKey = ({encryptionKey, onClickBack, onClickNext}) => (
   <div className="background-gradation">
     <header><img className="icon" src={leftWhiteIcon} alt="Goobox"/></header>
     <main style={style.main}>
@@ -65,10 +65,10 @@ export const StorjEncryptionKey = ({encryptionKey, onClickBack, onClickNext}) =>
   </div>
 );
 
-StorjEncryptionKey.propTypes = {
+EncryptionKey.propTypes = {
   encryptionKey: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
 };
 
-export default StorjEncryptionKey;
+export default EncryptionKey;

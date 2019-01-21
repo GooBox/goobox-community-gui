@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../src/render/installer/components/buttons";
-import StorjRegistration from "../../../../src/render/installer/components/storj-registration";
+import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
+import Registration from "../../../../../src/render/installer/components/storj/registration";
 
-describe("StorjRegistration component", () => {
+describe("Registration component", () => {
 
   const sampleEmail = "test@example.com";
   const samplePassword = "1234567";
@@ -33,7 +33,7 @@ describe("StorjRegistration component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallow(
-      <StorjRegistration onClickLogin={login} onClickBack={back} onClickNext={next} processing={false}/>
+      <Registration onClickLogin={login} onClickBack={back} onClickNext={next} processing={false}/>
     );
   });
 

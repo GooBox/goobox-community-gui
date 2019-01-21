@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,38 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../src/render/installer/components/buttons";
-import StorjEmailConfirmation from "../../../../src/render/installer/components/storj-email-confirmation";
+import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
+import EncryptionKey from "../../../../../src/render/installer/components/storj/encryption-key";
 
-describe("StorjEmailConfirmation", () => {
+describe("EncryptionKey component", () => {
 
+  const encryptionKey = "1234567890abcdefghijklmn";
   const onClickBack = jest.fn();
   const onClickNext = jest.fn();
 
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallow(<StorjEmailConfirmation onClickBack={onClickBack} onClickNext={onClickNext}/>);
+    wrapper = shallow(<EncryptionKey
+      encryptionKey={encryptionKey}
+      onClickBack={onClickBack}
+      onClickNext={onClickNext}
+    />);
   });
 
   it("has background-gradation class", () => {
     expect(wrapper.hasClass("background-gradation")).toBeTruthy();
   });
 
+  it("shows an encryption key given via key property", () => {
+    expect(wrapper.find("#encryption-key").prop("value")).toEqual(encryptionKey);
+  });
+
   it("has a back link", () => {
     expect(wrapper.find(WhiteButton).prop("onClick")).toEqual(onClickBack);
   });
 
-  it("has a login link", () => {
+  it("has a next link", () => {
     expect(wrapper.find(BlueButton).prop("onClick")).toEqual(onClickNext);
   });
 

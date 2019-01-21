@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import styled from "styled-components";
-import {BlueButton, WhiteButton} from "./buttons";
-import Sidebar from "./sidebar";
+import {BlueButton, WhiteButton} from "../buttons";
+import Sidebar from "../sidebar";
 
 const InputBox = styled.input`
   width: 489px;
@@ -40,7 +40,7 @@ const GenSeedButton = styled.button.attrs({
   padding: 0;
 `;
 
-export class StorjLogin extends React.Component {
+export class Login extends React.Component {
 
   constructor(props) {
     super(props);
@@ -154,7 +154,7 @@ export class StorjLogin extends React.Component {
 
 }
 
-StorjLogin.propTypes = {
+Login.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
   processing: PropTypes.bool.isRequired,
   encryptionKey: PropTypes.string.isRequired,
@@ -167,10 +167,10 @@ StorjLogin.propTypes = {
   keyWarn: PropTypes.bool,
 };
 
-StorjLogin.defaultProps = {
+Login.defaultProps = {
   emailWarn: false,
   passwordWarn: false,
   keyWarn: false
 };
 
-export default StorjLogin;
+export default Login;

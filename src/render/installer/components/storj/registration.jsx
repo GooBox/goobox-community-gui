@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftWhiteIcon from "../assets/left_white_icon.svg";
-import {BlueButton, WhiteButton} from "./buttons";
+import leftWhiteIcon from "../../assets/left_white_icon.svg";
+import {BlueButton, WhiteButton} from "../buttons";
 
 const style = {
   msg: {
@@ -56,7 +56,7 @@ const style = {
   },
 };
 
-export class StorjRegistration extends React.Component {
+export class Registration extends React.Component {
 
   constructor(props) {
     super(props);
@@ -177,7 +177,7 @@ export class StorjRegistration extends React.Component {
 
 }
 
-StorjRegistration.propTypes = {
+Registration.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
   processing: PropTypes.bool.isRequired,
   onClickLogin: PropTypes.func.isRequired,
@@ -188,10 +188,10 @@ StorjRegistration.propTypes = {
   warnMsg: PropTypes.string,
 };
 
-StorjRegistration.defaultProps = {
+Registration.defaultProps = {
   emailWarn: false,
   passwordWarn: false,
   warnMsg: "",
 };
 
-export default StorjRegistration;
+export default Registration;

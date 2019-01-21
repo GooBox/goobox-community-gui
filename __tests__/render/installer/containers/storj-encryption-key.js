@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +41,12 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickBack to push StorjRegistration", () => {
+  it("maps onClickBack to push Registration", () => {
     mapDispatchToProps(dispatch).onClickBack();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjRegistration));
   });
 
-  it("maps onClickNext to push StorjEmailConfirmation", () => {
+  it("maps onClickNext to push EmailConfirmation", () => {
     mapDispatchToProps(dispatch).onClickNext();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEmailConfirmation));
   });

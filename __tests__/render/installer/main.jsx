@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@ import configureStore from "redux-mock-store";
 import Preparation from "../../../src/render/installer/components/preparation";
 import SelectFolder from "../../../src/render/installer/components/select-folder";
 import SelectService from "../../../src/render/installer/components/select-service";
-import SiaSettingUp from "../../../src/render/installer/components/sia-setting-up";
-import SiaWallet from "../../../src/render/installer/components/sia-wallet";
-import StorjLogin from "../../../src/render/installer/components/storj-login";
+import SettingUp from "../../../src/render/installer/components/sia/setting-up";
+import Wallet from "../../../src/render/installer/components/sia/wallet";
+import Login from "../../../src/render/installer/components/storj/login";
 import * as screens from "../../../src/render/installer/constants/screens";
 import SiaFinish from "../../../src/render/installer/containers/sia-finish";
 import StorjFinish from "../../../src/render/installer/containers/storj-finish";
@@ -65,24 +65,24 @@ describe("routes", () => {
   //   expect(createDOM(screens.BothSelected).find("SelectFolder").exists()).toBeTruthy();
   // });
 
-  it("renders StorjLogin when path is screens.StorjLogin", () => {
-    expect(createDOM(screens.StorjLogin).find(StorjLogin).exists()).toBeTruthy();
+  it("renders Login when path is screens.Login", () => {
+    expect(createDOM(screens.StorjLogin).find(Login).exists()).toBeTruthy();
   });
 
-  // it("renders StorjRegistration when path is screens.StorjRegistration", () => {
-  //   expect(createDOM(screens.StorjRegistration).find("StorjRegistration").exists()).toBeTruthy();
+  // it("renders Registration when path is screens.Registration", () => {
+  //   expect(createDOM(screens.Registration).find("Registration").exists()).toBeTruthy();
   // });
   //
-  // it("renders StorjEncryptionKey when path is screens.StorjEncryptionKey", () => {
-  //   expect(createDOM(screens.StorjEncryptionKey).find("StorjEncryptionKey").exists()).toBeTruthy();
+  // it("renders EncryptionKey when path is screens.EncryptionKey", () => {
+  //   expect(createDOM(screens.EncryptionKey).find("EncryptionKey").exists()).toBeTruthy();
   // });
   //
-  // it("renders StorjEmailConfirmation when path is screens.StorjEmailConfirmation", () => {
-  //   expect(createDOM(screens.StorjEmailConfirmation).find("StorjEmailConfirmation").exists()).toBeTruthy();
+  // it("renders EmailConfirmation when path is screens.EmailConfirmation", () => {
+  //   expect(createDOM(screens.EmailConfirmation).find("EmailConfirmation").exists()).toBeTruthy();
   // });
 
-  it("renders SiaWallet when path is screens.SiaWallet", () => {
-    expect(createDOM(screens.SiaWallet).find(SiaWallet).exists()).toBeTruthy();
+  it("renders Wallet when path is screens.Wallet", () => {
+    expect(createDOM(screens.SiaWallet).find(Wallet).exists()).toBeTruthy();
   });
 
   it("renders SiaFinish when path is screens.SiaFinish", () => {
@@ -94,7 +94,7 @@ describe("routes", () => {
   });
 
   it("renders Preparation when path is screens.SiaPreparation", () => {
-    expect(createDOM(screens.SiaPreparation).find(SiaSettingUp).exists()).toBeTruthy();
+    expect(createDOM(screens.SiaPreparation).find(SettingUp).exists()).toBeTruthy();
   });
 
 });

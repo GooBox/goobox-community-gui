@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {ProgressBar} from "../../../../src/render/installer/components/progress-bar";
-import SiaSettingUp from "../../../../src/render/installer/components/sia-setting-up";
+import {ProgressBar} from "../../../../../src/render/installer/components/progress-bar";
+import SettingUp from "../../../../../src/render/installer/components/sia/setting-up";
 
-describe("SiaSettingUp component", () => {
+describe("SettingUp component", () => {
 
   const progress = 39;
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<SiaSettingUp progress={progress}/>);
+    wrapper = shallow(<SettingUp progress={progress}/>);
   });
 
   it("takes progress prop and shows a progress bar", () => {
@@ -35,7 +35,7 @@ describe("SiaSettingUp component", () => {
 
   it("shows an error message instead of the given message if given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<SiaSettingUp progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg}/>);
 
     const msg = wrapper.find("#message");
     expect(msg.text()).toContain(errorMsg);
@@ -48,7 +48,7 @@ describe("SiaSettingUp component", () => {
 
   it("doesn't have wait class if error message is given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<SiaSettingUp progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg}/>);
     expect(wrapper.hasClass("wait")).toBeFalsy();
   });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import StorjEmailConfirmation from "../components/storj-email-confirmation";
+import EmailConfirmation from "../components/storj/email-confirmation";
 import * as screens from "../constants/screens";
 
 export const mapStateToProps = () => ({});
@@ -30,5 +30,5 @@ export const mapDispatchToProps = dispatch => ({
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StorjEmailConfirmation);
+export default connect(mapStateToProps, mapDispatchToProps)(EmailConfirmation);
 

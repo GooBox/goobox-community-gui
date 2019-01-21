@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@ import React from "react";
 import Popover from "react-awesome-popover";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import styled from "styled-components";
-import {SleepTimeToShowCopyButton} from "../constants";
-import {BlueButton, WhiteButton} from "./buttons";
-import Sidebar from "./sidebar";
+import {SleepTimeToShowCopyButton} from "../../constants";
+import {BlueButton, WhiteButton} from "../buttons";
+import Sidebar from "../sidebar";
 
 const AddressBox = styled.input.attrs({
   className: "form-control",
@@ -61,7 +61,7 @@ const CopyButton = styled.button.attrs({
 `;
 
 
-export class SiaWallet extends React.Component {
+export class Wallet extends React.Component {
 
   constructor(props) {
     super(props);
@@ -177,7 +177,7 @@ export class SiaWallet extends React.Component {
 
 }
 
-SiaWallet.propTypes = {
+Wallet.propTypes = {
   address: PropTypes.string.isRequired,
   seed: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
@@ -185,8 +185,8 @@ SiaWallet.propTypes = {
   processing: PropTypes.bool,
 };
 
-SiaWallet.defaultProps = {
+Wallet.defaultProps = {
   processing: false,
 };
 
-export default SiaWallet;
+export default Wallet;

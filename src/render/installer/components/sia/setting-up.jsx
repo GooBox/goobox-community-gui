@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import LogoColor from "../assets/logo-color.svg";
-import ProgressBar from "./progress-bar";
+import LogoColor from "../../assets/logo-color.svg";
+import ProgressBar from "../progress-bar";
 
-export const SiaSettingUp = ({progress, errorMsg}) => (
+export const SettingUp = ({progress, errorMsg}) => (
   <main
     className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !errorMsg})}
   >
@@ -33,13 +33,13 @@ export const SiaSettingUp = ({progress, errorMsg}) => (
   </main>
 );
 
-SiaSettingUp.propTypes = {
+SettingUp.propTypes = {
   progress: PropTypes.number.isRequired,
   errorMsg: PropTypes.string,
 };
 
-SiaSettingUp.defaultProps = {
+SettingUp.defaultProps = {
   errorMsg: "",
 };
 
-export default SiaSettingUp;
+export default SettingUp;
