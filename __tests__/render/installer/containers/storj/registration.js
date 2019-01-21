@@ -16,13 +16,13 @@
  */
 
 import {push} from "connected-react-router";
-import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
+import * as actions from "../../../../../src/render/installer/actions";
+import * as screens from "../../../../../src/render/installer/constants/screens";
 import {
   mapDispatchToProps,
   mapStateToProps,
   mergeProps
-} from "../../../../src/render/installer/containers/storj-registration";
+} from "../../../../../src/render/installer/containers/storj/registration";
 
 describe("mapStateToProps", () => {
 

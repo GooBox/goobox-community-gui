@@ -15,20 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-encryption-key";
+import * as actions from "../../../../../src/render/installer/actions";
+import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/sia/finish";
 
 describe("mapStateToProps", () => {
 
-  it("maps state to encryptionKey", () => {
-    const main = {
-      storjAccount: {
-        key: "xxx xxx xxxx"
-      }
-    };
-    expect(mapStateToProps({main})).toEqual({
-      encryptionKey: main.storjAccount.key
+  it("set messages", () => {
+    expect(mapStateToProps()).toEqual({
+      header: "We’re preparing your Goobox",
+      message: "We will notify you when we’re done."
     });
   });
 
@@ -41,15 +36,11 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickBack to push Registration", () => {
-    mapDispatchToProps(dispatch).onClickBack();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjRegistration));
-  });
-
-  it("maps onClickNext to push EmailConfirmation", () => {
-    mapDispatchToProps(dispatch).onClickNext();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEmailConfirmation));
+  it("maps onClick to openSyncFolder action", () => {
+    mapDispatchToProps(dispatch).onClick();
+    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
   });
 
 });
+
 

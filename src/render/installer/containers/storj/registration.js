@@ -17,34 +17,28 @@
 
 import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import Login from "../components/storj/login";
-import * as screens from "../constants/screens";
+import * as actions from "../../actions";
+import Registration from "../../components/storj/registration";
+import * as screens from "../../constants/screens";
 
 export const mapStateToProps = state => ({
   processing: state.main.processing,
-  encryptionKey: state.main.storjAccount.key,
   emailWarn: state.main.storjAccount.emailWarn,
   passwordWarn: state.main.storjAccount.passwordWarn,
-  keyWarn: state.main.storjAccount.keyWarn,
   warnMsg: state.main.storjAccount.warnMsg,
-  mainState: state.main,
+  syncFolder: state.main.folder,
 });
 
 export const mapDispatchToProps = dispatch => ({
 
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (mainState, accountInfo) => dispatch(actions.storjLogin({
-    ...mainState,
-    storjAccount: accountInfo,
+  onClickNext: (syncFolder, accountInfo) => dispatch(actions.storjCreateAccount({
+    ...accountInfo,
+    syncFolder,
   })),
 
-  onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
-
-  onClickGenerateSeed: mainState => dispatch(actions.storjGenerateMnemonic({
-    folder: mainState.folder
-  })),
+  onClickLogin: () => dispatch(push(screens.StorjLogin)),
 
 });
 
@@ -52,10 +46,9 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...ownProps,
   ...stateProps,
   ...dispatchProps,
-  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
-  onClickGenerateSeed: dispatchProps.onClickGenerateSeed.bind(null, stateProps.mainState),
-  mainState: undefined,
+  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.syncFolder),
+  syncFolder: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Registration);
 

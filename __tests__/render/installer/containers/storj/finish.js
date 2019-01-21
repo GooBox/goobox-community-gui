@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/storj-finish";
+import * as actions from "../../../../../src/render/installer/actions";
+import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/storj/finish";
 
 describe("mapStateToProps", () => {
 

@@ -16,16 +16,20 @@
  */
 
 import {push} from "connected-react-router";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {
-  mapDispatchToProps,
-  mapStateToProps
-} from "../../../../src/render/installer/containers/storj-email-confirmation";
+import * as screens from "../../../../../src/render/installer/constants/screens";
+import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/storj/encryption-key";
 
 describe("mapStateToProps", () => {
 
-  it("maps nothing", () => {
-    expect(mapStateToProps()).toEqual({});
+  it("maps state to encryptionKey", () => {
+    const main = {
+      storjAccount: {
+        key: "xxx xxx xxxx"
+      }
+    };
+    expect(mapStateToProps({main})).toEqual({
+      encryptionKey: main.storjAccount.key
+    });
   });
 
 });
@@ -37,14 +41,14 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClickBack to push EncryptionKey", () => {
+  it("maps onClickBack to push Registration", () => {
     mapDispatchToProps(dispatch).onClickBack();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEncryptionKey));
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjRegistration));
   });
 
-  it("maps onClickNext to push Login", () => {
+  it("maps onClickNext to push EmailConfirmation", () => {
     mapDispatchToProps(dispatch).onClickNext();
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEmailConfirmation));
   });
 
 });

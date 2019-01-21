@@ -16,9 +16,9 @@
  */
 
 import {push} from "connected-react-router";
-import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps, mergeProps} from "../../../../src/render/installer/containers/sia-wallet";
+import * as actions from "../../../../../src/render/installer/actions";
+import * as screens from "../../../../../src/render/installer/constants/screens";
+import {mapDispatchToProps, mapStateToProps, mergeProps} from "../../../../../src/render/installer/containers/sia/wallet";
 
 describe("mapStateToProps", () => {
 

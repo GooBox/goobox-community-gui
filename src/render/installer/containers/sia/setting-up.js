@@ -15,22 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import EncryptionKey from "../components/storj/encryption-key";
-import * as screens from "../constants/screens";
+import SettingUp from "../../components/sia/setting-up";
 
 export const mapStateToProps = state => ({
-  encryptionKey: state.main.storjAccount.key,
+  progress: state.main.progress,
+  errorMsg: state.main.errorMsg
 });
 
-export const mapDispatchToProps = dispatch => ({
-
-  onClickBack: () => dispatch(push(screens.StorjRegistration)),
-
-  onClickNext: () => dispatch(push(screens.StorjEmailConfirmation)),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(EncryptionKey);
-
+export default connect(mapStateToProps)(SettingUp);

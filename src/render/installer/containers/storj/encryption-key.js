@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import Finish from "../components/finish";
+import EncryptionKey from "../../components/storj/encryption-key";
+import * as screens from "../../constants/screens";
 
-export const mapStateToProps = () => ({
-
-  header: "We’re preparing your Goobox",
-
-  message: "We will notify you when we’re done."
-
+export const mapStateToProps = state => ({
+  encryptionKey: state.main.storjAccount.key,
 });
 
 export const mapDispatchToProps = dispatch => ({
 
-  onClick: () => dispatch(actions.closeWindow()),
+  onClickBack: () => dispatch(push(screens.StorjRegistration)),
+
+  onClickNext: () => dispatch(push(screens.StorjEmailConfirmation)),
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Finish);
+export default connect(mapStateToProps, mapDispatchToProps)(EncryptionKey);
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/sia-finish";
+import {push} from "connected-react-router";
+import * as screens from "../../../../../src/render/installer/constants/screens";
+import {
+  mapDispatchToProps,
+  mapStateToProps
+} from "../../../../../src/render/installer/containers/storj/email-confirmation";
 
 describe("mapStateToProps", () => {
 
-  it("set messages", () => {
-    expect(mapStateToProps()).toEqual({
-      header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
-    });
+  it("maps nothing", () => {
+    expect(mapStateToProps()).toEqual({});
   });
 
 });
@@ -36,11 +37,15 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onClick to openSyncFolder action", () => {
-    mapDispatchToProps(dispatch).onClick();
-    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
+  it("maps onClickBack to push EncryptionKey", () => {
+    mapDispatchToProps(dispatch).onClickBack();
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEncryptionKey));
+  });
+
+  it("maps onClickNext to push Login", () => {
+    mapDispatchToProps(dispatch).onClickNext();
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
   });
 
 });
-
 

@@ -17,9 +17,9 @@
 
 import {push} from "connected-react-router";
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import Wallet from "../components/sia/wallet";
-import * as screens from "../constants/screens";
+import * as actions from "../../actions";
+import Wallet from "../../components/sia/wallet";
+import * as screens from "../../constants/screens";
 
 export const mapStateToProps = state => ({
   address: state.main.siaAccount.address,

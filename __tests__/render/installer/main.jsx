@@ -27,8 +27,8 @@ import SettingUp from "../../../src/render/installer/components/sia/setting-up";
 import Wallet from "../../../src/render/installer/components/sia/wallet";
 import Login from "../../../src/render/installer/components/storj/login";
 import * as screens from "../../../src/render/installer/constants/screens";
-import SiaFinish from "../../../src/render/installer/containers/sia-finish";
-import StorjFinish from "../../../src/render/installer/containers/storj-finish";
+import SiaFinish from "../../../src/render/installer/containers/sia/finish";
+import StorjFinish from "../../../src/render/installer/containers/storj/finish";
 import {routes} from "../../../src/render/installer/main";
 import {InitialState} from "../../../src/render/installer/reducers";
 

@@ -16,11 +16,21 @@
  */
 
 import {connect} from "react-redux";
-import SettingUp from "../components/sia/setting-up";
+import * as actions from "../../actions";
+import Finish from "../../components/finish";
 
-export const mapStateToProps = state => ({
-  progress: state.main.progress,
-  errorMsg: state.main.errorMsg
+export const mapStateToProps = () => ({
+
+  header: "We’re preparing your Goobox",
+
+  message: "We will notify you when we’re done."
+
 });
 
-export default connect(mapStateToProps)(SettingUp);
+export const mapDispatchToProps = dispatch => ({
+
+  onClick: () => dispatch(actions.closeWindow()),
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Finish);
