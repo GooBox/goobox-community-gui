@@ -16,22 +16,22 @@
  */
 
 import * as actions from "../../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/storj/finish";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../../src/render/installer/containers/storj/finish";
 
 describe("mapStateToProps", () => {
-
   it("set messages", () => {
     // noinspection SpellCheckingInspection
     expect(mapStateToProps()).toEqual({
       header: "You are ready to go",
-      message: "Happy Gooboxing!"
+      message: "Happy Gooboxing!",
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -41,6 +41,4 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClick();
     expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
   });
-
 });
-

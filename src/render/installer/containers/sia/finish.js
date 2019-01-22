@@ -20,17 +20,16 @@ import * as actions from "../../actions";
 import Finish from "../../components/screens/finish";
 
 export const mapStateToProps = () => ({
-
   header: "We’re preparing your Goobox",
 
-  message: "We will notify you when we’re done."
-
+  message: "We will notify you when we’re done.",
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onClick: () => dispatch(actions.closeWindow()),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Finish);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Finish);

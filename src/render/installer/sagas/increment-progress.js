@@ -20,12 +20,10 @@ import {call, put} from "redux-saga/effects";
 import * as actions from "../actions";
 
 export default function* incrementProgress() {
-
   let current = 0;
   while (true) {
     // noinspection JSCheckFunctionSignatures
     yield call(delay, 500);
     yield put(actions.setProgressValue(++current < 95 ? current : 95));
   }
-
 }

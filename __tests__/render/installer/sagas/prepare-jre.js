@@ -26,17 +26,20 @@ import incrementProgress from "../../../../src/render/installer/sagas/increment-
 import prepareJRE from "../../../../src/render/installer/sagas/prepare-jre";
 
 describe("prepareJRE", () => {
-
   it("yields increment progress and sendAsync with installJRE ipc action", () => {
     const saga = prepareJRE();
     const inc = {
-      cancel: jest.fn()
+      cancel: jest.fn(),
     };
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
+    expect(saga.next(inc).value).toEqual(
+      call(sendAsync, ipcActions.installJRE())
+    );
     expect(inc.cancel).not.toHaveBeenCalled();
     // returns false which means the installation of JRE was skipped.
-    expect(saga.next(false).value).toEqual(put(push(screens.ChooseCloudService)));
+    expect(saga.next(false).value).toEqual(
+      put(push(screens.ChooseCloudService))
+    );
     expect(inc.cancel).toHaveBeenCalled();
     expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
     expect(saga.next().done).toBeTruthy();
@@ -45,10 +48,12 @@ describe("prepareJRE", () => {
   it("increases the progress bar to 100% and waits a second if installJRE returns true", () => {
     const saga = prepareJRE();
     const inc = {
-      cancel: jest.fn()
+      cancel: jest.fn(),
     };
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
+    expect(saga.next(inc).value).toEqual(
+      call(sendAsync, ipcActions.installJRE())
+    );
     expect(inc.cancel).not.toHaveBeenCalled();
     // returns true which means a new JRE was installed.
     expect(saga.next(true).value).toEqual(put(actions.setProgressValue(100)));
@@ -63,11 +68,13 @@ describe("prepareJRE", () => {
   it("yields prepareJREFailure action and stops increasing progress when installJRE throws an error", () => {
     const saga = prepareJRE();
     const inc = {
-      cancel: jest.fn()
+      cancel: jest.fn(),
     };
     const err = "expected error";
     expect(saga.next().value).toEqual(fork(incrementProgress));
-    expect(saga.next(inc).value).toEqual(call(sendAsync, ipcActions.installJRE()));
+    expect(saga.next(inc).value).toEqual(
+      call(sendAsync, ipcActions.installJRE())
+    );
     expect(inc.cancel).not.toHaveBeenCalled();
 
     // throw an error.
@@ -75,5 +82,4 @@ describe("prepareJRE", () => {
     expect(inc.cancel).toHaveBeenCalled();
     expect(saga.next().done).toBeTruthy();
   });
-
 });

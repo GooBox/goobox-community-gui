@@ -17,25 +17,25 @@
 
 import {push} from "connected-react-router";
 import * as screens from "../../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/storj/encryption-key";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../../src/render/installer/containers/storj/encryption-key";
 
 describe("mapStateToProps", () => {
-
   it("maps state to encryptionKey", () => {
     const main = {
       storjAccount: {
-        key: "xxx xxx xxxx"
-      }
+        key: "xxx xxx xxxx",
+      },
     };
     expect(mapStateToProps({main})).toEqual({
-      encryptionKey: main.storjAccount.key
+      encryptionKey: main.storjAccount.key,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -50,6 +50,4 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClickNext();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEmailConfirmation));
   });
-
 });
-

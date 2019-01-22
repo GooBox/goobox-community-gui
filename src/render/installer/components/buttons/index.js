@@ -30,15 +30,13 @@ export const Button = styled.button.attrs({
 export const WhiteButton = styled(Button).attrs({
   className: "btn btn-light",
 })`
-/* this component doesn't extend styles but attributes */
+  /* this component doesn't extend styles but attributes */
 `;
 
 export const BlueButton = styled(Button).attrs({
   className: "btn btn-primary",
 })`
-/* this component doesn't extend styles but attributes */
+  /* this component doesn't extend styles but attributes */
 `;
 
-export {
-  CopyButton
-}
+export {CopyButton};

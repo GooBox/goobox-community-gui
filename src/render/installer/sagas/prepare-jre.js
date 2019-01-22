@@ -26,7 +26,6 @@ import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
 
 export default function* prepareJRE() {
-
   const inc = yield fork(incrementProgress);
   try {
     log.debug("[GUI render] Requesting JRE installation");
@@ -47,6 +46,4 @@ export default function* prepareJRE() {
     inc.cancel();
     yield put(actions.prepareJREFailure(err));
   }
-
 }
-

@@ -37,15 +37,20 @@ const style = {
     fontSize: "30px",
     textAlign: "center",
     marginTop: "35px",
-  }
+  },
 };
 
 export const EncryptionKey = ({encryptionKey, onClickBack, onClickNext}) => (
   <div className="background-gradation">
-    <header><img className="icon" src={leftWhiteIcon} alt="Goobox"/></header>
+    <header>
+      <img className="icon" src={leftWhiteIcon} alt="Goobox" />
+    </header>
     <main style={style.main}>
       <div className="f141">Storj new account.</div>
-      <div className="f211">Please save your <span className="underlined bold">Storj encryption key</span></div>
+      <div className="f211">
+        Please save your{" "}
+        <span className="underlined bold">Storj encryption key</span>
+      </div>
     </main>
     <main style={style.accountInfo}>
       <div>
@@ -59,8 +64,12 @@ export const EncryptionKey = ({encryptionKey, onClickBack, onClickNext}) => (
       </div>
     </main>
     <footer>
-      <WhiteButton id="back-btn" onClick={onClickBack}>Back </WhiteButton>
-      <BlueButton id="next-btn" onClick={onClickNext}>Next</BlueButton>
+      <WhiteButton id="back-btn" onClick={onClickBack}>
+        Back{" "}
+      </WhiteButton>
+      <BlueButton id="next-btn" onClick={onClickNext}>
+        Next
+      </BlueButton>
     </footer>
   </div>
 );

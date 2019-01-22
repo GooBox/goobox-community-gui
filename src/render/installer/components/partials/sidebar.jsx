@@ -20,8 +20,10 @@ import React from "react";
 import Logo from "../../assets/logo.svg";
 
 export const Sidebar = ({className}) => (
-  <aside className={`sidebar d-flex justify-content-center align-items-center ${className}`}>
-    <img src={Logo} alt="Goobox"/>
+  <aside
+    className={`sidebar d-flex justify-content-center align-items-center ${className}`}
+  >
+    <img src={Logo} alt="Goobox" />
   </aside>
 );
 

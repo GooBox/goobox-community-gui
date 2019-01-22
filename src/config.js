@@ -34,7 +34,7 @@ export async function getConfig() {
 
 export async function saveConfig(cfg) {
   return new Promise((resolve, reject) => {
-    storage.set(ConfigFile, cfg, (err) => {
+    storage.set(ConfigFile, cfg, err => {
       if (err) {
         reject(err);
       } else {

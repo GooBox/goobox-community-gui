@@ -29,7 +29,7 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
-  storjLoginHandler
+  storjLoginHandler,
 } from "../../../src/main/installer/handlers";
 import installer from "../../../src/main/installer/index";
 
@@ -42,9 +42,10 @@ jest.mock("../../../src/main/popup");
 jest.mock("../../../src/main/installer/handlers");
 
 describe("installer", () => {
-
   beforeAll(() => {
-    installerWindowAllClosedHandler.mockReturnValue("installerWindowAllClosedHandler");
+    installerWindowAllClosedHandler.mockReturnValue(
+      "installerWindowAllClosedHandler"
+    );
   });
 
   let mockLoadURL;
@@ -86,22 +87,30 @@ describe("installer", () => {
 
   it("loads static/installer.html", () => {
     installer();
-    expect(mockLoadURL).toHaveBeenCalledWith(`file://${path.join(__dirname, "../../../src/main/installer.html")}`);
+    expect(mockLoadURL).toHaveBeenCalledWith(
+      `file://${path.join(__dirname, "../../../src/main/installer.html")}`
+    );
   });
 
   it("registers installerWindowAllClosedHandler", () => {
     installer();
-    expect(app.on).toHaveBeenCalledWith("window-all-closed", installerWindowAllClosedHandler());
+    expect(app.on).toHaveBeenCalledWith(
+      "window-all-closed",
+      installerWindowAllClosedHandler()
+    );
     expect(installerWindowAllClosedHandler).toHaveBeenCalledWith(app);
   });
 
   describe("management of GUI event handlers", () => {
-
     beforeAll(() => {
       installJREHandler.mockReturnValue("installJREHandler");
-      siaRequestWalletInfoHandler.mockReturnValue("siaRequestWalletInfoHandler");
+      siaRequestWalletInfoHandler.mockReturnValue(
+        "siaRequestWalletInfoHandler"
+      );
       stopSyncAppsHandler.mockReturnValue("stopSyncAppsHandler");
-      storjGenerateMnemonicHandler.mockReturnValue("storjGenerateMnemonicHandler");
+      storjGenerateMnemonicHandler.mockReturnValue(
+        "storjGenerateMnemonicHandler"
+      );
       storjLoginHandler.mockReturnValue("storjLoginHandler");
       storjCreateAccountHandler.mockReturnValue("storjCreateAccountHandler");
     });
@@ -112,56 +121,75 @@ describe("installer", () => {
 
     it("registers installJREHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.InstallJRE, installJREHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.InstallJRE,
+        installJREHandler()
+      );
     });
 
     it("registers storjGenerateMnemonicHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.StorjGenerateMnemonic,
+        storjGenerateMnemonicHandler()
+      );
     });
 
     it("registers storjLoginHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.StorjLogin, storjLoginHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.StorjLogin,
+        storjLoginHandler()
+      );
     });
 
     it("registers storjCreateAccountHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.StorjCreateAccount,
+        storjCreateAccountHandler()
+      );
     });
 
     it("registers siaRequestWalletInfoHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.SiaRequestWalletInfo,
+        siaRequestWalletInfoHandler()
+      );
     });
 
     it("registers stopSyncAppsHandler", () => {
       installer();
-      expect(addListener).toHaveBeenCalledWith(actionTypes.StopSyncApps, stopSyncAppsHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        actionTypes.StopSyncApps,
+        stopSyncAppsHandler()
+      );
     });
-
   });
 
   describe("in macOS", () => {
-
     const oldPlatform = process.platform;
     beforeAll(() => {
       Object.defineProperty(process, "platform", {
-        value: "darwin"
+        value: "darwin",
       });
     });
 
     afterAll(() => {
       Object.defineProperty(process, "platform", {
-        value: oldPlatform
+        value: oldPlatform,
       });
     });
 
     it("starts the FinderSync extension", () => {
       installer();
-      expect(execFileSync).toHaveBeenCalledWith("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
+      expect(execFileSync).toHaveBeenCalledWith("pluginkit", [
+        "-e",
+        "use",
+        "-i",
+        "com.liferay.nativity.LiferayFinderSync",
+      ]);
     });
-
   });
-
 });

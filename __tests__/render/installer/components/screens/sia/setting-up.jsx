@@ -21,12 +21,11 @@ import {ProgressBar} from "../../../../../../src/render/installer/components/pro
 import SettingUp from "../../../../../../src/render/installer/components/screens/sia/setting-up";
 
 describe("SettingUp component", () => {
-
   const progress = 39;
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<SettingUp progress={progress}/>);
+    wrapper = shallow(<SettingUp progress={progress} />);
   });
 
   it("takes progress prop and shows a progress bar", () => {
@@ -35,7 +34,7 @@ describe("SettingUp component", () => {
 
   it("shows an error message instead of the given message if given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg} />);
 
     const msg = wrapper.find("#message");
     expect(msg.text()).toContain(errorMsg);
@@ -48,8 +47,7 @@ describe("SettingUp component", () => {
 
   it("doesn't have wait class if error message is given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<SettingUp progress={progress} errorMsg={errorMsg} />);
     expect(wrapper.hasClass("wait")).toBeFalsy();
   });
-
 });

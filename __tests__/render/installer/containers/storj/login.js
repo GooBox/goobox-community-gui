@@ -19,19 +19,16 @@ import * as actions from "../../../../../src/render/installer/actions";
 import {
   mapDispatchToProps,
   mapStateToProps,
-  mergeProps
+  mergeProps,
 } from "../../../../../src/render/installer/containers/storj/login";
 import {InitialState} from "../../../../../src/render/installer/reducers";
 
 describe("Login container", () => {
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-
   describe("mapStateToProps", () => {
-
     it("maps processing, warning information, and main state", () => {
       const main = {
         processing: true,
@@ -41,7 +38,7 @@ describe("Login container", () => {
           passwordWarn: true,
           keyWarn: false,
           warnMsg: "warning",
-        }
+        },
       };
       expect(mapStateToProps({main})).toEqual({
         processing: main.processing,
@@ -53,37 +50,37 @@ describe("Login container", () => {
         mainState: main,
       });
     });
-
   });
 
   describe("mapDispatchToProps", () => {
-
     const dispatch = jest.fn();
 
     it("maps onClickNext to storjLogin action with the given main state", () => {
       const info = {
         email: "another@email.com",
         password: "another password",
-        key: "yyy yyy yyy"
+        key: "yyy yyy yyy",
       };
       mapDispatchToProps(dispatch).onClickNext(InitialState, info);
-      expect(dispatch).toHaveBeenCalledWith(actions.storjLogin({
-        ...InitialState,
-        storjAccount: info,
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.storjLogin({
+          ...InitialState,
+          storjAccount: info,
+        })
+      );
     });
 
     it("maps onClickGenerateMnemonic to StorjGenerateMnemonic action", () => {
       mapDispatchToProps(dispatch).onClickGenerateSeed(InitialState);
-      expect(dispatch).toHaveBeenCalledWith(actions.storjGenerateMnemonic({
-        folder: InitialState.folder
-      }));
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.storjGenerateMnemonic({
+          folder: InitialState.folder,
+        })
+      );
     });
-
   });
 
   describe("mergeProps", () => {
-
     const main = {
       processing: true,
       storjAccount: {
@@ -91,7 +88,7 @@ describe("Login container", () => {
         passwordWarn: true,
         keyWarn: false,
         warnMsg: "warning",
-      }
+      },
     };
     const stateProps = {
       processing: main.processing,
@@ -105,7 +102,7 @@ describe("Login container", () => {
       onClickGenerateSeed: jest.fn(),
     };
     const ownProps = {
-      key: "value"
+      key: "value",
     };
 
     it("merges props, bind onClickNext to the main state, and removes that state from the result", () => {
@@ -123,7 +120,5 @@ describe("Login container", () => {
       res.onClickGenerateSeed();
       expect(dispatchProps.onClickGenerateSeed).toHaveBeenCalledWith(main);
     });
-
   });
-
 });

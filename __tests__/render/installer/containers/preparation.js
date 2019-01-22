@@ -18,20 +18,19 @@
 import {mapStateToProps} from "../../../../src/render/installer/containers/preparation";
 
 describe("mapStateToProps", () => {
-
   it("maps progress state", () => {
     const progress = 11;
     const errorMsg = "expected error";
-    expect(mapStateToProps({
-      main: {
-        progress,
-        errorMsg,
-      }
-    })).toEqual({
+    expect(
+      mapStateToProps({
+        main: {
+          progress,
+          errorMsg,
+        },
+      })
+    ).toEqual({
       progress,
       errorMsg,
     });
   });
-
 });
-

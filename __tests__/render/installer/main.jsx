@@ -33,32 +33,45 @@ import {routes} from "../../../src/render/installer/main";
 import {InitialState} from "../../../src/render/installer/reducers";
 
 describe("routes", () => {
-
   const createDOM = (path = "/") => {
     const store = configureStore()({main: InitialState});
     return mount(
       <Provider store={store}>
-        <MemoryRouter initialEntries={[path]}>
-          {routes()}
-        </MemoryRouter>
+        <MemoryRouter initialEntries={[path]}>{routes()}</MemoryRouter>
       </Provider>
     );
   };
 
   it("renders Preparation at first", () => {
-    expect(createDOM().find(Preparation).exists()).toBeTruthy();
+    expect(
+      createDOM()
+        .find(Preparation)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders SelectService when path is screens.ChooseCloudService", () => {
-    expect(createDOM(screens.ChooseCloudService).find(SelectService).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.ChooseCloudService)
+        .find(SelectService)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders SelectFolder when path is screens.StorjSelected", () => {
-    expect(createDOM(screens.StorjSelected).find(SelectFolder).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.StorjSelected)
+        .find(SelectFolder)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders SelectFolder when path is screens.SiaSelected", () => {
-    expect(createDOM(screens.SiaSelected).find(SelectFolder).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.SiaSelected)
+        .find(SelectFolder)
+        .exists()
+    ).toBeTruthy();
   });
 
   // it("renders SelectFolder when path is screens.BothSelected", () => {
@@ -66,7 +79,11 @@ describe("routes", () => {
   // });
 
   it("renders Login when path is screens.Login", () => {
-    expect(createDOM(screens.StorjLogin).find(Login).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.StorjLogin)
+        .find(Login)
+        .exists()
+    ).toBeTruthy();
   });
 
   // it("renders Registration when path is screens.Registration", () => {
@@ -82,19 +99,34 @@ describe("routes", () => {
   // });
 
   it("renders Wallet when path is screens.Wallet", () => {
-    expect(createDOM(screens.SiaWallet).find(Wallet).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.SiaWallet)
+        .find(Wallet)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders SiaFinish when path is screens.SiaFinish", () => {
-    expect(createDOM(screens.SiaFinish).find(SiaFinish).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.SiaFinish)
+        .find(SiaFinish)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders Finish when path is screens.FinishAll", () => {
-    expect(createDOM(screens.FinishAll).find(StorjFinish).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.FinishAll)
+        .find(StorjFinish)
+        .exists()
+    ).toBeTruthy();
   });
 
   it("renders Preparation when path is screens.SiaPreparation", () => {
-    expect(createDOM(screens.SiaPreparation).find(SettingUp).exists()).toBeTruthy();
+    expect(
+      createDOM(screens.SiaPreparation)
+        .find(SettingUp)
+        .exists()
+    ).toBeTruthy();
   });
-
 });

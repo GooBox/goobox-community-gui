@@ -20,7 +20,6 @@ import * as actions from "../../../src/render/popup/actions";
 import reducer, {InitialState} from "../../../src/render/popup/reducers";
 
 describe("InitialState", () => {
-
   it("sets synchronizing as the state", () => {
     expect(InitialState.state).toEqual(Synchronizing);
   });
@@ -36,25 +35,35 @@ describe("InitialState", () => {
   it("sets false as the disabled state", () => {
     expect(InitialState.disabled).toEqual(false);
   });
-
 });
 
 describe("reducer", () => {
-
   it("sets state paused when pause action received", () => {
-    expect(reducer(InitialState, actions.pause())).toEqual({...InitialState, state: Paused});
+    expect(reducer(InitialState, actions.pause())).toEqual({
+      ...InitialState,
+      state: Paused,
+    });
   });
 
   it("sets state synchronizing when restart action received", () => {
-    expect(reducer(InitialState, actions.restart())).toEqual({...InitialState, state: Synchronizing});
+    expect(reducer(InitialState, actions.restart())).toEqual({
+      ...InitialState,
+      state: Synchronizing,
+    });
   });
 
   it("sets disabled false when enable action received", () => {
-    expect(reducer(InitialState, actions.enable())).toEqual({...InitialState, disabled: false});
+    expect(reducer(InitialState, actions.enable())).toEqual({
+      ...InitialState,
+      disabled: false,
+    });
   });
 
   it("sets disabled true when disable action received", () => {
-    expect(reducer(InitialState, actions.disable())).toEqual({...InitialState, disabled: true});
+    expect(reducer(InitialState, actions.disable())).toEqual({
+      ...InitialState,
+      disabled: true,
+    });
   });
 
   it("passes throw a given state if other actions received", () => {
@@ -65,7 +74,7 @@ describe("reducer", () => {
     const value = 112;
     expect(reducer(InitialState, actions.setVolumeSize(value))).toEqual({
       ...InitialState,
-      usedVolume: value
+      usedVolume: value,
     });
   });
 
@@ -76,5 +85,4 @@ describe("reducer", () => {
       totalVolume: value,
     });
   });
-
 });

@@ -29,11 +29,9 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-
-  onClickNext: (mainState) => {
+  onClickNext: mainState => {
     dispatch(actions.saveConfig(mainState));
-  }
-
+  },
 });
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -44,5 +42,8 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Wallet);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(Wallet);

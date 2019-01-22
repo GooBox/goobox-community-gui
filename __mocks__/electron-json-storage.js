@@ -19,7 +19,7 @@ const storage = {};
 
 export const electronJsonStorage = {
   get: jest.fn(),
-  set: jest.fn()
+  set: jest.fn(),
 };
 
 electronJsonStorage.get.mockImplementation((key, cb) => {
@@ -32,6 +32,5 @@ electronJsonStorage.set.mockImplementation((key, value, cb) => {
     cb();
   }
 });
-
 
 export default electronJsonStorage;

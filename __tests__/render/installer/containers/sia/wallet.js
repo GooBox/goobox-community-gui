@@ -20,18 +20,17 @@ import * as screens from "../../../../../src/render/installer/constants/screens"
 import {
   mapDispatchToProps,
   mapStateToProps,
-  mergeProps
+  mergeProps,
 } from "../../../../../src/render/installer/containers/sia/wallet";
 
 describe("mapStateToProps", () => {
-
   it("maps storj configuration", () => {
     const main = {
       storj: true,
       siaAccount: {
         address: "",
         seed: "",
-      }
+      },
     };
     expect(mapStateToProps({main})).toEqual({
       ...main.siaAccount,
@@ -46,7 +45,7 @@ describe("mapStateToProps", () => {
       siaAccount: {
         address: "0123456",
         seed: "xxx xxx xxx",
-      }
+      },
     };
     expect(mapStateToProps({main})).toEqual({
       ...main.siaAccount,
@@ -55,11 +54,9 @@ describe("mapStateToProps", () => {
       prev: screens.SiaSelected,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     jest.clearAllMocks();
@@ -69,17 +66,15 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClickNext();
     expect(dispatch).toHaveBeenCalledWith(actions.saveConfig());
   });
-
 });
 
 describe("mergeProps", () => {
-
   it("merges props, binds the main state to onClickBack, and removes the main state from the result", () => {
     const main = {
       siaAccount: {
         address: "0123456",
         seed: "xxx xxx xxx",
-      }
+      },
     };
     const stateProps = {
       ...main.siaAccount,
@@ -101,6 +96,4 @@ describe("mergeProps", () => {
     res.onClickNext();
     expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main);
   });
-
 });
-

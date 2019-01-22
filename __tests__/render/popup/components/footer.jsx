@@ -21,7 +21,6 @@ import {Paused, Synchronizing} from "../../../../src/constants";
 import Footer from "../../../../src/render/popup/components/footer";
 
 describe("Footer component", () => {
-
   const used = 12.334;
   const total = 30;
   const onChangeState = jest.fn();
@@ -29,23 +28,33 @@ describe("Footer component", () => {
   let wrapper;
   beforeEach(() => {
     onChangeState.mockClear();
-    wrapper = mount(<Footer
-      usedVolume={used}
-      totalVolume={total}
-      state={Synchronizing}
-      onChangeState={onChangeState}
-    />);
+    wrapper = mount(
+      <Footer
+        usedVolume={used}
+        totalVolume={total}
+        state={Synchronizing}
+        onChangeState={onChangeState}
+      />
+    );
   });
 
   it("has a synchronized icon and text when the state is synchronizing", () => {
-    expect(wrapper.find(".state-icon").prop("icon")).toEqual(["far", "pause-circle"]);
+    expect(wrapper.find(".state-icon").prop("icon")).toEqual([
+      "far",
+      "pause-circle",
+    ]);
     expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
   });
 
   it("has a paused icon and text when the state is paused", () => {
     wrapper.setProps({state: Paused});
-    expect(wrapper.find(".state-icon").prop("icon")).toEqual(["far", "play-circle"]);
-    expect(wrapper.find(".state-text").text()).toEqual("File transfers paused.");
+    expect(wrapper.find(".state-icon").prop("icon")).toEqual([
+      "far",
+      "play-circle",
+    ]);
+    expect(wrapper.find(".state-text").text()).toEqual(
+      "File transfers paused."
+    );
   });
 
   it("has a pause button when the state is synchronizing", () => {
@@ -68,7 +77,8 @@ describe("Footer component", () => {
   it("has a usage percentage box", () => {
     const usage = wrapper.find(".usage-rate");
     expect(usage.exists()).toBeTruthy();
-    expect(usage.text()).toEqual(`Using ${Math.round(used / total * 100)}% of ${total}GB`);
+    expect(usage.text()).toEqual(
+      `Using ${Math.round((used / total) * 100)}% of ${total}GB`
+    );
   });
-
 });

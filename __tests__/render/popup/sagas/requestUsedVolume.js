@@ -23,19 +23,18 @@ import {setVolumeSize} from "../../../../src/render/popup/actions";
 import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUsedVolume";
 
 describe("requestUsedVolumeTimer", () => {
-
   const volume = 334;
   it("yields delay with 30sec, requestUsedVolume, and setVolumeSize", () => {
     const saga = requestUsedVolumeTimer();
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 30000));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.calculateUsedVolume()));
+    expect(saga.next().value).toEqual(
+      call(sendAsync, ipcActions.calculateUsedVolume())
+    );
     expect(saga.next(volume).value).toEqual(put(setVolumeSize(volume)));
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 30000));
   });
 
   // TODO: Test throwing exceptions.
-
 });
-

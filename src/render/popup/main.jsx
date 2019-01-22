@@ -37,9 +37,8 @@ const configureStore = () => {
 
 export const initPopup = () => (
   <Provider store={configureStore()}>
-    <Status/>
+    <Status />
   </Provider>
 );
 
 export default initPopup;
-

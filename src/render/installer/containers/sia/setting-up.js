@@ -20,7 +20,7 @@ import SettingUp from "../../components/screens/sia/setting-up";
 
 export const mapStateToProps = state => ({
   progress: state.main.progress,
-  errorMsg: state.main.errorMsg
+  errorMsg: state.main.errorMsg,
 });
 
 export default connect(mapStateToProps)(SettingUp);

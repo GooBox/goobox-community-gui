@@ -21,11 +21,19 @@ import React from "react";
 import Footer from "./footer";
 import Header from "./header";
 
-export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, onClickInfo, onClickSyncFolder, onClickImportDrive, onChangeState}) => (
-
+export const Status = ({
+  style,
+  usedVolume,
+  totalVolume,
+  state,
+  onClickSettings,
+  onClickInfo,
+  onClickSyncFolder,
+  onClickImportDrive,
+  onChangeState,
+}) => (
   <main style={style} className="d-flex flex-column">
-
-    <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo}/>
+    <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo} />
 
     <section className="d-flex flex-column p-3">
       <button
@@ -33,7 +41,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
         type="button"
         onClick={onClickSyncFolder}
       >
-        <FontAwesomeIcon className="mr-2" icon="folder-open"/>
+        <FontAwesomeIcon className="mr-2" icon="folder-open" />
         <span className="bold">Open my folder</span>
       </button>
       <button
@@ -42,7 +50,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
         type="button"
         onClick={onClickImportDrive}
       >
-        <FontAwesomeIcon className="mr-2" icon="cloud-upload-alt"/>
+        <FontAwesomeIcon className="mr-2" icon="cloud-upload-alt" />
         <span className="bold">Import drive</span>
       </button>
     </section>
@@ -53,9 +61,7 @@ export const Status = ({style, usedVolume, totalVolume, state, onClickSettings, 
       state={state}
       onChangeState={onChangeState}
     />
-
   </main>
-
 );
 
 Status.propTypes = {

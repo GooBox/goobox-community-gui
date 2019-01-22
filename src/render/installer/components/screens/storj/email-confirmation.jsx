@@ -24,7 +24,9 @@ export const EmailConfirmation = () => (
     <div className="f141">Storj new account.</div>
     <div className="f211">
       Please confirm your
-      <span className="underlined bold">Storj account <span className="light">in your email</span></span>
+      <span className="underlined bold">
+        Storj account <span className="light">in your email</span>
+      </span>
     </div>
   </Main>
 );

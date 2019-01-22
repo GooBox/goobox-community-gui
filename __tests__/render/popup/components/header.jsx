@@ -20,7 +20,6 @@ import React from "react";
 import Header from "../../../../src/render/popup/components/header";
 
 describe("Header component", () => {
-
   const onClickSettings = jest.fn();
   const onClickInfo = jest.fn();
 
@@ -28,7 +27,9 @@ describe("Header component", () => {
   beforeEach(() => {
     onClickSettings.mockClear();
     onClickInfo.mockClear();
-    wrapper = shallow(<Header onClickSettings={onClickSettings} onClickInfo={onClickInfo}/>);
+    wrapper = shallow(
+      <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo} />
+    );
   });
 
   it("has a settings button", () => {
@@ -46,5 +47,4 @@ describe("Header component", () => {
     info.simulate("click");
     expect(onClickInfo).toHaveBeenCalledTimes(1);
   });
-
 });

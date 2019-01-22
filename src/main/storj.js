@@ -26,7 +26,6 @@ import readLine from "readline";
 const DefaultTimeout = 60000;
 
 export default class Storj extends EventEmitter {
-
   constructor() {
     super();
     this._wd = path.normalize(path.join(__dirname, "../../goobox-sync-storj/"));
@@ -35,11 +34,14 @@ export default class Storj extends EventEmitter {
       this._cmd += ".bat";
     }
     this._javaHome = path.join(jre.driver(), "../../");
-    log.debug(`[GUI main] New storj instance: cmd = ${this._cmd}, wd = ${this._wd}, java-home = ${this._javaHome}`);
+    log.debug(
+      `[GUI main] New storj instance: cmd = ${this._cmd}, wd = ${
+        this._wd
+      }, java-home = ${this._javaHome}`
+    );
   }
 
   start(dir, reset) {
-
     if (this.proc) {
       return;
     }
@@ -56,7 +58,6 @@ export default class Storj extends EventEmitter {
       JAVA_HOME: this._javaHome,
     };
     if (process.platform === "win32") {
-
       const lib = path.normalize(path.join(this._wd, "../../libraries"));
       env.PATH = `${lib};${env.PATH || env.Path}`;
       env.GOOBOX_SYNC_STORJ_OPTS = `-Djava.library.path="${this._wd};${lib}"`;
@@ -66,20 +67,26 @@ export default class Storj extends EventEmitter {
         shell: true,
         windowsHide: true,
       });
-
     } else {
-
       env.PATH = `${this._wd}:${this._javaHome}/bin:${env.PATH || env.Path}`;
-      this.proc = spawn("java", [`-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`, "-jar", "*.jar", ...args], {
-        cwd: this._wd,
-        env,
-        shell: true,
-        windowsHide: true,
-      });
-
+      this.proc = spawn(
+        "java",
+        [
+          `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
+          "-jar",
+          "*.jar",
+          ...args,
+        ],
+        {
+          cwd: this._wd,
+          env,
+          shell: true,
+          windowsHide: true,
+        }
+      );
     }
 
-    readLine.createInterface({input: this.proc.stdout}).on("line", (line) => {
+    readLine.createInterface({input: this.proc.stdout}).on("line", line => {
       try {
         const e = JSON.parse(line);
         if (e.method) {
@@ -90,7 +97,9 @@ export default class Storj extends EventEmitter {
           this.emit("response", e);
         }
       } catch (err) {
-        log.error(`[GUI main] Could not handle a message from sync-storj: ${line}`);
+        log.error(
+          `[GUI main] Could not handle a message from sync-storj: ${line}`
+        );
       }
     });
 
@@ -98,12 +107,13 @@ export default class Storj extends EventEmitter {
 
     this.proc.on("close", (code, signal) => {
       if (this.proc && !this.proc._closing) {
-        log.debug(`[GUI main] sync-storj closed: code = ${code}, signal = ${signal}`);
+        log.debug(
+          `[GUI main] sync-storj closed: code = ${code}, signal = ${signal}`
+        );
         this.proc = null;
         setTimeout(() => this.start(dir), 5000);
       }
     });
-
   }
 
   /**
@@ -114,63 +124,58 @@ export default class Storj extends EventEmitter {
    * @returns {Promise<any>}
    */
   async _sendRequest(name, request) {
-
     if (!this.proc) {
       throw "sync storj app is not running";
     }
 
     return Promise.race([
-      new Promise((resolve) => {
+      new Promise(resolve => {
         this.once("response", resolve);
         const req = JSON.stringify(request);
         log.debug(`[GUI main] Sending a ${name} request to sync storj: ${req}`);
         this.proc.stdin.write(`${req}\n`);
       }),
-      new Promise((_, reject) => setTimeout(reject.bind(null, `${name} request timed out`), DefaultTimeout))
-    ]).then((res) => {
+      new Promise((_, reject) =>
+        setTimeout(
+          reject.bind(null, `${name} request timed out`),
+          DefaultTimeout
+        )
+      ),
+    ]).then(res => {
       if ("ok" !== res.status) {
         return Promise.reject(res.message);
       }
       return res;
     });
-
   }
 
   async login(email, password, encryptionKey) {
-
     await this._sendRequest("Login", {
       method: "login",
-      args: {email, password, encryptionKey}
+      args: {email, password, encryptionKey},
     });
-
   }
 
   async createAccount(email, password) {
-
     const res = await this._sendRequest("Registration", {
       method: "createAccount",
-      args: {email, password}
+      args: {email, password},
     });
     return res.encryptionKey;
-
   }
 
   async checkMnemonic(encryptionKey) {
-
     await this._sendRequest("Validate the encryption key", {
       method: "checkMnemonic",
-      args: {encryptionKey}
+      args: {encryptionKey},
     });
-
   }
 
   async generateMnemonic() {
-
     const res = await this._sendRequest("Generate encryption key", {
       method: "generateMnemonic",
     });
     return res.encryptionKey;
-
   }
 
   get closed() {
@@ -178,7 +183,6 @@ export default class Storj extends EventEmitter {
   }
 
   async close() {
-
     if (!this.proc) {
       return;
     }
@@ -189,16 +193,14 @@ export default class Storj extends EventEmitter {
       this._sendRequest("Quit", {
         method: "quit",
       }),
-      new Promise((resolve) => {
+      new Promise(resolve => {
         this.proc.once("close", () => {
           log.info("[GUI main] Streams of sync-storj are closed");
           resolve();
         });
-      })
+      }),
     ]).then(() => {
       this.proc = null;
     });
-
   }
-
 }

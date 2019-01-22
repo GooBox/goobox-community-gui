@@ -19,7 +19,6 @@ import {ipcRenderer} from "electron";
 import sendAsync from "../../src/ipc/send";
 
 describe("sendAsync", () => {
-
   beforeEach(() => {
     ipcRenderer.once.mockReset();
     ipcRenderer.send.mockReset();
@@ -37,7 +36,12 @@ describe("sendAsync", () => {
       meta: "sample meta",
     };
     await expect(sendAsync(action));
-    expect(ipcRenderer.send).toHaveBeenCalledWith(action.type, action.payload, action.error, action.meta);
+    expect(ipcRenderer.send).toHaveBeenCalledWith(
+      action.type,
+      action.payload,
+      action.error,
+      action.meta
+    );
   });
 
   it("returns the payload received from the main process", async () => {
@@ -67,6 +71,4 @@ describe("sendAsync", () => {
     };
     await expect(sendAsync(action)).rejects.toEqual(err);
   });
-
 });
-

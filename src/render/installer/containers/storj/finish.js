@@ -21,17 +21,16 @@ import Finish from "../../components/screens/finish";
 
 // noinspection SpellCheckingInspection
 export const mapStateToProps = () => ({
-
   header: "You are ready to go",
 
-  message: "Happy Gooboxing!"
-
+  message: "Happy Gooboxing!",
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onClick: () => dispatch(actions.closeWindow()),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Finish);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Finish);

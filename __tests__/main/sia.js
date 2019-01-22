@@ -28,19 +28,18 @@ jest.mock("child_process");
 jest.useFakeTimers();
 
 describe("Sia class", () => {
-
   const syncFolder = "/tmp";
   const oldPlatform = process.platform;
   beforeAll(() => {
     Object.defineProperty(process, "platform", {
-      value: "darwin"
+      value: "darwin",
     });
     jre.driver.mockReturnValue("/tmp/jre/bin/java");
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: oldPlatform
+      value: oldPlatform,
     });
   });
 
@@ -61,7 +60,6 @@ describe("Sia class", () => {
   });
 
   describe("instance fields", () => {
-
     it("has cmd which describes the path to the sync sia app", () => {
       const sia = new Sia();
       const cmd = "goobox-sync-sia";
@@ -69,43 +67,57 @@ describe("Sia class", () => {
     });
 
     it("has wd which describes the directory containing the sync sia app", () => {
-      expect(sia._wd).toEqual(path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin")));
+      expect(sia._wd).toEqual(
+        path.normalize(path.join(__dirname, "../../goobox-sync-sia/bin"))
+      );
     });
 
     it("has javaHome where the home directory of a JRE", () => {
       expect(sia._javaHome).toEqual(path.join(jre.driver(), "../../"));
     });
-
   });
 
   describe("start method", () => {
-
     it("spawns sync-sia", () => {
       sia.start(syncFolder);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
-        cwd: sia._wd,
-        env: expect.objectContaining({
-          JAVA_HOME: sia._javaHome,
-          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${sia._wd}:${process.env.PATH}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toBeCalledWith(
+        sia._cmd,
+        ["--sync-dir", `"${syncFolder}"`, "--output-events"],
+        {
+          cwd: sia._wd,
+          env: expect.objectContaining({
+            JAVA_HOME: sia._javaHome,
+            GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(
+              __dirname,
+              "../../resources/mac"
+            )}`,
+            PATH: `${sia._wd}:${process.env.PATH}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
 
     it("spawns sync-sia with --reset-db flag when reset is true", () => {
       sia.start(syncFolder, true);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
-        cwd: sia._wd,
-        env: expect.objectContaining({
-          JAVA_HOME: sia._javaHome,
-          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${sia._wd}:${process.env.PATH}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toBeCalledWith(
+        sia._cmd,
+        ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"],
+        {
+          cwd: sia._wd,
+          env: expect.objectContaining({
+            JAVA_HOME: sia._javaHome,
+            GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(
+              __dirname,
+              "../../resources/mac"
+            )}`,
+            PATH: `${sia._wd}:${process.env.PATH}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
 
     it("starts listening stdout and emits new events", () => {
@@ -113,7 +125,7 @@ describe("Sia class", () => {
         method: "syncState",
         args: {
           newState: "paused",
-        }
+        },
       };
       sia.start(syncFolder);
       return new Promise((resolve, reject) => {
@@ -155,16 +167,23 @@ describe("Sia class", () => {
       sia.start(syncFolder);
       jest.runOnlyPendingTimers();
       expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenLastCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
-        cwd: sia._wd,
-        env: expect.objectContaining({
-          JAVA_HOME: sia._javaHome,
-          GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          PATH: `${sia._wd}:${process.env.PATH}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toHaveBeenLastCalledWith(
+        sia._cmd,
+        ["--sync-dir", `"${syncFolder}"`, "--output-events"],
+        {
+          cwd: sia._wd,
+          env: expect.objectContaining({
+            JAVA_HOME: sia._javaHome,
+            GOOBOX_SYNC_SIA_OPTS: `-Dgoobox.resource=${path.resolve(
+              __dirname,
+              "../../resources/mac"
+            )}`,
+            PATH: `${sia._wd}:${process.env.PATH}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
 
     // _closing is true. It means this close event is expected and don't need to restart.
@@ -187,11 +206,9 @@ describe("Sia class", () => {
       sia.emit("syncState", {newState: Idle});
       expect(sia.syncState).toEqual(Idle);
     });
-
   });
 
   describe("close method", () => {
-
     beforeEach(() => {
       sia.closeProc = jest.fn().mockReturnValue(Promise.resolve());
     });
@@ -201,11 +218,9 @@ describe("Sia class", () => {
       expect(sia.closeProc).toHaveBeenCalledWith("proc");
       expect(sia.closeProc).toHaveBeenCalledWith("walletProc");
     });
-
   });
 
   describe("closeProc method", () => {
-
     beforeEach(() => {
       execSync.mockReset();
     });
@@ -226,7 +241,7 @@ describe("Sia class", () => {
           } else if (event === "close") {
             onClose = callback;
           }
-        }
+        },
       };
       sia.proc = proc;
       await sia.closeProc("proc");
@@ -238,20 +253,20 @@ describe("Sia class", () => {
       const sia = new Sia();
       await sia.closeProc("proc");
     });
-
   });
 
   describe("wallet method", () => {
-
     const address = "0x01234567890";
     const seed = "hello world";
     let stdout, stderr, on;
     beforeEach(() => {
       stdout = new Readable();
-      stdout.push(yaml.dump({
-        "wallet address": address,
-        "primary seed": seed
-      }));
+      stdout.push(
+        yaml.dump({
+          "wallet address": address,
+          "primary seed": seed,
+        })
+      );
       stdout.push(null);
       stderr = new Readable();
       stderr.push(null);
@@ -292,10 +307,12 @@ describe("Sia class", () => {
 
     it("returns a rejected promise when the output of wallet command doesn't have enough information", async () => {
       stdout = new Readable();
-      stdout.push(yaml.dump({
-        "wrong wallet address": address,
-        "wrong primary seed": seed
-      }));
+      stdout.push(
+        yaml.dump({
+          "wrong wallet address": address,
+          "wrong primary seed": seed,
+        })
+      );
       stdout.push(null);
       spawn.mockReturnValue({
         stdout,
@@ -317,20 +334,20 @@ describe("Sia class", () => {
       const promise = sia.wallet();
       expect(sia.walletProc).toBeDefined();
 
-      stdout.push(yaml.dump({
-        "wallet address": address,
-        "primary seed": seed
-      }));
+      stdout.push(
+        yaml.dump({
+          "wallet address": address,
+          "primary seed": seed,
+        })
+      );
       stdout.push(null);
       await promise;
 
       expect(sia.walletProc).toBeNull();
     });
-
   });
 
   describe("closed property", () => {
-
     it("returns true if the proc is null", () => {
       expect(sia.closed).toBeTruthy();
     });
@@ -339,22 +356,20 @@ describe("Sia class", () => {
       sia.proc = "some process";
       expect(sia.closed).toBeFalsy();
     });
-
   });
 
   describe("in Windows", () => {
-
     let oldPlatform;
     beforeAll(() => {
       oldPlatform = process.platform;
       Object.defineProperty(process, "platform", {
-        value: "win32"
+        value: "win32",
       });
     });
 
     afterAll(() => {
       Object.defineProperty(process, "platform", {
-        value: oldPlatform
+        value: oldPlatform,
       });
     });
 
@@ -391,32 +406,46 @@ describe("Sia class", () => {
 
     it("spawns sync-sia", () => {
       sia.start(syncFolder);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events"], {
-        cwd: sia._wd,
-        env: expect.objectContaining({
-          JAVA_HOME: sia._javaHome,
-          GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
-          PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toBeCalledWith(
+        sia._cmd,
+        ["--sync-dir", `"${syncFolder}"`, "--output-events"],
+        {
+          cwd: sia._wd,
+          env: expect.objectContaining({
+            JAVA_HOME: sia._javaHome,
+            GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(
+              path.join(sia._wd, "../../../libraries")
+            )}"`,
+            PATH: `${path.normalize(
+              path.join(sia._wd, "../../../libraries")
+            )};${process.env.PATH}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
 
     it("spawns sync-sia with --reset-db flag when reset is true", () => {
       sia.start(syncFolder, true);
-      expect(spawn).toBeCalledWith(sia._cmd, ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"], {
-        cwd: sia._wd,
-        env: expect.objectContaining({
-          JAVA_HOME: sia._javaHome,
-          GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(path.join(sia._wd, "../../../libraries"))}"`,
-          PATH: `${path.normalize(path.join(sia._wd, "../../../libraries"))};${process.env.PATH}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toBeCalledWith(
+        sia._cmd,
+        ["--sync-dir", `"${syncFolder}"`, "--output-events", "--reset-db"],
+        {
+          cwd: sia._wd,
+          env: expect.objectContaining({
+            JAVA_HOME: sia._javaHome,
+            GOOBOX_SYNC_SIA_OPTS: `-Djava.library.path="${path.normalize(
+              path.join(sia._wd, "../../../libraries")
+            )}"`,
+            PATH: `${path.normalize(
+              path.join(sia._wd, "../../../libraries")
+            )};${process.env.PATH}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
-
   });
-
 });

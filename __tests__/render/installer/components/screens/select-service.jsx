@@ -19,11 +19,12 @@ import {mount} from "enzyme";
 import React from "react";
 import {StaticRouter} from "react-router";
 import {Main} from "../../../../../src/render/installer/components/partials/main";
-import SelectService, {ServiceButton} from "../../../../../src/render/installer/components/screens/select-service";
+import SelectService, {
+  ServiceButton,
+} from "../../../../../src/render/installer/components/screens/select-service";
 import * as screens from "../../../../../src/render/installer/constants/screens";
 
 describe("SelectService component", () => {
-
   const onSelectStorj = jest.fn();
   const onSelectSia = jest.fn();
   const onSelectBoth = jest.fn();
@@ -32,7 +33,11 @@ describe("SelectService component", () => {
     jest.clearAllMocks();
     wrapper = mount(
       <StaticRouter location={screens.ChooseCloudService} context={{}}>
-        <SelectService onSelectStorj={onSelectStorj} onSelectSia={onSelectSia} onSelectBoth={onSelectBoth}/>
+        <SelectService
+          onSelectStorj={onSelectStorj}
+          onSelectSia={onSelectSia}
+          onSelectBoth={onSelectBoth}
+        />
       </StaticRouter>
     );
   });
@@ -83,5 +88,4 @@ describe("SelectService component", () => {
     link.prop("onClick")();
     expect(onSelectBoth).not.toHaveBeenCalled();
   });
-
 });

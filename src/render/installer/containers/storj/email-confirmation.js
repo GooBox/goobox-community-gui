@@ -22,5 +22,7 @@ export const mapStateToProps = () => ({});
 
 export const mapDispatchToProps = () => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(EmailConfirmation);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EmailConfirmation);

@@ -17,18 +17,22 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import {
+  BlueButton,
+  WhiteButton,
+} from "../../../../../../src/render/installer/components/buttons";
 import EmailConfirmation from "../../../../../../src/render/installer/components/screens/storj/email-confirmation";
 
 describe.skip("EmailConfirmation", () => {
-
   const onClickBack = jest.fn();
   const onClickNext = jest.fn();
 
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallow(<EmailConfirmation onClickBack={onClickBack} onClickNext={onClickNext}/>);
+    wrapper = shallow(
+      <EmailConfirmation onClickBack={onClickBack} onClickNext={onClickNext} />
+    );
   });
 
   it("has background-gradation class", () => {
@@ -42,5 +46,4 @@ describe.skip("EmailConfirmation", () => {
   it("has a login link", () => {
     expect(wrapper.find(BlueButton).prop("onClick")).toEqual(onClickNext);
   });
-
 });

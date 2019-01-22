@@ -35,7 +35,6 @@ const InnerCopyButton = styled.button.attrs({
 `;
 
 export class CopyButton extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +46,10 @@ export class CopyButton extends React.Component {
 
   _onCopy() {
     this.setState({copied: true}, () => {
-      setTimeout(() => this.setState({copied: false}), SleepTimeToShowCopyButton);
+      setTimeout(
+        () => this.setState({copied: false}),
+        SleepTimeToShowCopyButton
+      );
     });
   }
 
@@ -56,14 +58,14 @@ export class CopyButton extends React.Component {
     if (copied) {
       return (
         <div className="text-success">
-          <FontAwesomeIcon icon={["far", "check-circle"]}/>
-          <br/>
+          <FontAwesomeIcon icon={["far", "check-circle"]} />
+          <br />
           copied
         </div>
       );
     }
     return (
-      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]}/>
+      <FontAwesomeIcon className="text-black-50" icon={["far", "clone"]} />
     );
   }
 
@@ -71,11 +73,12 @@ export class CopyButton extends React.Component {
     const {text} = this.props;
     return (
       <CopyToClipboard text={text} onCopy={this._onCopy}>
-        <InnerCopyButton id="copy-address-btn">{this._renderBtn()}</InnerCopyButton>
+        <InnerCopyButton id="copy-address-btn">
+          {this._renderBtn()}
+        </InnerCopyButton>
       </CopyToClipboard>
     );
   }
-
 }
 
 CopyButton.propTypes = {
@@ -83,6 +86,3 @@ CopyButton.propTypes = {
 };
 
 export default CopyButton;
-
-
-

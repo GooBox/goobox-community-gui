@@ -29,7 +29,7 @@ const dialog = remote.dialog;
 export const ReadOnlyInputBox = styled.input.attrs({
   className: "form-control mr-2 col-8",
   type: "text",
-  readOnly: true
+  readOnly: true,
 })`
   width: 342px;
   height: 48px;
@@ -39,31 +39,28 @@ export const ServiceNames = ({storj, sia}) => {
   if (storj) {
     if (sia) {
       return (
-        <h1>Installing {Storj} & {Sia}</h1>
+        <h1>
+          Installing {Storj} & {Sia}
+        </h1>
       );
     } else {
-      return (
-        <h1>Installing {Storj}</h1>
-      );
+      return <h1>Installing {Storj}</h1>;
     }
   }
-  return (
-    <h1>Installing {Sia}</h1>
-  );
+  return <h1>Installing {Sia}</h1>;
 };
 
 ServiceNames.propTypes = {
   storj: PropTypes.bool,
   sia: PropTypes.bool,
-}
+};
 
 ServiceNames.defaultProps = {
   storj: false,
   sia: false,
-}
+};
 
 export class SelectFolder extends React.Component {
-
   constructor(props) {
     super(props);
     this._onClickBrowse = this._onClickBrowse.bind(this);
@@ -73,36 +70,46 @@ export class SelectFolder extends React.Component {
     const {folder} = this.props;
 
     let err;
-    return new Promise((resolve) => {
-
-      dialog.showOpenDialog(remote.getCurrentWindow(), {
-        defaultPath: folder,
-        properties: ["openDirectory", "createDirectory"]
-      }, resolve);
-
-    }).then((selected) => {
-
-      const {onSelectFolder} = this.props;
-      if (selected && selected.length > 0) {
-        let dir = selected[0];
-        if (dir.endsWith("\\")) {
-          dir = dir.substr(0, dir.length - 1);
+    return new Promise(resolve => {
+      dialog.showOpenDialog(
+        remote.getCurrentWindow(),
+        {
+          defaultPath: folder,
+          properties: ["openDirectory", "createDirectory"],
+        },
+        resolve
+      );
+    })
+      .then(selected => {
+        const {onSelectFolder} = this.props;
+        if (selected && selected.length > 0) {
+          let dir = selected[0];
+          if (dir.endsWith("\\")) {
+            dir = dir.substr(0, dir.length - 1);
+          }
+          onSelectFolder(dir);
         }
-        onSelectFolder(dir);
-      }
-
-    }).catch((reason) => {
-      err = reason;
-    }).then(() => {
-      if (err) {
-        return Promise.reject(err);
-      }
-    });
-
+      })
+      .catch(reason => {
+        err = reason;
+      })
+      .then(() => {
+        if (err) {
+          return Promise.reject(err);
+        }
+      });
   }
 
   render() {
-    const {folder, storj, sia, prev, next, onClickBack, onClickNext} = this.props;
+    const {
+      folder,
+      storj,
+      sia,
+      prev,
+      next,
+      onClickBack,
+      onClickNext,
+    } = this.props;
     return (
       <Main
         prev={prev}
@@ -111,12 +118,10 @@ export class SelectFolder extends React.Component {
         onClickNext={onClickNext}
         nextCaption="Choose this folder"
       >
-        <ServiceNames storj={storj} sia={sia}/>
-        <p>
-          Choose the folder you want to sync with Goobox
-        </p>
+        <ServiceNames storj={storj} sia={sia} />
+        <p>Choose the folder you want to sync with Goobox</p>
         <div className="form-row">
-          <ReadOnlyInputBox id="folder" value={folder}/>
+          <ReadOnlyInputBox id="folder" value={folder} />
           <button
             id="change-folder-btn"
             type="button"
@@ -132,7 +137,6 @@ export class SelectFolder extends React.Component {
       </Main>
     );
   }
-
 }
 
 SelectFolder.propTypes = {
@@ -143,12 +147,12 @@ SelectFolder.propTypes = {
   next: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
-  onSelectFolder: PropTypes.func.isRequired
+  onSelectFolder: PropTypes.func.isRequired,
 };
 
 SelectFolder.defaultProps = {
   storj: false,
   sia: false,
-}
+};
 
 export default SelectFolder;

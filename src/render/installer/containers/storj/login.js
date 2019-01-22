@@ -30,16 +30,20 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onClickNext: (mainState, accountInfo) =>
+    dispatch(
+      actions.storjLogin({
+        ...mainState,
+        storjAccount: accountInfo,
+      })
+    ),
 
-  onClickNext: (mainState, accountInfo) => dispatch(actions.storjLogin({
-    ...mainState,
-    storjAccount: accountInfo,
-  })),
-
-  onClickGenerateSeed: mainState => dispatch(actions.storjGenerateMnemonic({
-    folder: mainState.folder
-  })),
-
+  onClickGenerateSeed: mainState =>
+    dispatch(
+      actions.storjGenerateMnemonic({
+        folder: mainState.folder,
+      })
+    ),
 });
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -47,9 +51,15 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
   onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
-  onClickGenerateSeed: dispatchProps.onClickGenerateSeed.bind(null, stateProps.mainState),
+  onClickGenerateSeed: dispatchProps.onClickGenerateSeed.bind(
+    null,
+    stateProps.mainState
+  ),
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Login);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(Login);

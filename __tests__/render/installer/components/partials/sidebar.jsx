@@ -21,10 +21,8 @@ import Logo from "../../../../../src/render/installer/assets/logo.svg";
 import Sidebar from "../../../../../src/render/installer/components/partials/sidebar";
 
 describe("Sidebar component", () => {
-
-  const wrapper = shallow(<Sidebar/>);
+  const wrapper = shallow(<Sidebar />);
   it("has the logo", () => {
     expect(wrapper.find("img").prop("src")).toEqual(Logo);
   });
-
 });

@@ -24,12 +24,11 @@ import {
   stopSyncApps,
   storjCreateAccount,
   storjGenerateMnemonic,
-  storjLogin
+  storjLogin,
 } from "../../src/ipc/actions";
 import * as actionTypes from "../../src/ipc/constants";
 
 describe("action creators for IPC", () => {
-
   const dummyPayload = "dummyPayload";
 
   it("has changeState action", () => {
@@ -94,5 +93,4 @@ describe("action creators for IPC", () => {
       payload: dummyPayload,
     });
   });
-
 });

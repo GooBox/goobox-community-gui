@@ -22,15 +22,20 @@ import Logo from "../../assets/logo.svg";
 import ProgressBar from "../progress-bar";
 
 export const Preparation = ({progress, errorMsg}) => (
-  <main className={classNames("full-screen d-flex flex-column align-items-center", {"wait": !errorMsg})}>
-    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
-    <h1 className="mb-auto">
-      The safest place to store your files
-    </h1>
-    <span id="message" className={classNames("mb-2", {"text-warning": !!errorMsg})}>
+  <main
+    className={classNames("full-screen d-flex flex-column align-items-center", {
+      wait: !errorMsg,
+    })}
+  >
+    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox" />
+    <h1 className="mb-auto">The safest place to store your files</h1>
+    <span
+      id="message"
+      className={classNames("mb-2", {"text-warning": !!errorMsg})}
+    >
       {errorMsg || "Getting some tools…"}
     </span>
-    <ProgressBar progress={progress}/>
+    <ProgressBar progress={progress} />
   </main>
 );
 

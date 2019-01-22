@@ -20,11 +20,9 @@ import * as log from "electron-log";
 import fs from "fs";
 import path from "path";
 
-export const register = async (dir) => {
-
+export const register = async dir => {
   log.info(`[GUI main] Registering the folder icon to ${dir}`);
   if (process.platform === "win32") {
-
     log.verbose(`[GUI main] Set ${path.basename(dir)} as a system directory`);
     // noinspection SpellCheckingInspection
     execFileSync("attrib", ["+S", path.basename(dir)], {
@@ -33,49 +31,43 @@ export const register = async (dir) => {
     });
 
     const resources = ["desktop.ini", "desktop.ico"];
-    return Promise.all(resources.map(async name => new Promise((resolve, reject) => {
-
-      const src = path.join(__dirname, `../../resources/${name}`);
-      const dest = path.join(dir, name);
-      if (fs.existsSync(dest)) {
-        log.verbose(`[GUI main] ${dest} already exists`);
-        resolve();
-      } else {
-        log.verbose(`[GUI main] Copying ${src} to ${dest}`);
-        fs.createReadStream(src)
-          .pipe(fs.createWriteStream(dest))
-          .on("close", resolve)
-          .on("error", reject);
-      }
-
-    }).then(() => {
-
-      log.verbose(`[GUI main] Update the attribute of ${name}`);
-      try {
-        execFileSync("attrib", ["+S", "+H", name], {
-          cwd: dir,
-          windowsHide: true,
-        });
-      } catch (err) {
-        return Promise.reject(err);
-      }
-
-    })));
-
+    return Promise.all(
+      resources.map(async name =>
+        new Promise((resolve, reject) => {
+          const src = path.join(__dirname, `../../resources/${name}`);
+          const dest = path.join(dir, name);
+          if (fs.existsSync(dest)) {
+            log.verbose(`[GUI main] ${dest} already exists`);
+            resolve();
+          } else {
+            log.verbose(`[GUI main] Copying ${src} to ${dest}`);
+            fs.createReadStream(src)
+              .pipe(fs.createWriteStream(dest))
+              .on("close", resolve)
+              .on("error", reject);
+          }
+        }).then(() => {
+          log.verbose(`[GUI main] Update the attribute of ${name}`);
+          try {
+            execFileSync("attrib", ["+S", "+H", name], {
+              cwd: dir,
+              windowsHide: true,
+            });
+          } catch (err) {
+            return Promise.reject(err);
+          }
+        })
+      )
+    );
   } else if (process.platform === "darwin") {
-
     const wd = path.normalize(path.join(__dirname, "../../"));
     const icon = path.join(__dirname, "../../resources/mac/folder.icns");
     execFileSync("fileicon", ["set", dir, icon], {
       env: {
         PATH: `${wd}:${process.env.PATH}`,
-      }
+      },
     });
-
   }
-
 };
 
 export default register;
-
-

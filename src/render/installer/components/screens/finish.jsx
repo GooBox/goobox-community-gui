@@ -27,10 +27,12 @@ export const FinishButton = styled(WhiteButton)`
 
 export const Finish = ({header, message, onClick}) => (
   <main className="full-screen d-flex flex-column justify-content-between align-items-center">
-    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
+    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox" />
     <h1>{header}</h1>
     <p>{message}</p>
-    <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>
+    <FinishButton type="button" onClick={onClick}>
+      Open my Goobox
+    </FinishButton>
   </main>
 );
 

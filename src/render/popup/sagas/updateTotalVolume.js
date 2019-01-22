@@ -20,12 +20,10 @@ import {getConfig} from "../../../config";
 import * as actions from "../actions";
 
 export default function* updateTotalVolume() {
-
   const cfg = yield call(getConfig);
   if (cfg.storj) {
     yield put(actions.setTotalVolumeSize(15.654));
   } else {
     yield put(actions.setTotalVolumeSize(20));
   }
-
 }

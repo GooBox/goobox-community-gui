@@ -18,19 +18,17 @@
 import log from "electron-log";
 import notifier from "node-notifier";
 
-export const notifyAsync = async opts => new Promise((resolve, reject) => {
-
-  // noinspection JSUnresolvedFunction
-  notifier.notify(opts, (err, res) => {
-    if (err) {
-      log.warn(`Notification failed; the user might cancel it: ${err}`);
-      reject(err);
-    } else {
-      resolve(res);
-    }
+export const notifyAsync = async opts =>
+  new Promise((resolve, reject) => {
+    // noinspection JSUnresolvedFunction
+    notifier.notify(opts, (err, res) => {
+      if (err) {
+        log.warn(`Notification failed; the user might cancel it: ${err}`);
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
   });
-
-});
-
 
 export default notifyAsync;

@@ -22,9 +22,7 @@ import {Footer} from "../../../../src/render/popup/components/footer";
 import {Header} from "../../../../src/render/popup/components/header";
 import Status from "../../../../src/render/popup/components/status";
 
-
 describe("Status component", () => {
-
   const used = 12.334;
   const total = 30;
   const onChangeState = jest.fn();
@@ -39,16 +37,18 @@ describe("Status component", () => {
     onClickInfo.mockClear();
     onClickSettings.mockClear();
     onClickSyncFolder.mockClear();
-    wrapper = shallow(<Status
-      usedVolume={used}
-      totalVolume={total}
-      state={Synchronizing}
-      onChangeState={onChangeState}
-      onClickSettings={onClickSettings}
-      onClickInfo={onClickInfo}
-      onClickSyncFolder={onClickSyncFolder}
-      onClickImportDrive={onClickImportDrive}
-    />);
+    wrapper = shallow(
+      <Status
+        usedVolume={used}
+        totalVolume={total}
+        state={Synchronizing}
+        onChangeState={onChangeState}
+        onClickSettings={onClickSettings}
+        onClickInfo={onClickInfo}
+        onClickSyncFolder={onClickSyncFolder}
+        onClickImportDrive={onClickImportDrive}
+      />
+    );
   });
 
   it("has a header", () => {
@@ -88,6 +88,4 @@ describe("Status component", () => {
     footer.prop("onChangeState")(Paused);
     expect(onChangeState).toHaveBeenCalledWith(Paused);
   });
-
 });
-

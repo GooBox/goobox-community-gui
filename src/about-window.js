@@ -21,7 +21,7 @@ import icon from "./assets/goobox.svg";
 
 export default async function showInfoWindowAsync() {
   log.debug("[GUI] Opening the info window");
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     // noinspection SpellCheckingInspection
     const about = openAboutWindow({
       icon_path: icon,
@@ -34,8 +34,8 @@ export default async function showInfoWindowAsync() {
         resizable: false,
         fullscreenable: false,
         minimizable: false,
-        maximizable: false
-      }
+        maximizable: false,
+      },
     });
     about.on("closed", () => {
       log.debug("[GUI] Closing the info window");

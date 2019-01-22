@@ -22,20 +22,19 @@ import {PassThrough} from "stream";
 jest.mock("child_process");
 
 describe("utils module in Windows", () => {
-
   let originalPlatform;
   let utils;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "win32"
+      value: "win32",
     });
     utils = require("../../src/main/utils").default;
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
@@ -44,17 +43,14 @@ describe("utils module in Windows", () => {
   });
 
   describe("openDirectory", () => {
-
     it("open a given directory with explorer", () => {
       const dir = "/tmp/some-dir";
       utils.openDirectory(dir);
       expect(spawnSync).toHaveBeenCalledWith("explorer.exe", [dir]);
     });
-
   });
 
   describe("totalVolume", () => {
-
     it("calculate total volume of a given directory with du", async () => {
       const file1 = 12345;
       const file2 = 123450;
@@ -78,14 +74,17 @@ describe("utils module in Windows", () => {
 
       const volume = await utils.totalVolume(dir);
       expect(volume).toEqual((file1 + file2) / 1024 / 1024 / 1024);
-      const script = path.normalize(path.join(__dirname, "../../resources/du.ps1"));
-      expect(spawn).toHaveBeenCalledWith("powershell", ["-ExecutionPolicy", "RemoteSigned", "-File", script], {
-        cwd: dir,
-        windowsHide: true,
-      });
-
+      const script = path.normalize(
+        path.join(__dirname, "../../resources/du.ps1")
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        "powershell",
+        ["-ExecutionPolicy", "RemoteSigned", "-File", script],
+        {
+          cwd: dir,
+          windowsHide: true,
+        }
+      );
     });
-
   });
-
 });

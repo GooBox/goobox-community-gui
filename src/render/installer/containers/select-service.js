@@ -20,18 +20,18 @@ import * as actions from "../actions";
 import ServiceSelector from "../components/screens/select-service";
 
 export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+  processing,
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onSelectStorj: () => dispatch(actions.selectStorj()),
 
   onSelectSia: () => dispatch(actions.selectSia()),
 
   onSelectBoth: () => dispatch(actions.selectBoth()),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ServiceSelector);

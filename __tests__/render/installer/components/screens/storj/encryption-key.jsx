@@ -17,11 +17,13 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import {
+  BlueButton,
+  WhiteButton,
+} from "../../../../../../src/render/installer/components/buttons";
 import EncryptionKey from "../../../../../../src/render/installer/components/screens/storj/encryption-key";
 
 describe("EncryptionKey component", () => {
-
   const encryptionKey = "1234567890abcdefghijklmn";
   const onClickBack = jest.fn();
   const onClickNext = jest.fn();
@@ -29,11 +31,13 @@ describe("EncryptionKey component", () => {
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallow(<EncryptionKey
-      encryptionKey={encryptionKey}
-      onClickBack={onClickBack}
-      onClickNext={onClickNext}
-    />);
+    wrapper = shallow(
+      <EncryptionKey
+        encryptionKey={encryptionKey}
+        onClickBack={onClickBack}
+        onClickNext={onClickNext}
+      />
+    );
   });
 
   it("has background-gradation class", () => {
@@ -41,7 +45,9 @@ describe("EncryptionKey component", () => {
   });
 
   it("shows an encryption key given via key property", () => {
-    expect(wrapper.find("#encryption-key").prop("value")).toEqual(encryptionKey);
+    expect(wrapper.find("#encryption-key").prop("value")).toEqual(
+      encryptionKey
+    );
   });
 
   it("has a back link", () => {
@@ -51,5 +57,4 @@ describe("EncryptionKey component", () => {
   it("has a next link", () => {
     expect(wrapper.find(BlueButton).prop("onClick")).toEqual(onClickNext);
   });
-
 });

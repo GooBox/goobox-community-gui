@@ -21,8 +21,12 @@ import React from "react";
 import {Paused, Synchronizing} from "../../../constants";
 
 const PauseBtn = ({onChangeState}) => (
-  <button className="pause-sync-btn btn btn-link" type="button" onClick={() => onChangeState(Paused)}>
-    <FontAwesomeIcon className="state-icon" icon={["far", "pause-circle"]}/>
+  <button
+    className="pause-sync-btn btn btn-link"
+    type="button"
+    onClick={() => onChangeState(Paused)}
+  >
+    <FontAwesomeIcon className="state-icon" icon={["far", "pause-circle"]} />
     &nbsp;
     <span className="state-text">Goobox is up to date.</span>
   </button>
@@ -33,8 +37,12 @@ PauseBtn.propTypes = {
 };
 
 const RestartBtn = ({onChangeState}) => (
-  <button className="sync-again-btn btn btn-link" type="button" onClick={() => onChangeState(Synchronizing)}>
-    <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]}/>
+  <button
+    className="sync-again-btn btn btn-link"
+    type="button"
+    onClick={() => onChangeState(Synchronizing)}
+  >
+    <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]} />
     &nbsp;
     <span className="state-text">File transfers paused.</span>
   </button>
@@ -46,9 +54,13 @@ RestartBtn.propTypes = {
 
 export const Footer = ({state, totalVolume, usedVolume, onChangeState}) => (
   <footer className="d-flex px-3 py-2 mt-auto">
-    {state === Synchronizing ? <PauseBtn onChangeState={onChangeState}/> : <RestartBtn onChangeState={onChangeState}/>}
+    {state === Synchronizing ? (
+      <PauseBtn onChangeState={onChangeState} />
+    ) : (
+      <RestartBtn onChangeState={onChangeState} />
+    )}
     <span className="usage-rate ml-auto">
-      Using {Math.round(usedVolume / totalVolume * 100)}% of {totalVolume}GB
+      Using {Math.round((usedVolume / totalVolume) * 100)}% of {totalVolume}GB
     </span>
   </footer>
 );

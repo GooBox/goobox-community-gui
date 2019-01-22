@@ -21,18 +21,18 @@ import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
 
-export const storjGenerateMnemonic = function* (action) {
-
+export function* storjGenerateMnemonic(action) {
   try {
-    const encryptionKey = yield call(sendAsync, ipcActions.storjGenerateMnemonic({
-      syncFolder: action.payload.folder,
-    }));
+    const encryptionKey = yield call(
+      sendAsync,
+      ipcActions.storjGenerateMnemonic({
+        syncFolder: action.payload.folder,
+      })
+    );
     yield put(actions.storjGenerateMnemonicSuccess(encryptionKey));
-
   } catch (err) {
     log.error(err);
   }
-
-};
+}
 
 export default storjGenerateMnemonic;

@@ -16,20 +16,27 @@
  */
 
 import * as actions from "../../../../src/render/popup/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/popup/containers/status";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../src/render/popup/containers/status";
 
 describe("Status container", () => {
-
   describe("mapStateToProps", () => {
-
     it("passes usedVolume state", () => {
       const volume = 1234;
-      expect(mapStateToProps({usedVolume: volume})).toHaveProperty("usedVolume", volume);
+      expect(mapStateToProps({usedVolume: volume})).toHaveProperty(
+        "usedVolume",
+        volume
+      );
     });
 
     it("passes totalVolume state", () => {
       const volume = 1234;
-      expect(mapStateToProps({totalVolume: volume})).toHaveProperty("totalVolume", volume);
+      expect(mapStateToProps({totalVolume: volume})).toHaveProperty(
+        "totalVolume",
+        volume
+      );
     });
 
     it("passes state state", () => {
@@ -38,17 +45,21 @@ describe("Status container", () => {
     });
 
     it("sets wait to style.cursor when disabled is true", () => {
-      expect(mapStateToProps({disabled: true})).toHaveProperty("style.cursor", "wait");
+      expect(mapStateToProps({disabled: true})).toHaveProperty(
+        "style.cursor",
+        "wait"
+      );
     });
 
     it("sets auto to style.cursor when disabled is false", () => {
-      expect(mapStateToProps({disabled: false})).toHaveProperty("style.cursor", "auto");
+      expect(mapStateToProps({disabled: false})).toHaveProperty(
+        "style.cursor",
+        "auto"
+      );
     });
-
   });
 
   describe("mapDispatchToProps", () => {
-
     const dispatch = jest.fn();
     beforeEach(() => {
       dispatch.mockReset();
@@ -79,7 +90,5 @@ describe("Status container", () => {
       mapDispatchToProps(dispatch).onClickImportDrive();
       expect(dispatch).toHaveBeenCalledWith(actions.importDrive());
     });
-
   });
-
 });

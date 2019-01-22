@@ -28,8 +28,8 @@ export const menubarMock = {
     listeners: jest.fn(),
     removeAllListeners: jest.fn(),
     setImage: jest.fn(),
-    popUpContextMenu: jest.fn()
-  }
+    popUpContextMenu: jest.fn(),
+  },
 };
 
 menubar.mockReturnValue(menubarMock);

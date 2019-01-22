@@ -23,13 +23,25 @@ import ProgressBar from "../../progress-bar";
 
 export const SettingUp = ({progress, errorMsg}) => (
   <main
-    className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !errorMsg})}
+    className={classNames(
+      "full-screen full-screen-white d-flex flex-column align-items-center",
+      {wait: !errorMsg}
+    )}
   >
-    <img className="mb-5" src={LogoColor} width={110} height={115.2} alt="Goobox"/>
-    <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!errorMsg})}>
+    <img
+      className="mb-5"
+      src={LogoColor}
+      width={110}
+      height={115.2}
+      alt="Goobox"
+    />
+    <span
+      id="message"
+      className={classNames("mt-4 mb-2", {"text-danger": !!errorMsg})}
+    >
       {errorMsg || "We’re setting up your Sia wallet…"}
     </span>
-    <ProgressBar progress={progress}/>
+    <ProgressBar progress={progress} />
   </main>
 );
 

@@ -26,7 +26,6 @@ jest.mock("del");
 jest.useFakeTimers();
 
 describe("installJRE function", () => {
-
   const jrePath = "/tmp/java";
   const jreExec = path.join(jrePath, "bin/java");
 
@@ -72,7 +71,7 @@ describe("installJRE function", () => {
     fs.existsSync.mockReturnValue(false);
 
     const err = "expected error";
-    jre.install.mockImplementationOnce((callback) => {
+    jre.install.mockImplementationOnce(callback => {
       callback(err);
     });
 
@@ -85,24 +84,25 @@ describe("installJRE function", () => {
   it("times out the installation after 5min", async () => {
     fs.existsSync.mockReturnValue(false);
 
-    jre.install.mockImplementationOnce(() => {
-    });
+    jre.install.mockImplementationOnce(() => {});
     setTimeout.mockImplementation(cb => cb());
     await expect(installJRE()).rejects.toEqual(expect.any(String));
     expect(jre.install).toHaveBeenCalled();
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 60 * 60 * 1000);
+    expect(setTimeout).toHaveBeenCalledWith(
+      expect.any(Function),
+      60 * 60 * 1000
+    );
   });
 
   it("deletes downloaded files if the installation fails", async () => {
     fs.existsSync.mockReturnValue(false);
 
     const err = "expected error";
-    jre.install.mockImplementationOnce((callback) => {
+    jre.install.mockImplementationOnce(callback => {
       callback(err);
     });
 
     await expect(installJRE()).rejects.toEqual(expect.any(String));
     expect(del.sync).toHaveBeenCalledWith(path.join(jre.jreDir(), "**"));
   });
-
 });

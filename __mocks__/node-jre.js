@@ -22,7 +22,7 @@ export const setJreDir = jest.fn();
 
 driver.mockReturnValue("/tmp/jre/bin/java");
 
-install.mockImplementation((callback) => {
+install.mockImplementation(callback => {
   callback(null);
 });
 

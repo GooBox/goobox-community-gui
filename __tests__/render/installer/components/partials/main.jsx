@@ -21,7 +21,6 @@ import {Link} from "react-router-dom";
 import Main from "../../../../../src/render/installer/components/partials/main";
 
 describe("Main component", () => {
-
   const prev = "previous-screen";
   const next = "next-screen";
   const onClickPrev = jest.fn();
@@ -31,8 +30,13 @@ describe("Main component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallow(
-      <Main prev={prev} next={next} onClickNext={onClickNext} onClickPrev={onClickPrev}>
-        <div id="child"/>
+      <Main
+        prev={prev}
+        next={next}
+        onClickNext={onClickNext}
+        onClickPrev={onClickPrev}
+      >
+        <div id="child" />
       </Main>
     );
   });
@@ -55,22 +59,43 @@ describe("Main component", () => {
 
   it("hides the prev button if prev is empty", () => {
     wrapper.setProps({prev: ""});
-    expect(wrapper.find(Link).filter("#prev-btn").hasClass("d-none")).toBeTruthy();
+    expect(
+      wrapper
+        .find(Link)
+        .filter("#prev-btn")
+        .hasClass("d-none")
+    ).toBeTruthy();
   });
 
   it("hides the next button if next is empty", () => {
     wrapper.setProps({next: ""});
-    expect(wrapper.find(Link).filter("#next-btn").hasClass("d-none")).toBeTruthy();
+    expect(
+      wrapper
+        .find(Link)
+        .filter("#next-btn")
+        .hasClass("d-none")
+    ).toBeTruthy();
   });
 
   it("renders the caption in the prev button if it is given", () => {
     wrapper.setProps({prevCaption: prev});
-    expect(wrapper.find(Link).filter("#prev-btn").children().text()).toEqual(prev);
+    expect(
+      wrapper
+        .find(Link)
+        .filter("#prev-btn")
+        .children()
+        .text()
+    ).toEqual(prev);
   });
 
   it("renders the caption in the next button if it is given", () => {
     wrapper.setProps({nextCaption: next});
-    expect(wrapper.find(Link).filter("#next-btn").children().text()).toEqual(next);
+    expect(
+      wrapper
+        .find(Link)
+        .filter("#next-btn")
+        .children()
+        .text()
+    ).toEqual(next);
   });
-
 });

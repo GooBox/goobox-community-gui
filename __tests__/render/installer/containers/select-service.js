@@ -16,10 +16,12 @@
  */
 
 import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/select-service";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../src/render/installer/containers/select-service";
 
 describe("mapStateToProps", () => {
-
   it("maps processing state", () => {
     const main = {
       processing: true,
@@ -28,11 +30,9 @@ describe("mapStateToProps", () => {
       processing: true,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -52,6 +52,4 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onSelectBoth();
     expect(dispatch).toHaveBeenCalledWith(actions.selectBoth());
   });
-
 });
-

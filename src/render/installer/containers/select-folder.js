@@ -20,7 +20,7 @@ import * as actions from "../actions";
 import SelectFolder from "../components/screens/select-folder";
 import * as screens from "../constants/screens";
 
-const nextScreen = (main) => {
+const nextScreen = main => {
   if (main.storj) {
     return screens.StorjLogin;
   } else if (main.siaAccount.address) {
@@ -39,17 +39,15 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onClickBack: () => dispatch(actions.stopSyncApps()),
 
-  onClickNext: (mainState) => {
+  onClickNext: mainState => {
     if (!mainState.storj && !mainState.siaAccount.address) {
       dispatch(actions.requestSiaWalletInfo(mainState));
     }
   },
 
   onSelectFolder: folder => dispatch(actions.selectFolder(folder)),
-
 });
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -60,5 +58,8 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SelectFolder);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(SelectFolder);

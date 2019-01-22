@@ -21,16 +21,18 @@ import React from "react";
 import {StaticRouter} from "react-router";
 import {Sia, Storj} from "../../../../../src/constants";
 import {Main} from "../../../../../src/render/installer/components/partials/main";
-import SelectFolder, {ReadOnlyInputBox, ServiceNames} from "../../../../../src/render/installer/components/screens/select-folder";
+import SelectFolder, {
+  ReadOnlyInputBox,
+  ServiceNames,
+} from "../../../../../src/render/installer/components/screens/select-folder";
 import {SiaSelected} from "../../../../../src/render/installer/constants/screens";
 
 const dialog = remote.dialog;
 
 describe("ServiceNames component", () => {
-
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<ServiceNames storj/>);
+    wrapper = shallow(<ServiceNames storj />);
   });
 
   it("shows Storj is storj is true", () => {
@@ -52,11 +54,9 @@ describe("ServiceNames component", () => {
     expect(text).toContain(Storj);
     expect(text).toContain(Sia);
   });
-
 });
 
 describe("SelectFolder component", () => {
-
   const defaultDir = "/home/someone/Goobox";
   const prev = "prev-screen";
   const next = "next-screen";
@@ -118,17 +118,23 @@ describe("SelectFolder component", () => {
   });
 
   describe("_onClickBrowse", () => {
-
     it("shows a dialog with showOpenDialog and notifies chosen folder via onSelectFolder", async () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([defaultDir]);
       });
-      await wrapper.find(SelectFolder).instance()._onClickBrowse();
+      await wrapper
+        .find(SelectFolder)
+        .instance()
+        ._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(defaultDir);
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
-        defaultPath: defaultDir,
-        properties: ["openDirectory", "createDirectory"]
-      }, expect.any(Function));
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+        "getCurrentWindow",
+        {
+          defaultPath: defaultDir,
+          properties: ["openDirectory", "createDirectory"],
+        },
+        expect.any(Function)
+      );
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
 
@@ -136,12 +142,19 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback(undefined);
       });
-      await wrapper.find(SelectFolder).instance()._onClickBrowse();
+      await wrapper
+        .find(SelectFolder)
+        .instance()
+        ._onClickBrowse();
       expect(selectFolder).not.toHaveBeenCalled();
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
-        defaultPath: defaultDir,
-        properties: ["openDirectory", "createDirectory"]
-      }, expect.any(Function));
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+        "getCurrentWindow",
+        {
+          defaultPath: defaultDir,
+          properties: ["openDirectory", "createDirectory"],
+        },
+        expect.any(Function)
+      );
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
 
@@ -150,15 +163,20 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([`${dir}\\`]);
       });
-      await wrapper.find(SelectFolder).instance()._onClickBrowse();
+      await wrapper
+        .find(SelectFolder)
+        .instance()
+        ._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(dir);
-      expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
-        defaultPath: defaultDir,
-        properties: ["openDirectory", "createDirectory"]
-      }, expect.any(Function));
+      expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+        "getCurrentWindow",
+        {
+          defaultPath: defaultDir,
+          properties: ["openDirectory", "createDirectory"],
+        },
+        expect.any(Function)
+      );
       expect(remote.getCurrentWindow).toHaveBeenCalledTimes(1);
     });
-
   });
-
 });

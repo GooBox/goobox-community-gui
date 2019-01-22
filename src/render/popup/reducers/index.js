@@ -26,31 +26,32 @@ export const InitialState = {
   disabled: false,
 };
 
-export default handleActions({
-
-  [constants.Pause]: state => ({
-    ...state,
-    state: Paused
-  }),
-  [constants.Restart]: state => ({
-    ...state,
-    state: Synchronizing
-  }),
-  [constants.Enable]: state => ({
-    ...state,
-    disabled: false
-  }),
-  [constants.Disable]: state => ({
-    ...state,
-    disabled: true
-  }),
-  [constants.SetVolumeSize]: (state, action) => ({
-    ...state,
-    usedVolume: action.payload,
-  }),
-  [constants.SetTotalVolumeSize]: (state, action) => ({
-    ...state,
-    totalVolume: action.payload,
-  }),
-
-}, InitialState);
+export default handleActions(
+  {
+    [constants.Pause]: state => ({
+      ...state,
+      state: Paused,
+    }),
+    [constants.Restart]: state => ({
+      ...state,
+      state: Synchronizing,
+    }),
+    [constants.Enable]: state => ({
+      ...state,
+      disabled: false,
+    }),
+    [constants.Disable]: state => ({
+      ...state,
+      disabled: true,
+    }),
+    [constants.SetVolumeSize]: (state, action) => ({
+      ...state,
+      usedVolume: action.payload,
+    }),
+    [constants.SetTotalVolumeSize]: (state, action) => ({
+      ...state,
+      totalVolume: action.payload,
+    }),
+  },
+  InitialState
+);

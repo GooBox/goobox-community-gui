@@ -23,9 +23,8 @@ import semver from "semver";
 export const icons = {};
 
 if (process.platform === "darwin") {
-
   // mac
-  const getIcon = (name) => {
+  const getIcon = name => {
     if (systemPreferences.isDarkMode()) {
       return path.join(__dirname, `../../resources/mac/dark/${name}.png`);
     }
@@ -36,9 +35,7 @@ if (process.platform === "darwin") {
   icons.getPausedIcon = () => getIcon("paused");
   icons.getErrorIcon = () => getIcon("error");
   icons.getWarnIcon = () => getIcon("warn");
-
 } else {
-
   // windows
   let version = os.release();
   if (version.split(".").length === 2) {
@@ -67,7 +64,6 @@ if (process.platform === "darwin") {
   icons.getPausedIcon = () => pausedIcon;
   icons.getErrorIcon = () => errorIcon;
   icons.getWarnIcon = () => warnIcon;
-
 }
 
 export default icons;

@@ -20,7 +20,6 @@ import {call} from "redux-saga/effects";
 import closeWindow from "../../../../src/render/installer/sagas/close-window";
 
 describe("closeWindow", () => {
-
   it("yields close method of the current window", () => {
     const close = jest.fn();
     remote.getCurrentWindow.mockReturnValue({close});
@@ -28,5 +27,4 @@ describe("closeWindow", () => {
     expect(saga.next().value).toEqual(call(remote.getCurrentWindow().close));
     expect(saga.next().done).toBeTruthy();
   });
-
 });

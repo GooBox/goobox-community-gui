@@ -19,19 +19,16 @@ import {push} from "connected-react-router";
 import * as screens from "../../../../../src/render/installer/constants/screens";
 import {
   mapDispatchToProps,
-  mapStateToProps
+  mapStateToProps,
 } from "../../../../../src/render/installer/containers/storj/email-confirmation";
 
 describe("mapStateToProps", () => {
-
   it("maps nothing", () => {
     expect(mapStateToProps()).toEqual({});
   });
-
 });
 
 describe.skip("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -46,6 +43,4 @@ describe.skip("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClickNext();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
   });
-
 });
-

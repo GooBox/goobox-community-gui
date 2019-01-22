@@ -50,86 +50,86 @@ export const InitialState = {
   errorMsg: null,
 };
 
-export default handleActions({
+export default handleActions(
+  {
+    [actionTypes.SelectFolder]: (state, action) => ({
+      ...state,
+      folder: action.payload,
+    }),
 
-  [actionTypes.SelectFolder]: (state, action) => ({
-    ...state,
-    folder: action.payload
-  }),
+    [actionTypes.SelectStorj]: state => ({
+      ...state,
+      storj: true,
+      sia: false,
+    }),
 
-  [actionTypes.SelectStorj]: state => ({
-    ...state,
-    storj: true,
-    sia: false,
-  }),
+    [actionTypes.SelectSia]: state => ({
+      ...state,
+      storj: false,
+      sia: true,
+    }),
 
-  [actionTypes.SelectSia]: state => ({
-    ...state,
-    storj: false,
-    sia: true,
-  }),
+    [actionTypes.SelectBoth]: state => ({
+      ...state,
+      storj: true,
+      sia: true,
+    }),
 
-  [actionTypes.SelectBoth]: state => ({
-    ...state,
-    storj: true,
-    sia: true,
-  }),
+    [actionTypes.SetProgressValue]: (state, action) => ({
+      ...state,
+      progress: action.payload,
+    }),
 
-  [actionTypes.SetProgressValue]: (state, action) => ({
-    ...state,
-    progress: action.payload,
-  }),
+    [actionTypes.StorjGenerateMnemonicSuccess]: (state, action) => {
+      const res = {...state};
+      res.storjAccount.key = action.payload;
+      return res;
+    },
 
-  [actionTypes.StorjGenerateMnemonicSuccess]: (state, action) => {
-    const res = {...state};
-    res.storjAccount.key = action.payload;
-    return res;
+    [actionTypes.StorjLoginSuccess]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjLoginFailure]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjCreateAccountSuccess]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjCreateAccountFailure]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
+      ...state,
+      siaAccount: action.payload,
+    }),
+
+    [actionTypes.RequestSiaWalletInfoFailure]: (state, action) => ({
+      ...state,
+      errorMsg: action.payload,
+    }),
+
+    [actionTypes.ProcessingStart]: state => ({
+      ...state,
+      processing: true,
+    }),
+
+    [actionTypes.ProcessingEnd]: state => ({
+      ...state,
+      processing: false,
+    }),
+
+    [actionTypes.PrepareJREFailure]: (state, action) => ({
+      ...state,
+      errorMsg: action.payload,
+    }),
   },
-
-  [actionTypes.StorjLoginSuccess]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjLoginFailure]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjCreateAccountSuccess]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjCreateAccountFailure]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
-    ...state,
-    siaAccount: action.payload,
-  }),
-
-  [actionTypes.RequestSiaWalletInfoFailure]: (state, action) => ({
-    ...state,
-    errorMsg: action.payload
-  }),
-
-  [actionTypes.ProcessingStart]: state => ({
-    ...state,
-    processing: true,
-  }),
-
-  [actionTypes.ProcessingEnd]: state => ({
-    ...state,
-    processing: false,
-  }),
-
-  [actionTypes.PrepareJREFailure]: (state, action) => ({
-    ...state,
-    errorMsg: action.payload
-  }),
-}, InitialState);
-
-
+  InitialState
+);

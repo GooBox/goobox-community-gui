@@ -20,17 +20,16 @@ import * as screens from "../../../../src/render/installer/constants/screens";
 import {
   mapDispatchToProps,
   mapStateToProps,
-  mergeProps
+  mergeProps,
 } from "../../../../src/render/installer/containers/select-folder";
 
 describe("mapStateToProps", () => {
-
   it("maps storj, sia, folder, and mainState", () => {
     const main = {
       storj: false,
       sia: true,
       folder: "/tmp",
-      siaAccount: {address: ""}
+      siaAccount: {address: ""},
     };
     expect(mapStateToProps({main})).toEqual({
       storj: main.storj,
@@ -58,7 +57,6 @@ describe("mapStateToProps", () => {
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     jest.clearAllMocks();
@@ -72,7 +70,9 @@ describe("mapDispatchToProps", () => {
   it("maps onClickNext to push SiaPreparation and requestSiaWalletInfo", () => {
     const mainState = {storj: false, siaAccount: {address: null}};
     mapDispatchToProps(dispatch).onClickNext(mainState);
-    expect(dispatch).toHaveBeenCalledWith(actions.requestSiaWalletInfo(mainState));
+    expect(dispatch).toHaveBeenCalledWith(
+      actions.requestSiaWalletInfo(mainState)
+    );
   });
 
   it("maps onSelectFolder to selectFolder", () => {
@@ -80,11 +80,9 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onSelectFolder(folder);
     expect(dispatch).toHaveBeenCalledWith(actions.selectFolder(folder));
   });
-
 });
 
 describe("mergeProps", () => {
-
   it("merge props and bind mainState to onClickNext, then remove mainState", () => {
     const main = {
       storj: false,
@@ -101,7 +99,7 @@ describe("mergeProps", () => {
       onSelectFolder: jest.fn(),
     };
     const ownProps = {
-      some: "value"
+      some: "value",
     };
 
     const res = mergeProps(stateProps, dispatchProps, ownProps);
@@ -110,14 +108,9 @@ describe("mergeProps", () => {
       ...stateProps,
       ...dispatchProps,
       onClickNext: expect.any(Function),
-      mainState: undefined
+      mainState: undefined,
     });
     res.onClickNext();
     expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main);
   });
-
 });
-
-
-
-

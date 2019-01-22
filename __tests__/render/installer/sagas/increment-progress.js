@@ -21,16 +21,14 @@ import * as actions from "../../../../src/render/installer/actions/index";
 import incrementProgress from "../../../../src/render/installer/sagas/increment-progress";
 
 describe("incrementProgress", () => {
-
   it("yields calling delay with 500msec and putting set new progress value action", () => {
     const saga = incrementProgress();
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 500));
-    expect(saga.next().value).toEqual(put(actions.setProgressValue(expect.any(Number))));
+    expect(saga.next().value).toEqual(
+      put(actions.setProgressValue(expect.any(Number)))
+    );
     // noinspection JSCheckFunctionSignatures
     expect(saga.next().value).toEqual(call(delay, 500));
   });
-
 });
-
-

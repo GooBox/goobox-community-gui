@@ -21,12 +21,11 @@ import Preparation from "../../../../../src/render/installer/components/screens/
 import {ProgressBar} from "../../../../../src/render/installer/components/progress-bar";
 
 describe("Preparation component", () => {
-
   const progress = 39;
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<Preparation progress={progress}/>);
+    wrapper = shallow(<Preparation progress={progress} />);
   });
 
   it("takes progress prop and shows a progress bar", () => {
@@ -35,7 +34,7 @@ describe("Preparation component", () => {
 
   it("shows an error message instead of the given message if given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg} />);
 
     const msg = wrapper.find("#message");
     expect(msg.text()).toContain(errorMsg);
@@ -48,8 +47,7 @@ describe("Preparation component", () => {
 
   it("doesn't have wait class if error message is given", () => {
     const errorMsg = "expected error";
-    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg}/>);
+    wrapper = shallow(<Preparation progress={progress} errorMsg={errorMsg} />);
     expect(wrapper.hasClass("wait")).toBeFalsy();
   });
-
 });

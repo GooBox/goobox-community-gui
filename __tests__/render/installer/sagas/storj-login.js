@@ -24,7 +24,6 @@ import * as screens from "../../../../src/render/installer/constants/screens";
 import storjLogin from "../../../../src/render/installer/sagas/storj-login";
 
 describe("storjLogin", () => {
-
   const dir = "/tmp";
   const storjAccount = {
     email: "test@example.com",
@@ -42,22 +41,31 @@ describe("storjLogin", () => {
         storjAccount,
         sia: true,
         folder: dir,
-      }
+      },
     };
   });
 
   it("calls sendAsync and puts storjLoginSuccess if successes, then puts requestSiaWalletInfo if sia = true", () => {
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
-      email: storjAccount.email,
-      password: storjAccount.password,
-      encryptionKey: storjAccount.key,
-      syncFolder: dir,
-    })));
-    expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
-      ...storjAccount
-    })));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjLogin({
+          email: storjAccount.email,
+          password: storjAccount.password,
+          encryptionKey: storjAccount.key,
+          syncFolder: dir,
+        })
+      )
+    );
+    expect(saga.next().value).toEqual(
+      put(
+        actions.storjLoginSuccess({
+          ...storjAccount,
+        })
+      )
+    );
     expect(saga.next().value).toEqual(put(actions.requestSiaWalletInfo()));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });
@@ -66,15 +74,24 @@ describe("storjLogin", () => {
     action.payload.sia = false;
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
-      email: storjAccount.email,
-      password: storjAccount.password,
-      encryptionKey: storjAccount.key,
-      syncFolder: dir,
-    })));
-    expect(saga.next().value).toEqual(put(actions.storjLoginSuccess({
-      ...storjAccount
-    })));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjLogin({
+          email: storjAccount.email,
+          password: storjAccount.password,
+          encryptionKey: storjAccount.key,
+          syncFolder: dir,
+        })
+      )
+    );
+    expect(saga.next().value).toEqual(
+      put(
+        actions.storjLoginSuccess({
+          ...storjAccount,
+        })
+      )
+    );
     expect(saga.next().value).toEqual(put(actions.saveConfig(action.payload)));
     expect(saga.next().value).toEqual(put(push(screens.FinishAll)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
@@ -89,20 +106,28 @@ describe("storjLogin", () => {
     };
     const saga = storjLogin(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjLogin({
-      email: storjAccount.email,
-      password: storjAccount.password,
-      encryptionKey: storjAccount.key,
-      syncFolder: dir,
-    })));
-    expect(saga.throw(err).value).toEqual(put(actions.storjLoginFailure({
-      ...storjAccount,
-      emailWarn: err.email,
-      passwordWarn: err.password,
-      keyWarn: err.encryptionKey,
-      warnMsg: err.error,
-    })));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjLogin({
+          email: storjAccount.email,
+          password: storjAccount.password,
+          encryptionKey: storjAccount.key,
+          syncFolder: dir,
+        })
+      )
+    );
+    expect(saga.throw(err).value).toEqual(
+      put(
+        actions.storjLoginFailure({
+          ...storjAccount,
+          emailWarn: err.email,
+          passwordWarn: err.password,
+          keyWarn: err.encryptionKey,
+          warnMsg: err.error,
+        })
+      )
+    );
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
   });
-
 });

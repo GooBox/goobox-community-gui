@@ -20,12 +20,11 @@ import React from "react";
 import ProgressBar from "../../../../src/render/installer/components/progress-bar";
 
 describe("ProgressBar component", () => {
-
   const progress = 24;
 
   let wrapper;
   beforeEach(() => {
-    wrapper = shallow(<ProgressBar progress={progress}/>);
+    wrapper = shallow(<ProgressBar progress={progress} />);
   });
 
   it("renders a parent element which has meter class", () => {
@@ -33,7 +32,9 @@ describe("ProgressBar component", () => {
   });
 
   it("renders a child element which has bar class and width is the given progress", () => {
-    expect(wrapper.find(".bar").prop("style")).toHaveProperty("width", `${progress}%`);
+    expect(wrapper.find(".bar").prop("style")).toHaveProperty(
+      "width",
+      `${progress}%`
+    );
   });
-
 });

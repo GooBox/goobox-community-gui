@@ -26,15 +26,16 @@ import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
 
 export default function* requestSiaWallet(action) {
-
   const mainState = action.payload;
   const inc = yield fork(incrementProgress);
   try {
-
     log.info("[GUI render] Requesting sia wallet information");
-    const info = yield call(sendAsync, ipcActions.siaRequestWalletInfo({
-      syncFolder: mainState.folder,
-    }));
+    const info = yield call(
+      sendAsync,
+      ipcActions.siaRequestWalletInfo({
+        syncFolder: mainState.folder,
+      })
+    );
     inc.cancel();
 
     log.debug(`[GUI render] Received the wallet information: ${info}`);
@@ -45,15 +46,9 @@ export default function* requestSiaWallet(action) {
 
     yield put(push(screens.SiaWallet));
     yield put(actions.setProgressValue(0));
-
   } catch (err) {
-
     inc.cancel();
     log.error(`[GUI render] Fails to received the wallet information: ${err}`);
     yield put(actions.requestSiaWalletInfoFailure(err));
-
   }
-
 }
-
-

@@ -19,7 +19,6 @@ import electronLog from "electron-log";
 import {createLogger as _createLogger} from "redux-logger";
 
 export const createLogger = () => {
-
   if (process.env.NODE_ENV === "development") {
     return _createLogger();
   }
@@ -33,10 +32,9 @@ export const createLogger = () => {
         action: false,
         nextState: false,
         error: false,
-      }
-    }
+      },
+    },
   });
-
 };
 
 export default createLogger;

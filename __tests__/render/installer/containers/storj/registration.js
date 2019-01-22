@@ -21,11 +21,10 @@ import * as screens from "../../../../../src/render/installer/constants/screens"
 import {
   mapDispatchToProps,
   mapStateToProps,
-  mergeProps
+  mergeProps,
 } from "../../../../../src/render/installer/containers/storj/registration";
 
 describe("mapStateToProps", () => {
-
   it("maps processing and warning messages", () => {
     const main = {
       processing: true,
@@ -34,7 +33,7 @@ describe("mapStateToProps", () => {
         passwordWarn: true,
         warnMsg: "some message",
       },
-      folder: "/tmp"
+      folder: "/tmp",
     };
     expect(mapStateToProps({main})).toEqual({
       ...main.storjAccount,
@@ -42,11 +41,9 @@ describe("mapStateToProps", () => {
       syncFolder: main.folder,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -64,21 +61,21 @@ describe("mapDispatchToProps", () => {
       password: "password",
     };
     mapDispatchToProps(dispatch).onClickNext(syncFolder, info);
-    expect(dispatch).toHaveBeenCalledWith(actions.storjCreateAccount({
-      ...info,
-      syncFolder,
-    }));
+    expect(dispatch).toHaveBeenCalledWith(
+      actions.storjCreateAccount({
+        ...info,
+        syncFolder,
+      })
+    );
   });
 
   it("maps onClickLogin to push Login", () => {
     mapDispatchToProps(dispatch).onClickLogin();
     expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
   });
-
 });
 
 describe("mergeProps", () => {
-
   it("merges props, bind onClickNext to the main state, and removes that state from the result", () => {
     const main = {
       processing: true,
@@ -87,7 +84,7 @@ describe("mergeProps", () => {
         passwordWarn: true,
         warnMsg: "some message",
       },
-      folder: "/tmp"
+      folder: "/tmp",
     };
     const stateProps = {
       ...main.storjAccount,
@@ -100,7 +97,7 @@ describe("mergeProps", () => {
       onClickLogin: jest.fn(),
     };
     const ownProps = {
-      key: "value"
+      key: "value",
     };
     const res = mergeProps(stateProps, dispatchProps, ownProps);
     expect(res).toEqual({
@@ -113,12 +110,12 @@ describe("mergeProps", () => {
 
     const accountInfo = {
       email: "test@exmaple.com",
-      password: "password"
+      password: "password",
     };
     res.onClickNext(accountInfo);
-    expect(dispatchProps.onClickNext).toHaveBeenCalledWith(main.syncFolder, accountInfo);
+    expect(dispatchProps.onClickNext).toHaveBeenCalledWith(
+      main.syncFolder,
+      accountInfo
+    );
   });
-
 });
-
-

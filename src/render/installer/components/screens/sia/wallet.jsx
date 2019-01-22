@@ -45,23 +45,37 @@ const SeedBox = styled.textarea.attrs({
   background-color: #ffffff !important;
 `;
 
-
-export const Wallet = ({address, seed, processing, next, prev, onClickNext}) => (
-  <Main processing={processing} next={next} prev={prev} onClickNext={onClickNext} nextCaption="Set-up my Goobox">
+export const Wallet = ({
+  address,
+  seed,
+  processing,
+  next,
+  prev,
+  onClickNext,
+}) => (
+  <Main
+    processing={processing}
+    next={next}
+    prev={prev}
+    onClickNext={onClickNext}
+    nextCaption="Set-up my Goobox"
+  >
     <h1>Installing Sia</h1>
     <div className="form-group mb-3">
       <label htmlFor="address">
         Please save your &nbsp;
         <span className="font-weight-bold">Sia wallet address</span>&nbsp;
         <Popover contentClass="rap-popover-content">
-          <FontAwesomeIcon icon="info-circle" className="info-button"/>
-          <span>Send Sia tokens to this address in order to top-up your account.</span>
+          <FontAwesomeIcon icon="info-circle" className="info-button" />
+          <span>
+            Send Sia tokens to this address in order to top-up your account.
+          </span>
         </Popover>
       </label>
       <div className="input-group">
-        <AddressBox id="address" value={address}/>
+        <AddressBox id="address" value={address} />
         <div className="input-group-append">
-          <CopyButton id="copy-address-btn" text={address}/>
+          <CopyButton id="copy-address-btn" text={address} />
         </div>
       </div>
     </div>
@@ -70,14 +84,16 @@ export const Wallet = ({address, seed, processing, next, prev, onClickNext}) => 
         And your &nbsp;
         <span className="font-weight-bold">Sia seed</span>&nbsp;
         <Popover contentClass="rap-popover-content">
-          <FontAwesomeIcon icon="info-circle" className="info-button"/>
-          <span>Save your Sia seed somewhere safe.  It is the key to your account.</span>
+          <FontAwesomeIcon icon="info-circle" className="info-button" />
+          <span>
+            Save your Sia seed somewhere safe. It is the key to your account.
+          </span>
         </Popover>
       </label>
       <div className="input-group">
-        <SeedBox id="seed" value={seed}/>
+        <SeedBox id="seed" value={seed} />
         <div className="input-group-append">
-          <CopyButton id="copy-seed-btn" text={seed}/>
+          <CopyButton id="copy-seed-btn" text={seed} />
         </div>
       </div>
     </div>

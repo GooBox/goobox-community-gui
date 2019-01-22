@@ -26,8 +26,9 @@ import * as screens from "../../constants/screens";
 import Main from "../partials/main";
 
 export const ServiceButton = styled(Link).attrs({
-  className: "btn btn-outline-light mr-2 d-flex justify-content-center align-items-center",
-  role: "button"
+  className:
+    "btn btn-outline-light mr-2 d-flex justify-content-center align-items-center",
+  role: "button",
 })`
   width: 131.5px !important;
   height: 131.5px !important;
@@ -36,16 +37,29 @@ export const ServiceButton = styled(Link).attrs({
   border: solid 1px #dddddd !important;
 `;
 
-export const SelectService = ({processing, onSelectStorj, onSelectSia, onSelectBoth}) => (
+export const SelectService = ({
+  processing,
+  onSelectStorj,
+  onSelectSia,
+  onSelectBoth,
+}) => (
   <Main processing={processing}>
     <h1>Let’s get started</h1>
     <p>Please choose your cloud service</p>
     <div className="d-flex">
-      <ServiceButton id="option-storj" to={screens.StorjSelected} onClick={() => processing || onSelectStorj()}>
-        <img src={storjLogo} width={64.7} height={93.2} alt="Storj"/>
+      <ServiceButton
+        id="option-storj"
+        to={screens.StorjSelected}
+        onClick={() => processing || onSelectStorj()}
+      >
+        <img src={storjLogo} width={64.7} height={93.2} alt="Storj" />
       </ServiceButton>
-      <ServiceButton id="option-sia" to={screens.SiaSelected} onClick={() => processing || onSelectSia()}>
-        <img src={siaLogo} width={94} height={59} alt="Sia"/>
+      <ServiceButton
+        id="option-sia"
+        to={screens.SiaSelected}
+        onClick={() => processing || onSelectSia()}
+      >
+        <img src={siaLogo} width={94} height={59} alt="Sia" />
       </ServiceButton>
       {/* Goobox only supports either Storj or Sia currently */}
       <div style={{display: "none"}}>
@@ -54,7 +68,12 @@ export const SelectService = ({processing, onSelectStorj, onSelectSia, onSelectB
           to={screens.StorjSelected}
           onClick={() => processing || onSelectBoth()}
         >
-          <img src={storjAndSiaLogo} width={140} height={68} alt="Storj and Sia"/>
+          <img
+            src={storjAndSiaLogo}
+            width={140}
+            height={68}
+            alt="Storj and Sia"
+          />
         </ServiceButton>
       </div>
       {/* End */}
@@ -67,11 +86,11 @@ SelectService.propTypes = {
   processing: PropTypes.bool,
   onSelectStorj: PropTypes.func.isRequired,
   onSelectSia: PropTypes.func.isRequired,
-  onSelectBoth: PropTypes.func.isRequired
+  onSelectBoth: PropTypes.func.isRequired,
 };
 
 SelectService.defaultProps = {
   processing: false,
-}
+};
 
 export default SelectService;

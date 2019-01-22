@@ -25,7 +25,6 @@ import * as desktop from "../../src/main/desktop";
 jest.mock("child_process");
 
 describe("desktop module", () => {
-
   let dir;
   beforeEach(() => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
@@ -37,17 +36,16 @@ describe("desktop module", () => {
   });
 
   describe("in Windows", () => {
-
     const oldPlatform = process.platform;
     beforeAll(() => {
       Object.defineProperty(process, "platform", {
-        value: "win32"
+        value: "win32",
       });
     });
 
     afterAll(() => {
       Object.defineProperty(process, "platform", {
-        value: oldPlatform
+        value: oldPlatform,
       });
     });
 
@@ -55,41 +53,55 @@ describe("desktop module", () => {
       await desktop.register(dir);
 
       const iniFile = fs.readFileSync(path.join(dir, "desktop.ini"));
-      const expectedIniFile = fs.readFileSync(path.join(__dirname, "../../resources/desktop.ini"));
+      const expectedIniFile = fs.readFileSync(
+        path.join(__dirname, "../../resources/desktop.ini")
+      );
       expect(iniFile).toEqual(expectedIniFile);
 
       const icoFile = fs.readFileSync(path.join(dir, "desktop.ico"));
-      const expectedIcoFile = fs.readFileSync(path.join(__dirname, "../../resources/desktop.ico"));
+      const expectedIcoFile = fs.readFileSync(
+        path.join(__dirname, "../../resources/desktop.ico")
+      );
       expect(icoFile).toEqual(expectedIcoFile);
 
-      expect(execFileSync).toHaveBeenCalledWith("attrib", ["+S", path.basename(dir)], {
-        cwd: path.dirname(dir),
-        windowsHide: true,
-      });
-      expect(execFileSync).toHaveBeenCalledWith("attrib", ["+S", "+H", "desktop.ini"], {
-        cwd: dir,
-        windowsHide: true,
-      });
-      expect(execFileSync).toHaveBeenCalledWith("attrib", ["+S", "+H", "desktop.ico"], {
-        cwd: dir,
-        windowsHide: true,
-      });
+      expect(execFileSync).toHaveBeenCalledWith(
+        "attrib",
+        ["+S", path.basename(dir)],
+        {
+          cwd: path.dirname(dir),
+          windowsHide: true,
+        }
+      );
+      expect(execFileSync).toHaveBeenCalledWith(
+        "attrib",
+        ["+S", "+H", "desktop.ini"],
+        {
+          cwd: dir,
+          windowsHide: true,
+        }
+      );
+      expect(execFileSync).toHaveBeenCalledWith(
+        "attrib",
+        ["+S", "+H", "desktop.ico"],
+        {
+          cwd: dir,
+          windowsHide: true,
+        }
+      );
     });
-
   });
 
   describe("in macOS", () => {
-
     const oldPlatform = process.platform;
     beforeAll(() => {
       Object.defineProperty(process, "platform", {
-        value: "darwin"
+        value: "darwin",
       });
     });
 
     afterAll(() => {
       Object.defineProperty(process, "platform", {
-        value: oldPlatform
+        value: oldPlatform,
       });
     });
 
@@ -98,13 +110,15 @@ describe("desktop module", () => {
       const icon = path.join(__dirname, "../../resources/mac/folder.icns");
 
       await desktop.register(dir);
-      expect(execFileSync).toHaveBeenCalledWith("fileicon", ["set", dir, icon], {
-        env: {
-          PATH: `${wd}:${process.env.PATH}`,
+      expect(execFileSync).toHaveBeenCalledWith(
+        "fileicon",
+        ["set", dir, icon],
+        {
+          env: {
+            PATH: `${wd}:${process.env.PATH}`,
+          },
         }
-      });
+      );
     });
-
   });
-
 });

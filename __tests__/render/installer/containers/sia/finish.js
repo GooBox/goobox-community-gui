@@ -16,21 +16,21 @@
  */
 
 import * as actions from "../../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/sia/finish";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../../src/render/installer/containers/sia/finish";
 
 describe("mapStateToProps", () => {
-
   it("set messages", () => {
     expect(mapStateToProps()).toEqual({
       header: "We’re preparing your Goobox",
-      message: "We will notify you when we’re done."
+      message: "We will notify you when we’re done.",
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -40,7 +40,4 @@ describe("mapDispatchToProps", () => {
     mapDispatchToProps(dispatch).onClick();
     expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
   });
-
 });
-
-

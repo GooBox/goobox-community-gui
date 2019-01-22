@@ -22,12 +22,11 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import CopyButton from "../../../../../src/render/installer/components/buttons/copy-button";
 
 describe("CopyButton component", () => {
-
   const text = "sample text";
 
   let wrapper;
   beforeEach(() => {
-    wrapper = mount(<CopyButton text={text}/>);
+    wrapper = mount(<CopyButton text={text} />);
   });
 
   it("renders CopyToClipboard component with the given text", () => {
@@ -35,13 +34,18 @@ describe("CopyButton component", () => {
   });
 
   it("renders far-clone icon if copied state is false", () => {
-    expect(wrapper.find(FontAwesomeIcon).prop("icon")).toEqual(["far", "clone"]);
+    expect(wrapper.find(FontAwesomeIcon).prop("icon")).toEqual([
+      "far",
+      "clone",
+    ]);
   });
 
   it("renders far-check-circle icon if copied state is true", () => {
     wrapper.setState({copied: true});
-    expect(wrapper.find(FontAwesomeIcon).prop("icon")).toEqual(["far", "check-circle"]);
+    expect(wrapper.find(FontAwesomeIcon).prop("icon")).toEqual([
+      "far",
+      "check-circle",
+    ]);
     expect(wrapper.text()).toContain("copied");
   });
-
 });

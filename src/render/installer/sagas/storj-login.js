@@ -24,17 +24,18 @@ import * as actions from "../actions";
 import * as screens from "../constants/screens";
 
 export default function* storjLogin(action) {
-
   const mainState = action.payload;
   yield put(actions.processingStart());
   try {
-
-    yield call(sendAsync, ipcActions.storjLogin({
-      email: mainState.storjAccount.email,
-      password: mainState.storjAccount.password,
-      encryptionKey: mainState.storjAccount.key,
-      syncFolder: mainState.folder,
-    }));
+    yield call(
+      sendAsync,
+      ipcActions.storjLogin({
+        email: mainState.storjAccount.email,
+        password: mainState.storjAccount.password,
+        encryptionKey: mainState.storjAccount.key,
+        syncFolder: mainState.folder,
+      })
+    );
     yield put(actions.storjLoginSuccess(mainState.storjAccount));
 
     if (mainState.sia) {
@@ -43,17 +44,16 @@ export default function* storjLogin(action) {
       yield put(actions.saveConfig(mainState));
       yield put(push(screens.FinishAll));
     }
-
   } catch (err) {
-    yield put(actions.storjLoginFailure({
-      ...mainState.storjAccount,
-      warnMsg: util.isString(err.error) ? err.error : null,
-      emailWarn: err.email,
-      passwordWarn: err.password,
-      keyWarn: err.encryptionKey,
-    }));
+    yield put(
+      actions.storjLoginFailure({
+        ...mainState.storjAccount,
+        warnMsg: util.isString(err.error) ? err.error : null,
+        emailWarn: err.email,
+        passwordWarn: err.password,
+        keyWarn: err.encryptionKey,
+      })
+    );
   }
   yield put(actions.processingEnd());
-
 }
-

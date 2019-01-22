@@ -17,11 +17,13 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import {
+  BlueButton,
+  WhiteButton,
+} from "../../../../../../src/render/installer/components/buttons";
 import Registration from "../../../../../../src/render/installer/components/screens/storj/registration";
 
 describe("Registration component", () => {
-
   const sampleEmail = "test@example.com";
   const samplePassword = "1234567";
 
@@ -33,7 +35,12 @@ describe("Registration component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallow(
-      <Registration onClickLogin={login} onClickBack={back} onClickNext={next} processing={false}/>
+      <Registration
+        onClickLogin={login}
+        onClickBack={back}
+        onClickNext={next}
+        processing={false}
+      />
     );
   });
 
@@ -49,8 +56,8 @@ describe("Registration component", () => {
     const sampleEmail = "test@example.com";
     email.simulate("change", {
       target: {
-        value: sampleEmail
-      }
+        value: sampleEmail,
+      },
     });
     expect(wrapper.state("email")).toEqual(sampleEmail);
   });
@@ -65,8 +72,8 @@ describe("Registration component", () => {
     const newEmail = "test@example.com";
     email.simulate("change", {
       target: {
-        value: newEmail
-      }
+        value: newEmail,
+      },
     });
     expect(wrapper.state("email")).toEqual(oldEmail);
   });
@@ -79,8 +86,8 @@ describe("Registration component", () => {
     const samplePassword = "1234567";
     password.simulate("change", {
       target: {
-        value: samplePassword
-      }
+        value: samplePassword,
+      },
     });
     expect(wrapper.state("password")).toEqual(samplePassword);
   });
@@ -95,8 +102,8 @@ describe("Registration component", () => {
     const newPassword = "1234567";
     password.simulate("change", {
       target: {
-        value: newPassword
-      }
+        value: newPassword,
+      },
     });
     expect(wrapper.state("password")).toEqual(oldPassword);
   });
@@ -226,5 +233,4 @@ describe("Registration component", () => {
     expect(wrapper.state("emailWarn")).toBeTruthy();
     expect(wrapper.state("passwordWarn")).toBeTruthy();
   });
-
 });

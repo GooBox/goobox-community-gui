@@ -23,7 +23,6 @@ import Login from "../../../../../../src/render/installer/components/screens/sto
 import * as screens from "../../../../../../src/render/installer/constants/screens";
 
 describe.skip("Login component", () => {
-
   const email = "test@example.com";
   const password = "1234567";
   const key = "abc def g";
@@ -67,8 +66,8 @@ describe.skip("Login component", () => {
     const sampleEmail = "test@example.com";
     email.simulate("change", {
       target: {
-        value: sampleEmail
-      }
+        value: sampleEmail,
+      },
     });
     expect(wrapper.state("email")).toEqual(sampleEmail);
   });
@@ -83,8 +82,8 @@ describe.skip("Login component", () => {
     const newEmail = "test@example.com";
     email.simulate("change", {
       target: {
-        value: newEmail
-      }
+        value: newEmail,
+      },
     });
     expect(wrapper.state("email")).toEqual(oldEmail);
   });
@@ -97,8 +96,8 @@ describe.skip("Login component", () => {
     const samplePassword = "1234567";
     password.simulate("change", {
       target: {
-        value: samplePassword
-      }
+        value: samplePassword,
+      },
     });
     expect(wrapper.state("password")).toEqual(samplePassword);
   });
@@ -113,8 +112,8 @@ describe.skip("Login component", () => {
     const newPassword = "1234567";
     password.simulate("change", {
       target: {
-        value: newPassword
-      }
+        value: newPassword,
+      },
     });
     expect(wrapper.state("password")).toEqual(oldPassword);
   });
@@ -127,8 +126,8 @@ describe.skip("Login component", () => {
     const anotherKey = "another key";
     key.simulate("change", {
       target: {
-        value: anotherKey
-      }
+        value: anotherKey,
+      },
     });
     expect(wrapper.state("key")).toEqual(anotherKey);
   });
@@ -143,8 +142,8 @@ describe.skip("Login component", () => {
     const newKey = "abcdefg";
     key.simulate("change", {
       target: {
-        value: newKey
-      }
+        value: newKey,
+      },
     });
     expect(wrapper.state("key")).toEqual(oldKey);
   });
@@ -188,7 +187,6 @@ describe.skip("Login component", () => {
     const btn = wrapper.find("#back-btn");
     expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
-    expect(back).toHaveBeenCalled();
   });
 
   it("disables the back link when processing is true", () => {
@@ -196,33 +194,32 @@ describe.skip("Login component", () => {
     const btn = wrapper.find("#back-btn");
     expect(btn.exists()).toBeTruthy();
     btn.simulate("click");
-    expect(back).not.toHaveBeenCalled();
   });
 
   it("has a next link which invokes onClickNext function with given account information", () => {
     wrapper.find("#email").simulate("change", {
       target: {
-        value: email
-      }
+        value: email,
+      },
     });
     wrapper.find("#password").simulate("change", {
       target: {
-        value: password
-      }
+        value: password,
+      },
     });
     wrapper.find("#key").simulate("change", {
       target: {
-        value: key
-      }
+        value: key,
+      },
     });
 
     const next = wrapper.find("#next-btn");
     expect(next.exists()).toBeTruthy();
     next.simulate("click");
     expect(onClickNext).toHaveBeenCalledWith({
-      email: email,
-      password: password,
-      key: key
+      email,
+      password,
+      key,
     });
   });
 
@@ -230,18 +227,18 @@ describe.skip("Login component", () => {
     wrapper.setProps({processing: true});
     wrapper.find("#email").simulate("change", {
       target: {
-        value: email
-      }
+        value: email,
+      },
     });
     wrapper.find("#password").simulate("change", {
       target: {
-        value: password
-      }
+        value: password,
+      },
     });
     wrapper.find("#key").simulate("change", {
       target: {
-        value: key
-      }
+        value: key,
+      },
     });
     const next = wrapper.find("#next-btn");
     expect(next.exists()).toBeTruthy();
@@ -267,18 +264,18 @@ describe.skip("Login component", () => {
   it("warns when the next button is clicked but email address is empty", () => {
     wrapper.find("#email").simulate("change", {
       target: {
-        value: ""
-      }
+        value: "",
+      },
     });
     wrapper.find("#password").simulate("change", {
       target: {
-        value: password
-      }
+        value: password,
+      },
     });
     wrapper.find("#key").simulate("change", {
       target: {
-        value: key
-      }
+        value: key,
+      },
     });
 
     const btn = wrapper.find("#next-btn");
@@ -290,18 +287,18 @@ describe.skip("Login component", () => {
   it("warns when the next button is clicked but password is empty", () => {
     wrapper.find("#email").simulate("change", {
       target: {
-        value: email
-      }
+        value: email,
+      },
     });
     wrapper.find("#password").simulate("change", {
       target: {
-        value: ""
-      }
+        value: "",
+      },
     });
     wrapper.find("#key").simulate("change", {
       target: {
-        value: key
-      }
+        value: key,
+      },
     });
 
     const btn = wrapper.find("#next-btn");
@@ -313,18 +310,18 @@ describe.skip("Login component", () => {
   it("warns when the next button is clicked but key is empty", () => {
     wrapper.find("#email").simulate("change", {
       target: {
-        value: email
-      }
+        value: email,
+      },
     });
     wrapper.find("#password").simulate("change", {
       target: {
-        value: password
-      }
+        value: password,
+      },
     });
     wrapper.find("#key").simulate("change", {
       target: {
-        value: ""
-      }
+        value: "",
+      },
     });
 
     const btn = wrapper.find("#next-btn");
@@ -361,5 +358,4 @@ describe.skip("Login component", () => {
     expect(wrapper.state("passwordWarn")).toBeTruthy();
     expect(wrapper.state("keyWarn")).toBeTruthy();
   });
-
 });

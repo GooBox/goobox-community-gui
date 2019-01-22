@@ -24,7 +24,6 @@ import Wallet from "../../../../../../src/render/installer/components/screens/si
 import {SiaWallet} from "../../../../../../src/render/installer/constants/screens";
 
 describe("Wallet component", () => {
-
   const address = "address:12345678901234567890";
   const seed = "seed:12345678901234567890";
   const prev = "previous-screen";
@@ -36,8 +35,15 @@ describe("Wallet component", () => {
     jest.clearAllMocks();
     wrapper = mount(
       <StaticRouter location={SiaWallet} context={{}}>
-        <Wallet address={address} seed={seed} prev={prev} next={next} onClickNext={onClickNext}/>
-      </StaticRouter>);
+        <Wallet
+          address={address}
+          seed={seed}
+          prev={prev}
+          next={next}
+          onClickNext={onClickNext}
+        />
+      </StaticRouter>
+    );
   });
 
   it("renders Main component", () => {
@@ -57,11 +63,20 @@ describe("Wallet component", () => {
   });
 
   it("renders CopyButton for address", () => {
-    expect(wrapper.find(CopyButton).filter("#copy-address-btn").prop("text")).toEqual(address);
+    expect(
+      wrapper
+        .find(CopyButton)
+        .filter("#copy-address-btn")
+        .prop("text")
+    ).toEqual(address);
   });
 
   it("renders CopyButton for seed", () => {
-    expect(wrapper.find(CopyButton).filter("#copy-seed-btn").prop("text")).toEqual(seed);
+    expect(
+      wrapper
+        .find(CopyButton)
+        .filter("#copy-seed-btn")
+        .prop("text")
+    ).toEqual(seed);
   });
-
 });

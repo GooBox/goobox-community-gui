@@ -41,7 +41,6 @@ const GenSeedButton = styled.button.attrs({
 `;
 
 export class Login extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -90,7 +89,6 @@ export class Login extends React.Component {
   }
 
   render() {
-
     const {processing, onClickGenerateSeed} = this.props;
     const {email, emailWarn, password, passwordWarn, key, keyWarn} = this.state;
     return (
@@ -110,7 +108,9 @@ export class Login extends React.Component {
             value={email}
             onChange={e => processing || this.setState({email: e.target.value})}
           />
-          <div className="invalid-feedback">Please enter a valid email address</div>
+          <div className="invalid-feedback">
+            Please enter a valid email address
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
@@ -119,23 +119,31 @@ export class Login extends React.Component {
             type="password"
             className={classNames("form-control", {"is-invalid": passwordWarn})}
             value={password}
-            onChange={e => processing || this.setState({password: e.target.value})}
+            onChange={e =>
+              processing || this.setState({password: e.target.value})
+            }
           />
-          <div className="invalid-feedback">Please enter the correct password</div>
+          <div className="invalid-feedback">
+            Please enter the correct password
+          </div>
         </div>
         <div className="form-group">
           <div className="d-flex align-self-center justify-content-between">
             <label htmlFor="key">
               Encryption Key&nbsp;
               <Popover contentClass="rap-popover-content">
-                <FontAwesomeIcon icon="info-circle" className="info-button"/>
-                <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
+                <FontAwesomeIcon icon="info-circle" className="info-button" />
+                <span>
+                  If you already have a encryption key for Goobox please enter
+                  it, otherwise click on &quot;Generate&quot;.
+                </span>
               </Popover>
             </label>
             <GenSeedButton
               id="generate-mnemonic-btn"
               onClick={() => processing || onClickGenerateSeed()}
-            >generate seed
+            >
+              generate seed
             </GenSeedButton>
           </div>
           <InputBox
@@ -144,12 +152,13 @@ export class Login extends React.Component {
             value={key}
             onChange={e => processing || this.setState({key: e.target.value})}
           />
-          <div className="invalid-feedback">Please enter the correct encryption key</div>
+          <div className="invalid-feedback">
+            Please enter the correct encryption key
+          </div>
         </div>
       </Main>
     );
   }
-
 }
 
 Login.propTypes = {
@@ -168,7 +177,7 @@ Login.defaultProps = {
   processing: false,
   emailWarn: false,
   passwordWarn: false,
-  keyWarn: false
+  keyWarn: false,
 };
 
 export default Login;

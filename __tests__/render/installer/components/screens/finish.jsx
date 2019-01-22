@@ -17,10 +17,11 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Finish, {FinishButton} from "../../../../../src/render/installer/components/screens/finish";
+import Finish, {
+  FinishButton,
+} from "../../../../../src/render/installer/components/screens/finish";
 
 describe("Finish component", () => {
-
   const header = "sample header";
   const message = "sample message";
   const onClick = jest.fn();
@@ -28,7 +29,9 @@ describe("Finish component", () => {
   let wrapper;
   beforeEach(() => {
     onClick.mockClear();
-    wrapper = shallow(<Finish header={header} message={message} onClick={onClick}/>);
+    wrapper = shallow(
+      <Finish header={header} message={message} onClick={onClick} />
+    );
   });
 
   it("takes header prop and renders the given text", () => {
@@ -45,5 +48,4 @@ describe("Finish component", () => {
     btn.simulate("click");
     expect(onClick).toHaveBeenCalledTimes(1);
   });
-
 });

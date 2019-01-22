@@ -33,4 +33,3 @@ export default function* saveConfig(action) {
     log.error(`[GUI render] Failed to store configurations: ${err}`);
   }
 }
-

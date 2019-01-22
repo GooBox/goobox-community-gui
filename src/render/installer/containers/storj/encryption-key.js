@@ -25,12 +25,12 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onClickBack: () => dispatch(push(screens.StorjRegistration)),
 
   onClickNext: () => dispatch(push(screens.StorjEmailConfirmation)),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EncryptionKey);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EncryptionKey);

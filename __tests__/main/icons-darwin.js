@@ -21,19 +21,18 @@ import path from "path";
 jest.mock("electron");
 
 describe("icons module in Mac", () => {
-
   let originalPlatform, icons;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "darwin"
+      value: "darwin",
     });
     icons = require("../../src/main/icons").default;
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
@@ -42,20 +41,39 @@ describe("icons module in Mac", () => {
   });
 
   it("returns white icons", () => {
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/error.png"));
-    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/mac/warn.png"));
+    expect(icons.getIdleIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/idle.png")
+    );
+    expect(icons.getSyncIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/sync.png")
+    );
+    expect(icons.getPausedIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/paused.png")
+    );
+    expect(icons.getErrorIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/error.png")
+    );
+    expect(icons.getWarnIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/warn.png")
+    );
   });
 
   it("returns icons for the dark theme if the dark theme is true", () => {
     systemPreferences.isDarkMode.mockReturnValue(true);
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/error.png"));
-    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/mac/dark/warn.png"));
+    expect(icons.getIdleIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/dark/idle.png")
+    );
+    expect(icons.getSyncIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/dark/sync.png")
+    );
+    expect(icons.getPausedIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/dark/paused.png")
+    );
+    expect(icons.getErrorIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/dark/error.png")
+    );
+    expect(icons.getWarnIcon()).toEqual(
+      path.join(__dirname, "../../resources/mac/dark/warn.png")
+    );
   });
-
 });

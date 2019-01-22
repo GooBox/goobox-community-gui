@@ -34,7 +34,7 @@ const style = {
     borderRadius: "5px",
     borderStyle: "none",
     fontSize: "9px",
-    height: "15px"
+    height: "15px",
   },
   input: {
     width: "198px",
@@ -57,7 +57,6 @@ const style = {
 };
 
 export class Registration extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -113,7 +112,9 @@ export class Registration extends React.Component {
         msg = (
           <main className="warnMsg" style={style.msg}>
             <div className="f141">Ooops.</div>
-            <div className="f211">Invalid email or password. <span className="underlined bold">Please try again.</span>
+            <div className="f211">
+              Invalid email or password.{" "}
+              <span className="underlined bold">Please try again.</span>
             </div>
           </main>
         );
@@ -122,14 +123,19 @@ export class Registration extends React.Component {
       msg = (
         <main className="info" style={style.msg}>
           <div className="f141">Storj new account.</div>
-          <div className="f211">Please create your <span className="underlined bold">Storj account</span></div>
+          <div className="f211">
+            Please create your{" "}
+            <span className="underlined bold">Storj account</span>
+          </div>
         </main>
       );
     }
 
     return (
       <div className="background-gradation">
-        <header><img className="icon" src={leftWhiteIcon} alt="Goobox"/></header>
+        <header>
+          <img className="icon" src={leftWhiteIcon} alt="Goobox" />
+        </header>
         {msg}
         <main style={style.accountInfo}>
           <div>
@@ -139,7 +145,9 @@ export class Registration extends React.Component {
               placeholder="e-mail"
               value={email}
               style={style.input}
-              onChange={e => processing || this.setState({email: e.target.value})}
+              onChange={e =>
+                processing || this.setState({email: e.target.value})
+              }
             />
           </div>
           <div>
@@ -150,14 +158,14 @@ export class Registration extends React.Component {
               placeholder="password"
               value={password}
               style={style.input}
-              onChange={e => processing || this.setState({password: e.target.value})}
+              onChange={e =>
+                processing || this.setState({password: e.target.value})
+              }
             />
           </div>
         </main>
         <main style={style.storjLogin}>
-          <div style={style.storjLoginText}>
-            Already have an account?
-          </div>
+          <div style={style.storjLoginText}>Already have an account?</div>
           <button
             id="login-btn"
             type="button"
@@ -168,13 +176,19 @@ export class Registration extends React.Component {
           </button>
         </main>
         <footer>
-          <WhiteButton id="back-btn" onClick={() => processing || onClickBack()}>Back </WhiteButton>
-          <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
+          <WhiteButton
+            id="back-btn"
+            onClick={() => processing || onClickBack()}
+          >
+            Back{" "}
+          </WhiteButton>
+          <BlueButton id="next-btn" onClick={this._onClickNext}>
+            Next
+          </BlueButton>
         </footer>
       </div>
     );
   }
-
 }
 
 Registration.propTypes = {

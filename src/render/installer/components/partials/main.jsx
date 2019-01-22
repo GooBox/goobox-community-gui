@@ -21,9 +21,18 @@ import React from "react";
 import {Link} from "react-router-dom";
 import Sidebar from "./sidebar";
 
-export const Main = ({children, processing, next, prev, nextCaption, prevCaption, onClickNext, onClickPrev}) => (
+export const Main = ({
+  children,
+  processing,
+  next,
+  prev,
+  nextCaption,
+  prevCaption,
+  onClickNext,
+  onClickPrev,
+}) => (
   <div className={classNames("clearfix", {wait: processing})}>
-    <Sidebar className="float-left"/>
+    <Sidebar className="float-left" />
     <main className="float-right d-flex flex-column">
       {children}
       <nav className="mt-auto d-flex justify-content-between">
@@ -32,14 +41,16 @@ export const Main = ({children, processing, next, prev, nextCaption, prevCaption
           className={classNames("btn btn-light py-3", {"d-none": !prev})}
           to={prev}
           onClick={onClickPrev}
-        >{prevCaption}
+        >
+          {prevCaption}
         </Link>
         <Link
           id="next-btn"
           className={classNames("btn btn-primary py-3", {"d-none": !next})}
           to={next}
           onClick={onClickNext}
-        >{nextCaption}
+        >
+          {nextCaption}
         </Link>
       </nav>
     </main>
@@ -49,7 +60,7 @@ export const Main = ({children, processing, next, prev, nextCaption, prevCaption
 Main.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
+    PropTypes.node,
   ]),
   processing: PropTypes.bool,
   next: PropTypes.string,
@@ -70,6 +81,5 @@ Main.defaultProps = {
   onClickNext: null,
   onClickPrev: null,
 };
-
 
 export default Main;

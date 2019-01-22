@@ -30,16 +30,17 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onClickBack: () => dispatch(push(screens.StorjSelected)),
 
-  onClickNext: (syncFolder, accountInfo) => dispatch(actions.storjCreateAccount({
-    ...accountInfo,
-    syncFolder,
-  })),
+  onClickNext: (syncFolder, accountInfo) =>
+    dispatch(
+      actions.storjCreateAccount({
+        ...accountInfo,
+        syncFolder,
+      })
+    ),
 
   onClickLogin: () => dispatch(push(screens.StorjLogin)),
-
 });
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -50,5 +51,8 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   syncFolder: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Registration);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(Registration);

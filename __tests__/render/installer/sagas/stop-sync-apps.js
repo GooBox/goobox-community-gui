@@ -22,13 +22,13 @@ import * as actions from "../../../../src/render/installer/actions/index";
 import stopSyncApps from "../../../../src/render/installer/sagas/stop-sync-apps";
 
 describe("stopSyncApp", () => {
-
   it("puts ProcessingStart, calls sendAsync with stopSyncApps ipc actions, and then ProcessingEnd", () => {
     const saga = stopSyncApps();
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.stopSyncApps()));
+    expect(saga.next().value).toEqual(
+      call(sendAsync, ipcActions.stopSyncApps())
+    );
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done);
   });
-
 });

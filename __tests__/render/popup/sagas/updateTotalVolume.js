@@ -23,7 +23,6 @@ import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVol
 jest.mock("../../../../src/config");
 
 describe("updateTotalVolume", () => {
-
   beforeEach(() => {
     getConfig.mockReset();
   });
@@ -31,7 +30,9 @@ describe("updateTotalVolume", () => {
   it("sets the total volume size to 15.654GB when the user chooses Storj", () => {
     const saga = updateTotalVolume();
     expect(saga.next().value).toEqual(call(getConfig));
-    expect(saga.next({storj: true}).value).toEqual(put(setTotalVolumeSize(15.654)));
+    expect(saga.next({storj: true}).value).toEqual(
+      put(setTotalVolumeSize(15.654))
+    );
     expect(saga.next().done).toBeTruthy();
   });
 
@@ -44,5 +45,4 @@ describe("updateTotalVolume", () => {
     expect(saga.next({sia: true}).value).toEqual(put(setTotalVolumeSize(20)));
     expect(saga.next().done).toBeTruthy();
   });
-
 });
