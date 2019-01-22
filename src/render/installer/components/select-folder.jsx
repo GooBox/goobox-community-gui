@@ -22,12 +22,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 import {Sia, Storj} from "../../../constants";
-import {BlueButton, WhiteButton} from "./buttons";
-import Sidebar from "./sidebar";
+import Main from "./main";
 
 const dialog = remote.dialog;
 
-const ReadOnlyInputBox = styled.input.attrs({
+export const ReadOnlyInputBox = styled.input.attrs({
   className: "form-control mr-2 col-8",
   type: "text",
   readOnly: true
@@ -36,62 +35,46 @@ const ReadOnlyInputBox = styled.input.attrs({
   height: 48px;
 `;
 
-const serviceNames = (storj, sia) => {
+export const ServiceNames = ({storj, sia}) => {
   if (storj) {
     if (sia) {
-      return `${Storj} & ${Sia}`;
+      return (
+        <h1>Installing {Storj} & {Sia}</h1>
+      );
     } else {
-      return Storj;
+      return (
+        <h1>Installing {Storj}</h1>
+      );
     }
   }
-  return Sia;
+  return (
+    <h1>Installing {Sia}</h1>
+  );
 };
+
+ServiceNames.propTypes = {
+  storj: PropTypes.bool,
+  sia: PropTypes.bool,
+}
+
+ServiceNames.defaultProps = {
+  storj: false,
+  sia: false,
+}
 
 export class SelectFolder extends React.Component {
 
   constructor(props) {
     super(props);
-    this._onClickBack = this._onClickBack.bind(this);
-    this._onClickNext = this._onClickNext.bind(this);
     this._onClickBrowse = this._onClickBrowse.bind(this);
-    this.state = {
-      disabled: false,
-    };
-  }
-
-  _onClickBack() {
-    const {onClickBack} = this.props;
-    const {disabled} = this.state;
-    if (disabled) {
-      return;
-    }
-    if (onClickBack) {
-      this.setState({disabled: true}, onClickBack);
-    }
-  }
-
-  _onClickNext() {
-    const {onClickNext} = this.props;
-    const {disabled} = this.state;
-    if (disabled) {
-      return;
-    }
-    if (onClickNext) {
-      this.setState({disabled: true}, onClickNext);
-    }
   }
 
   async _onClickBrowse() {
-
-    const {disabled} = this.state;
-    if (disabled) {
-      throw "disabled";
-    }
+    const {folder} = this.props;
 
     let err;
     return new Promise((resolve) => {
 
-      const {folder} = this.props;
       dialog.showOpenDialog(remote.getCurrentWindow(), {
         defaultPath: folder,
         properties: ["openDirectory", "createDirectory"]
@@ -119,54 +102,53 @@ export class SelectFolder extends React.Component {
   }
 
   render() {
-
-    const {folder, storj, sia} = this.props;
+    const {folder, storj, sia, prev, next, onClickBack, onClickNext} = this.props;
     return (
-      <div className="clearfix">
-        <Sidebar className="float-left"/>
-        <main className="float-right d-flex flex-column">
-          <h1>
-            {`Installing ${serviceNames(storj, sia)}`}
-          </h1>
-          <p>
-            Choose the folder you want to sync with Goobox
-          </p>
-          <div className="form-row">
-            <ReadOnlyInputBox id="folder" value={folder}/>
-            <button
-              id="change-folder-btn"
-              type="button"
-              className="btn btn-outline-primary"
-              onClick={() => this._onClickBrowse().catch(logger.debug)}
-            >
-              Change folder
-            </button>
-            <small className="form-text text-muted">
-              Everything in this folder will be encrypted and safely stored.
-            </small>
-          </div>
-          <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={this._onClickBack}>
-              Back
-            </WhiteButton>
-            <BlueButton id="next-btn" onClick={this._onClickNext}>
-              Choose this folder
-            </BlueButton>
-          </div>
-        </main>
-      </div>
+      <Main
+        prev={prev}
+        next={next}
+        onClickPrev={onClickBack}
+        onClickNext={onClickNext}
+        nextCaption="Choose this folder"
+      >
+        <ServiceNames storj={storj} sia={sia}/>
+        <p>
+          Choose the folder you want to sync with Goobox
+        </p>
+        <div className="form-row">
+          <ReadOnlyInputBox id="folder" value={folder}/>
+          <button
+            id="change-folder-btn"
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => this._onClickBrowse().catch(logger.debug)}
+          >
+            Change folder
+          </button>
+          <small className="form-text text-muted">
+            Everything in this folder will be encrypted and safely stored.
+          </small>
+        </div>
+      </Main>
     );
   }
 
 }
 
 SelectFolder.propTypes = {
-  storj: PropTypes.bool.isRequired,
-  sia: PropTypes.bool.isRequired,
+  storj: PropTypes.bool,
+  sia: PropTypes.bool,
   folder: PropTypes.string.isRequired,
+  prev: PropTypes.string.isRequired,
+  next: PropTypes.string.isRequired,
   onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
   onSelectFolder: PropTypes.func.isRequired
 };
+
+SelectFolder.defaultProps = {
+  storj: false,
+  sia: false,
+}
 
 export default SelectFolder;

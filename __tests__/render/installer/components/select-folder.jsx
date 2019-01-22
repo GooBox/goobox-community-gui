@@ -16,105 +16,105 @@
  */
 
 import {remote} from "electron";
-import {shallow} from "enzyme";
+import {mount, shallow} from "enzyme";
 import React from "react";
+import {StaticRouter} from "react-router";
 import {Sia, Storj} from "../../../../src/constants";
-import SelectFolder from "../../../../src/render/installer/components/select-folder";
+import {Main} from "../../../../src/render/installer/components/main";
+import SelectFolder, {ReadOnlyInputBox, ServiceNames} from "../../../../src/render/installer/components/select-folder";
+import {SiaSelected} from "../../../../src/render/installer/constants/screens";
 
 const dialog = remote.dialog;
+
+describe("ServiceNames component", () => {
+
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallow(<ServiceNames storj/>);
+  });
+
+  it("shows Storj is storj is true", () => {
+    const text = wrapper.text();
+    expect(text).toContain(Storj);
+    expect(text).not.toContain(Sia);
+  });
+
+  it("shows Sia is sia is true", () => {
+    wrapper.setProps({storj: false, sia: true});
+    const text = wrapper.text();
+    expect(text).not.toContain(Storj);
+    expect(text).toContain(Sia);
+  });
+
+  it("shows both Storj and Sia is storj and sia are true", () => {
+    wrapper.setProps({storj: true, sia: true});
+    const text = wrapper.text();
+    expect(text).toContain(Storj);
+    expect(text).toContain(Sia);
+  });
+
+});
 
 describe("SelectFolder component", () => {
 
   const defaultDir = "/home/someone/Goobox";
-  const back = jest.fn();
-  const next = jest.fn();
+  const prev = "prev-screen";
+  const next = "next-screen";
+  const onClickBack = jest.fn();
+  const onClickNext = jest.fn();
   const selectFolder = jest.fn();
+
+  let _onClickBrowse;
+  beforeAll(() => {
+    _onClickBrowse = jest.spyOn(SelectFolder.prototype, "_onClickBrowse");
+  });
+
+  afterAll(() => {
+    _onClickBrowse.mockRestore();
+  });
 
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallow(
-      <SelectFolder
-        storj
-        sia={false}
-        folder={defaultDir}
-        onClickBack={back}
-        onClickNext={next}
-        onSelectFolder={selectFolder}
-      />);
+    wrapper = mount(
+      <StaticRouter location={SiaSelected} context={{}}>
+        <SelectFolder
+          storj
+          folder={defaultDir}
+          next={next}
+          prev={prev}
+          onClickBack={onClickBack}
+          onClickNext={onClickNext}
+          onSelectFolder={selectFolder}
+        />
+      </StaticRouter>
+    );
   });
 
-  it("shows Storj as the service name if only storj is true", () => {
-    expect(wrapper.find("h1").text()).toContain(Storj);
+  it("renders Main component", () => {
+    const c = wrapper.find(Main);
+    expect(c.prop("next")).toEqual(next);
+    expect(c.prop("prev")).toEqual(prev);
+    expect(c.prop("onClickNext")).toEqual(onClickNext);
+    expect(c.prop("onClickPrev")).toEqual(onClickBack);
   });
 
-  it("shows Sia as the service name if only sia is true", () => {
-    wrapper.setProps({storj: false, sia: true});
-    expect(wrapper.find("h1").text()).toContain(Sia);
-  });
-
-  it("shows Storj and Sia as the service name if both storj and sia is true", () => {
-    wrapper.setProps({storj: true, sia: true});
-    expect(wrapper.find("h1").text()).toContain(`${Storj} & ${Sia}`);
+  it("renders ServiceName component", () => {
+    const c = wrapper.find(ServiceNames);
+    expect(c.prop("storj")).toBeTruthy();
+    expect(c.prop("sia")).toBeFalsy();
   });
 
   it("shows current selected folder", () => {
-    const c = wrapper.find("#folder");
+    const c = wrapper.find(ReadOnlyInputBox).filter("#folder");
     expect(c.exists()).toBeTruthy();
     expect(c.prop("value")).toEqual(defaultDir);
   });
 
-  it("has a back link", () => {
-    const link = wrapper.find("#back-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(back).toHaveBeenCalledTimes(1);
-  });
-
-  it("disables other actions after the back link is clicked", () => {
-    const link = wrapper.find("#back-btn");
-    link.simulate("click");
-    expect(wrapper.state("disabled")).toBeTruthy();
-    expect(back).toHaveBeenCalled();
-  });
-
-  it("disables the back link when the disabled state is true", () => {
-    wrapper.setState({disabled: true});
-    const link = wrapper.find("#back-btn");
-    link.simulate("click");
-    expect(back).not.toHaveBeenCalled();
-  });
-
-  it("has a next link", () => {
-    const link = wrapper.find("#next-btn");
-    expect(link.exists()).toBeTruthy();
-    link.simulate("click");
-    expect(next).toHaveBeenCalledTimes(1);
-  });
-
-  it("disables other actions after the next link is clicked", () => {
-    const link = wrapper.find("#next-btn");
-    link.simulate("click");
-    expect(wrapper.state("disabled")).toBeTruthy();
-    expect(next).toHaveBeenCalled();
-  });
-
-  it("disables the nect link when disabled state is true", () => {
-    wrapper.setState({disabled: true});
-    const link = wrapper.find("#next-btn");
-    link.simulate("click");
-    expect(next).not.toHaveBeenCalled();
-  });
-
   it("has a button to open a dialog", () => {
-    wrapper.instance()._onClickBrowse = jest.fn().mockReturnValue(Promise.resolve());
+    _onClickBrowse.mockReturnValueOnce(Promise.resolve());
     wrapper.find("#change-folder-btn").prop("onClick")();
-    expect(wrapper.instance()._onClickBrowse).toHaveBeenCalled();
-  });
-
-  it("disabled the open dialog button when disabled state is true", async () => {
-    wrapper.setState({disabled: true});
-    await expect(wrapper.instance()._onClickBrowse()).rejects.toBeDefined();
+    expect(_onClickBrowse).toHaveBeenCalled();
   });
 
   describe("_onClickBrowse", () => {
@@ -123,7 +123,7 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([defaultDir]);
       });
-      await wrapper.instance()._onClickBrowse();
+      await wrapper.find(SelectFolder).instance()._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(defaultDir);
       expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
@@ -136,7 +136,7 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback(undefined);
       });
-      await wrapper.instance()._onClickBrowse();
+      await wrapper.find(SelectFolder).instance()._onClickBrowse();
       expect(selectFolder).not.toHaveBeenCalled();
       expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
@@ -150,7 +150,7 @@ describe("SelectFolder component", () => {
       dialog.showOpenDialog.mockImplementation((window, opts, callback) => {
         callback([`${dir}\\`]);
       });
-      await wrapper.instance()._onClickBrowse();
+      await wrapper.find(SelectFolder).instance()._onClickBrowse();
       expect(selectFolder).toHaveBeenCalledWith(dir);
       expect(dialog.showOpenDialog).toHaveBeenCalledWith("getCurrentWindow", {
         defaultPath: defaultDir,
