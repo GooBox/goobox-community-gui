@@ -22,7 +22,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 import {Sia, Storj} from "../../../constants";
-import Main from "./main";
+import Main from "./partials/main";
 
 const dialog = remote.dialog;
 

@@ -18,7 +18,7 @@
 import {shallow} from "enzyme";
 import React from "react";
 import {Link} from "react-router-dom";
-import Main from "../../../../src/render/installer/components/main";
+import Main from "../../../../../src/render/installer/components/partials/main";
 
 describe("Main component", () => {
 

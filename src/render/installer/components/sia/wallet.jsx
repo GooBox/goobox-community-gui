@@ -22,7 +22,7 @@ import React from "react";
 import Popover from "react-awesome-popover";
 import styled from "styled-components";
 import {CopyButton} from "../buttons";
-import Main from "../main";
+import Main from "../partials/main";
 
 const AddressBox = styled.input.attrs({
   className: "form-control",

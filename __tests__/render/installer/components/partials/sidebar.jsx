@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Logo from "../../../../src/render/installer/assets/logo.svg";
-import Sidebar from "../../../../src/render/installer/components/sidebar";
+import Logo from "../../../../../src/render/installer/assets/logo.svg";
+import Sidebar from "../../../../../src/render/installer/components/partials/sidebar";
 
 describe("Sidebar component", () => {
 
