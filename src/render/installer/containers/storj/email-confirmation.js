@@ -16,22 +16,11 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import EmailConfirmation from "../../components/screens/storj/email-confirmation";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+export const mapStateToProps = () => ({});
 
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = () => ({});
 
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
+export default connect(mapStateToProps, mapDispatchToProps)(EmailConfirmation);
 

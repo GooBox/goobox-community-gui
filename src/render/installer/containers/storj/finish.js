@@ -16,22 +16,22 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import * as actions from "../../actions";
+import Finish from "../../components/screens/finish";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+// noinspection SpellCheckingInspection
+export const mapStateToProps = () => ({
+
+  header: "You are ready to go",
+
+  message: "Happy Gooboxing!"
+
 });
 
 export const mapDispatchToProps = dispatch => ({
 
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
+  onClick: () => dispatch(actions.closeWindow()),
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default connect(mapStateToProps, mapDispatchToProps)(Finish);

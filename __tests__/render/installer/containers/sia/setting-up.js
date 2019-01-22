@@ -15,23 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import {mapStateToProps} from "../../../../../src/render/installer/containers/sia/setting-up";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+describe("mapStateToProps", () => {
+
+  it("maps progress state", () => {
+    const progress = 11;
+    const errorMsg = "expected error";
+    expect(mapStateToProps({
+      main: {
+        progress,
+        errorMsg,
+      }
+    })).toEqual({
+      progress,
+      errorMsg,
+    });
+  });
+
 });
 
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
 

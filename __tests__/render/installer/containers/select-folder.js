@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import * as actions from "../../../../src/render/installer/actions";
 import * as screens from "../../../../src/render/installer/constants/screens";
 import {
@@ -31,42 +30,48 @@ describe("mapStateToProps", () => {
       storj: false,
       sia: true,
       folder: "/tmp",
+      siaAccount: {address: ""}
+    };
+    expect(mapStateToProps({main})).toEqual({
+      storj: main.storj,
+      sia: main.sia,
+      folder: main.folder,
+      mainState: main,
+      prev: screens.ChooseCloudService,
+      next: screens.SiaPreparation,
+    });
+  });
+
+  it("maps storj, sia, folder, and mainState if only storj is selected", () => {
+    const main = {
+      storj: true,
+      sia: false,
+      folder: "/tmp",
     };
     expect(mapStateToProps({main})).toEqual({
       ...main,
       mainState: main,
+      prev: screens.ChooseCloudService,
+      next: screens.StorjLogin,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
 
   const dispatch = jest.fn();
   beforeEach(() => {
-    dispatch.mockReset();
+    jest.clearAllMocks();
   });
 
   it("maps onClickBack to stopSyncApps and push ChooseCloudService", () => {
     mapDispatchToProps(dispatch).onClickBack();
     expect(dispatch).toHaveBeenCalledWith(actions.stopSyncApps());
-    expect(dispatch).toHaveBeenCalledWith(push(screens.ChooseCloudService));
-  });
-
-  it("maps onClickNext to push StorjLogin if storj is true", () => {
-    mapDispatchToProps(dispatch).onClickNext({storj: true});
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjLogin));
-  });
-
-  it("maps onClickNext to push SiaWallet if storj is false and siaAccount has address", () => {
-    mapDispatchToProps(dispatch).onClickNext({storj: false, siaAccount: {address: "xxx xxx xxx"}});
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaWallet));
   });
 
   it("maps onClickNext to push SiaPreparation and requestSiaWalletInfo", () => {
     const mainState = {storj: false, siaAccount: {address: null}};
     mapDispatchToProps(dispatch).onClickNext(mainState);
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaPreparation));
     expect(dispatch).toHaveBeenCalledWith(actions.requestSiaWalletInfo(mainState));
   });
 

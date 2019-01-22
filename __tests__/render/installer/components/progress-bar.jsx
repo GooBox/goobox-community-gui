@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import {shallow} from "enzyme";
+import React from "react";
+import ProgressBar from "../../../../src/render/installer/components/progress-bar";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+describe("ProgressBar component", () => {
+
+  const progress = 24;
+
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallow(<ProgressBar progress={progress}/>);
+  });
+
+  it("renders a parent element which has meter class", () => {
+    expect(wrapper.hasClass("meter")).toBeTruthy();
+  });
+
+  it("renders a child element which has bar class and width is the given progress", () => {
+    expect(wrapper.find(".bar").prop("style")).toHaveProperty("width", `${progress}%`);
+  });
+
 });
-
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Junpei Kawamoto
+ * Copyright (C) 2017-2018 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import PropTypes from "prop-types";
+import React from "react";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+export const ProgressBar = ({progress}) => (
+  <div className="meter">
+    <span className="bar" style={{width: `${progress}%`}}/>
+  </div>
+);
 
-export const mapDispatchToProps = dispatch => ({
+ProgressBar.propTypes = {
+  progress: PropTypes.number.isRequired,
+};
 
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default ProgressBar;

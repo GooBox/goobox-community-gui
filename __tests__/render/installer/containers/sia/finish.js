@@ -15,23 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import * as actions from "../../../../../src/render/installer/actions";
+import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/sia/finish";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+describe("mapStateToProps", () => {
 
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
+  it("set messages", () => {
+    expect(mapStateToProps()).toEqual({
+      header: "We’re preparing your Goobox",
+      message: "We will notify you when we’re done."
+    });
+  });
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
+describe("mapDispatchToProps", () => {
+
+  const dispatch = jest.fn();
+  beforeEach(() => {
+    dispatch.mockReset();
+  });
+
+  it("maps onClick to openSyncFolder action", () => {
+    mapDispatchToProps(dispatch).onClick();
+    expect(dispatch).toHaveBeenCalledWith(actions.closeWindow());
+  });
+
+});
+
 

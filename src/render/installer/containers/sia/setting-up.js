@@ -16,22 +16,11 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import SettingUp from "../../components/screens/sia/setting-up";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+export const mapStateToProps = state => ({
+  progress: state.main.progress,
+  errorMsg: state.main.errorMsg
 });
 
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default connect(mapStateToProps)(SettingUp);

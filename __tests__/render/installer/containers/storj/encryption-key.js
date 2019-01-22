@@ -15,17 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/installer/actions";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/select-service";
+import {push} from "connected-react-router";
+import * as screens from "../../../../../src/render/installer/constants/screens";
+import {mapDispatchToProps, mapStateToProps} from "../../../../../src/render/installer/containers/storj/encryption-key";
 
 describe("mapStateToProps", () => {
 
-  it("maps processing state", () => {
+  it("maps state to encryptionKey", () => {
     const main = {
-      processing: true,
+      storjAccount: {
+        key: "xxx xxx xxxx"
+      }
     };
     expect(mapStateToProps({main})).toEqual({
-      processing: true,
+      encryptionKey: main.storjAccount.key
     });
   });
 
@@ -38,19 +41,14 @@ describe("mapDispatchToProps", () => {
     dispatch.mockReset();
   });
 
-  it("maps onSelectStorj to selectStorj and push StorjSelected", () => {
-    mapDispatchToProps(dispatch).onSelectStorj();
-    expect(dispatch).toHaveBeenCalledWith(actions.selectStorj());
+  it("maps onClickBack to push Registration", () => {
+    mapDispatchToProps(dispatch).onClickBack();
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjRegistration));
   });
 
-  it("maps onSelectSia to selectSia and push SiaSelected", () => {
-    mapDispatchToProps(dispatch).onSelectSia();
-    expect(dispatch).toHaveBeenCalledWith(actions.selectSia());
-  });
-
-  it("maps onSelectBoth to selectBoth and push StorjSelected", () => {
-    mapDispatchToProps(dispatch).onSelectBoth();
-    expect(dispatch).toHaveBeenCalledWith(actions.selectBoth());
+  it("maps onClickNext to push EmailConfirmation", () => {
+    mapDispatchToProps(dispatch).onClickNext();
+    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjEmailConfirmation));
   });
 
 });

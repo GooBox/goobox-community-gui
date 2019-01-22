@@ -66,12 +66,11 @@ export const remote = {
   dialog: {
     showOpenDialog: jest.fn()
   },
-  getCurrentWindow: jest.fn(),
+  getCurrentWindow: jest.fn(() => "getCurrentWindow"),
   require: (module) => {
     if (module === "electron-json-storage") {
       return electronJsonStorage;
     }
-
   }
 };
 

@@ -15,23 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import styled from "styled-components";
+import CopyButton from "./copy-button";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+export const Button = styled.button.attrs({
+  type: "button",
+})`
+  width: 239.1px;
+  height: 47.3px;
+  border-radius: 3.2px;
+  border: solid 0.8px #dddddd;
+`;
 
-export const mapDispatchToProps = dispatch => ({
+export const WhiteButton = styled(Button).attrs({
+  className: "btn btn-light",
+})`
+/* this component doesn't extend styles but attributes */
+`;
 
-  onSelectStorj: () => dispatch(actions.selectStorj()),
+export const BlueButton = styled(Button).attrs({
+  className: "btn btn-primary",
+})`
+/* this component doesn't extend styles but attributes */
+`;
 
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export {
+  CopyButton
+}

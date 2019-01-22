@@ -16,22 +16,33 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import * as actions from "../../actions";
+import Wallet from "../../components/screens/sia/wallet";
+import * as screens from "../../constants/screens";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
+export const mapStateToProps = state => ({
+  address: state.main.siaAccount.address,
+  seed: state.main.siaAccount.seed,
+  mainState: state.main,
+  next: screens.SiaFinish,
+  prev: state.main.storj ? screens.StorjLogin : screens.SiaSelected,
 });
 
 export const mapDispatchToProps = dispatch => ({
 
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
+  onClickNext: (mainState) => {
+    dispatch(actions.saveConfig(mainState));
+  }
 
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
+export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...ownProps,
+  ...stateProps,
+  ...dispatchProps,
+  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
+  mainState: undefined,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Wallet);
 

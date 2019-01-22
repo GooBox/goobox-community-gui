@@ -15,23 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import React from "react";
+import * as screens from "../../../constants/screens";
+import Main from "../../partials/main";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+export const EmailConfirmation = () => (
+  <Main prev={screens.StorjEncryptionKey} next={screens.StorjLogin}>
+    <div className="f141">Storj new account.</div>
+    <div className="f211">
+      Please confirm your
+      <span className="underlined bold">Storj account <span className="light">in your email</span></span>
+    </div>
+  </Main>
+);
 
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default EmailConfirmation;

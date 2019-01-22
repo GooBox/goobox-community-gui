@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ import * as screens from "./constants/screens";
 import Preparation from "./containers/preparation";
 import SelectFolder from "./containers/select-folder";
 import SelectService from "./containers/select-service";
-import SiaFinish from "./containers/sia-finish";
-import SiaSettingUp from "./containers/sia-setting-up";
-import SiaWallet from "./containers/sia-wallet";
-import StorjEmailConfirmation from "./containers/storj-email-confirmation";
-import StorjEncryptionKey from "./containers/storj-encryption-key";
-import StorjFinish from "./containers/storj-finish";
-import StorjLogin from "./containers/storj-login";
-import StorjRegistration from "./containers/storj-registration";
+import SiaFinish from "./containers/sia/finish";
+import SiaSettingUp from "./containers/sia/setting-up";
+import SiaWallet from "./containers/sia/wallet";
+import StorjEmailConfirmation from "./containers/storj/email-confirmation";
+import StorjEncryptionKey from "./containers/storj/encryption-key";
+import StorjFinish from "./containers/storj/finish";
+import StorjLogin from "./containers/storj/login";
+import StorjRegistration from "./containers/storj/registration";
 import "./main.css";
 import reducer from "./reducers";
 import rootSaga from "./sagas";

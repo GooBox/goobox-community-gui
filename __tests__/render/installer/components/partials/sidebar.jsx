@@ -15,23 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import * as actions from "../actions";
-import ServiceSelector from "../components/screens/select-service";
+import {shallow} from "enzyme";
+import React from "react";
+import Logo from "../../../../../src/render/installer/assets/logo.svg";
+import Sidebar from "../../../../../src/render/installer/components/partials/sidebar";
 
-export const mapStateToProps = ({main: {processing}}) => ({
-  processing
-});
+describe("Sidebar component", () => {
 
-export const mapDispatchToProps = dispatch => ({
-
-  onSelectStorj: () => dispatch(actions.selectStorj()),
-
-  onSelectSia: () => dispatch(actions.selectSia()),
-
-  onSelectBoth: () => dispatch(actions.selectBoth()),
+  const wrapper = shallow(<Sidebar/>);
+  it("has the logo", () => {
+    expect(wrapper.find("img").prop("src")).toEqual(Logo);
+  });
 
 });
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-

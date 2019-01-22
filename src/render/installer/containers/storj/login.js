@@ -16,39 +16,29 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
-import SelectFolder from "../components/screens/select-folder";
-import * as screens from "../constants/screens";
-
-const nextScreen = (main) => {
-  if (main.storj) {
-    return screens.StorjLogin;
-  } else if (main.siaAccount.address) {
-    return screens.SiaWallet;
-  }
-  return screens.SiaPreparation;
-};
+import * as actions from "../../actions";
+import Login from "../../components/screens/storj/login";
 
 export const mapStateToProps = state => ({
-  storj: state.main.storj,
-  sia: state.main.sia,
-  folder: state.main.folder,
+  processing: state.main.processing,
+  encryptionKey: state.main.storjAccount.key,
+  emailWarn: state.main.storjAccount.emailWarn,
+  passwordWarn: state.main.storjAccount.passwordWarn,
+  keyWarn: state.main.storjAccount.keyWarn,
+  warnMsg: state.main.storjAccount.warnMsg,
   mainState: state.main,
-  prev: screens.ChooseCloudService,
-  next: nextScreen(state.main),
 });
 
 export const mapDispatchToProps = dispatch => ({
 
-  onClickBack: () => dispatch(actions.stopSyncApps()),
+  onClickNext: (mainState, accountInfo) => dispatch(actions.storjLogin({
+    ...mainState,
+    storjAccount: accountInfo,
+  })),
 
-  onClickNext: (mainState) => {
-    if (!mainState.storj && !mainState.siaAccount.address) {
-      dispatch(actions.requestSiaWalletInfo(mainState));
-    }
-  },
-
-  onSelectFolder: folder => dispatch(actions.selectFolder(folder)),
+  onClickGenerateSeed: mainState => dispatch(actions.storjGenerateMnemonic({
+    folder: mainState.folder
+  })),
 
 });
 
@@ -56,9 +46,10 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...ownProps,
   ...stateProps,
   ...dispatchProps,
-  onClickNext: () => dispatchProps.onClickNext(stateProps.mainState),
+  onClickNext: dispatchProps.onClickNext.bind(null, stateProps.mainState),
+  onClickGenerateSeed: dispatchProps.onClickGenerateSeed.bind(null, stateProps.mainState),
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SelectFolder);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Login);
 
