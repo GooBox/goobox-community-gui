@@ -22,8 +22,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import styled from "styled-components";
-import {BlueButton, WhiteButton} from "../buttons";
-import Sidebar from "../sidebar";
+import * as screens from "../../constants/screens";
+import Main from "../main";
 
 const InputBox = styled.input`
   width: 489px;
@@ -91,64 +91,62 @@ export class Login extends React.Component {
 
   render() {
 
-    const {processing, onClickGenerateSeed, onClickBack} = this.props;
+    const {processing, onClickGenerateSeed} = this.props;
     const {email, emailWarn, password, passwordWarn, key, keyWarn} = this.state;
     return (
-      <div className={classNames("clearfix", {wait: processing})}>
-        <Sidebar className="float-left"/>
-        <main className="float-right d-flex flex-column">
-          <h1>Login to your Storj account</h1>
-          <div className="form-group">
-            <label htmlFor="email">Email address</label>
-            <InputBox
-              id="email"
-              type="text"
-              className={classNames("form-control", {"is-invalid": emailWarn})}
-              value={email}
-              onChange={e => processing || this.setState({email: e.target.value})}
-            />
-            <div className="invalid-feedback">Please enter a valid email address</div>
+      <Main
+        processing={processing}
+        prev={screens.StorjSelected}
+        next={screens.StorjLogin}
+        onClickNext={this._onClickNext}
+      >
+        <h1>Login to your Storj account</h1>
+        <div className="form-group">
+          <label htmlFor="email">Email address</label>
+          <InputBox
+            id="email"
+            type="text"
+            className={classNames("form-control", {"is-invalid": emailWarn})}
+            value={email}
+            onChange={e => processing || this.setState({email: e.target.value})}
+          />
+          <div className="invalid-feedback">Please enter a valid email address</div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <InputBox
+            id="password"
+            type="password"
+            className={classNames("form-control", {"is-invalid": passwordWarn})}
+            value={password}
+            onChange={e => processing || this.setState({password: e.target.value})}
+          />
+          <div className="invalid-feedback">Please enter the correct password</div>
+        </div>
+        <div className="form-group">
+          <div className="d-flex align-self-center justify-content-between">
+            <label htmlFor="key">
+              Encryption Key&nbsp;
+              <Popover contentClass="rap-popover-content">
+                <FontAwesomeIcon icon="info-circle" className="info-button"/>
+                <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
+              </Popover>
+            </label>
+            <GenSeedButton
+              id="generate-mnemonic-btn"
+              onClick={() => processing || onClickGenerateSeed()}
+            >generate seed
+            </GenSeedButton>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <InputBox
-              id="password"
-              type="password"
-              className={classNames("form-control", {"is-invalid": passwordWarn})}
-              value={password}
-              onChange={e => processing || this.setState({password: e.target.value})}
-            />
-            <div className="invalid-feedback">Please enter the correct password</div>
-          </div>
-          <div className="form-group">
-            <div className="d-flex align-self-center justify-content-between">
-              <label htmlFor="key">
-                Encryption Key&nbsp;
-                <Popover contentClass="rap-popover-content">
-                  <FontAwesomeIcon icon="info-circle" className="info-button"/>
-                  <span>If you already have a encryption key for Goobox please enter it, otherwise click on &quot;Generate&quot;.</span>
-                </Popover>
-              </label>
-              <GenSeedButton
-                id="generate-mnemonic-btn"
-                onClick={() => processing || onClickGenerateSeed()}
-              >generate seed
-              </GenSeedButton>
-            </div>
-            <InputBox
-              id="key"
-              className={classNames("form-control", {"is-invalid": keyWarn})}
-              value={key}
-              onChange={e => processing || this.setState({key: e.target.value})}
-            />
-            <div className="invalid-feedback">Please enter the correct encryption key</div>
-          </div>
-          <div className="mt-auto d-flex justify-content-between">
-            <WhiteButton id="back-btn" onClick={() => processing || onClickBack()}>Back </WhiteButton>
-            <BlueButton id="next-btn" onClick={this._onClickNext}>Next</BlueButton>
-          </div>
-        </main>
-      </div>
+          <InputBox
+            id="key"
+            className={classNames("form-control", {"is-invalid": keyWarn})}
+            value={key}
+            onChange={e => processing || this.setState({key: e.target.value})}
+          />
+          <div className="invalid-feedback">Please enter the correct encryption key</div>
+        </div>
+      </Main>
     );
   }
 
@@ -156,11 +154,10 @@ export class Login extends React.Component {
 
 Login.propTypes = {
   // If true, showing wait mouse cursor and preventing all actions.
-  processing: PropTypes.bool.isRequired,
+  processing: PropTypes.bool,
   encryptionKey: PropTypes.string.isRequired,
   // onClickCreateAccount: PropTypes.func.isRequired,
   onClickGenerateSeed: PropTypes.func.isRequired,
-  onClickBack: PropTypes.func.isRequired,
   onClickNext: PropTypes.func.isRequired,
   emailWarn: PropTypes.bool,
   passwordWarn: PropTypes.bool,
@@ -168,6 +165,7 @@ Login.propTypes = {
 };
 
 Login.defaultProps = {
+  processing: false,
   emailWarn: false,
   passwordWarn: false,
   keyWarn: false

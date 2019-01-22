@@ -15,11 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../../actions";
 import Login from "../../components/storj/login";
-import * as screens from "../../constants/screens";
 
 export const mapStateToProps = state => ({
   processing: state.main.processing,
@@ -33,14 +31,10 @@ export const mapStateToProps = state => ({
 
 export const mapDispatchToProps = dispatch => ({
 
-  onClickBack: () => dispatch(push(screens.StorjSelected)),
-
   onClickNext: (mainState, accountInfo) => dispatch(actions.storjLogin({
     ...mainState,
     storjAccount: accountInfo,
   })),
-
-  onClickCreateAccount: () => dispatch(push(screens.StorjRegistration)),
 
   onClickGenerateSeed: mainState => dispatch(actions.storjGenerateMnemonic({
     folder: mainState.folder
