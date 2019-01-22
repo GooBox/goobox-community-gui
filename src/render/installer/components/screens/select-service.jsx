@@ -19,11 +19,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import {Link} from "react-router-dom";
 import styled from "styled-components";
-import siaLogo from "../assets/sia_logo.svg";
-import storjAndSiaLogo from "../assets/storj_and_sia_logo.svg";
-import storjLogo from "../assets/storj_logo.svg";
-import * as screens from "../constants/screens";
-import Main from "./partials/main";
+import siaLogo from "../../assets/sia_logo.svg";
+import storjAndSiaLogo from "../../assets/storj_and_sia_logo.svg";
+import storjLogo from "../../assets/storj_logo.svg";
+import * as screens from "../../constants/screens";
+import Main from "../partials/main";
 
 export const ServiceButton = styled(Link).attrs({
   className: "btn btn-outline-light mr-2 d-flex justify-content-center align-items-center",

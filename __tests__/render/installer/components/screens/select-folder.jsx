@@ -19,10 +19,10 @@ import {remote} from "electron";
 import {mount, shallow} from "enzyme";
 import React from "react";
 import {StaticRouter} from "react-router";
-import {Sia, Storj} from "../../../../src/constants";
-import {Main} from "../../../../src/render/installer/components/partials/main";
-import SelectFolder, {ReadOnlyInputBox, ServiceNames} from "../../../../src/render/installer/components/select-folder";
-import {SiaSelected} from "../../../../src/render/installer/constants/screens";
+import {Sia, Storj} from "../../../../../src/constants";
+import {Main} from "../../../../../src/render/installer/components/partials/main";
+import SelectFolder, {ReadOnlyInputBox, ServiceNames} from "../../../../../src/render/installer/components/screens/select-folder";
+import {SiaSelected} from "../../../../../src/render/installer/constants/screens";
 
 const dialog = remote.dialog;
 

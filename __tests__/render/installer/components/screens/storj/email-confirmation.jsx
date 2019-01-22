@@ -17,8 +17,8 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
-import EmailConfirmation from "../../../../../src/render/installer/components/storj/email-confirmation";
+import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import EmailConfirmation from "../../../../../../src/render/installer/components/screens/storj/email-confirmation";
 
 describe.skip("EmailConfirmation", () => {
 

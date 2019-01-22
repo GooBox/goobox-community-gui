@@ -16,8 +16,8 @@
  */
 
 import React from "react";
-import * as screens from "../../constants/screens";
-import Main from "../partials/main";
+import * as screens from "../../../constants/screens";
+import Main from "../../partials/main";
 
 export const EmailConfirmation = () => (
   <Main prev={screens.StorjEncryptionKey} next={screens.StorjLogin}>

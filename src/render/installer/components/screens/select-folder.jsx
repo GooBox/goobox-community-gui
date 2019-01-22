@@ -21,8 +21,8 @@ import logger from "electron-log";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
-import {Sia, Storj} from "../../../constants";
-import Main from "./partials/main";
+import {Sia, Storj} from "../../../../constants";
+import Main from "../partials/main";
 
 const dialog = remote.dialog;
 

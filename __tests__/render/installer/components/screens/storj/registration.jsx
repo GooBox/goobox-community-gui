@@ -17,8 +17,8 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
-import Registration from "../../../../../src/render/installer/components/storj/registration";
+import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import Registration from "../../../../../../src/render/installer/components/screens/storj/registration";
 
 describe("Registration component", () => {
 

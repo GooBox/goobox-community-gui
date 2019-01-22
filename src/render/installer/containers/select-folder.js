@@ -17,7 +17,7 @@
 
 import {connect} from "react-redux";
 import * as actions from "../actions";
-import SelectFolder from "../components/select-folder";
+import SelectFolder from "../components/screens/select-folder";
 import * as screens from "../constants/screens";
 
 const nextScreen = (main) => {

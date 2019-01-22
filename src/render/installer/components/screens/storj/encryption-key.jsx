@@ -17,8 +17,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import leftWhiteIcon from "../../assets/left_white_icon.svg";
-import {BlueButton, WhiteButton} from "../buttons";
+import leftWhiteIcon from "../../../assets/left_white_icon.svg";
+import {BlueButton, WhiteButton} from "../../buttons";
 
 const style = {
   main: {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import Finish, {FinishButton} from "../../../../src/render/installer/components/finish";
+import Finish, {FinishButton} from "../../../../../src/render/installer/components/screens/finish";
 
 describe("Finish component", () => {
 

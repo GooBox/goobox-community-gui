@@ -17,8 +17,8 @@
 
 import {shallow} from "enzyme";
 import React from "react";
-import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
-import EncryptionKey from "../../../../../src/render/installer/components/storj/encryption-key";
+import {BlueButton, WhiteButton} from "../../../../../../src/render/installer/components/buttons";
+import EncryptionKey from "../../../../../../src/render/installer/components/screens/storj/encryption-key";
 
 describe("EncryptionKey component", () => {
 

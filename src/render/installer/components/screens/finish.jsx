@@ -15,31 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import LogoColor from "../../assets/logo-color.svg";
-import ProgressBar from "../progress-bar";
+import styled from "styled-components";
+import Logo from "../../assets/logo.svg";
+import {WhiteButton} from "../buttons";
 
-export const SettingUp = ({progress, errorMsg}) => (
-  <main
-    className={classNames("full-screen full-screen-white d-flex flex-column align-items-center", {"wait": !errorMsg})}
-  >
-    <img className="mb-5" src={LogoColor} width={110} height={115.2} alt="Goobox"/>
-    <span id="message" className={classNames("mt-4 mb-2", {"text-danger": !!errorMsg})}>
-      {errorMsg || "We’re setting up your Sia wallet…"}
-    </span>
-    <ProgressBar progress={progress}/>
+export const FinishButton = styled(WhiteButton)`
+  color: #26aae1;
+`;
+
+export const Finish = ({header, message, onClick}) => (
+  <main className="full-screen d-flex flex-column justify-content-between align-items-center">
+    <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
+    <h1>{header}</h1>
+    <p>{message}</p>
+    <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>
   </main>
 );
 
-SettingUp.propTypes = {
-  progress: PropTypes.number.isRequired,
-  errorMsg: PropTypes.string,
+Finish.propTypes = {
+  header: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
-SettingUp.defaultProps = {
-  errorMsg: "",
-};
-
-export default SettingUp;
+export default Finish;

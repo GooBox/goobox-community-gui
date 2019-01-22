@@ -18,7 +18,7 @@
 import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../../actions";
-import Registration from "../../components/storj/registration";
+import Registration from "../../components/screens/storj/registration";
 import * as screens from "../../constants/screens";
 
 export const mapStateToProps = state => ({

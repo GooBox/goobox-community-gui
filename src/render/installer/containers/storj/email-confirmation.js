@@ -16,7 +16,7 @@
  */
 
 import {connect} from "react-redux";
-import EmailConfirmation from "../../components/storj/email-confirmation";
+import EmailConfirmation from "../../components/screens/storj/email-confirmation";
 
 export const mapStateToProps = () => ({});
 

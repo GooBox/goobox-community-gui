@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import styled from "styled-components";
-import Logo from "../assets/logo.svg";
-import {WhiteButton} from "./buttons";
+import Logo from "../../assets/logo.svg";
+import ProgressBar from "../progress-bar";
 
-export const FinishButton = styled(WhiteButton)`
-  color: #26aae1;
-`;
-
-export const Finish = ({header, message, onClick}) => (
-  <main className="full-screen d-flex flex-column justify-content-between align-items-center">
+export const Preparation = ({progress, errorMsg}) => (
+  <main className={classNames("full-screen d-flex flex-column align-items-center", {"wait": !errorMsg})}>
     <img className="mb-3" src={Logo} width={110} height={115.2} alt="Goobox"/>
-    <h1>{header}</h1>
-    <p>{message}</p>
-    <FinishButton type="button" onClick={onClick}>Open my Goobox</FinishButton>
+    <h1 className="mb-auto">
+      The safest place to store your files
+    </h1>
+    <span id="message" className={classNames("mb-2", {"text-warning": !!errorMsg})}>
+      {errorMsg || "Getting some tools…"}
+    </span>
+    <ProgressBar progress={progress}/>
   </main>
 );
 
-Finish.propTypes = {
-  header: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+Preparation.propTypes = {
+  progress: PropTypes.number.isRequired,
+  errorMsg: PropTypes.string,
 };
 
-export default Finish;
+Preparation.defaultProps = {
+  errorMsg: "",
+};
+
+export default Preparation;

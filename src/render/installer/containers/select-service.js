@@ -17,7 +17,7 @@
 
 import {connect} from "react-redux";
 import * as actions from "../actions";
-import ServiceSelector from "../components/select-service";
+import ServiceSelector from "../components/screens/select-service";
 
 export const mapStateToProps = ({main: {processing}}) => ({
   processing

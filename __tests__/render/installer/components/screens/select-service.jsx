@@ -18,9 +18,9 @@
 import {mount} from "enzyme";
 import React from "react";
 import {StaticRouter} from "react-router";
-import {Main} from "../../../../src/render/installer/components/partials/main";
-import SelectService, {ServiceButton} from "../../../../src/render/installer/components/select-service";
-import * as screens from "../../../../src/render/installer/constants/screens";
+import {Main} from "../../../../../src/render/installer/components/partials/main";
+import SelectService, {ServiceButton} from "../../../../../src/render/installer/components/screens/select-service";
+import * as screens from "../../../../../src/render/installer/constants/screens";
 
 describe("SelectService component", () => {
 

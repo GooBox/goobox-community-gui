@@ -18,10 +18,10 @@
 import {mount} from "enzyme";
 import React from "react";
 import {StaticRouter} from "react-router";
-import CopyButton from "../../../../../src/render/installer/components/buttons/copy-button";
-import {Main} from "../../../../../src/render/installer/components/partials/main";
-import Wallet from "../../../../../src/render/installer/components/sia/wallet";
-import {SiaWallet} from "../../../../../src/render/installer/constants/screens";
+import CopyButton from "../../../../../../src/render/installer/components/buttons/copy-button";
+import {Main} from "../../../../../../src/render/installer/components/partials/main";
+import Wallet from "../../../../../../src/render/installer/components/screens/sia/wallet";
+import {SiaWallet} from "../../../../../../src/render/installer/constants/screens";
 
 describe("Wallet component", () => {
 

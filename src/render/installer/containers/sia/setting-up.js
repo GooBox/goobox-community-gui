@@ -16,7 +16,7 @@
  */
 
 import {connect} from "react-redux";
-import SettingUp from "../../components/sia/setting-up";
+import SettingUp from "../../components/screens/sia/setting-up";
 
 export const mapStateToProps = state => ({
   progress: state.main.progress,

@@ -22,8 +22,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import Popover from "react-awesome-popover";
 import styled from "styled-components";
-import * as screens from "../../constants/screens";
-import Main from "../partials/main";
+import * as screens from "../../../constants/screens";
+import Main from "../../partials/main";
 
 const InputBox = styled.input`
   width: 489px;

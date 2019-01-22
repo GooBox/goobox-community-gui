@@ -17,7 +17,7 @@
 
 import {connect} from "react-redux";
 import * as actions from "../../actions";
-import Login from "../../components/storj/login";
+import Login from "../../components/screens/storj/login";
 
 export const mapStateToProps = state => ({
   processing: state.main.processing,

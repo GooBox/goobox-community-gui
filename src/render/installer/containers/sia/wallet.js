@@ -17,7 +17,7 @@
 
 import {connect} from "react-redux";
 import * as actions from "../../actions";
-import Wallet from "../../components/sia/wallet";
+import Wallet from "../../components/screens/sia/wallet";
 import * as screens from "../../constants/screens";
 
 export const mapStateToProps = state => ({
