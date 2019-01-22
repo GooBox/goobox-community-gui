@@ -15,43 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import PropTypes from "prop-types";
 import React from "react";
-import leftWhiteIcon from "../../assets/left_white_icon.svg";
-import {BlueButton, WhiteButton} from "../buttons";
+import * as screens from "../../constants/screens";
+import Main from "../main";
 
-const style = {
-  main: {
-    color: "white",
-    display: "table",
-    fontSize: "30px",
-    textAlign: "left",
-    margin: "82px auto 0 auto",
-  }
-};
-
-export const EmailConfirmation = ({onClickBack, onClickNext}) => (
-  <div className="background-gradation">
-    <header>
-      <img className="icon" src={leftWhiteIcon} alt="Goobox"/>
-    </header>
-    <main style={style.main}>
-      <div className="f141">Storj new account.</div>
-      <div className="f211">
-        Please confirm your
-        <span className="underlined bold">Storj account <span className="light">in your email</span></span>
-      </div>
-    </main>
-    <footer>
-      <WhiteButton id="back-btn" onClick={onClickBack}>Back</WhiteButton>
-      <BlueButton id="next-btn" onClick={onClickNext}>Next</BlueButton>
-    </footer>
-  </div>
+export const EmailConfirmation = () => (
+  <Main prev={screens.StorjEncryptionKey} next={screens.StorjLogin}>
+    <div className="f141">Storj new account.</div>
+    <div className="f211">
+      Please confirm your
+      <span className="underlined bold">Storj account <span className="light">in your email</span></span>
+    </div>
+  </Main>
 );
-
-EmailConfirmation.propTypes = {
-  onClickBack: PropTypes.func.isRequired,
-  onClickNext: PropTypes.func.isRequired,
-};
 
 export default EmailConfirmation;

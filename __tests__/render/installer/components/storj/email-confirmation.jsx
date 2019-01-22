@@ -20,7 +20,7 @@ import React from "react";
 import {BlueButton, WhiteButton} from "../../../../../src/render/installer/components/buttons";
 import EmailConfirmation from "../../../../../src/render/installer/components/storj/email-confirmation";
 
-describe("EmailConfirmation", () => {
+describe.skip("EmailConfirmation", () => {
 
   const onClickBack = jest.fn();
   const onClickNext = jest.fn();

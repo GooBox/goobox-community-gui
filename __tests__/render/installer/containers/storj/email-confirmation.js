@@ -30,7 +30,7 @@ describe("mapStateToProps", () => {
 
 });
 
-describe("mapDispatchToProps", () => {
+describe.skip("mapDispatchToProps", () => {
 
   const dispatch = jest.fn();
   beforeEach(() => {
