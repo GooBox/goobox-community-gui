@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,8 +119,9 @@ const configs = [{
   devtool: "source-map"
 }];
 
-if (process.env.NODE_ENV === "production") {
-  configs.forEach(c => c.devtool = false);
-}
-
-module.exports = configs;
+module.exports = (env, argv) => {
+  if (argv.mode === "production") {
+    configs.forEach(c => c.devtool = false);
+  }
+  return configs;
+};
