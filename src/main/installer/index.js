@@ -67,7 +67,9 @@ export const installer = () => {
     fullscreenable: false,
     title: "Goobox installer",
     // skipTaskbar: true,
-    nodeIntegration: true,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
   mainWindow.loadURL(`file://${path.join(__dirname, "../installer.html")}`);
 
