@@ -328,8 +328,7 @@ describe("Storj class", () => {
         cb();
       });
       // _sendRequest returns a promise never resolved.
-      storj._sendRequest = jest.fn().mockReturnValue(new Promise(() => {
-      }));
+      storj._sendRequest = jest.fn().mockReturnValue(new Promise(() => {}));
       await expect(storj.close()).resolves.not.toBeDefined();
       expect(storj._sendRequest).toHaveBeenCalledWith("Quit", {
         method: "quit",
@@ -505,10 +504,10 @@ describe("Storj class", () => {
           JAVA_HOME: storj._javaHome,
           GOOBOX_SYNC_STORJ_OPTS: `-Djava.library.path="${
             storj._wd
-            };${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
+          };${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
           PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${
             process.env.PATH
-            }`,
+          }`,
         }),
         shell: true,
         windowsHide: true,
@@ -526,10 +525,10 @@ describe("Storj class", () => {
             JAVA_HOME: storj._javaHome,
             GOOBOX_SYNC_STORJ_OPTS: `-Djava.library.path="${
               storj._wd
-              };${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
+            };${path.normalize(path.join(storj._wd, "../../libraries"))}"`,
             PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${
               process.env.PATH
-              }`,
+            }`,
           }),
           shell: true,
           windowsHide: true,
@@ -558,22 +557,29 @@ describe("Storj class", () => {
 
     it("spawns sync-storj", () => {
       storj.start(dir);
-      expect(spawn).toBeCalledWith("java", [
-        `-Djava.library.path="${storj._wd}:/lib:/usr/lib:${libPath}"`,
-        `-Dgoobox.resource="${path.resolve(__dirname, "../../resources/mac")}"`,
-        "-jar",
-        "*.jar",
-        "--sync-dir",
-        `"${dir}"`
-      ], {
-        cwd: storj._wd,
-        env: expect.objectContaining({
-          PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
-          LD_LIBRARY_PATH: `${storj._wd}:/lib:/usr/lib:${libPath}`,
-        }),
-        shell: true,
-        windowsHide: true,
-      });
+      expect(spawn).toBeCalledWith(
+        "java",
+        [
+          `-Djava.library.path="${storj._wd}:/lib:/usr/lib:${libPath}"`,
+          `-Dgoobox.resource="${path.resolve(
+            __dirname,
+            "../../resources/mac"
+          )}"`,
+          "-jar",
+          "*.jar",
+          "--sync-dir",
+          `"${dir}"`,
+        ],
+        {
+          cwd: storj._wd,
+          env: expect.objectContaining({
+            PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
+            LD_LIBRARY_PATH: `${storj._wd}:/lib:/usr/lib:${libPath}`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
     });
   });
 });

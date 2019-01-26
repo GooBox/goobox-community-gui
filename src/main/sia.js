@@ -43,7 +43,7 @@ export default class Sia extends EventEmitter {
     log.debug(
       `[GUI main] New sia instance: cmd = ${this._cmd} in ${
         this._wd
-        }, java-home = ${this._javaHome}`
+      }, java-home = ${this._javaHome}`
     );
   }
 
@@ -176,7 +176,7 @@ export default class Sia extends EventEmitter {
       const stderr = readLine.createInterface({input: this.walletProc.stderr});
       stderr.on("line", log.verbose);
 
-      this.walletProc.on("error", (err) => {
+      this.walletProc.on("error", err => {
         if (!err) {
           log.warn("[GUI main] wallet command returned an empty error");
           return;
@@ -201,7 +201,7 @@ export default class Sia extends EventEmitter {
           log.info(
             `[GUI main] Received the wallet info: address = ${
               info["wallet address"]
-              }`
+            }`
           );
           resolve(info);
         }
