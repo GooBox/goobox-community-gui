@@ -16,17 +16,12 @@
  */
 
 module.exports = {
-  "setupFiles": [
-    "raf/polyfill",
-    "./setupTests.js"
-  ],
-  "modulePathIgnorePatterns": [
-    "<rootDir>/dist"
-  ],
-  "transform": {
-    "^.+\\.jsx?$": "babel-jest"
+  setupFiles: ["raf/polyfill", "./setupTests.js"],
+  transform: {
+    "^.+\\.jsx?$": "babel-jest",
   },
-  "moduleNameMapper": {
-    "\\.(jpg|jpeg|png|gif|svg|css)$": "<rootDir>/__mocks__/fileMock.js"
-  }
+  moduleNameMapper: {
+    "\\.(jpg|jpeg|png|gif|svg|css)$": "<rootDir>/__mocks__/fileMock.js",
+  },
+  modulePathIgnorePatterns: ["<rootDir>/dist"],
 };

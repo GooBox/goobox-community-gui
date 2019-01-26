@@ -14,23 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* eslint-disable no-console */
 
-import {configure} from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
-// noinspection ES6CheckImport
-import fetch from "jest-fetch-mock";
-
-process.env.DEFAULT_SYNC_FOLDER = "/tmp";
-configure({adapter: new Adapter()});
-
-global.fetch = fetch;
-
-// Disable console object.
-console.error = message => {
-  if (/(Failed prop type)/.test(message)) {
-    throw new Error(message);
-  }
-};
-
-process.env.DEFAULT_SYNC_FOLDER = "/tmp/";
+// eslint-disable-next-line import/prefer-default-export
+export const RefreshInterval = 10 * 1000;
