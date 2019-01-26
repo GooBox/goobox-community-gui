@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import logger from "electron-log";
+// import logger from "electron-log";
 import React from "react";
 import {RefreshInterval} from "./constants";
+
+const logger = console;
 
 export class Viewer extends React.Component {
   constructor(props) {
