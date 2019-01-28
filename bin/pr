@@ -21,6 +21,7 @@
 #
 brew tap jkawamoto/pixeldrain
 brew install pixeldrain
+pd -v
 
 rm -rf /Users/travis/Library/Caches/electron-builder
 yarn run dist
