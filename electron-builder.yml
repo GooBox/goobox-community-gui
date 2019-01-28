@@ -61,7 +61,7 @@ linux:
       to: "app/goobox-sync-storj"
     - from: "tmp/linux/goobox-sync-sia"
       to: "app/goobox-sync-sia"
-  artifactName: "${productName}-${version}.${ext}"
+  artifactName: "${productName}-${version}-x86_64.${ext}"
 asar: false
 asarUnpack:
   - "node_modules/node-jre"
