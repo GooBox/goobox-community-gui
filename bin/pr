@@ -44,10 +44,7 @@ curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
     "title": "Development build of $TRAVIS_PULL_REQUEST_BRANCH",
     "description": "Build [#$TRAVIS_BUILD_NUMBER]($TRAVIS_BUILD_WEB_URL) of $TRAVIS_REPO_SLUG@$TRAVIS_PULL_REQUEST_BRANCH",
     "url": "$LIST_URL",
-    "color": "2664261",
-    "thumbnail": {
-      "url": "https://sia.pixeldrain.com/api/file/$WIN_ID/thumbnail"
-    },
+    "color": "2664261"
   }]
 }
 EOF
