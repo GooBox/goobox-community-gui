@@ -21,21 +21,21 @@
 #
 brew tap jkawamoto/pixeldrain
 brew install pixeldrain
+pd -v
 
 rm -rf /Users/travis/Library/Caches/electron-builder
 yarn run dist
 
 WIN_ID=$(basename $(pd upload dist/Goobox-0.2.3-setup_x64.exe -n Goobox-0.2.3-setup_x64.exe))
-echo "Dev build for Windows has been uploaded at ${WIN_ID}"
+echo "Dev build for Windows is uploaded at ${WIN_ID}"
 
 MAC_ID=$(basename $(pd upload dist/Goobox-0.2.3.dmg -n Goobox-0.2.3.dmg))
-echo "Dev build for MacOS has been uploaded at ${MAC_ID}"
+echo "Dev build for MacOS is uploaded at ${MAC_ID}"
 
-# LINUX_ID=$(basename $(pd upload dist/Goobox-0.2.3-x86_64.AppImage -n Goobox-0.2.3-x86_64.AppImage))
-# echo "Dev build for Linux has been uploaded at ${LINUX_ID}"
+LINUX_ID=$(basename $(pd upload dist/Goobox-0.2.3-x86_64.AppImage -n Goobox-0.2.3-x86_64.AppImage))
+echo "Dev build for Linux is uploaded at ${LINUX_ID}"
 
-LIST_URL=$(pd create-list -t "Goobox-0.2.3" ${WIN_ID}:Goobox-0.2.3-setup_x64.exe ${MAC_ID}:Goobox-0.2.3.dmg)
-# LIST_URL=$(pd create-list -t "Goobox-0.2.3" ${WIN_ID}:Goobox-0.2.3-setup_x64.exe ${MAC_ID}:Goobox-0.2.3.dmg ${LINUX_ID}:Goobox-0.2.3-x86_64.AppImage)
+LIST_URL=$(pd create-list -t "Goobox-0.2.3" ${WIN_ID}:Goobox-0.2.3-setup_x64.exe ${MAC_ID}:Goobox-0.2.3.dmg ${LINUX_ID}:Goobox-0.2.3-x86_64.AppImage)
 echo "Download page for the dev builds are set up at ${LIST_URL}"
 
 curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
@@ -44,10 +44,7 @@ curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
     "title": "Development build of $TRAVIS_PULL_REQUEST_BRANCH",
     "description": "Build [#$TRAVIS_BUILD_NUMBER]($TRAVIS_BUILD_WEB_URL) of $TRAVIS_REPO_SLUG@$TRAVIS_PULL_REQUEST_BRANCH",
     "url": "$LIST_URL",
-    "color": "2664261",
-    "thumbnail": {
-      "url": "https://sia.pixeldrain.com/api/file/$WIN_ID/thumbnail"
-    },
+    "color": "2664261"
   }]
 }
 EOF

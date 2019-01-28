@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import classNames from "classnames";
+import os from "os";
 import PropTypes from "prop-types";
 import React from "react";
 import {Link} from "react-router-dom";
@@ -27,7 +29,7 @@ import Main from "../partials/main";
 
 export const ServiceButton = styled(Link).attrs({
   className:
-    "btn btn-outline-light mr-2 d-flex justify-content-center align-items-center",
+    "d-flex btn btn-outline-light mr-2 justify-content-center align-items-center",
   role: "button",
 })`
   width: 131.5px !important;
@@ -47,13 +49,15 @@ export const SelectService = ({
     <h1>Let’s get started</h1>
     <p>Please choose your cloud service</p>
     <div className="d-flex">
-      <ServiceButton
-        id="option-storj"
-        to={screens.StorjSelected}
-        onClick={() => processing || onSelectStorj()}
-      >
-        <img src={storjLogo} width={64.7} height={93.2} alt="Storj" />
-      </ServiceButton>
+      <div className={classNames({"d-none": os.type() === "Linux"})}>
+        <ServiceButton
+          id="option-storj"
+          to={screens.StorjSelected}
+          onClick={() => processing || onSelectStorj()}
+        >
+          <img src={storjLogo} width={64.7} height={93.2} alt="Storj" />
+        </ServiceButton>
+      </div>
       <ServiceButton
         id="option-sia"
         to={screens.SiaSelected}

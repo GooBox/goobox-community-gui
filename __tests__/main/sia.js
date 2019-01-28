@@ -358,7 +358,7 @@ describe("Sia class", () => {
     });
   });
 
-  describe("in Windows", () => {
+  describe("On Windows", () => {
     let oldPlatform;
     beforeAll(() => {
       oldPlatform = process.platform;
@@ -446,6 +446,27 @@ describe("Sia class", () => {
           windowsHide: true,
         }
       );
+    });
+  });
+
+  describe("On Linux", () => {
+    let oldPlatform;
+    beforeAll(() => {
+      oldPlatform = process.platform;
+      Object.defineProperty(process, "platform", {
+        value: "linux",
+      });
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform,
+      });
+    });
+
+    it("has cmd which describes the path to the bat file of sync sia app", () => {
+      const sia = new Sia();
+      expect(sia._cmd).toEqual("./goobox-sync-sia");
     });
   });
 });

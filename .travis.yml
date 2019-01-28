@@ -1,4 +1,4 @@
-osx_image: xcode9.3
+osx_image: xcode10.1
 dist: trusty
 sudo: false
 language: node_js
@@ -17,20 +17,18 @@ cache:
     - "$HOME/Library/Caches/electron"
     - "$HOME/Library/Caches/electron-builder"
     - "$HOME/.npm/_prebuilds"
-before_install:
-  - brew update
 script:
-  - yarn run test:coverage
+  - yarn test:coverage
   - yarn run check
-  - yarn run build
+  - yarn build
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] || ./bin/pr'
 before_cache:
   - rm -rf $HOME/Library/Caches/electron-builder/wine
 after_success:
-  - yarn run coveralls
+  - yarn coveralls
 before_deploy:
-  - yarn run build:production
-  - yarn run dist
+  - yarn build:production
+  - yarn dist
 deploy:
   provider: releases
   api_key:

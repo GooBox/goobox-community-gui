@@ -68,22 +68,25 @@ export default class Storj extends EventEmitter {
         windowsHide: true,
       });
     } else {
+      const opts = [
+        `-Dgoobox.resource="${path.resolve(__dirname, "../../resources/mac")}"`,
+        "-jar",
+        "*.jar",
+        ...args,
+      ];
+      if (process.platform !== "darwin") {
+        env.LD_LIBRARY_PATH = `${this._wd}:/lib:/usr/lib:${
+          env.LD_LIBRARY_PATH
+        }`;
+        opts.unshift(`-Djava.library.path="${env.LD_LIBRARY_PATH}"`);
+      }
       env.PATH = `${this._wd}:${this._javaHome}/bin:${env.PATH || env.Path}`;
-      this.proc = spawn(
-        "java",
-        [
-          `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
-          "-jar",
-          "*.jar",
-          ...args,
-        ],
-        {
-          cwd: this._wd,
-          env,
-          shell: true,
-          windowsHide: true,
-        }
-      );
+      this.proc = spawn("java", opts, {
+        cwd: this._wd,
+        env,
+        shell: true,
+        windowsHide: true,
+      });
     }
 
     readLine.createInterface({input: this.proc.stdout}).on("line", line => {

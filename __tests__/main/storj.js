@@ -82,7 +82,10 @@ describe("Storj class", () => {
       expect(spawn).toBeCalledWith(
         "java",
         [
-          `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
+          `-Dgoobox.resource="${path.resolve(
+            __dirname,
+            "../../resources/mac"
+          )}"`,
           "-jar",
           "*.jar",
           "--sync-dir",
@@ -104,7 +107,10 @@ describe("Storj class", () => {
       expect(spawn).toBeCalledWith(
         "java",
         [
-          `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
+          `-Dgoobox.resource="${path.resolve(
+            __dirname,
+            "../../resources/mac"
+          )}"`,
           "-jar",
           "*.jar",
           "--sync-dir",
@@ -194,7 +200,10 @@ describe("Storj class", () => {
       expect(spawn).toHaveBeenLastCalledWith(
         "java",
         [
-          `-Dgoobox.resource=${path.resolve(__dirname, "../../resources/mac")}`,
+          `-Dgoobox.resource="${path.resolve(
+            __dirname,
+            "../../resources/mac"
+          )}"`,
           "-jar",
           "*.jar",
           "--sync-dir",
@@ -466,7 +475,7 @@ describe("Storj class", () => {
     });
   });
 
-  describe("in Windows", () => {
+  describe("On Windows", () => {
     const dir = "/tmp";
     const oldPlatform = process.platform;
     beforeAll(() => {
@@ -520,6 +529,52 @@ describe("Storj class", () => {
             PATH: `${path.normalize(path.join(storj._wd, "../../libraries"))};${
               process.env.PATH
             }`,
+          }),
+          shell: true,
+          windowsHide: true,
+        }
+      );
+    });
+  });
+
+  describe("On Linux", () => {
+    const libPath = "/test";
+    const dir = "/tmp";
+    const oldPlatform = process.platform;
+    beforeAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: "linux",
+      });
+      process.env.LD_LIBRARY_PATH = libPath;
+    });
+
+    afterAll(() => {
+      Object.defineProperty(process, "platform", {
+        value: oldPlatform,
+      });
+      process.env.LD_LIBRARY_PATH = undefined;
+    });
+
+    it("spawns sync-storj", () => {
+      storj.start(dir);
+      expect(spawn).toBeCalledWith(
+        "java",
+        [
+          `-Djava.library.path="${storj._wd}:/lib:/usr/lib:${libPath}"`,
+          `-Dgoobox.resource="${path.resolve(
+            __dirname,
+            "../../resources/mac"
+          )}"`,
+          "-jar",
+          "*.jar",
+          "--sync-dir",
+          `"${dir}"`,
+        ],
+        {
+          cwd: storj._wd,
+          env: expect.objectContaining({
+            PATH: `${storj._wd}:${storj._javaHome}/bin:${process.env.PATH}`,
+            LD_LIBRARY_PATH: `${storj._wd}:/lib:/usr/lib:${libPath}`,
           }),
           shell: true,
           windowsHide: true,

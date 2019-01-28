@@ -15,8 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {remote} from "electron";
 import {handleActions} from "redux-actions";
 import * as actionTypes from "../constants/action-types";
+
+const defaultFolder = () => {
+  if (process.env.DEFAULT_SYNC_FOLDER) {
+    return process.env.DEFAULT_SYNC_FOLDER;
+  }
+  return remote.getGlobal("process").env.DEFAULT_SYNC_FOLDER;
+};
 
 export const InitialState = {
   // current screen.
@@ -26,7 +34,7 @@ export const InitialState = {
   // true if the user chooses Sia.
   sia: false,
   // default sync folder: <home>/<app-name>
-  folder: process.env.DEFAULT_SYNC_FOLDER,
+  folder: defaultFolder(),
   // Storj account information.
   storjAccount: {
     email: "",

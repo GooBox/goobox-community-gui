@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ export default class Sia extends EventEmitter {
     this._cmd = "goobox-sync-sia";
     if (process.platform === "win32") {
       this._cmd += ".bat";
+    } else if (process.platform !== "darwin") {
+      this._cmd = `./${this._cmd}`;
     }
     this._javaHome = path.join(jre.driver(), "../../");
     this._state = Synchronizing;
@@ -175,6 +177,10 @@ export default class Sia extends EventEmitter {
       stderr.on("line", log.verbose);
 
       this.walletProc.on("error", err => {
+        if (!err) {
+          log.warn("[GUI main] wallet command returned an empty error");
+          return;
+        }
         log.error(`[GUI main] Failed to obtain the wallet information: ${err}`);
         this.walletProc = null;
         reject(
@@ -185,6 +191,7 @@ export default class Sia extends EventEmitter {
       toString(this.walletProc.stdout).then(res => {
         this.walletProc = null;
         const info = yaml.safeLoad(res);
+        log.debug(`[GUI main] wallet info: ${res}`);
         if (!info || !info["wallet address"]) {
           log.error(
             `[GUI main] Failed to obtain the wallet information: ${info}`

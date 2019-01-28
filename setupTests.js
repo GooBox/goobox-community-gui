@@ -19,6 +19,7 @@
 import {configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 
+process.env.DEFAULT_SYNC_FOLDER = "/tmp";
 configure({adapter: new Adapter()});
 
 // Disable console object.

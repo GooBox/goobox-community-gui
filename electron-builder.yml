@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017-2018 Junpei Kawamoto
+# Copyright (C) 2017-2019 Junpei Kawamoto
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ linux:
       to: "app/goobox-sync-storj"
     - from: "tmp/linux/goobox-sync-sia"
       to: "app/goobox-sync-sia"
+  artifactName: "${productName}-${version}-x86_64.${ext}"
 asar: false
 asarUnpack:
   - "node_modules/node-jre"
