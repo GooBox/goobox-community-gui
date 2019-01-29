@@ -24,6 +24,7 @@ import path from "path";
 import showInfoWindowAsync from "../../about-window";
 import * as actionTypes from "../../ipc/constants";
 import addListener from "../../ipc/receiver";
+import {open} from "../logviewer";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
@@ -97,42 +98,43 @@ export const installer = () => {
       "-i",
       "com.liferay.nativity.LiferayFinderSync",
     ]);
-
-    // Create the Application's main menu for macOS
-    const template = [
-      {
-        label: "Goobox",
-        submenu: [
-          {label: "About Goobox", click: showInfoWindowAsync},
-          {type: "separator"},
-          {
-            label: "Quit",
-            accelerator: "Command+Q",
-            click: () => {
-              mainWindow.close();
-            },
-          },
-        ],
-      },
-      {
-        label: "Edit",
-        submenu: [
-          {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
-          {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
-          {type: "separator"},
-          {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
-          {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
-          {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
-          {
-            label: "Select All",
-            accelerator: "CmdOrCtrl+A",
-            selector: "selectAll:",
-          },
-        ],
-      },
-    ];
-    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
   }
+
+  // Create the Application's main menu for macOS
+  const template = [
+    {
+      label: "Goobox",
+      submenu: [
+        {label: "About Goobox", click: showInfoWindowAsync},
+        {label: "Open Log File Viewer", click: () => open(mainWindow)},
+        {type: "separator"},
+        {
+          label: "Quit",
+          accelerator: "Command+Q",
+          click: () => {
+            mainWindow.close();
+          },
+        },
+      ],
+    },
+    {
+      label: "Edit",
+      submenu: [
+        {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
+        {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
+        {type: "separator"},
+        {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
+        {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
+        {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
+        {
+          label: "Select All",
+          accelerator: "CmdOrCtrl+A",
+          selector: "selectAll:",
+        },
+      ],
+    },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
 export default installer;

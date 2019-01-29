@@ -42,7 +42,7 @@ curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
 {
   "embeds": [{
     "title": "Development build of $TRAVIS_PULL_REQUEST_BRANCH",
-    "description": "Build [#$TRAVIS_BUILD_NUMBER]($TRAVIS_BUILD_WEB_URL) of $TRAVIS_REPO_SLUG@$TRAVIS_PULL_REQUEST_BRANCH",
+    "description": "Build [#$TRAVIS_BUILD_NUMBER]($TRAVIS_BUILD_WEB_URL) of $TRAVIS_REPO_SLUG@$TRAVIS_PULL_REQUEST_BRANCH: $LIST_URL",
     "url": "$LIST_URL",
     "color": "2664261"
   }]
