@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,7 @@
 
 import {push} from "connected-react-router";
 import log from "electron-log";
-import {delay} from "redux-saga";
-import {call, fork, put} from "redux-saga/effects";
+import {call, delay, fork, put} from "redux-saga/effects";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
@@ -41,8 +40,7 @@ export default function* requestSiaWallet(action) {
     log.debug(`[GUI render] Received the wallet information: ${info}`);
     yield put(actions.requestSiaWalletInfoSuccess(info));
     yield put(actions.setProgressValue(100));
-    // noinspection JSCheckFunctionSignatures
-    yield call(delay, 500);
+    yield delay(500);
 
     yield put(push(screens.SiaWallet));
     yield put(actions.setProgressValue(0));

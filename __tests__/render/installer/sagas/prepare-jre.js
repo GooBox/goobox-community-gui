@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
  */
 
 import {push} from "connected-react-router";
-import {delay} from "redux-saga";
-import {call, fork, put} from "redux-saga/effects";
+import {call, delay, fork, put} from "redux-saga/effects";
 import * as ipcActions from "../../../../src/ipc/actions";
 import sendAsync from "../../../../src/ipc/send";
 import * as actions from "../../../../src/render/installer/actions/index";
@@ -58,8 +57,7 @@ describe("prepareJRE", () => {
     // returns true which means a new JRE was installed.
     expect(saga.next(true).value).toEqual(put(actions.setProgressValue(100)));
     expect(inc.cancel).toHaveBeenCalled();
-    // noinspection JSCheckFunctionSignatures
-    expect(saga.next().value).toEqual(call(delay, 500));
+    expect(saga.next().value).toEqual(delay(500));
     expect(saga.next().value).toEqual(put(push(screens.ChooseCloudService)));
     expect(saga.next().value).toEqual(put(actions.setProgressValue(0)));
     expect(saga.next().done).toBeTruthy();

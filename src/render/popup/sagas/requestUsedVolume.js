@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,14 @@
  */
 
 import log from "electron-log";
-import {delay} from "redux-saga";
-import {call, put} from "redux-saga/effects";
+import {call, delay, put} from "redux-saga/effects";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
 import {setVolumeSize} from "../actions";
 
 export default function* requestUsedVolumeTimer() {
   while (true) {
-    // noinspection JSCheckFunctionSignatures
-    yield call(delay, 30000);
+    yield delay(30000);
     try {
       const volume = yield call(sendAsync, ipcActions.calculateUsedVolume());
       yield put(setVolumeSize(volume || 0));
