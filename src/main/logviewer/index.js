@@ -48,6 +48,7 @@ export const open = parent => {
     filePath = log.transports.file.findLogPath("Goobox");
   }
 
+  log.debug(`[GUI main] Loading log file ${filePath}`);
   mainWindow.loadFile(`${path.join(__dirname, "../logviewer.html")}`, {
     hash: filePath,
   });
