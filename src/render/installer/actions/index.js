@@ -29,15 +29,31 @@ export const storjLogin = createAction(actionTypes.StorjLogin);
 export const storjLoginSuccess = createAction(actionTypes.StorjLoginSuccess);
 export const storjLoginFailure = createAction(actionTypes.StorjLoginFailure);
 export const storjCreateAccount = createAction(actionTypes.StorjCreateAccount);
-export const storjCreateAccountSuccess = createAction(actionTypes.StorjCreateAccountSuccess);
-export const storjCreateAccountFailure = createAction(actionTypes.StorjCreateAccountFailure);
-export const storjGenerateMnemonic = createAction(actionTypes.StorjGenerateMnemonic);
-export const storjGenerateMnemonicSuccess = createAction(actionTypes.StorjGenerateMnemonicSuccess);
-export const storjGenerateMnemonicFailure = createAction(actionTypes.StorjGenerateMnemonicFailure);
+export const storjCreateAccountSuccess = createAction(
+  actionTypes.StorjCreateAccountSuccess
+);
+export const storjCreateAccountFailure = createAction(
+  actionTypes.StorjCreateAccountFailure
+);
+export const storjGenerateMnemonic = createAction(
+  actionTypes.StorjGenerateMnemonic
+);
+export const storjGenerateMnemonicSuccess = createAction(
+  actionTypes.StorjGenerateMnemonicSuccess
+);
+export const storjGenerateMnemonicFailure = createAction(
+  actionTypes.StorjGenerateMnemonicFailure
+);
 
-export const requestSiaWalletInfo = createAction(actionTypes.RequestSiaWalletInfo);
-export const requestSiaWalletInfoSuccess = createAction(actionTypes.RequestSiaWalletInfoSuccess);
-export const requestSiaWalletInfoFailure = createAction(actionTypes.RequestSiaWalletInfoFailure);
+export const requestSiaWalletInfo = createAction(
+  actionTypes.RequestSiaWalletInfo
+);
+export const requestSiaWalletInfoSuccess = createAction(
+  actionTypes.RequestSiaWalletInfoSuccess
+);
+export const requestSiaWalletInfoFailure = createAction(
+  actionTypes.RequestSiaWalletInfoFailure
+);
 
 export const setProgressValue = createAction(actionTypes.SetProgressValue);
 
@@ -49,4 +65,3 @@ export const processingEnd = createAction(actionTypes.ProcessingEnd);
 
 export const saveConfig = createAction(actionTypes.SaveConfig);
 export const stopSyncApps = createAction(actionTypes.StopSyncApps);
-

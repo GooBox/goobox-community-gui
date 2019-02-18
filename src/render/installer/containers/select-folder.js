@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../actions";
-import SelectFolder from "../components/select-folder";
+import SelectFolder from "../components/screens/select-folder";
 import * as screens from "../constants/screens";
+
+const nextScreen = main => {
+  if (main.storj) {
+    return screens.StorjLogin;
+  } else if (main.siaAccount.address) {
+    return screens.SiaWallet;
+  }
+  return screens.SiaPreparation;
+};
 
 export const mapStateToProps = state => ({
   storj: state.main.storj,
   sia: state.main.sia,
   folder: state.main.folder,
   mainState: state.main,
+  prev: screens.ChooseCloudService,
+  next: nextScreen(state.main),
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onClickBack: () => dispatch(actions.stopSyncApps()),
 
-  onClickBack: () => {
-    dispatch(actions.stopSyncApps());
-    dispatch(push(screens.ChooseCloudService));
-  },
-
-  onClickNext: (mainState) => {
-    if (mainState.storj) {
-      dispatch(push(screens.StorjLogin));
-    } else if (mainState.siaAccount.address) {
-      dispatch(push(screens.SiaWallet));
-    } else {
-      dispatch(push(screens.SiaPreparation));
+  onClickNext: mainState => {
+    if (!mainState.storj && !mainState.siaAccount.address) {
       dispatch(actions.requestSiaWalletInfo(mainState));
     }
   },
 
   onSelectFolder: folder => dispatch(actions.selectFolder(folder)),
-
 });
 
 export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -58,5 +58,8 @@ export const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   mainState: undefined,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SelectFolder);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(SelectFolder);

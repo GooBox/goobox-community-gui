@@ -20,20 +20,19 @@ import {execFile, spawnSync} from "child_process";
 jest.mock("child_process");
 
 describe("utils module for mac", () => {
-
   let originalPlatform;
   let utils;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "darwin"
+      value: "darwin",
     });
     utils = require("../../src/main/utils").default;
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
@@ -43,17 +42,14 @@ describe("utils module for mac", () => {
   });
 
   describe("openDirectory", () => {
-
     it("open a given directory with Finder", () => {
       const dir = "/tmp/some-dir";
       utils.openDirectory(dir);
       expect(spawnSync).toHaveBeenCalledWith("open", [dir]);
     });
-
   });
 
   describe("totalVolume", () => {
-
     it("calculate total volume of a given directory with du", async () => {
       const size = 12345;
       const dir = "/tmp/some-dir";
@@ -62,10 +58,11 @@ describe("utils module for mac", () => {
       });
 
       await expect(utils.totalVolume(dir)).resolves.toEqual(size / 1024 / 1024);
-      expect(execFile).toHaveBeenCalledWith("du", ["-s", "-k", dir], expect.any(Function));
+      expect(execFile).toHaveBeenCalledWith(
+        "du",
+        ["-s", "-k", dir],
+        expect.any(Function)
+      );
     });
-
   });
-
 });
-

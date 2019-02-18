@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 @import "~bootstrap/dist/css/bootstrap.css";
 @import "~react-awesome-popover/dest/react-awesome-popover.css";
+/*noinspection CssUnknownTarget*/
 @import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
 
 * {
@@ -34,75 +35,6 @@ html {
   overflow: hidden;
   text-align: left;
   color: #0c2543;
-}
-
-#app {
-  height: 600px;
-  width: 800px;
-}
-
-.sidebar {
-  height: 600px;
-  width: 188px;
-  background: linear-gradient(to bottom, #26AAE1, #0972BA);
-  box-shadow: 0 -3px 18px 0 rgba(0, 0, 0, 0.2);
-}
-
-.sidebar img {
-  height: 100px;
-  width: 100px;
-}
-
-/*
- * Normal preparation screen.
- */
-.full-screen {
-  height: 600px;
-  width: 800px;
-  background: linear-gradient(to bottom, #26AAE1, #0972BA);
-  color: white;
-  padding-top: 147px;
-  padding-bottom: 147px;
-  text-align: center;
-}
-
-.full-screen h1 {
-  color: white;
-  font-size: 28px;
-  font-weight: 300;
-  margin: 0;
-}
-
-.full-screen p {
-  color: white;
-  font-size: 18px;
-  font-weight: 300;
-}
-
-.meter {
-  display: block;
-  background-color: #e8eef4;
-  clear: both;
-  width: 550px;
-  height: 5px;
-}
-
-.meter > span {
-  display: block;
-  height: 100%;
-  background: #26aae1;
-}
-
-/*
- * White preparation screen.
- */
-.full-screen-white {
-  background: white;
-  color: #0972ba;
-}
-
-.full-screen-white span {
-  font-size: 22px;
 }
 
 main {
@@ -175,6 +107,76 @@ button:focus {
   outline: none;
 }
 
+#app {
+  height: 600px;
+  width: 800px;
+}
+
+.sidebar {
+  height: 600px;
+  width: 188px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  box-shadow: 0 -3px 18px 0 rgba(0, 0, 0, 0.2);
+}
+
+.sidebar img {
+  height: 100px;
+  width: 100px;
+}
+
+/*
+ * Normal preparation screen.
+ */
+.full-screen {
+  height: 600px;
+  width: 800px;
+  background: linear-gradient(to bottom, #26AAE1, #0972BA);
+  color: white;
+  padding-top: 147px;
+  padding-bottom: 147px;
+  text-align: center;
+}
+
+.full-screen h1 {
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0;
+}
+
+.full-screen p {
+  color: white;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.meter {
+  display: block;
+  background-color: #e8eef4;
+  clear: both;
+  width: 550px;
+  height: 5px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: #26aae1;
+}
+
+/*
+ * White preparation screen.
+ */
+.full-screen-white {
+  background: white;
+  color: #0972ba;
+}
+
+.full-screen-white span {
+  font-size: 22px;
+}
+
+
 .light {
   font-weight: 300;
 }
@@ -191,11 +193,11 @@ button:focus {
   text-align: center;
 }
 
-:-moz-placeholder { /* Firefox 18- */
+::-moz-placeholder { /* Firefox 19+ */
   text-align: center;
 }
 
-::-moz-placeholder { /* Firefox 19+ */
+:-moz-placeholder { /* Firefox 18- */
   text-align: center;
 }
 
@@ -234,9 +236,14 @@ textarea {
 
 .rap-popover-content {
   width: 20em;
-  border: solid 1px #dddddd;
+  background-color: white;
   padding: 1em;
   font-size: 14px;
-  background-color: white;
   box-shadow: 0 4px 16px 0 rgba(9, 28, 46, 0.3);
+}
+
+nav .btn {
+  width: 239px;
+  border-radius: 3px;
+  border: solid 1px #dddddd;
 }

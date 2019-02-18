@@ -23,10 +23,18 @@ export default async function sendAsync(action) {
   return new Promise((resolve, reject) => {
     ipcRenderer.once(action.type, (_, payload, error, meta) => {
       if (error) {
-        log.error(`[GUI render] Received an error response for the ${action.type} request: ${payload}`);
+        log.error(
+          `[GUI render] Received an error response for the ${
+            action.type
+          } request: ${payload}`
+        );
         reject(payload, meta);
       } else {
-        log.debug(`[GUI render] Received an successful response for the ${action.type} request: ${JSON.stringify(payload)}`);
+        log.debug(
+          `[GUI render] Received an successful response for the ${
+            action.type
+          } request: ${JSON.stringify(payload)}`
+        );
         resolve(payload, meta);
       }
     });

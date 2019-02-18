@@ -22,59 +22,59 @@ import readLine from "readline";
 let openDirectory, totalVolume;
 
 if (process.platform === "win32") {
-
-  openDirectory = (dir) => {
+  openDirectory = dir => {
     spawnSync("explorer.exe", [dir]);
   };
 
-  totalVolume = async dir => new Promise((resolve, reject) => {
+  totalVolume = async dir =>
+    new Promise((resolve, reject) => {
+      const script = path.normalize(
+        path.join(__dirname, "../../resources/du.ps1")
+      );
+      const proc = spawn(
+        "powershell",
+        ["-ExecutionPolicy", "RemoteSigned", "-File", script],
+        {
+          cwd: dir,
+          windowsHide: true,
+        }
+      );
 
-    const script = path.normalize(path.join(__dirname, "../../resources/du.ps1"));
-    const proc = spawn("powershell", ["-ExecutionPolicy", "RemoteSigned", "-File", script], {
-      cwd: dir,
-      windowsHide: true,
+      proc.on("error", err => {
+        reject(err);
+        proc.kill();
+      });
+
+      let count = 0;
+      readLine.createInterface({input: proc.stdout}).on("line", line => {
+        const value = Number.parseInt(line);
+        if (!Number.isNaN(value)) {
+          count += value;
+        }
+      });
+
+      proc.on("close", () => {
+        resolve(count / 1024 / 1024 / 1024);
+      });
     });
-
-    proc.on("error", (err) => {
-      reject(err);
-      proc.kill();
-    });
-
-    let count = 0;
-    readLine.createInterface({input: proc.stdout}).on("line", (line) => {
-      const value = Number.parseInt(line);
-      if (!Number.isNaN(value)) {
-        count += value;
-      }
-    });
-
-    proc.on("close", () => {
-      resolve(count / 1024 / 1024 / 1024);
-    });
-
-  });
-
 } else {
-
-  openDirectory = (dir) => {
+  openDirectory = dir => {
     spawnSync("open", [dir]);
   };
 
-  totalVolume = async dir => new Promise((resolve, reject) => {
-
-    execFile("du", ["-s", "-k", dir], (error, stdout) => {
-      if (error) {
-        reject(error);
-      }
-      const sp = stdout.split("\t");
-      if (!sp.length) {
-        reject("invalid response");
-      }
-      resolve(parseInt(sp[0]) / 1024 / 1024);
+  totalVolume = async dir =>
+    new Promise((resolve, reject) => {
+      execFile("du", ["-s", "-k", dir], (error, stdout) => {
+        if (error) {
+          reject(error);
+        }
+        const sp = stdout.split("\t");
+        if (!sp.length) {
+          reject("invalid response");
+        }
+        resolve(parseInt(sp[0]) / 1024 / 1024);
+      });
     });
-
-  });
-
 }
 
 export const utils = {

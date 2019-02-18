@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,34 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import {connect} from "react-redux";
 import * as actions from "../actions";
-import ServiceSelector from "../components/select-service";
-import * as screens from "../constants/screens";
+import ServiceSelector from "../components/screens/select-service";
 
-export const mapStateToProps = state => ({
-  processing: state.main.processing
+export const mapStateToProps = ({main: {processing}}) => ({
+  processing,
 });
 
 export const mapDispatchToProps = dispatch => ({
+  onSelectStorj: () => dispatch(actions.selectStorj()),
 
-  onSelectStorj: () => {
-    dispatch(actions.selectStorj());
-    dispatch(push(screens.StorjSelected));
-  },
+  onSelectSia: () => dispatch(actions.selectSia()),
 
-  onSelectSia: () => {
-    dispatch(actions.selectSia());
-    dispatch(push(screens.SiaSelected));
-  },
-
-  onSelectBoth: () => {
-    dispatch(actions.selectBoth());
-    dispatch(push(screens.StorjSelected));
-  }
-
+  onSelectBoth: () => dispatch(actions.selectBoth()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ServiceSelector);

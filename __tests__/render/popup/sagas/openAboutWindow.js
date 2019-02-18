@@ -20,13 +20,9 @@ import showInfoWindowAsync from "../../../../src/about-window";
 import openAboutWindow from "../../../../src/render/popup/sagas/openAboutWindow";
 
 describe("openAboutWindow", () => {
-
   it("forks showInfoWindowAsycs", () => {
     const iter = openAboutWindow();
     expect(iter.next().value).toEqual(fork(showInfoWindowAsync));
     expect(iter.next().done);
   });
-
 });
-
-

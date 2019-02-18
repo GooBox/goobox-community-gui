@@ -18,28 +18,36 @@
 import path from "path";
 
 describe("icons module in Windows 8+", () => {
-
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "win32"
+      value: "win32",
     });
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
   it("returns white icons", () => {
     const icons = require("../../src/main/icons").default;
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/win/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win/error.png"));
-    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/win/warn.png"));
+    expect(icons.getIdleIcon()).toEqual(
+      path.join(__dirname, "../../resources/win/idle.png")
+    );
+    expect(icons.getSyncIcon()).toEqual(
+      path.join(__dirname, "../../resources/win/sync.png")
+    );
+    expect(icons.getPausedIcon()).toEqual(
+      path.join(__dirname, "../../resources/win/paused.png")
+    );
+    expect(icons.getErrorIcon()).toEqual(
+      path.join(__dirname, "../../resources/win/error.png")
+    );
+    expect(icons.getWarnIcon()).toEqual(
+      path.join(__dirname, "../../resources/win/warn.png")
+    );
   });
-
 });

@@ -24,6 +24,7 @@ import path from "path";
 import showInfoWindowAsync from "../../about-window";
 import * as actionTypes from "../../ipc/constants";
 import addListener from "../../ipc/receiver";
+import {open} from "../logviewer";
 import {
   installerWindowAllClosedHandler,
   installJREHandler,
@@ -31,20 +32,26 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
-  storjLoginHandler
+  storjLoginHandler,
 } from "./handlers";
 
 const DefaultWidth = 800;
 const DefaultHeight = 600;
 
 export const installer = () => {
-
   if (!process.env.DEFAULT_SYNC_FOLDER) {
-    process.env.DEFAULT_SYNC_FOLDER = path.join(app.getPath("home"), app.getName());
+    process.env.DEFAULT_SYNC_FOLDER = path.join(
+      app.getPath("home"),
+      app.getName()
+    );
   }
 
   if (!fs.existsSync(process.env.DEFAULT_SYNC_FOLDER)) {
-    log.verbose(`[GUI main] Creating the default sync folder: ${process.env.DEFAULT_SYNC_FOLDER}`);
+    log.verbose(
+      `[GUI main] Creating the default sync folder: ${
+        process.env.DEFAULT_SYNC_FOLDER
+      }`
+    );
     fs.mkdirSync(process.env.DEFAULT_SYNC_FOLDER);
   }
 
@@ -61,6 +68,9 @@ export const installer = () => {
     fullscreenable: false,
     title: "Goobox installer",
     // skipTaskbar: true,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
   mainWindow.loadURL(`file://${path.join(__dirname, "../installer.html")}`);
 
@@ -71,30 +81,43 @@ export const installer = () => {
   // Register event handlers.
   app.on("window-all-closed", installerWindowAllClosedHandler(app));
   addListener(actionTypes.InstallJRE, installJREHandler());
-  addListener(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonicHandler());
+  addListener(
+    actionTypes.StorjGenerateMnemonic,
+    storjGenerateMnemonicHandler()
+  );
   addListener(actionTypes.StorjLogin, storjLoginHandler());
   addListener(actionTypes.StorjCreateAccount, storjCreateAccountHandler());
   addListener(actionTypes.SiaRequestWalletInfo, siaRequestWalletInfoHandler());
   addListener(actionTypes.StopSyncApps, stopSyncAppsHandler());
 
   if (process.platform === "darwin") {
-
     log.info("[GUI main] Checking FinderSync extension");
-    execFileSync("pluginkit", ["-e", "use", "-i", "com.liferay.nativity.LiferayFinderSync"]);
+    execFileSync("pluginkit", [
+      "-e",
+      "use",
+      "-i",
+      "com.liferay.nativity.LiferayFinderSync",
+    ]);
+  }
 
-    // Create the Application's main menu for macOS
-    const template = [{
+  // Create the Application's main menu for macOS
+  const template = [
+    {
       label: "Goobox",
       submenu: [
         {label: "About Goobox", click: showInfoWindowAsync},
+        {label: "Open Log File Viewer", click: () => open(mainWindow)},
         {type: "separator"},
         {
-          label: "Quit", accelerator: "Command+Q", click: () => {
+          label: "Quit",
+          accelerator: "Command+Q",
+          click: () => {
             mainWindow.close();
-          }
-        }
-      ]
-    }, {
+          },
+        },
+      ],
+    },
+    {
       label: "Edit",
       submenu: [
         {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
@@ -103,13 +126,15 @@ export const installer = () => {
         {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
         {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
         {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
-        {label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"}
-      ]
-    }];
-    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
-  }
-
+        {
+          label: "Select All",
+          accelerator: "CmdOrCtrl+A",
+          selector: "selectAll:",
+        },
+      ],
+    },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
 export default installer;

@@ -28,7 +28,6 @@ export const app = {
 };
 
 export class BrowserWindow {
-
   constructor(opts) {
     this.opts = opts;
   }
@@ -37,15 +36,11 @@ export class BrowserWindow {
     this.url = url;
   }
 
-  setResizable() {
-  }
+  setResizable() {}
 
-  toggleDevTools() {
-  }
+  toggleDevTools() {}
 
-  setSkipTaskbar() {
-  }
-
+  setSkipTaskbar() {}
 }
 
 export const ipcMain = {
@@ -64,24 +59,23 @@ export const remote = {
     getPath: jest.fn(),
   },
   dialog: {
-    showOpenDialog: jest.fn()
+    showOpenDialog: jest.fn(),
   },
-  getCurrentWindow: jest.fn(),
-  require: (module) => {
+  getCurrentWindow: jest.fn(() => "getCurrentWindow"),
+  require: module => {
     if (module === "electron-json-storage") {
       return electronJsonStorage;
     }
-
-  }
+  },
 };
 
 export const Menu = {
   buildFromTemplate: jest.fn(),
-  setApplicationMenu: jest.fn()
+  setApplicationMenu: jest.fn(),
 };
 
 export const dialog = {
-  showErrorBox: jest.fn()
+  showErrorBox: jest.fn(),
 };
 
 export const systemPreferences = {

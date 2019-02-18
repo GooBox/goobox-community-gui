@@ -19,7 +19,6 @@ import {ipcMain} from "electron";
 import addListener from "../../src/ipc/receiver";
 
 describe("addListener", () => {
-
   const action = {
     type: "sample action",
     payload: "sample payload",
@@ -37,8 +36,8 @@ describe("addListener", () => {
 
       const event = {
         sender: {
-          send: jest.fn()
-        }
+          send: jest.fn(),
+        },
       };
       await asyncCallback(event, action.payload, action.error, action.meta);
       expect(event.sender.send).toHaveBeenCalledWith(type, res);
@@ -58,8 +57,8 @@ describe("addListener", () => {
 
       const event = {
         sender: {
-          send: jest.fn()
-        }
+          send: jest.fn(),
+        },
       };
       await asyncCallback(event, action.payload, action.error, action.meta);
       expect(event.sender.send).toHaveBeenCalledWith(type, err, true);
@@ -71,6 +70,4 @@ describe("addListener", () => {
       throw err;
     });
   });
-
 });
-

@@ -34,7 +34,10 @@ import {
   updateStateHandler,
   willQuitHandler,
 } from "../../../src/main/popup/handlers";
-import popup, {DefaultHeight, DefaultWidth} from "../../../src/main/popup/index";
+import popup, {
+  DefaultHeight,
+  DefaultWidth,
+} from "../../../src/main/popup/index";
 import Sia from "../../../src/main/sia";
 import Storj from "../../../src/main/storj";
 import utils from "../../../src/main/utils";
@@ -49,25 +52,25 @@ jest.mock("../../../src/main/popup/handlers");
 jest.useFakeTimers();
 
 function getEventHandler(emitter, event) {
-  return emitter.on.mock.calls.filter(args => args[0] === event).map(args => args[1])[0];
+  return emitter.on.mock.calls
+    .filter(args => args[0] === event)
+    .map(args => args[1])[0];
 }
 
 describe("main process of the popup app", () => {
-
   const syncFolder = "/tmp";
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "darwin"
+      value: "darwin",
     });
-    desktop.register.mockImplementation(() => {
-    });
+    desktop.register.mockImplementation(() => {});
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
@@ -83,7 +86,10 @@ describe("main process of the popup app", () => {
   });
 
   it("create a menu bar instance", async () => {
-    const setSkipTaskBar = jest.spyOn(BrowserWindow.prototype, "setSkipTaskbar");
+    const setSkipTaskBar = jest.spyOn(
+      BrowserWindow.prototype,
+      "setSkipTaskbar"
+    );
     try {
       await popup();
       expect(menubar).toHaveBeenCalledWith({
@@ -116,21 +122,26 @@ describe("main process of the popup app", () => {
     themeChangedHandler.mockReset().mockReturnValue(cb);
 
     await popup();
-    expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith("AppleInterfaceThemeChangedNotification", cb);
+    expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith(
+      "AppleInterfaceThemeChangedNotification",
+      cb
+    );
     expect(themeChangedHandler).toHaveBeenCalledWith(menubarMock);
   });
 
   it("prepare desktop integration", async () => {
-    getConfig.mockReturnValue(Promise.resolve({
-      syncFolder,
-    }));
+    getConfig.mockReturnValue(
+      Promise.resolve({
+        syncFolder,
+      })
+    );
     await popup();
     expect(desktop.register).toHaveBeenCalledWith(syncFolder);
   });
 
   describe("system tray event handlers", () => {
-
-    const getTrayEventHandler = event => getEventHandler(menubarMock.tray, event);
+    const getTrayEventHandler = event =>
+      getEventHandler(menubarMock.tray, event);
     const menuItems = "sample menue items";
     const onClick = jest.fn();
 
@@ -143,7 +154,6 @@ describe("main process of the popup app", () => {
     });
 
     describe("click and double click event handler", () => {
-
       const syncFolder = "/tmp";
       let clickHandler, doubleClickhandler;
       beforeEach(() => {
@@ -151,9 +161,11 @@ describe("main process of the popup app", () => {
         doubleClickhandler = getTrayEventHandler("double-click");
         utils.openDirectory.mockReset();
         getConfig.mockReset();
-        getConfig.mockReturnValue(Promise.resolve({
-          syncFolder,
-        }));
+        getConfig.mockReturnValue(
+          Promise.resolve({
+            syncFolder,
+          })
+        );
       });
 
       it("sets a timer which invokes onClick after 250msec", () => {
@@ -176,11 +188,9 @@ describe("main process of the popup app", () => {
         jest.advanceTimersByTime(250);
         expect(onClick).not.toHaveBeenCalled();
       });
-
     });
 
     describe("right click event handler", () => {
-
       let handler;
       beforeEach(() => {
         menubarMock.tray.popUpContextMenu.mockReset();
@@ -189,24 +199,25 @@ describe("main process of the popup app", () => {
 
       it("shows a context menu which has exit", () => {
         handler();
-        expect(menubarMock.tray.popUpContextMenu).toHaveBeenCalledWith(menuItems);
-        expect(Menu.buildFromTemplate).toHaveBeenCalledWith([{
-          label: "exit",
-          click: expect.any(Function)
-        }]);
+        expect(menubarMock.tray.popUpContextMenu).toHaveBeenCalledWith(
+          menuItems
+        );
+        expect(Menu.buildFromTemplate).toHaveBeenCalledWith([
+          {
+            label: "exit",
+            click: expect.any(Function),
+          },
+        ]);
       });
 
       it("quits the app when the exit menu is clicked", async () => {
         await Menu.buildFromTemplate.mock.calls[0][0][0].click();
         expect(app.quit).toHaveBeenCalled();
       });
-
     });
-
   });
 
   describe("management of GUI event handlers", () => {
-
     beforeAll(() => {
       changeStateHandler.mockReturnValue("changeStateHandler");
       openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
@@ -219,26 +230,33 @@ describe("main process of the popup app", () => {
 
     it("registers changeStateHandler", async () => {
       await popup();
-      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.ChangeState, changeStateHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        ipcActionTypes.ChangeState,
+        changeStateHandler()
+      );
       expect(changeStateHandler).toHaveBeenCalledWith(menubarMock);
     });
 
     it("registers openSyncFolderHandler", async () => {
       await popup();
-      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        ipcActionTypes.OpenSyncFolder,
+        openSyncFolderHandler()
+      );
       expect(openSyncFolderHandler).toHaveBeenCalled();
     });
 
     it("registers calculateUsedVolumeHandler", async () => {
       await popup();
-      expect(addListener).toHaveBeenCalledWith(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
+      expect(addListener).toHaveBeenCalledWith(
+        ipcActionTypes.CalculateUsedVolume,
+        calculateUsedVolumeHandler()
+      );
       expect(calculateUsedVolumeHandler).toHaveBeenCalled();
     });
-
   });
 
   describe("sync-storj/sync-sia integration", () => {
-
     beforeAll(() => {
       updateStateHandler.mockReturnValue("updateStateHandler");
       siaFundEventHandler.mockReturnValue("siaFundEventHandler");
@@ -246,14 +264,14 @@ describe("main process of the popup app", () => {
 
     let storjStart, storjOn, siaStart, siaOn;
     beforeEach(() => {
-      storjStart = jest.spyOn(Storj.prototype, "start").mockImplementation(() => {
-      });
-      storjOn = jest.spyOn(Storj.prototype, "on").mockImplementation(() => {
-      });
-      siaStart = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
-      });
-      siaOn = jest.spyOn(Sia.prototype, "on").mockImplementation(() => {
-      });
+      storjStart = jest
+        .spyOn(Storj.prototype, "start")
+        .mockImplementation(() => {});
+      storjOn = jest.spyOn(Storj.prototype, "on").mockImplementation(() => {});
+      siaStart = jest
+        .spyOn(Sia.prototype, "start")
+        .mockImplementation(() => {});
+      siaOn = jest.spyOn(Sia.prototype, "on").mockImplementation(() => {});
       installJRE.mockReset();
       dialog.showErrorBox.mockReset();
     });
@@ -276,15 +294,20 @@ describe("main process of the popup app", () => {
 
       await popup();
       expect(installJRE).toHaveBeenCalled();
-      expect(dialog.showErrorBox).toHaveBeenCalledWith("Goobox", `Cannot start Goobox: ${err}`);
+      expect(dialog.showErrorBox).toHaveBeenCalledWith(
+        "Goobox",
+        `Cannot start Goobox: ${err}`
+      );
       expect(app.quit).toHaveBeenCalled();
     });
 
     it("starts the storj backend if storj conf is true but not running", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        storj: true,
-        syncFolder,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          storj: true,
+          syncFolder,
+        })
+      );
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -293,9 +316,11 @@ describe("main process of the popup app", () => {
     });
 
     it("registers updateStateHandler to the storj instance and listens syncState event", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        storj: true,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          storj: true,
+        })
+      );
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -305,9 +330,11 @@ describe("main process of the popup app", () => {
     });
 
     it("doesn't start the storj backend but registers updateStateHandler if it is already running", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        storj: true,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          storj: true,
+        })
+      );
       global.storj = {
         on: storjOn,
       };
@@ -321,24 +348,30 @@ describe("main process of the popup app", () => {
     });
 
     it("starts the sia backend if sia conf is true but not running", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        sia: true,
-        syncFolder
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          sia: true,
+          syncFolder,
+        })
+      );
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).toHaveBeenCalledWith(syncFolder);
       expect(app.quit).not.toHaveBeenCalled();
 
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getSyncIcon()
+      );
       expect(menubarMock.appState).toEqual(Synchronizing);
     });
 
     it("registers updateStateHandler to the sia instance and listens syncState event", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        sia: true,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          sia: true,
+        })
+      );
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -348,9 +381,11 @@ describe("main process of the popup app", () => {
     });
 
     it("registers siaFundEventHandler to the sia instance and listens walletInfo events", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        sia: true,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          sia: true,
+        })
+      );
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -360,9 +395,11 @@ describe("main process of the popup app", () => {
     });
 
     it("doesn't start the sia backend but registers updateStateHandler if it is already running", async () => {
-      getConfig.mockReturnValue(Promise.resolve({
-        sia: true,
-      }));
+      getConfig.mockReturnValue(
+        Promise.resolve({
+          sia: true,
+        })
+      );
       global.sia = {
         on: siaOn,
         syncState: Idle,
@@ -375,7 +412,9 @@ describe("main process of the popup app", () => {
       expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
 
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getIdleIcon()
+      );
       expect(menubarMock.appState).toEqual(Idle);
     });
 
@@ -384,7 +423,5 @@ describe("main process of the popup app", () => {
       await popup();
       expect(app.quit).toHaveBeenCalled();
     });
-
   });
-
 });

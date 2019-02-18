@@ -29,8 +29,7 @@ import utils from "../utils";
 
 export const installJREHandler = () => async () => installJRE();
 
-export const siaRequestWalletInfoHandler = () => async (payload) => {
-
+export const siaRequestWalletInfoHandler = () => async payload => {
   if (!global.sia) {
     global.sia = new Sia();
   }
@@ -42,17 +41,14 @@ export const siaRequestWalletInfoHandler = () => async (payload) => {
       address: res["wallet address"],
       seed: res["primary seed"],
     };
-
   } catch (error) {
     log.error(error);
     delete global.sia;
     throw error;
   }
-
 };
 
 export const stopSyncAppsHandler = () => async () => {
-
   if (global.storj) {
     await global.storj.close();
     delete global.storj;
@@ -61,11 +57,9 @@ export const stopSyncAppsHandler = () => async () => {
     await global.sia.close();
     delete global.sia;
   }
-
 };
 
-export const storjGenerateMnemonicHandler = () => async (payload) => {
-
+export const storjGenerateMnemonicHandler = () => async payload => {
   log.info("[GUI main] Generating a mnemonic code");
   if (global.storj && global.storj.proc) {
     await global.storj.close();
@@ -74,18 +68,15 @@ export const storjGenerateMnemonicHandler = () => async (payload) => {
   global.storj.start(payload.syncFolder, true);
 
   return global.storj.generateMnemonic();
-
 };
 
-export const storjLoginHandler = () => async (payload) => {
-
+export const storjLoginHandler = () => async payload => {
   log.info(`[GUI main] Logging in to Storj: ${payload.email}`);
   if (global.storj && global.storj.proc) {
     await global.storj.close();
   }
   global.storj = new Storj();
   global.storj.start(payload.syncFolder, true);
-
 
   try {
     await global.storj.checkMnemonic(payload.encryptionKey);
@@ -100,7 +91,11 @@ export const storjLoginHandler = () => async (payload) => {
   }
 
   try {
-    await global.storj.login(payload.email, payload.password, payload.encryptionKey);
+    await global.storj.login(
+      payload.email,
+      payload.password,
+      payload.encryptionKey
+    );
   } catch (err) {
     log.error(`[GUI main] Failed to log in to Storj: ${err}`);
     throw {
@@ -110,11 +105,9 @@ export const storjLoginHandler = () => async (payload) => {
       encryptionKey: false,
     };
   }
-
 };
 
-export const storjCreateAccountHandler = () => async (payload) => {
-
+export const storjCreateAccountHandler = () => async payload => {
   log.info(`[GUI main] Creating a new Storj account for ${payload.email}`);
   if (global.storj && global.storj.proc) {
     await global.storj.close();
@@ -122,11 +115,9 @@ export const storjCreateAccountHandler = () => async (payload) => {
   global.storj = new Storj();
   global.storj.start(payload.syncFolder, true);
   return global.storj.createAccount(payload.email, payload.password);
-
 };
 
-export const startSynchronizationHandler = () => async (payload) => {
-
+export const startSynchronizationHandler = () => async payload => {
   if (payload.newState !== "startSynchronization") {
     return;
   }
@@ -137,19 +128,15 @@ export const startSynchronizationHandler = () => async (payload) => {
     icon: path.join(__dirname, "../../resources/goobox.png"),
     sound: true,
     wait: true,
-    appID: AppID
+    appID: AppID,
   });
-
 };
 
 export const installerWindowAllClosedHandler = app => async () => {
-
   log.info("[GUI main] Loading the config file");
   try {
-
     const cfg = await getConfig();
     if (cfg && cfg.installed) {
-
       try {
         await desktop.register(cfg.syncFolder);
       } catch (err) {
@@ -164,11 +151,11 @@ export const installerWindowAllClosedHandler = app => async () => {
       utils.openDirectory(cfg.syncFolder);
 
       // if the installation process is finished.
-      log.info("[GUI main] Installation has been succeeded, now starting synchronization");
+      log.info(
+        "[GUI main] Installation has been succeeded, now starting synchronization"
+      );
       await popup();
-
     } else {
-
       // otherwise
       log.info("[GUI main] Installation has been canceled");
       if (global.storj) {
@@ -182,9 +169,7 @@ export const installerWindowAllClosedHandler = app => async () => {
         delete global.sia;
       }
       app.quit();
-
     }
-
   } catch (err) {
     log.error(`[GUI main] Failed to read/write the config: ${err}`);
     if (global.storj) {
@@ -195,5 +180,4 @@ export const installerWindowAllClosedHandler = app => async () => {
     }
     app.quit();
   }
-
 };

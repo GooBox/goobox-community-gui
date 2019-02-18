@@ -21,7 +21,7 @@ import Status from "../components/status";
 
 export const mapStateToProps = state => ({
   style: {
-    cursor: state.disabled ? "wait" : "auto"
+    cursor: state.disabled ? "wait" : "auto",
   },
   usedVolume: state.usedVolume,
   totalVolume: state.totalVolume,
@@ -29,7 +29,6 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-
   onChangeState: args => dispatch(actions.changeState(args)),
 
   onClickSyncFolder: () => dispatch(actions.openSyncFolder()),
@@ -39,7 +38,9 @@ export const mapDispatchToProps = dispatch => ({
   onClickSettings: () => dispatch(actions.openSettings()),
 
   onClickImportDrive: () => dispatch(actions.importDrive()),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Status);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Status);

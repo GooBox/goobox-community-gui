@@ -23,12 +23,13 @@ import * as actions from "../../../../src/render/popup/actions/index";
 import changeState from "../../../../src/render/popup/sagas/changeState";
 
 describe("changeState", () => {
-
   it("yields disable, changeStateAsync, restart, and enable actions if changeStateAsync returns Synchronizing", () => {
     const value = "some value";
     const saga = changeState(actions.changeState(value));
     expect(saga.next().value).toEqual(put(actions.disable()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.changeState(value)));
+    expect(saga.next().value).toEqual(
+      call(sendAsync, ipcActions.changeState(value))
+    );
     expect(saga.next(Synchronizing).value).toEqual(put(actions.restart()));
     expect(saga.next().value).toEqual(put(actions.enable()));
     expect(saga.next().done).toBeTruthy();
@@ -38,12 +39,13 @@ describe("changeState", () => {
     const value = "some value";
     const saga = changeState(actions.changeState(value));
     expect(saga.next().value).toEqual(put(actions.disable()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.changeState(value)));
+    expect(saga.next().value).toEqual(
+      call(sendAsync, ipcActions.changeState(value))
+    );
     expect(saga.next(Paused).value).toEqual(put(actions.pause()));
     expect(saga.next().value).toEqual(put(actions.enable()));
     expect(saga.next().done).toBeTruthy();
   });
 
   // TODO: Test throwing exceptions.
-
 });

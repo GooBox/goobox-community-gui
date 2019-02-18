@@ -21,13 +21,13 @@ import sendAsync from "../../../../src/ipc/send";
 import openSyncFolder from "../../../../src/render/popup/sagas/openSyncFolder";
 
 describe("openSyncFolder", () => {
-
   it("yields openSyncFolderAsync saga", () => {
     const saga = openSyncFolder();
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.openSyncFolder()));
+    expect(saga.next().value).toEqual(
+      call(sendAsync, ipcActions.openSyncFolder())
+    );
     expect(saga.next().done).toBeTruthy();
   });
 
   // TODO: Test throwing exceptions.
-
 });

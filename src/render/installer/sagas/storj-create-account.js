@@ -24,31 +24,35 @@ import * as actions from "../actions";
 import * as screens from "../constants/screens";
 
 export default function* storjCreateAccount(action) {
-
   const accountInfo = action.payload;
   yield put(actions.processingStart());
   try {
-    const encryptionKey = yield call(sendAsync, ipcActions.storjCreateAccount({
-      email: accountInfo.email,
-      password: accountInfo.password,
-      syncFolder: accountInfo.syncFolder,
-    }));
-    yield put(actions.storjCreateAccountSuccess({
-      ...accountInfo,
-      key: encryptionKey,
-      syncFolder: undefined,
-    }));
+    const encryptionKey = yield call(
+      sendAsync,
+      ipcActions.storjCreateAccount({
+        email: accountInfo.email,
+        password: accountInfo.password,
+        syncFolder: accountInfo.syncFolder,
+      })
+    );
+    yield put(
+      actions.storjCreateAccountSuccess({
+        ...accountInfo,
+        key: encryptionKey,
+        syncFolder: undefined,
+      })
+    );
     yield put(push(screens.StorjEncryptionKey));
-
   } catch (err) {
-    yield put(actions.storjCreateAccountFailure({
-      ...accountInfo,
-      emailWarn: true,
-      passwordWarn: true,
-      warnMsg: util.isString(err) ? err : null,
-      syncFolder: undefined,
-    }));
+    yield put(
+      actions.storjCreateAccountFailure({
+        ...accountInfo,
+        emailWarn: true,
+        passwordWarn: true,
+        warnMsg: util.isString(err) ? err : null,
+        syncFolder: undefined,
+      })
+    );
   }
   yield put(actions.processingEnd());
-
 }

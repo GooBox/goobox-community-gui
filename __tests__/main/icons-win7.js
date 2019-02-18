@@ -21,29 +21,37 @@ import path from "path";
 jest.mock("os");
 
 describe("icons module in Windows 7-", () => {
-
   let originalPlatform;
   beforeAll(() => {
     originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
-      value: "win32"
+      value: "win32",
     });
     os.release.mockReturnValue("5.0");
   });
 
   afterAll(() => {
     Object.defineProperty(process, "platform", {
-      value: originalPlatform
+      value: originalPlatform,
     });
   });
 
   it("returns white icons", () => {
     const icons = require("../../src/main/icons").default;
-    expect(icons.getIdleIcon()).toEqual(path.join(__dirname, "../../resources/win7/idle.png"));
-    expect(icons.getSyncIcon()).toEqual(path.join(__dirname, "../../resources/win7/sync.png"));
-    expect(icons.getPausedIcon()).toEqual(path.join(__dirname, "../../resources/win7/paused.png"));
-    expect(icons.getErrorIcon()).toEqual(path.join(__dirname, "../../resources/win7/error.png"));
-    expect(icons.getWarnIcon()).toEqual(path.join(__dirname, "../../resources/win7/warn.png"));
+    expect(icons.getIdleIcon()).toEqual(
+      path.join(__dirname, "../../resources/win7/idle.png")
+    );
+    expect(icons.getSyncIcon()).toEqual(
+      path.join(__dirname, "../../resources/win7/sync.png")
+    );
+    expect(icons.getPausedIcon()).toEqual(
+      path.join(__dirname, "../../resources/win7/paused.png")
+    );
+    expect(icons.getErrorIcon()).toEqual(
+      path.join(__dirname, "../../resources/win7/error.png")
+    );
+    expect(icons.getWarnIcon()).toEqual(
+      path.join(__dirname, "../../resources/win7/warn.png")
+    );
   });
-
 });

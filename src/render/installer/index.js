@@ -22,10 +22,7 @@ import {webFrame} from "electron";
 import ReactDOM from "react-dom";
 import initInstaller from "./main";
 
-library.add(
-  faCheckCircle, faClone,
-  faInfoCircle,
-);
+library.add(faCheckCircle, faClone, faInfoCircle);
 
 webFrame.setVisualZoomLevelLimits(1, 1);
 

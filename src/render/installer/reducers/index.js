@@ -15,8 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {remote} from "electron";
 import {handleActions} from "redux-actions";
 import * as actionTypes from "../constants/action-types";
+
+const defaultFolder = () => {
+  if (process.env.DEFAULT_SYNC_FOLDER) {
+    return process.env.DEFAULT_SYNC_FOLDER;
+  }
+  return remote.getGlobal("process").env.DEFAULT_SYNC_FOLDER;
+};
 
 export const InitialState = {
   // current screen.
@@ -26,7 +34,7 @@ export const InitialState = {
   // true if the user chooses Sia.
   sia: false,
   // default sync folder: <home>/<app-name>
-  folder: process.env.DEFAULT_SYNC_FOLDER,
+  folder: defaultFolder(),
   // Storj account information.
   storjAccount: {
     email: "",
@@ -50,86 +58,86 @@ export const InitialState = {
   errorMsg: null,
 };
 
-export default handleActions({
+export default handleActions(
+  {
+    [actionTypes.SelectFolder]: (state, action) => ({
+      ...state,
+      folder: action.payload,
+    }),
 
-  [actionTypes.SelectFolder]: (state, action) => ({
-    ...state,
-    folder: action.payload
-  }),
+    [actionTypes.SelectStorj]: state => ({
+      ...state,
+      storj: true,
+      sia: false,
+    }),
 
-  [actionTypes.SelectStorj]: state => ({
-    ...state,
-    storj: true,
-    sia: false,
-  }),
+    [actionTypes.SelectSia]: state => ({
+      ...state,
+      storj: false,
+      sia: true,
+    }),
 
-  [actionTypes.SelectSia]: state => ({
-    ...state,
-    storj: false,
-    sia: true,
-  }),
+    [actionTypes.SelectBoth]: state => ({
+      ...state,
+      storj: true,
+      sia: true,
+    }),
 
-  [actionTypes.SelectBoth]: state => ({
-    ...state,
-    storj: true,
-    sia: true,
-  }),
+    [actionTypes.SetProgressValue]: (state, action) => ({
+      ...state,
+      progress: action.payload,
+    }),
 
-  [actionTypes.SetProgressValue]: (state, action) => ({
-    ...state,
-    progress: action.payload,
-  }),
+    [actionTypes.StorjGenerateMnemonicSuccess]: (state, action) => {
+      const res = {...state};
+      res.storjAccount.key = action.payload;
+      return res;
+    },
 
-  [actionTypes.StorjGenerateMnemonicSuccess]: (state, action) => {
-    const res = {...state};
-    res.storjAccount.key = action.payload;
-    return res;
+    [actionTypes.StorjLoginSuccess]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjLoginFailure]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjCreateAccountSuccess]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.StorjCreateAccountFailure]: (state, action) => ({
+      ...state,
+      storjAccount: action.payload,
+    }),
+
+    [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
+      ...state,
+      siaAccount: action.payload,
+    }),
+
+    [actionTypes.RequestSiaWalletInfoFailure]: (state, action) => ({
+      ...state,
+      errorMsg: action.payload,
+    }),
+
+    [actionTypes.ProcessingStart]: state => ({
+      ...state,
+      processing: true,
+    }),
+
+    [actionTypes.ProcessingEnd]: state => ({
+      ...state,
+      processing: false,
+    }),
+
+    [actionTypes.PrepareJREFailure]: (state, action) => ({
+      ...state,
+      errorMsg: action.payload,
+    }),
   },
-
-  [actionTypes.StorjLoginSuccess]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjLoginFailure]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjCreateAccountSuccess]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.StorjCreateAccountFailure]: (state, action) => ({
-    ...state,
-    storjAccount: action.payload,
-  }),
-
-  [actionTypes.RequestSiaWalletInfoSuccess]: (state, action) => ({
-    ...state,
-    siaAccount: action.payload,
-  }),
-
-  [actionTypes.RequestSiaWalletInfoFailure]: (state, action) => ({
-    ...state,
-    errorMsg: action.payload
-  }),
-
-  [actionTypes.ProcessingStart]: state => ({
-    ...state,
-    processing: true,
-  }),
-
-  [actionTypes.ProcessingEnd]: state => ({
-    ...state,
-    processing: false,
-  }),
-
-  [actionTypes.PrepareJREFailure]: (state, action) => ({
-    ...state,
-    errorMsg: action.payload
-  }),
-}, InitialState);
-
-
+  InitialState
+);

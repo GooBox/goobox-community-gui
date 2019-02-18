@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,7 @@
 
 import {push} from "connected-react-router";
 import log from "electron-log";
-import {delay} from "redux-saga";
-import {call, fork, put} from "redux-saga/effects";
+import {call, delay, fork, put} from "redux-saga/effects";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
 import * as actions from "../actions";
@@ -26,7 +25,6 @@ import * as screens from "../constants/screens";
 import incrementProgress from "./increment-progress";
 
 export default function* prepareJRE() {
-
   const inc = yield fork(incrementProgress);
   try {
     log.debug("[GUI render] Requesting JRE installation");
@@ -35,8 +33,7 @@ export default function* prepareJRE() {
     if (installed) {
       log.debug("[GUI render] JRE installation succeeds");
       yield put(actions.setProgressValue(100));
-      // noinspection JSCheckFunctionSignatures
-      yield call(delay, 500);
+      yield delay(500);
     } else {
       log.debug("[GUI render] JRE installation is skipped");
     }
@@ -47,6 +44,4 @@ export default function* prepareJRE() {
     inc.cancel();
     yield put(actions.prepareJREFailure(err));
   }
-
 }
-

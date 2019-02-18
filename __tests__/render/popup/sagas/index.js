@@ -25,15 +25,19 @@ import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUs
 import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVolume";
 
 describe("rootSaga", () => {
-
   it("yields updateTotalVolume, requestUsedVolumeTimer, openSyncFolder, openAboutWindow, and changeState", () => {
     const saga = rootSaga();
     expect(saga.next().value).toEqual(fork(updateTotalVolume));
     expect(saga.next().value).toEqual(fork(requestUsedVolumeTimer));
-    expect(saga.next().value).toEqual(takeEvery(constants.OpenSyncFolder, openSyncFolder));
-    expect(saga.next().value).toEqual(takeEvery(constants.OpenAboutWindow, openAboutWindow));
-    expect(saga.next().value).toEqual(takeEvery(constants.ChangeState, changeState));
+    expect(saga.next().value).toEqual(
+      takeEvery(constants.OpenSyncFolder, openSyncFolder)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(constants.OpenAboutWindow, openAboutWindow)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(constants.ChangeState, changeState)
+    );
     expect(saga.next().done).toBeTruthy();
   });
-
 });

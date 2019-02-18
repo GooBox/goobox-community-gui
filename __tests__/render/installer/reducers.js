@@ -18,13 +18,13 @@
 import * as actions from "../../../src/render/installer/actions";
 
 describe("Initial state", () => {
-
   let InitialState;
   const oldFolder = process.env.DEFAULT_SYNC_FOLDER;
   const testFolder = "/tmp";
   beforeAll(() => {
     process.env.DEFAULT_SYNC_FOLDER = testFolder;
-    InitialState = require("../../../src/render/installer/reducers").InitialState;
+    InitialState = require("../../../src/render/installer/reducers")
+      .InitialState;
   });
 
   afterAll(() => {
@@ -47,17 +47,38 @@ describe("Initial state", () => {
   });
 
   it("has storj account information", () => {
-    expect(InitialState.storjAccount).toHaveProperty("email", expect.any(String));
-    expect(InitialState.storjAccount).toHaveProperty("password", expect.any(String));
+    expect(InitialState.storjAccount).toHaveProperty(
+      "email",
+      expect.any(String)
+    );
+    expect(InitialState.storjAccount).toHaveProperty(
+      "password",
+      expect.any(String)
+    );
     expect(InitialState.storjAccount).toHaveProperty("key", expect.any(String));
-    expect(InitialState.storjAccount).toHaveProperty("emailWarn", expect.any(Boolean));
-    expect(InitialState.storjAccount).toHaveProperty("passwordWarn", expect.any(Boolean));
-    expect(InitialState.storjAccount).toHaveProperty("keyWarn", expect.any(Boolean));
-    expect(InitialState.storjAccount).toHaveProperty("warnMsg", expect.any(String));
+    expect(InitialState.storjAccount).toHaveProperty(
+      "emailWarn",
+      expect.any(Boolean)
+    );
+    expect(InitialState.storjAccount).toHaveProperty(
+      "passwordWarn",
+      expect.any(Boolean)
+    );
+    expect(InitialState.storjAccount).toHaveProperty(
+      "keyWarn",
+      expect.any(Boolean)
+    );
+    expect(InitialState.storjAccount).toHaveProperty(
+      "warnMsg",
+      expect.any(String)
+    );
   });
 
   it("has sia account information", () => {
-    expect(InitialState.siaAccount).toHaveProperty("address", expect.any(String));
+    expect(InitialState.siaAccount).toHaveProperty(
+      "address",
+      expect.any(String)
+    );
     expect(InitialState.siaAccount).toHaveProperty("seed", expect.any(String));
   });
 
@@ -68,11 +89,9 @@ describe("Initial state", () => {
   it("has progress value", () => {
     expect(InitialState).toHaveProperty("progress", expect.any(Number));
   });
-
 });
 
 describe("reducer", () => {
-
   let reducer, state;
   beforeAll(() => {
     reducer = require("../../../src/render/installer/reducers").default;
@@ -128,7 +147,9 @@ describe("reducer", () => {
 
   it("sets storjAccount.key to the given encryption key if receives storjGenerateMnemonicSuccess action", () => {
     const encryptionKey = "sample key";
-    expect(reducer(state, actions.storjGenerateMnemonicSuccess(encryptionKey))).toHaveProperty("storjAccount.key", encryptionKey);
+    expect(
+      reducer(state, actions.storjGenerateMnemonicSuccess(encryptionKey))
+    ).toHaveProperty("storjAccount.key", encryptionKey);
   });
 
   it("updates storjAccount by StorjLoginSuccess action", () => {
@@ -199,8 +220,5 @@ describe("reducer", () => {
       ...state,
       errorMsg: error,
     });
-
   });
-
 });
-

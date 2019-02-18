@@ -19,17 +19,23 @@ import {ipcMain} from "electron";
 import log from "electron-log";
 
 export default function addListener(actionType, asyncCallback) {
-
   ipcMain.on(actionType, async (event, payload, error, meta) => {
-    log.debug(`[GUI main] Received a ${actionType} request: ${JSON.stringify(payload)}`);
+    log.debug(
+      `[GUI main] Received a ${actionType} request: ${JSON.stringify(payload)}`
+    );
     try {
       const res = await asyncCallback(payload, error, meta);
-      log.debug(`[GUI main] Sending a successful response for ${actionType} request: ${JSON.stringify(payload)}`);
+      log.debug(
+        `[GUI main] Sending a successful response for ${actionType} request: ${JSON.stringify(
+          payload
+        )}`
+      );
       event.sender.send(actionType, res);
     } catch (error) {
-      log.error(`[GUI main] Sending an error response for ${actionType} request: ${error}`);
+      log.error(
+        `[GUI main] Sending an error response for ${actionType} request: ${error}`
+      );
       event.sender.send(actionType, error, true);
     }
   });
-
 }

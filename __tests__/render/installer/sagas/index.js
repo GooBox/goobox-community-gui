@@ -28,19 +28,30 @@ import storjGenerateMnemonic from "../../../../src/render/installer/sagas/storj-
 import storjLogin from "../../../../src/render/installer/sagas/storj-login";
 
 describe("rootSaga", () => {
-
   it("yields all child sagas", () => {
     const saga = rootSaga();
     expect(saga.next().value).toEqual(fork(prepareJRE));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.StorjLogin, storjLogin));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.StorjCreateAccount, storjCreateAccount));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonic));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.RequestSiaWalletInfo, requestSiaWallet));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.SaveConfig, saveConfig));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.StopSyncApps, stopSyncApps));
-    expect(saga.next().value).toEqual(takeEvery(actionTypes.CloseWindow, closeWindow));
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.StorjLogin, storjLogin)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.StorjCreateAccount, storjCreateAccount)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.StorjGenerateMnemonic, storjGenerateMnemonic)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.RequestSiaWalletInfo, requestSiaWallet)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.SaveConfig, saveConfig)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.StopSyncApps, stopSyncApps)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(actionTypes.CloseWindow, closeWindow)
+    );
     expect(saga.next().done).toBeTruthy();
   });
-
 });
-

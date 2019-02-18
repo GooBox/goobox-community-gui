@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {push} from "connected-react-router";
 import * as actions from "../../../../src/render/installer/actions";
-import * as screens from "../../../../src/render/installer/constants/screens";
-import {mapDispatchToProps, mapStateToProps} from "../../../../src/render/installer/containers/select-service";
+import {
+  mapDispatchToProps,
+  mapStateToProps,
+} from "../../../../src/render/installer/containers/select-service";
 
 describe("mapStateToProps", () => {
-
   it("maps processing state", () => {
     const main = {
       processing: true,
@@ -30,11 +30,9 @@ describe("mapStateToProps", () => {
       processing: true,
     });
   });
-
 });
 
 describe("mapDispatchToProps", () => {
-
   const dispatch = jest.fn();
   beforeEach(() => {
     dispatch.mockReset();
@@ -43,20 +41,15 @@ describe("mapDispatchToProps", () => {
   it("maps onSelectStorj to selectStorj and push StorjSelected", () => {
     mapDispatchToProps(dispatch).onSelectStorj();
     expect(dispatch).toHaveBeenCalledWith(actions.selectStorj());
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjSelected));
   });
 
   it("maps onSelectSia to selectSia and push SiaSelected", () => {
     mapDispatchToProps(dispatch).onSelectSia();
     expect(dispatch).toHaveBeenCalledWith(actions.selectSia());
-    expect(dispatch).toHaveBeenCalledWith(push(screens.SiaSelected));
   });
 
   it("maps onSelectBoth to selectBoth and push StorjSelected", () => {
     mapDispatchToProps(dispatch).onSelectBoth();
     expect(dispatch).toHaveBeenCalledWith(actions.selectBoth());
-    expect(dispatch).toHaveBeenCalledWith(push(screens.StorjSelected));
   });
-
 });
-

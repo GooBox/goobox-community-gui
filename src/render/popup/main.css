@@ -25,47 +25,6 @@
   font-weight: 300;
 }
 
-*:hover {
-  cursor: default;
-}
-
-a {
-  color: white;
-  text-decoration: none;
-}
-
-a:hover {
-  cursor: pointer;
-}
-
-a *:hover {
-  cursor: pointer;
-}
-
-a:active {
-  position: relative;
-  transform: scale(0.95);
-}
-
-button {
-  text-decoration: none !important;
-}
-
-button *:hover {
-  cursor: pointer;
-}
-
-button:active {
-  position: relative;
-  transform: scale(0.95);
-}
-
-#app {
-  background-color: #fbfbfd;
-  width: 360px;
-  height: 340px;
-}
-
 nav {
   height: 50px;
   background: linear-gradient(to bottom, #26AAE1, #0972BA);
@@ -105,6 +64,47 @@ footer * {
 section i {
   color: #26aae1;
   font-size: 29px;
+}
+
+*:hover {
+  cursor: default;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+a *:hover {
+  cursor: pointer;
+}
+
+a:active {
+  position: relative;
+  transform: scale(0.95);
+}
+
+button {
+  text-decoration: none !important;
+}
+
+button *:hover {
+  cursor: pointer;
+}
+
+button:active {
+  position: relative;
+  transform: scale(0.95);
+}
+
+#app {
+  background-color: #fbfbfd;
+  width: 360px;
+  height: 340px;
 }
 
 .pause-sync-btn {

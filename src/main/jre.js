@@ -22,11 +22,8 @@ import jre from "node-jre";
 import path from "path";
 
 export async function installJRE() {
-
   return Promise.race([
-
     new Promise((resolve, reject) => {
-
       log.verbose(`[GUI main] JRE path: ${jre.jreDir()}`);
       let shouldInstall = false;
       try {
@@ -39,10 +36,15 @@ export async function installJRE() {
       }
 
       if (shouldInstall) {
-
-        log.info("[GUI main] JRE is not found and starts installation of a JRE");
-        jre.install((err) => {
-          log.info(`[GUI main] JRE installation has been finished ${err ? `with an error: ${err}` : ""}`);
+        log.info(
+          "[GUI main] JRE is not found and starts installation of a JRE"
+        );
+        jre.install(err => {
+          log.info(
+            `[GUI main] JRE installation has been finished ${
+              err ? `with an error: ${err}` : ""
+            }`
+          );
           // noinspection SpellCheckingInspection
           if (err && err !== "Smoketest failed.") {
             log.error("[GUI main] JRE installation failed and cleaning up");
@@ -52,17 +54,15 @@ export async function installJRE() {
             resolve(true);
           }
         });
-
       } else {
         resolve(false);
       }
-
     }),
 
-    new Promise((_, reject) => setTimeout(() => reject("JRE installation timed out"), 60 * 60 * 1000))
-
+    new Promise((_, reject) =>
+      setTimeout(() => reject("JRE installation timed out"), 60 * 60 * 1000)
+    ),
   ]);
-
 }
 
 export default installJRE;

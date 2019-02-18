@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 import {app} from "electron";
 import {getConfig} from "../../../src/main/config";
 import * as desktop from "../../../src/main/desktop";
@@ -27,7 +26,7 @@ import {
   stopSyncAppsHandler,
   storjCreateAccountHandler,
   storjGenerateMnemonicHandler,
-  storjLoginHandler
+  storjLoginHandler,
 } from "../../../src/main/installer/handlers";
 import {installJRE} from "../../../src/main/jre";
 import popup from "../../../src/main/popup";
@@ -43,7 +42,6 @@ jest.mock("../../../src/main/popup");
 jest.mock("../../../src/main/desktop");
 
 describe("handlers for the installer", () => {
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -54,7 +52,6 @@ describe("handlers for the installer", () => {
   });
 
   describe("installJRE handler", () => {
-
     let handler;
     beforeEach(() => {
       handler = installJREHandler();
@@ -73,11 +70,9 @@ describe("handlers for the installer", () => {
       await expect(handler()).rejects.toEqual(err);
       expect(installJRE).toHaveBeenCalledWith();
     });
-
   });
 
   describe("siaRequestWalletInfo handler", () => {
-
     const address = "0x01234567890";
     const seed = "hello world";
     const dir = "/tmp";
@@ -88,8 +83,7 @@ describe("handlers for the installer", () => {
         "wallet address": address,
         "primary seed": seed,
       });
-      start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {
-      });
+      start = jest.spyOn(Sia.prototype, "start").mockImplementation(() => {});
       once = jest.spyOn(Sia.prototype, "once");
     });
 
@@ -133,11 +127,9 @@ describe("handlers for the installer", () => {
       await expect(handler({syncFolder: dir})).rejects.toEqual(error);
       expect(start).not.toHaveBeenCalled();
     });
-
   });
 
   describe("stopSyncApps handler", () => {
-
     let handler;
     beforeEach(() => {
       handler = stopSyncAppsHandler();
@@ -146,7 +138,7 @@ describe("handlers for the installer", () => {
     it("calls storj.close and deletes global.storj if exists", async () => {
       const close = jest.fn();
       global.storj = {
-        close
+        close,
       };
       await expect(handler());
       expect(close).toHaveBeenCalled();
@@ -156,17 +148,15 @@ describe("handlers for the installer", () => {
     it("calls sia.close and deletes global.sia if exists", async () => {
       const close = jest.fn();
       global.sia = {
-        close
+        close,
       };
       await expect(handler());
       expect(close).toHaveBeenCalled();
       expect(global.sia).not.toBeDefined();
     });
-
   });
 
   describe("storjGenerateMnemonic handler", () => {
-
     const encryptionKey = "sample mnemonic";
     const dir = "/tmp";
     const payload = {
@@ -181,7 +171,9 @@ describe("handlers for the installer", () => {
           global.storj.proc = "a dummy storj instance";
         }
       });
-      generateMnemonic = jest.spyOn(Storj.prototype, "generateMnemonic").mockResolvedValue(encryptionKey);
+      generateMnemonic = jest
+        .spyOn(Storj.prototype, "generateMnemonic")
+        .mockResolvedValue(encryptionKey);
     });
 
     afterEach(() => {
@@ -221,11 +213,9 @@ describe("handlers for the installer", () => {
       await expect(handler(payload)).rejects.toEqual(err);
       expect(generateMnemonic).toHaveBeenCalledTimes(1);
     });
-
   });
 
   describe("storjLogin handler", () => {
-
     const email = "abc@example.com";
     const password = "password";
     const key = "xxx xxx xxx";
@@ -245,7 +235,9 @@ describe("handlers for the installer", () => {
           global.storj.proc = "a dummy storj instance";
         }
       });
-      checkMnemonic = jest.spyOn(Storj.prototype, "checkMnemonic").mockResolvedValue(null);
+      checkMnemonic = jest
+        .spyOn(Storj.prototype, "checkMnemonic")
+        .mockResolvedValue(null);
       login = jest.spyOn(Storj.prototype, "login").mockResolvedValue(null);
     });
 
@@ -309,11 +301,9 @@ describe("handlers for the installer", () => {
       expect(checkMnemonic).toHaveBeenCalledWith(key);
       expect(login).toHaveBeenCalledWith(email, password, key);
     });
-
   });
 
   describe("storjCreateAccount handler", () => {
-
     const email = "abc@example.com";
     const password = "password";
     const key = "xxx xxx xxx";
@@ -326,7 +316,9 @@ describe("handlers for the installer", () => {
           global.storj.proc = "a dummy storj instance";
         }
       });
-      createAccount = jest.spyOn(Storj.prototype, "createAccount").mockReturnValue(Promise.resolve(key));
+      createAccount = jest
+        .spyOn(Storj.prototype, "createAccount")
+        .mockReturnValue(Promise.resolve(key));
     });
 
     afterEach(() => {
@@ -336,11 +328,13 @@ describe("handlers for the installer", () => {
 
     it("starts Storj instance with reset option, calls createAccount method, and returns a key", async () => {
       expect(global.storj).not.toBeDefined();
-      await expect(handler({
-        email,
-        password,
-        syncFolder,
-      })).resolves.toEqual(key);
+      await expect(
+        handler({
+          email,
+          password,
+          syncFolder,
+        })
+      ).resolves.toEqual(key);
       expect(global.storj).toBeDefined();
       expect(start).toHaveBeenCalledWith(syncFolder, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
@@ -352,11 +346,13 @@ describe("handlers for the installer", () => {
       global.storj.proc = {};
       global.storj.close = close;
 
-      await expect(handler({
-        email,
-        password,
-        syncFolder,
-      })).resolves.toEqual(key);
+      await expect(
+        handler({
+          email,
+          password,
+          syncFolder,
+        })
+      ).resolves.toEqual(key);
       expect(close).toHaveBeenCalled();
       expect(global.storj).toBeDefined();
       expect(start).toHaveBeenCalledWith(syncFolder, true);
@@ -367,19 +363,19 @@ describe("handlers for the installer", () => {
       const err = new Error("expected error");
       createAccount.mockRejectedValue(err);
 
-      await expect(handler({
-        email,
-        password,
-        syncFolder,
-      })).rejects.toEqual(err);
+      await expect(
+        handler({
+          email,
+          password,
+          syncFolder,
+        })
+      ).rejects.toEqual(err);
       expect(start).toHaveBeenCalledWith(syncFolder, true);
       expect(createAccount).toHaveBeenCalledWith(email, password);
     });
-
   });
 
   describe("installerWindowAllClosedHandler", () => {
-
     beforeAll(() => {
       desktop.register.mockResolvedValue(null);
       popup.mockResolvedValue(null);
@@ -400,7 +396,6 @@ describe("handlers for the installer", () => {
     });
 
     it("starts the core app when all windows are closed after the installation has been finished", async () => {
-
       getConfig.mockResolvedValue({
         installed: true,
       });
@@ -409,7 +404,6 @@ describe("handlers for the installer", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(popup).toHaveBeenCalled();
       expect(app.quit).not.toHaveBeenCalled();
-
     });
 
     it("registers startSynchronizationHandler when the user chooses sia", async () => {
@@ -422,8 +416,13 @@ describe("handlers for the installer", () => {
       };
 
       await onWindowAllClosed();
-      expect(global.sia.once).toHaveBeenCalledWith("syncState", expect.any(Function));
-      expect(global.sia.once.mock.calls[0][1].toString()).toEqual(startSynchronizationHandler().toString());
+      expect(global.sia.once).toHaveBeenCalledWith(
+        "syncState",
+        expect.any(Function)
+      );
+      expect(global.sia.once.mock.calls[0][1].toString()).toEqual(
+        startSynchronizationHandler().toString()
+      );
     });
 
     it("opens the sync folder", async () => {
@@ -448,7 +447,6 @@ describe("handlers for the installer", () => {
 
     // TODO: it shows some message to make sure users want to quit the installer.
     it("doesn't start the core app when all windows are closed before the installation is finished", async () => {
-
       getConfig.mockResolvedValue({
         installed: false,
       });
@@ -457,16 +455,15 @@ describe("handlers for the installer", () => {
       expect(getConfig).toHaveBeenCalled();
       expect(popup).not.toHaveBeenCalled();
       expect(app.quit).toHaveBeenCalled();
-
     });
 
     it("closes the sync storj app if running in spite of the installation is canceled", async () => {
       const close = jest.fn().mockResolvedValue(null);
       global.storj = {
-        close
+        close,
       };
       getConfig.mockResolvedValue({
-        installed: false
+        installed: false,
       });
 
       await onWindowAllClosed();
@@ -478,10 +475,10 @@ describe("handlers for the installer", () => {
     it("closes the sync sia app if running in spite of the installation is canceled", async () => {
       const close = jest.fn().mockResolvedValue(null);
       global.sia = {
-        close
+        close,
       };
       getConfig.mockResolvedValue({
-        installed: false
+        installed: false,
       });
 
       await onWindowAllClosed();
@@ -489,7 +486,5 @@ describe("handlers for the installer", () => {
       expect(close).toHaveBeenCalled();
       expect(app.quit).toHaveBeenCalled();
     });
-
   });
-
 });

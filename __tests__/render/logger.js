@@ -21,7 +21,6 @@ import {createLogger as _createLogger} from "redux-logger";
 jest.mock("redux-logger");
 
 describe("logger", () => {
-
   let env;
   beforeAll(() => {
     env = process.env.NODE_ENV;
@@ -36,7 +35,6 @@ describe("logger", () => {
   });
 
   describe("development", () => {
-
     beforeAll(() => {
       process.env.NODE_ENV = "development";
     });
@@ -46,11 +44,9 @@ describe("logger", () => {
       createLogger();
       expect(_createLogger).toHaveBeenCalledWith();
     });
-
   });
 
   describe("production", () => {
-
     beforeAll(() => {
       process.env.NODE_ENV = "production";
     });
@@ -67,11 +63,9 @@ describe("logger", () => {
             action: false,
             nextState: false,
             error: false,
-          }
-        }
+          },
+        },
       });
     });
-
   });
-
 });

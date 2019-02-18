@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {delay} from "redux-saga";
-import {call, put} from "redux-saga/effects";
+import {delay, put} from "redux-saga/effects";
 import * as actions from "../actions";
 
 export default function* incrementProgress() {
-
   let current = 0;
   while (true) {
-    // noinspection JSCheckFunctionSignatures
-    yield call(delay, 500);
+    yield delay(500);
     yield put(actions.setProgressValue(++current < 95 ? current : 95));
   }
-
 }

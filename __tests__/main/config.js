@@ -20,9 +20,7 @@ import {ConfigFile} from "../../src/constants";
 import {getConfig, saveConfig} from "../../src/main/config";
 
 describe("config module", () => {
-
   describe("getConfig function", () => {
-
     beforeEach(() => {
       storage.get.mockClear();
     });
@@ -34,7 +32,10 @@ describe("config module", () => {
       });
 
       await expect(getConfig()).resolves.toEqual(cfg);
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+      expect(storage.get).toHaveBeenCalledWith(
+        ConfigFile,
+        expect.any(Function)
+      );
     });
 
     it("throws an error if failed to get the config object", async () => {
@@ -44,13 +45,14 @@ describe("config module", () => {
       });
 
       await expect(getConfig()).rejects.toEqual(err);
-      expect(storage.get).toHaveBeenCalledWith(ConfigFile, expect.any(Function));
+      expect(storage.get).toHaveBeenCalledWith(
+        ConfigFile,
+        expect.any(Function)
+      );
     });
-
   });
 
   describe("saveConfig function", () => {
-
     const cfg = "expected config object";
     beforeEach(() => {
       storage.set.mockClear();
@@ -58,7 +60,11 @@ describe("config module", () => {
 
     it("sets a given object", async () => {
       await saveConfig(cfg);
-      expect(storage.set).toHaveBeenCalledWith(ConfigFile, cfg, expect.any(Function));
+      expect(storage.set).toHaveBeenCalledWith(
+        ConfigFile,
+        cfg,
+        expect.any(Function)
+      );
     });
 
     it("throws an error if failed to save the config object", async () => {
@@ -68,7 +74,5 @@ describe("config module", () => {
       });
       await expect(saveConfig(cfg)).rejects.toEqual(err);
     });
-
   });
-
 });

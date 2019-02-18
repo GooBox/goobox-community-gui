@@ -21,7 +21,6 @@ import {notifyAsync} from "../../src/main/notify";
 jest.mock("node-notifier");
 
 describe("notify module", () => {
-
   const result = "test result";
   const option = "test option";
 
@@ -48,6 +47,4 @@ describe("notify module", () => {
     err = new Error("test error");
     await expect(notifyAsync(option)).rejects.toEqual(err);
   });
-
-
 });

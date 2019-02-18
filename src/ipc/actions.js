@@ -20,10 +20,16 @@ import * as actionTypes from "./constants";
 
 export const changeState = createAction(actionTypes.ChangeState);
 export const openSyncFolder = createAction(actionTypes.OpenSyncFolder);
-export const calculateUsedVolume = createAction(actionTypes.CalculateUsedVolume);
+export const calculateUsedVolume = createAction(
+  actionTypes.CalculateUsedVolume
+);
 export const installJRE = createAction(actionTypes.InstallJRE);
-export const storjGenerateMnemonic = createAction(actionTypes.StorjGenerateMnemonic);
+export const storjGenerateMnemonic = createAction(
+  actionTypes.StorjGenerateMnemonic
+);
 export const storjLogin = createAction(actionTypes.StorjLogin);
 export const storjCreateAccount = createAction(actionTypes.StorjCreateAccount);
-export const siaRequestWalletInfo = createAction(actionTypes.SiaRequestWalletInfo);
+export const siaRequestWalletInfo = createAction(
+  actionTypes.SiaRequestWalletInfo
+);
 export const stopSyncApps = createAction(actionTypes.StopSyncApps);

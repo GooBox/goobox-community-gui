@@ -22,7 +22,6 @@ import icon from "../src/assets/goobox.svg";
 jest.mock("about-window");
 
 describe("showInfoWindowAsync function", () => {
-
   const on = jest.fn();
   beforeAll(() => {
     openAboutWindow.mockReturnValue({
@@ -54,10 +53,8 @@ describe("showInfoWindowAsync function", () => {
         resizable: false,
         fullscreenable: false,
         minimizable: false,
-        maximizable: false
-      }
+        maximizable: false,
+      },
     });
-
   });
-
 });

@@ -1,0 +1,11 @@
+{
+  "linters":{
+    "*.{js,jsx}": [
+      "eslint --fix", "git add"
+    ],
+    "*.css": [
+      "stylelint --fix", "git add"
+    ]
+  },
+  "ignore": ["**/lib/*.js"]
+}

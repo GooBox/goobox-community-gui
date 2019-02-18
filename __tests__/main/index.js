@@ -30,7 +30,6 @@ jest.mock("../../src/main/installer");
 jest.mock("../../src/main/popup");
 
 describe("main", () => {
-
   let oldArgs;
   beforeAll(() => {
     popup.mockReturnValue(Promise.resolve());
@@ -55,9 +54,11 @@ describe("main", () => {
   });
 
   it("starts the installer when it hasn't been finished yet", async () => {
-    getConfig.mockReturnValue(Promise.resolve({
-      installed: false
-    }));
+    getConfig.mockReturnValue(
+      Promise.resolve({
+        installed: false,
+      })
+    );
     await main();
     expect(installer).toHaveBeenCalled();
     expect(popup).not.toHaveBeenCalled();
@@ -65,9 +66,11 @@ describe("main", () => {
   });
 
   it("starts the core when the installer already has been finished", async () => {
-    getConfig.mockReturnValue(Promise.resolve({
-      installed: true
-    }));
+    getConfig.mockReturnValue(
+      Promise.resolve({
+        installed: true,
+      })
+    );
     await main();
     expect(popup).toHaveBeenCalled();
     expect(installer).not.toHaveBeenCalled();
@@ -125,5 +128,4 @@ describe("main", () => {
     expect(jre.setJreDir).toHaveBeenLastCalledWith(path.join(userData, "jre"));
     expect(app.getPath).toHaveBeenCalledWith("userData");
   });
-
 });

@@ -17,36 +17,26 @@
 
 /*eslint no-console: 0*/
 import jre from "node-jre";
-import rmDir from "rmdir";
+import rimraf from "rimraf";
 
 jest.unmock("node-jre");
 jest.setTimeout(9 * 60 * 1000);
 
 describe("JRE installation test on Windows", () => {
-
   if (process.platform === "win32") {
-
-    it("installs JRE", (callback) => {
-      rmDir(jre.jreDir(), (err) => {
-
+    it("installs JRE", callback => {
+      rimraf(jre.jreDir(), err => {
         console.log(`Deleting JRE directory: ${err || "ok"}`);
         expect(err).toBeNull();
 
-        jre.install((err) => {
+        jre.install(err => {
           console.log(`Installing JRE: ${err || "ok"}`);
           expect(err === null || err === "Smoketest failed.").toBeTruthy();
           callback();
         });
-
       });
-
     });
-
   } else {
-
-    it("runs a dummy test on other platforms", () => {
-    });
-
+    it("runs a dummy test on other platforms", () => {});
   }
-
 });

@@ -44,7 +44,6 @@ export const DefaultWidth = 360;
 export const DefaultHeight = 340;
 
 export const popup = async () => {
-
   let width = DefaultWidth;
   if (process.env.DEV_TOOLS) {
     width *= 2;
@@ -63,7 +62,9 @@ export const popup = async () => {
   mb.window.setSkipTaskbar(true);
   mb.app.on("window-all-closed", app.quit);
   mb.app.on("will-quit", willQuitHandler(mb.app));
-  mb.app.on("quit", (_, code) => log.info(`[GUI main] Goobox is closed: status code = ${code}`));
+  mb.app.on("quit", (_, code) =>
+    log.info(`[GUI main] Goobox is closed: status code = ${code}`)
+  );
   mb.appState = Synchronizing;
 
   // Allow running only one instance.
@@ -80,10 +81,12 @@ export const popup = async () => {
     mb.window.toggleDevTools();
   }
 
-  const ctxMenu = Menu.buildFromTemplate([{
-    label: "exit",
-    click: app.quit,
-  }]);
+  const ctxMenu = Menu.buildFromTemplate([
+    {
+      label: "exit",
+      click: app.quit,
+    },
+  ]);
 
   const onClick = mb.tray.listeners("click")[0];
   let visible = false;
@@ -129,8 +132,13 @@ export const popup = async () => {
   log.debug("[GUI main] Register calculateUsedVolumeHandler");
   addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
   if (systemPreferences.subscribeNotification) {
-    log.debug("[GUI main] Register AppleInterfaceThemeChangedNotification event handler");
-    systemPreferences.subscribeNotification("AppleInterfaceThemeChangedNotification", themeChangedHandler(mb));
+    log.debug(
+      "[GUI main] Register AppleInterfaceThemeChangedNotification event handler"
+    );
+    systemPreferences.subscribeNotification(
+      "AppleInterfaceThemeChangedNotification",
+      themeChangedHandler(mb)
+    );
   }
 
   // Start back ends.
@@ -164,16 +172,18 @@ export const popup = async () => {
       log.debug("[GUI main] Register siaFundEventHandler");
       global.sia.on("walletInfo", siaFundEventHandler());
 
-      mb.tray.setImage(global.sia.syncState === Synchronizing ? icons.getSyncIcon() : icons.getIdleIcon());
+      mb.tray.setImage(
+        global.sia.syncState === Synchronizing
+          ? icons.getSyncIcon()
+          : icons.getIdleIcon()
+      );
       mb.appState = global.sia.syncState;
     }
-
   } catch (err) {
     log.error(`[GUI main] Failed to start synchronization ${err}`);
     dialog.showErrorBox("Goobox", `Cannot start Goobox: ${err}`);
     app.quit();
   }
-
 };
 
 export default popup;

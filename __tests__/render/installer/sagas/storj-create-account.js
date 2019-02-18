@@ -24,7 +24,6 @@ import * as screens from "../../../../src/render/installer/constants/screens";
 import storjCreateAccount from "../../../../src/render/installer/sagas/storj-create-account";
 
 describe("storjCreateAccount", () => {
-
   const action = {
     payload: {
       email: "test@example.com",
@@ -34,24 +33,33 @@ describe("storjCreateAccount", () => {
       passwordWarn: false,
       keyWarn: false,
       warnMsg: "",
-      syncFolder: "/tmp"
-    }
+      syncFolder: "/tmp",
+    },
   };
 
   it("calls sendAsync with storjCreateAccount action and puts storjCreateAccountSuccess if the call successes", () => {
     const encryptionKey = "yyy yyy yyy yyy";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
-      email: action.payload.email,
-      password: action.payload.password,
-      syncFolder: action.payload.syncFolder,
-    })));
-    expect(saga.next(encryptionKey).value).toEqual(put(actions.storjCreateAccountSuccess({
-      ...action.payload,
-      key: encryptionKey,
-      syncFolder: undefined,
-    })));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjCreateAccount({
+          email: action.payload.email,
+          password: action.payload.password,
+          syncFolder: action.payload.syncFolder,
+        })
+      )
+    );
+    expect(saga.next(encryptionKey).value).toEqual(
+      put(
+        actions.storjCreateAccountSuccess({
+          ...action.payload,
+          key: encryptionKey,
+          syncFolder: undefined,
+        })
+      )
+    );
     expect(saga.next().value).toEqual(put(push(screens.StorjEncryptionKey)));
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();
@@ -61,20 +69,28 @@ describe("storjCreateAccount", () => {
     const err = "expected error";
     const saga = storjCreateAccount(action);
     expect(saga.next().value).toEqual(put(actions.processingStart()));
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjCreateAccount({
-      email: action.payload.email,
-      password: action.payload.password,
-      syncFolder: action.payload.syncFolder,
-    })));
-    expect(saga.throw(err).value).toEqual(put(actions.storjCreateAccountFailure({
-      ...action.payload,
-      emailWarn: true,
-      passwordWarn: true,
-      warnMsg: err,
-      syncFolder: undefined
-    })));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjCreateAccount({
+          email: action.payload.email,
+          password: action.payload.password,
+          syncFolder: action.payload.syncFolder,
+        })
+      )
+    );
+    expect(saga.throw(err).value).toEqual(
+      put(
+        actions.storjCreateAccountFailure({
+          ...action.payload,
+          emailWarn: true,
+          passwordWarn: true,
+          warnMsg: err,
+          syncFolder: undefined,
+        })
+      )
+    );
     expect(saga.next().value).toEqual(put(actions.processingEnd()));
     expect(saga.next().done).toBeTruthy();
   });
-
 });

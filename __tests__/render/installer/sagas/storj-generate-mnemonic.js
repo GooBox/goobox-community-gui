@@ -22,22 +22,27 @@ import * as actions from "../../../../src/render/installer/actions";
 import {storjGenerateMnemonic} from "../../../../src/render/installer/sagas/storj-generate-mnemonic";
 
 describe("storjGenerateMnemonic", () => {
-
   const dir = "/tmp";
   const action = {
     payload: {
       folder: dir,
-    }
+    },
   };
   const encryptionKey = "yyy yyy yyy yyy";
 
   it("yields sendAsync saga with storjGenerateMnemonic action", () => {
     const saga = storjGenerateMnemonic(action);
-    expect(saga.next().value).toEqual(call(sendAsync, ipcActions.storjGenerateMnemonic({
-      syncFolder: dir,
-    })));
-    expect(saga.next(encryptionKey).value).toEqual(put(actions.storjGenerateMnemonicSuccess(encryptionKey)));
+    expect(saga.next().value).toEqual(
+      call(
+        sendAsync,
+        ipcActions.storjGenerateMnemonic({
+          syncFolder: dir,
+        })
+      )
+    );
+    expect(saga.next(encryptionKey).value).toEqual(
+      put(actions.storjGenerateMnemonicSuccess(encryptionKey))
+    );
     expect(saga.next().done).toBeTruthy();
   });
-
 });

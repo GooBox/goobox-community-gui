@@ -1,4 +1,4 @@
-osx_image: xcode9.3
+osx_image: xcode10.1
 dist: trusty
 sudo: false
 language: node_js
@@ -11,26 +11,32 @@ env:
     - ELECTRON_CACHE=$HOME/Library/Caches/electron
     - ELECTRON_BUILDER_CACHE=$HOME/Library/Caches/electron-builder
     - secure: tkInSF4UT6PO8SydezSNcaMYhGygtN9q/pTV+jprrGeJ1LAZJrhuytwdlopCl9/BAcOBDATOh02PX5Oa8pZAl84ARhOTLbKYdGycXtW65PGXsGzx4ORJ4fVAp2N684NNNPFxVqHrkG6DKjKhDoeHILysVJN2ZTfzYI6wCaFsW9Jzelc5xzz3/ELzUM9TjUTLW5rlIW9awtkonlKA3LBiWDZBPke7ch9VrhDyV9V8EStJPFnq6lqSLz1sNzf1bbz8x3cYVH5YhKhkbutugTMedsWJ+kp1HAVn0Gz52Wg11D32d91ym9HuvQuQoTbIge+HLj5uky6+CbNp0GIK0adOZdBAXITLrk1TilNHEz74XwLWWfYcLGV06qFgzXhHIxDR/qx5SNsBLLVefdbpw1JzGmp0cIre9ahUbfm4GrmZODW2JzHHBd8w+QEzxrpYZaFeXoqN3qvX7mmK3tN1sI1Ylm8A16AjpECoDZoFQb6ikVdV9McjtlJ6QwFZUqg0IKQIxB+OEnQ8dl1vFP37jjx1nNLh9qYmUCw7Gug0o2CQ7hFgmgqCh1ik36e6GfDowhgRdsPkCI8yKB/hBT8f6z2kuVFQQ7f3Dz3vHCeKntEtdNnUR1AwqrMIWr8dye/wSbgsLtCKlQPXDQkWUrFKvHWvo7bguWYIClvyEVr+D1XmLvQ=
-before_install:
-  - brew update
+cache:
+  directories:
+    - node_modules
+    - "$HOME/Library/Caches/electron"
+    - "$HOME/Library/Caches/electron-builder"
+    - "$HOME/.npm/_prebuilds"
 script:
-  - yarn run test:coverage
+  - yarn test:coverage
   - yarn run check
-  - yarn run build
+  - yarn build
   - '[ "$TRAVIS_PULL_REQUEST" = "false" ] || ./bin/pr'
+before_cache:
+  - rm -rf $HOME/Library/Caches/electron-builder/wine
 after_success:
-  - yarn run coveralls
+  - yarn coveralls
 before_deploy:
-  - yarn run build:production
-  - yarn run dist
+  - yarn build:production
+  - yarn dist
 deploy:
   provider: releases
   api_key:
     secure: NW1GGTAdJQpjlWnRvIXVNWm7bsEb33l+inZu4HpG7oKse73YSE6pr8/p0aDO2DHhq1YpTh8eQ2ulGBk3dhFWNS39dlTEdhN7tRLnZlBmxJe2fwlMVBkeLDlPWFWDVPHP/dZ8IAfaOZ98ehphlM8FYjqkRaVse+dFyOGqC3qfVgaj/4RnJns/wmQtnOapKgMd89GYghnhPsaVec2kT9zO7uu80GpzXG1lIVW0mwFBqdKBlqKynm7K4VdRaze0mwFvLnJWdHc8XRwYZoWUxGsUzuJBw1Hie8FzDTLdTs3SbDJJ4IIRHcU0eYdN+CLWBXfCsgJOReifgWbIHQ48AEn5E5zNN9UbRuUf8ghGtArS6KPymnKAyzj6gT0If3QAeVQtjeRrWhzt8naL9GjrgWv2kLkwDKZNiuoip8eKkfJktBs1vsZi6RUa89lgp9Eb/fWbG0g6KpAn6fZcyZDlch0j5RUUAogc3OItBpilu9PK1CyKs25HhDKpUYuDEWauFQAZeulf+puMUfk+OGQI7I0+hlxN0KdK3A2oixevNn+l6UFil3vPoxBIo89TmLEYLXdQ3PvI7XqpEfpsIP9SOq4psOuOqZ24JqhDo9NIlgFOQjFCX0ul9M4ToGvKMT2OiJQR01W19NceJd/ZTVM1mRlzGtaMPVehKrU9+G14bJ6c9XU=
   skip_cleanup: true
   file:
-    - dist/Goobox-0.2.3-setup_x64.exe
-    - dist/Goobox-0.2.3.dmg
+    - dist/Goobox-0.3.0-setup_x64.exe
+    - dist/Goobox-0.3.0.dmg
   on:
     tags: true
     repo: GooBox/goobox-community-gui

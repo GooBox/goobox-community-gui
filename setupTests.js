@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,16 @@
 
 import {configure} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+// noinspection ES6CheckImport
+import fetch from "jest-fetch-mock";
 
+process.env.DEFAULT_SYNC_FOLDER = "/tmp";
 configure({adapter: new Adapter()});
 
+global.fetch = fetch;
+
 // Disable console object.
-console.error = (message) => {
+console.error = message => {
   if (/(Failed prop type)/.test(message)) {
     throw new Error(message);
   }

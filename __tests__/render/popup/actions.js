@@ -19,7 +19,6 @@ import * as actions from "../../../src/render/popup/actions";
 import * as constants from "../../../src/render/popup/constants";
 
 describe("actions of popup module", () => {
-
   it("provides change state action", () => {
     const state = "sample state";
     expect(actions.changeState(state)).toEqual({
@@ -30,13 +29,13 @@ describe("actions of popup module", () => {
 
   it("provides pause action", () => {
     expect(actions.pause()).toEqual({
-      type: constants.Pause
+      type: constants.Pause,
     });
   });
 
   it("provides restart action", () => {
     expect(actions.restart()).toEqual({
-      type: constants.Restart
+      type: constants.Restart,
     });
   });
 
@@ -56,7 +55,7 @@ describe("actions of popup module", () => {
 
   it("provides open about window action", () => {
     expect(actions.openAboutWindow()).toEqual({
-      type: constants.OpenAboutWindow
+      type: constants.OpenAboutWindow,
     });
   });
 
@@ -91,5 +90,4 @@ describe("actions of popup module", () => {
       type: constants.ImportDrive,
     });
   });
-
 });

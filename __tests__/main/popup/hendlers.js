@@ -40,7 +40,6 @@ jest.mock("../../../src/main/utils");
 jest.mock("../../../src/main/notify");
 
 describe("handlers for the popup ", () => {
-
   beforeAll(() => {
     notifyAsync.mockResolvedValue(undefined);
   });
@@ -55,9 +54,7 @@ describe("handlers for the popup ", () => {
   });
 
   describe("handlers for the core app", () => {
-
     describe("changeStateHandler", () => {
-
       const dir = "/tmp";
       let handler;
       beforeEach(() => {
@@ -72,13 +69,17 @@ describe("handlers for the popup ", () => {
 
       it("sets the idle icon when the state is Synchronizing", async () => {
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
-        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+          icons.getSyncIcon()
+        );
         expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the paused icon when the state is Paused", async () => {
         await expect(handler(Paused)).resolves.toEqual(Paused);
-        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+          icons.getPausedIcon()
+        );
         expect(menubarMock.appState).toEqual(Paused);
       });
 
@@ -86,8 +87,8 @@ describe("handlers for the popup ", () => {
         const storj = {
           start: jest.fn(),
           stdout: {
-            on: jest.fn()
-          }
+            on: jest.fn(),
+          },
         };
         global.storj = storj;
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
@@ -100,7 +101,7 @@ describe("handlers for the popup ", () => {
           close: jest.fn(),
           stdout: {
             removeListener: jest.fn(),
-          }
+          },
         };
         global.storj = storj;
         await expect(handler(Paused)).resolves.toEqual(Paused);
@@ -112,8 +113,8 @@ describe("handlers for the popup ", () => {
         const sia = {
           start: jest.fn(),
           stdout: {
-            on: jest.fn()
-          }
+            on: jest.fn(),
+          },
         };
         global.sia = sia;
         await expect(handler(Synchronizing)).resolves.toEqual(Synchronizing);
@@ -126,18 +127,16 @@ describe("handlers for the popup ", () => {
           close: jest.fn(),
           stdout: {
             removeListener: jest.fn(),
-          }
+          },
         };
         global.sia = sia;
         await expect(handler(Paused)).resolves.toEqual(Paused);
         expect(global.sia).toBe(sia);
         expect(global.sia.close).toHaveBeenCalled();
       });
-
     });
 
     describe("openSyncFolderHandler", () => {
-
       let handler;
       beforeEach(() => {
         handler = openSyncFolderHandler();
@@ -154,11 +153,9 @@ describe("handlers for the popup ", () => {
         expect(getConfig).toHaveBeenCalled();
         expect(utils.openDirectory).toHaveBeenCalledWith(syncFolder);
       });
-
     });
 
     describe("usedVolumeHandler", () => {
-
       let handler;
       beforeEach(() => {
         handler = calculateUsedVolumeHandler();
@@ -178,11 +175,9 @@ describe("handlers for the popup ", () => {
         expect(getConfig).toHaveBeenCalled();
         expect(utils.totalVolume).toHaveBeenCalledWith(syncFolder);
       });
-
     });
 
     describe("core app will quit handler", () => {
-
       let handler;
       const event = {
         preventDefault: jest.fn(),
@@ -224,7 +219,7 @@ describe("handlers for the popup ", () => {
 
       it("prevents default when storj is running, closes the process, and exists", async () => {
         global.storj = {
-          close: jest.fn().mockResolvedValue(null)
+          close: jest.fn().mockResolvedValue(null),
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -234,7 +229,7 @@ describe("handlers for the popup ", () => {
 
       it("prevents default when sia is running, closes the process, and exists", async () => {
         global.sia = {
-          close: jest.fn().mockResolvedValue(null)
+          close: jest.fn().mockResolvedValue(null),
         };
         await handler(event);
         expect(event.preventDefault).toHaveBeenCalled();
@@ -242,13 +237,10 @@ describe("handlers for the popup ", () => {
         expect(app.exit).toHaveBeenCalled();
       });
     });
-
   });
 
   describe("handlers for sync-storj/sync-sia apps", () => {
-
     describe("updateStateHandler", () => {
-
       let handler;
       beforeEach(async () => {
         menubarMock.appState = null;
@@ -257,17 +249,22 @@ describe("handlers for the popup ", () => {
       });
 
       it("sets the synchronizing icon when receiving a synchronizing event", async () => {
-        await expect(handler({newState: Synchronizing})).resolves.not.toBeDefined();
-        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+        await expect(
+          handler({newState: Synchronizing})
+        ).resolves.not.toBeDefined();
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+          icons.getSyncIcon()
+        );
         expect(menubarMock.appState).toEqual(Synchronizing);
       });
 
       it("sets the idle icon when receiving an idle event", async () => {
         await expect(handler({newState: Idle})).resolves.not.toBeDefined();
-        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+        expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+          icons.getIdleIcon()
+        );
         expect(menubarMock.appState).toEqual(Idle);
       });
-
     });
 
     // describe("startSynchronizationHandler", () => {
@@ -297,74 +294,80 @@ describe("handlers for the popup ", () => {
     // });
 
     describe("siaFundEventHandler", () => {
-
       let handler;
       beforeEach(() => {
         handler = siaFundEventHandler();
       });
 
       it("notifies the user that his/her current balance is 0", async () => {
-        await expect(handler({eventType: "NoFunds"})).resolves.not.toBeDefined();
+        await expect(
+          handler({eventType: "NoFunds"})
+        ).resolves.not.toBeDefined();
         expect(notifyAsync).toHaveBeenCalledWith({
           title: "Goobox",
           message: "Your wallet doesn't have sia coins",
           icon: path.join(__dirname, "../../../src/resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: AppID
+          appID: AppID,
         });
       });
 
       it("notifies the user that his/her funds are insufficient", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "InsufficientFunds", message})).resolves.not.toBeDefined();
+        await expect(
+          handler({eventType: "InsufficientFunds", message})
+        ).resolves.not.toBeDefined();
         expect(notifyAsync).toHaveBeenCalledWith({
           title: "Goobox",
           message,
           icon: path.join(__dirname, "../../../src/resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: AppID
+          appID: AppID,
         });
       });
 
       it("notifies the user that a fund allocation has been succeeded", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "Allocated", message})).resolves.not.toBeDefined();
+        await expect(
+          handler({eventType: "Allocated", message})
+        ).resolves.not.toBeDefined();
         expect(notifyAsync).toHaveBeenCalledWith({
           title: "Goobox",
           message,
           icon: path.join(__dirname, "../../../src/resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: AppID
+          appID: AppID,
         });
       });
 
       it("notifies the user when an error occurs", async () => {
         const message = "sample message";
-        await expect(handler({eventType: "Error", message})).resolves.not.toBeDefined();
+        await expect(
+          handler({eventType: "Error", message})
+        ).resolves.not.toBeDefined();
         expect(notifyAsync).toHaveBeenCalledWith({
           title: "Goobox",
           message,
           icon: path.join(__dirname, "../../../src/resources/goobox.png"),
           sound: true,
           wait: true,
-          appID: AppID
+          appID: AppID,
         });
       });
 
       it("does nothing for other events", async () => {
-        await expect(handler({eventType: "AnotherEvent"})).resolves.not.toBeDefined();
+        await expect(
+          handler({eventType: "AnotherEvent"})
+        ).resolves.not.toBeDefined();
         expect(notifyAsync).not.toHaveBeenCalled();
       });
-
     });
-
   });
 
   describe("AppleInterfaceThemeChangedNotification event handler (themeChangedHandler)", () => {
-
     let handler;
     beforeEach(() => {
       menubarMock.appState = null;
@@ -375,26 +378,32 @@ describe("handlers for the popup ", () => {
     it("sets idle icon if appState is Idle", async () => {
       menubarMock.appState = Idle;
       await expect(handler()).resolves.not.toBeDefined();
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getIdleIcon()
+      );
     });
 
     it("sets synchronizing icon if appState is Synchronizing", async () => {
       menubarMock.appState = Synchronizing;
       await expect(handler()).resolves.not.toBeDefined();
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getSyncIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getSyncIcon()
+      );
     });
 
     it("sets paused icon if appState is Paused", async () => {
       menubarMock.appState = Paused;
       await expect(handler()).resolves.not.toBeDefined();
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getPausedIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getPausedIcon()
+      );
     });
 
     it("sets idle icon if appState isn't defined", async () => {
       await expect(handler()).resolves.not.toBeDefined();
-      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
+      expect(menubarMock.tray.setImage).toHaveBeenCalledWith(
+        icons.getIdleIcon()
+      );
     });
-
   });
-
 });

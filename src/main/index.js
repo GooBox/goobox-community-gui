@@ -25,11 +25,16 @@ import installer from "./installer";
 import popup from "./popup";
 
 export const main = async () => {
-
   const program = new Command();
   program
-    .option("--installer", "Run the installer even if the installation has been succeeded")
-    .option("--dev-tools", "Enable developer tools (not available in production builds)")
+    .option(
+      "--installer",
+      "Run the installer even if the installation has been succeeded"
+    )
+    .option(
+      "--dev-tools",
+      "Enable developer tools (not available in production builds)"
+    )
     .option("--storj", "Overwrite the configuration file and start with Storj")
     .option("--sia", "Overwrite the configuration file and start with Sia")
     .parse(["", "", ...process.argv]);
@@ -49,18 +54,18 @@ export const main = async () => {
       // By default, log files are stored in %USERPROFILE%\AppData\Roaming\<app name>\log.log on Windows.
       // To fix https://github.com/GooBox/goobox-community-gui/issues/123,
       // the following code modifies the directory where the log files are stored.
-      log.transports.file.file = path.join(log.transports.file.findLogPath("Goobox"), "../logs/log.log");
+      log.transports.file.file = path.join(
+        log.transports.file.findLogPath("Goobox"),
+        "../logs/log.log"
+      );
     }
   }
 
   jre.setJreDir(path.join(app.getPath("userData"), "jre"));
 
   if (program.installer) {
-
     installer();
-
   } else {
-
     let cfg = null;
     try {
       cfg = await getConfig();
@@ -84,21 +89,18 @@ export const main = async () => {
       await saveConfig({
         ...cfg,
         storj: false,
-        sia: true
+        sia: true,
       });
     }
     await popup();
-
   }
-
 };
 
 export default main;
 
-app.on("ready", () => main().catch((err) => {
-  log.error(`[GUI main] ${err}`);
-  app.quit();
-}));
-
-
-
+app.on("ready", () =>
+  main().catch(err => {
+    log.error(`[GUI main] ${err}`);
+    app.quit();
+  })
+);
