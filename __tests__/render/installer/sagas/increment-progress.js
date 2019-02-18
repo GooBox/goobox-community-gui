@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {delay} from "redux-saga";
-import {call, put} from "redux-saga/effects";
+import {delay, put} from "redux-saga/effects";
 import * as actions from "../../../../src/render/installer/actions/index";
 import incrementProgress from "../../../../src/render/installer/sagas/increment-progress";
 
 describe("incrementProgress", () => {
-  it("yields calling delay with 500msec and putting set new progress value action", () => {
+  it("yields calling delay with 500 msec and putting set new progress value action", () => {
     const saga = incrementProgress();
-    // noinspection JSCheckFunctionSignatures
-    expect(saga.next().value).toEqual(call(delay, 500));
+    expect(saga.next().value).toEqual(delay(500));
     expect(saga.next().value).toEqual(
       put(actions.setProgressValue(expect.any(Number)))
     );
-    // noinspection JSCheckFunctionSignatures
-    expect(saga.next().value).toEqual(call(delay, 500));
+    expect(saga.next().value).toEqual(delay(500));
   });
 });
