@@ -23,8 +23,15 @@ import path from "path";
 import {getConfig, saveConfig} from "./config";
 import installer from "./installer";
 import popup from "./popup";
+import {checkForUpdatesAndNotify} from "./updater";
 
 export const main = async () => {
+  try {
+    await checkForUpdatesAndNotify();
+  } catch (err) {
+    log.error(`[GUI main] ${err}`);
+  }
+
   const program = new Command();
   program
     .option(

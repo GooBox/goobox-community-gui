@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 
 import {app} from "electron";
+import * as opn from "opn";
 import {getConfig} from "../../../src/main/config";
 import * as desktop from "../../../src/main/desktop";
 import {
@@ -32,9 +33,9 @@ import {installJRE} from "../../../src/main/jre";
 import popup from "../../../src/main/popup";
 import Sia from "../../../src/main/sia";
 import Storj from "../../../src/main/storj";
-import utils from "../../../src/main/utils";
 
 jest.mock("electron");
+jest.mock("opn", () => jest.fn().mockResolvedValue(null));
 jest.mock("../../../src/main/jre");
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/main/utils");
@@ -59,14 +60,14 @@ describe("handlers for the installer", () => {
 
     it("installs JRE and returns the if the installation succeeds", async () => {
       const res = true;
-      installJRE.mockResolvedValue(res);
+      installJRE.mockResolvedValueOnce(res);
       await expect(handler()).resolves.toEqual(res);
       expect(installJRE).toHaveBeenCalledWith();
     });
 
     it("installs JRE and returns a rejected promise with an error messages if the installation fails", async () => {
       const err = new Error("expected error");
-      installJRE.mockRejectedValue(err);
+      installJRE.mockRejectedValueOnce(err);
       await expect(handler()).rejects.toEqual(err);
       expect(installJRE).toHaveBeenCalledWith();
     });
@@ -77,8 +78,7 @@ describe("handlers for the installer", () => {
     const seed = "hello world";
     const dir = "/tmp";
     let handler, wallet, start, once;
-    beforeEach(() => {
-      handler = siaRequestWalletInfoHandler();
+    beforeAll(() => {
       wallet = jest.spyOn(Sia.prototype, "wallet").mockResolvedValue({
         "wallet address": address,
         "primary seed": seed,
@@ -87,10 +87,17 @@ describe("handlers for the installer", () => {
       once = jest.spyOn(Sia.prototype, "once");
     });
 
-    afterEach(() => {
+    afterAll(() => {
       wallet.mockRestore();
       start.mockRestore();
       once.mockRestore();
+    });
+
+    beforeEach(() => {
+      handler = siaRequestWalletInfoHandler();
+    });
+
+    afterEach(() => {
       delete global.sia;
     });
 
@@ -123,7 +130,7 @@ describe("handlers for the installer", () => {
 
     it("returns a rejected promise with the error message when the wallet command returns an error", async () => {
       const error = new Error("expected error");
-      wallet.mockRejectedValue(error);
+      wallet.mockRejectedValueOnce(error);
       await expect(handler({syncFolder: dir})).rejects.toEqual(error);
       expect(start).not.toHaveBeenCalled();
     });
@@ -383,20 +390,11 @@ describe("handlers for the installer", () => {
 
     let onWindowAllClosed;
     beforeEach(() => {
-      app.quit.mockClear();
-      desktop.register.mockClear();
-      utils.openDirectory.mockClear();
-      popup.mockClear();
       onWindowAllClosed = installerWindowAllClosedHandler(app);
     });
 
-    afterEach(() => {
-      delete global.storj;
-      delete global.sia;
-    });
-
     it("starts the core app when all windows are closed after the installation has been finished", async () => {
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: true,
       });
 
@@ -407,7 +405,7 @@ describe("handlers for the installer", () => {
     });
 
     it("registers startSynchronizationHandler when the user chooses sia", async () => {
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: true,
         sia: true,
       });
@@ -427,17 +425,17 @@ describe("handlers for the installer", () => {
 
     it("opens the sync folder", async () => {
       const dir = "/tmp";
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: true,
         syncFolder: dir,
       });
       await onWindowAllClosed();
-      expect(utils.openDirectory).toHaveBeenCalledWith(dir);
+      expect(opn).toHaveBeenCalledWith(dir);
     });
 
     it("registers the folder icon before starting the core app", async () => {
       const dir = "/tmp";
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: true,
         syncFolder: dir,
       });
@@ -447,7 +445,7 @@ describe("handlers for the installer", () => {
 
     // TODO: it shows some message to make sure users want to quit the installer.
     it("doesn't start the core app when all windows are closed before the installation is finished", async () => {
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: false,
       });
 
@@ -462,7 +460,7 @@ describe("handlers for the installer", () => {
       global.storj = {
         close,
       };
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: false,
       });
 
@@ -477,7 +475,7 @@ describe("handlers for the installer", () => {
       global.sia = {
         close,
       };
-      getConfig.mockResolvedValue({
+      getConfig.mockResolvedValueOnce({
         installed: false,
       });
 

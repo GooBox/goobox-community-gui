@@ -3,8 +3,9 @@ environment:
 install:
   - ps: Install-Product node $env:nodejs_version x64
   - node --version
-  - npm --version
-  - npm install
+  - yarn --version
+  - yarn install
 test_script:
-  - npm test
+  - yarn test
+  - yarn run check
 build: off

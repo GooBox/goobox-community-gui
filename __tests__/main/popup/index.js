@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 import {app, BrowserWindow, dialog, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
+import * as opn from "opn";
 import path from "path";
 import {Idle, Synchronizing} from "../../../src/constants";
 import * as ipcActionTypes from "../../../src/ipc/constants";
@@ -40,9 +41,9 @@ import popup, {
 } from "../../../src/main/popup/index";
 import Sia from "../../../src/main/sia";
 import Storj from "../../../src/main/storj";
-import utils from "../../../src/main/utils";
 
 jest.mock("electron");
+jest.mock("opn", () => jest.fn().mockResolvedValue(null));
 jest.mock("../../../src/main/jre");
 jest.mock("../../../src/main/desktop");
 jest.mock("../../../src/main/config");
@@ -66,6 +67,7 @@ describe("main process of the popup app", () => {
       value: "darwin",
     });
     desktop.register.mockImplementation(() => {});
+    menubarMock.tray.listeners.mockReturnValue([() => null]);
   });
 
   afterAll(() => {
@@ -75,14 +77,12 @@ describe("main process of the popup app", () => {
   });
 
   beforeEach(() => {
-    menubarMock.tray.listeners.mockReturnValue([() => null]);
     jest.clearAllMocks();
   });
 
   afterEach(() => {
     delete global.storj;
     delete global.sia;
-    getConfig.mockReset();
   });
 
   it("create a menu bar instance", async () => {
@@ -101,6 +101,9 @@ describe("main process of the popup app", () => {
         height: DefaultHeight,
         alwaysOnTop: true,
         showDockIcon: false,
+        webPreferences: {
+          nodeIntegration: true,
+        },
       });
       expect(setSkipTaskBar).toHaveBeenCalledWith(true);
       expect(menubarMock.appState).toEqual(Synchronizing);
@@ -111,7 +114,7 @@ describe("main process of the popup app", () => {
 
   it("registers willQuitEventHandler", async () => {
     const handler = "expected handler";
-    willQuitHandler.mockReturnValue(handler);
+    willQuitHandler.mockReturnValueOnce(handler);
     await popup();
     expect(menubarMock.app.on).toHaveBeenCalledWith("will-quit", handler);
     expect(willQuitHandler).toHaveBeenCalledWith(menubarMock.app);
@@ -119,7 +122,7 @@ describe("main process of the popup app", () => {
 
   it("subscribes AppleInterfaceThemeChangedNotification event", async () => {
     const cb = "cb";
-    themeChangedHandler.mockReset().mockReturnValue(cb);
+    themeChangedHandler.mockReturnValueOnce(cb);
 
     await popup();
     expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith(
@@ -130,11 +133,7 @@ describe("main process of the popup app", () => {
   });
 
   it("prepare desktop integration", async () => {
-    getConfig.mockReturnValue(
-      Promise.resolve({
-        syncFolder,
-      })
-    );
+    getConfig.mockResolvedValueOnce({syncFolder});
     await popup();
     expect(desktop.register).toHaveBeenCalledWith(syncFolder);
   });
@@ -142,30 +141,28 @@ describe("main process of the popup app", () => {
   describe("system tray event handlers", () => {
     const getTrayEventHandler = event =>
       getEventHandler(menubarMock.tray, event);
-    const menuItems = "sample menue items";
+    const menuItems = "sample menu items";
     const onClick = jest.fn();
 
-    beforeEach(async () => {
-      Menu.buildFromTemplate.mockReset();
+    beforeAll(() => {
       Menu.buildFromTemplate.mockReturnValue(menuItems);
-      onClick.mockReset();
       menubarMock.tray.listeners.mockReturnValue([onClick]);
+    });
+
+    beforeEach(async () => {
       await popup();
     });
 
     describe("click and double click event handler", () => {
       const syncFolder = "/tmp";
-      let clickHandler, doubleClickhandler;
+      let clickHandler, doubleClickHandler;
+      beforeAll(() => {
+        getConfig.mockResolvedValue({syncFolder});
+      });
+
       beforeEach(() => {
         clickHandler = getTrayEventHandler("click");
-        doubleClickhandler = getTrayEventHandler("double-click");
-        utils.openDirectory.mockReset();
-        getConfig.mockReset();
-        getConfig.mockReturnValue(
-          Promise.resolve({
-            syncFolder,
-          })
-        );
+        doubleClickHandler = getTrayEventHandler("double-click");
       });
 
       it("sets a timer which invokes onClick after 250msec", () => {
@@ -176,15 +173,15 @@ describe("main process of the popup app", () => {
         expect(onClick).toHaveBeenCalled();
       });
 
-      it("invokes openDirecotory when double clicked", async () => {
-        await doubleClickhandler();
+      it("opens the sync folder when double clicked", async () => {
+        await doubleClickHandler();
         expect(getConfig).toHaveBeenCalled();
-        expect(utils.openDirectory).toHaveBeenCalledWith(syncFolder);
+        expect(opn).toHaveBeenCalledWith(syncFolder);
       });
 
       it("doesn't invokes openDirectory when both click and double click event occur", async () => {
         clickHandler();
-        await doubleClickhandler();
+        await doubleClickHandler();
         jest.advanceTimersByTime(250);
         expect(onClick).not.toHaveBeenCalled();
       });
@@ -193,7 +190,6 @@ describe("main process of the popup app", () => {
     describe("right click event handler", () => {
       let handler;
       beforeEach(() => {
-        menubarMock.tray.popUpContextMenu.mockReset();
         handler = getTrayEventHandler("right-click");
       });
 
@@ -222,10 +218,6 @@ describe("main process of the popup app", () => {
       changeStateHandler.mockReturnValue("changeStateHandler");
       openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
       calculateUsedVolumeHandler.mockReturnValue("calculateUsedVolumeHandler");
-    });
-
-    beforeEach(() => {
-      addListener.mockReset();
     });
 
     it("registers changeStateHandler", async () => {
@@ -272,8 +264,6 @@ describe("main process of the popup app", () => {
         .spyOn(Sia.prototype, "start")
         .mockImplementation(() => {});
       siaOn = jest.spyOn(Sia.prototype, "on").mockImplementation(() => {});
-      installJRE.mockReset();
-      dialog.showErrorBox.mockReset();
     });
 
     afterEach(() => {
@@ -290,7 +280,7 @@ describe("main process of the popup app", () => {
 
     it("shows an error message and quits when the JRE installation is failed", async () => {
       const err = "expected error";
-      installJRE.mockReturnValue(Promise.reject(err));
+      installJRE.mockRejectedValueOnce(err);
 
       await popup();
       expect(installJRE).toHaveBeenCalled();
@@ -302,12 +292,10 @@ describe("main process of the popup app", () => {
     });
 
     it("starts the storj backend if storj conf is true but not running", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          storj: true,
-          syncFolder,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        storj: true,
+        syncFolder,
+      });
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -316,11 +304,9 @@ describe("main process of the popup app", () => {
     });
 
     it("registers updateStateHandler to the storj instance and listens syncState event", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          storj: true,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        storj: true,
+      });
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -330,11 +316,9 @@ describe("main process of the popup app", () => {
     });
 
     it("doesn't start the storj backend but registers updateStateHandler if it is already running", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          storj: true,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        storj: true,
+      });
       global.storj = {
         on: storjOn,
       };
@@ -348,12 +332,10 @@ describe("main process of the popup app", () => {
     });
 
     it("starts the sia backend if sia conf is true but not running", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          sia: true,
-          syncFolder,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        sia: true,
+        syncFolder,
+      });
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -367,11 +349,9 @@ describe("main process of the popup app", () => {
     });
 
     it("registers updateStateHandler to the sia instance and listens syncState event", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          sia: true,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        sia: true,
+      });
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -381,11 +361,9 @@ describe("main process of the popup app", () => {
     });
 
     it("registers siaFundEventHandler to the sia instance and listens walletInfo events", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          sia: true,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        sia: true,
+      });
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
@@ -395,11 +373,9 @@ describe("main process of the popup app", () => {
     });
 
     it("doesn't start the sia backend but registers updateStateHandler if it is already running", async () => {
-      getConfig.mockReturnValue(
-        Promise.resolve({
-          sia: true,
-        })
-      );
+      getConfig.mockResolvedValueOnce({
+        sia: true,
+      });
       global.sia = {
         on: siaOn,
         syncState: Idle,
@@ -419,7 +395,7 @@ describe("main process of the popup app", () => {
     });
 
     it("closes the process if another process is already running", async () => {
-      app.requestSingleInstanceLock.mockReturnValueOnce(true);
+      app.requestSingleInstanceLock.mockReturnValueOnce(false);
       await popup();
       expect(app.quit).toHaveBeenCalled();
     });

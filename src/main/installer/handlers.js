@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 
 import log from "electron-log";
+import opn from "opn";
 import path from "path";
 import {AppID} from "../../constants";
 import {getConfig} from "../config";
@@ -25,7 +26,6 @@ import {notifyAsync} from "../notify";
 import popup from "../popup";
 import Sia from "../sia";
 import Storj from "../storj";
-import utils from "../utils";
 
 export const installJREHandler = () => async () => installJRE();
 
@@ -148,7 +148,7 @@ export const installerWindowAllClosedHandler = app => async () => {
         global.sia.once("syncState", startSynchronizationHandler());
       }
 
-      utils.openDirectory(cfg.syncFolder);
+      await opn(cfg.syncFolder);
 
       // if the installation process is finished.
       log.info(
