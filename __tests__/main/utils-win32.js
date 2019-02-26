@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +40,6 @@ describe("utils module in Windows", () => {
 
   beforeEach(() => {
     spawnSync.mockReset();
-  });
-
-  describe("openDirectory", () => {
-    it("open a given directory with explorer", () => {
-      const dir = "/tmp/some-dir";
-      utils.openDirectory(dir);
-      expect(spawnSync).toHaveBeenCalledWith("explorer.exe", [dir]);
-    });
   });
 
   describe("totalVolume", () => {

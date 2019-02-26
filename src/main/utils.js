@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {execFile, spawn, spawnSync} from "child_process";
+import {execFile, spawn} from "child_process";
 import path from "path";
 import readLine from "readline";
 
-let openDirectory, totalVolume;
+let totalVolume;
 
 if (process.platform === "win32") {
-  openDirectory = dir => {
-    spawnSync("explorer.exe", [dir]);
-  };
-
   totalVolume = async dir =>
     new Promise((resolve, reject) => {
       const script = path.normalize(
@@ -58,10 +54,6 @@ if (process.platform === "win32") {
       });
     });
 } else {
-  openDirectory = dir => {
-    spawnSync("open", [dir]);
-  };
-
   totalVolume = async dir =>
     new Promise((resolve, reject) => {
       execFile("du", ["-s", "-k", dir], (error, stdout) => {
@@ -78,7 +70,6 @@ if (process.platform === "win32") {
 }
 
 export const utils = {
-  openDirectory,
   totalVolume,
 };
 

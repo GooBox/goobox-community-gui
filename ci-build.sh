@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 #
 # Copyright (C) 2018-2019 Junpei Kawamoto
 #
@@ -15,27 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+set -ev
 
-#
-# Build dev builds and upload them to Pixeldrain, then posts their links to Slack.
-#
+yarn build:production
+yarn dist
+
+if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
+    exit 0
+fi
+
 brew tap jkawamoto/pixeldrain
 brew install pixeldrain
 pd -v
 
-rm -rf /Users/travis/Library/Caches/electron-builder
-yarn run dist
-
-WIN_ID=$(basename $(pd upload dist/Goobox-0.3.0-setup_x64.exe -n Goobox-0.3.0-setup_x64.exe))
+WIN_ID=$(basename $(pd upload dist/Goobox-0.3.1-setup_x64.exe -n Goobox-0.3.1-setup_x64.exe))
 echo "Dev build for Windows is uploaded at ${WIN_ID}"
 
-MAC_ID=$(basename $(pd upload dist/Goobox-0.3.0.dmg -n Goobox-0.3.0.dmg))
+MAC_ID=$(basename $(pd upload dist/Goobox-0.3.1.dmg -n Goobox-0.3.1.dmg))
 echo "Dev build for MacOS is uploaded at ${MAC_ID}"
 
-LINUX_ID=$(basename $(pd upload dist/Goobox-0.3.0-x86_64.AppImage -n Goobox-0.3.0-x86_64.AppImage))
+LINUX_ID=$(basename $(pd upload dist/Goobox-0.3.1-x86_64.AppImage -n Goobox-0.3.1-x86_64.AppImage))
 echo "Dev build for Linux is uploaded at ${LINUX_ID}"
 
-LIST_URL=$(pd create-list -t "Goobox-0.3.0" ${WIN_ID}:Goobox-0.3.0-setup_x64.exe ${MAC_ID}:Goobox-0.3.0.dmg ${LINUX_ID}:Goobox-0.3.0-x86_64.AppImage)
+LIST_URL=$(pd create-list -t "Goobox-0.3.1" ${WIN_ID}:Goobox-0.3.1-setup_x64.exe ${MAC_ID}:Goobox-0.3.1.dmg ${LINUX_ID}:Goobox-0.3.1-x86_64.AppImage)
 echo "Download page for the dev builds are set up at ${LIST_URL}"
 
 curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
@@ -44,7 +46,10 @@ curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
     "title": "Development build of $TRAVIS_PULL_REQUEST_BRANCH",
     "description": "Build [#$TRAVIS_BUILD_NUMBER]($TRAVIS_BUILD_WEB_URL) of $TRAVIS_REPO_SLUG@$TRAVIS_PULL_REQUEST_BRANCH: $LIST_URL",
     "url": "$LIST_URL",
-    "color": "2664261"
+    "color": "2664261",
+    "thumbnail": {
+      "url": "https://goobox.io/icon-192x192.png"
+    }
   }]
 }
 EOF
