@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,21 @@ import {getConfig, saveConfig} from "../../src/main/config";
 import {main} from "../../src/main/index";
 import installer from "../../src/main/installer";
 import popup from "../../src/main/popup";
+import checkForUpdatesAndNotify from "../../src/main/updater";
 
 jest.mock("electron");
 jest.mock("node-jre");
 jest.mock("../../src/main/config");
 jest.mock("../../src/main/installer");
 jest.mock("../../src/main/popup");
+jest.mock("../../src/main/updater");
 
 describe("main", () => {
   let oldArgs;
   beforeAll(() => {
-    popup.mockReturnValue(Promise.resolve());
-    saveConfig.mockReturnValue(Promise.resolve());
+    popup.mockResolvedValue(null);
+    saveConfig.mockResolvedValue(null);
+    checkForUpdatesAndNotify.mockResolvedValue(null);
     oldArgs = process.argv;
   });
 
@@ -46,7 +49,7 @@ describe("main", () => {
   });
 
   it("starts the installer when there are no config file", async () => {
-    getConfig.mockReturnValue(Promise.reject("not fund"));
+    getConfig.mockRejectedValueOnce("not fund");
     await main();
     expect(installer).toHaveBeenCalled();
     expect(popup).not.toHaveBeenCalled();
@@ -54,11 +57,7 @@ describe("main", () => {
   });
 
   it("starts the installer when it hasn't been finished yet", async () => {
-    getConfig.mockReturnValue(
-      Promise.resolve({
-        installed: false,
-      })
-    );
+    getConfig.mockResolvedValueOnce({installed: false});
     await main();
     expect(installer).toHaveBeenCalled();
     expect(popup).not.toHaveBeenCalled();
@@ -66,11 +65,7 @@ describe("main", () => {
   });
 
   it("starts the core when the installer already has been finished", async () => {
-    getConfig.mockReturnValue(
-      Promise.resolve({
-        installed: true,
-      })
-    );
+    getConfig.mockResolvedValueOnce({installed: true});
     await main();
     expect(popup).toHaveBeenCalled();
     expect(installer).not.toHaveBeenCalled();
@@ -91,7 +86,7 @@ describe("main", () => {
       storj: false,
       sia: true,
     };
-    getConfig.mockReturnValue(Promise.resolve(cfg));
+    getConfig.mockResolvedValueOnce(cfg);
     process.argv = ["--storj"];
     await main();
     expect(popup).toHaveBeenCalled();
@@ -109,7 +104,7 @@ describe("main", () => {
       storj: true,
       sia: false,
     };
-    getConfig.mockReturnValue(Promise.resolve(cfg));
+    getConfig.mockResolvedValueOnce(cfg);
     process.argv = ["--sia"];
     await main();
     expect(popup).toHaveBeenCalled();
