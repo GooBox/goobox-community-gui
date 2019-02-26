@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +48,15 @@ describe("installer", () => {
     );
   });
 
-  let mockLoadURL;
+  let mockLoadFile;
   beforeEach(() => {
-    mockLoadURL = jest.spyOn(BrowserWindow.prototype, "loadURL");
+    mockLoadFile = jest.spyOn(BrowserWindow.prototype, "loadFile");
     getConfig.mockReset();
     jest.clearAllMocks();
   });
 
   afterEach(() => {
-    mockLoadURL.mockRestore();
+    mockLoadFile.mockRestore();
   });
 
   it("checks the sync folder exists and creates it if not exits", () => {
@@ -87,8 +87,8 @@ describe("installer", () => {
 
   it("loads static/installer.html", () => {
     installer();
-    expect(mockLoadURL).toHaveBeenCalledWith(
-      `file://${path.join(__dirname, "../../../src/main/installer.html")}`
+    expect(mockLoadFile).toHaveBeenCalledWith(
+      `${path.join(__dirname, "../../../src/main/installer.html")}`
     );
   });
 

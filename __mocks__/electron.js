@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,10 @@ export class BrowserWindow {
 
   loadURL(url) {
     this.url = url;
+  }
+
+  loadFile(path) {
+    this.path = path;
   }
 
   setResizable() {}

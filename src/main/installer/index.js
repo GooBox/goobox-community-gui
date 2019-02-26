@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +72,7 @@ export const installer = () => {
       nodeIntegration: true,
     },
   });
-  mainWindow.loadURL(`file://${path.join(__dirname, "../installer.html")}`);
-
+  mainWindow.loadFile(`${path.join(__dirname, "../installer.html")}`);
   if (process.env.DEV_TOOLS) {
     mainWindow.toggleDevTools();
   }
