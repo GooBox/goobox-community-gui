@@ -101,6 +101,9 @@ describe("main process of the popup app", () => {
         height: DefaultHeight,
         alwaysOnTop: true,
         showDockIcon: false,
+        webPreferences: {
+          nodeIntegration: true,
+        },
       });
       expect(setSkipTaskBar).toHaveBeenCalledWith(true);
       expect(menubarMock.appState).toEqual(Synchronizing);

@@ -58,6 +58,9 @@ export const popup = async () => {
     showDockIcon: false,
     width,
     height: DefaultHeight,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
   mb.window.setSkipTaskbar(true);
   mb.app.on("window-all-closed", app.quit);
