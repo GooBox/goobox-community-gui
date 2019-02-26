@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 import {app, dialog, Menu, systemPreferences} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
+import opn from "opn";
 import path from "path";
 import {Synchronizing} from "../../constants";
 import * as ipcActionTypes from "../../ipc/constants";
@@ -29,7 +30,6 @@ import icons from "../icons";
 import {installJRE} from "../jre";
 import Sia from "../sia";
 import Storj from "../storj";
-import utils from "../utils";
 import {
   calculateUsedVolumeHandler,
   changeStateHandler,
@@ -112,7 +112,7 @@ export const popup = async () => {
   mb.tray.on("double-click", async () => {
     singleClicked = false;
     const cfg = await getConfig();
-    utils.openDirectory(cfg.syncFolder);
+    await opn(cfg.syncFolder);
   });
 
   mb.tray.on("right-click", () => {

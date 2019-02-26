@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 
 import log from "electron-log";
+import opn from "opn";
 import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../../constants";
 import {getConfig} from "../config";
@@ -52,7 +53,7 @@ export const changeStateHandler = mb => async payload => {
 export const openSyncFolderHandler = () => async () => {
   const cfg = await getConfig();
   log.info(`[GUI main] Open sync folder ${cfg.syncFolder}`);
-  utils.openDirectory(cfg.syncFolder);
+  await opn(cfg.syncFolder);
 };
 
 export const calculateUsedVolumeHandler = () => async () => {

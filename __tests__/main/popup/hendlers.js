@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 import {app} from "electron";
 // noinspection ES6CheckImport
 import {menubarMock} from "menubar";
+import * as opn from "opn";
 import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../../../src/constants";
 import {getConfig} from "../../../src/main/config";
@@ -35,6 +36,7 @@ import {
 import utils from "../../../src/main/utils";
 
 jest.mock("electron");
+jest.mock("opn", () => jest.fn().mockResolvedValue(null));
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/main/utils");
 jest.mock("../../../src/main/notify");
@@ -57,14 +59,15 @@ describe("handlers for the popup ", () => {
     describe("changeStateHandler", () => {
       const dir = "/tmp";
       let handler;
-      beforeEach(() => {
-        menubarMock.appState = null;
-        menubarMock.tray.setImage.mockClear();
-        handler = changeStateHandler(menubarMock);
-        getConfig.mockReset();
+      beforeAll(() => {
         getConfig.mockReturnValue({
           syncFolder: dir,
         });
+      });
+
+      beforeEach(() => {
+        menubarMock.appState = null;
+        handler = changeStateHandler(menubarMock);
       });
 
       it("sets the idle icon when the state is Synchronizing", async () => {
@@ -140,18 +143,17 @@ describe("handlers for the popup ", () => {
       let handler;
       beforeEach(() => {
         handler = openSyncFolderHandler();
-        utils.openDirectory.mockReset();
       });
 
       it("opens the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockResolvedValue({
+        getConfig.mockResolvedValueOnce({
           syncFolder,
         });
 
         await expect(handler()).resolves.not.toBeDefined();
         expect(getConfig).toHaveBeenCalled();
-        expect(utils.openDirectory).toHaveBeenCalledWith(syncFolder);
+        expect(opn).toHaveBeenCalledWith(syncFolder);
       });
     });
 
@@ -159,17 +161,16 @@ describe("handlers for the popup ", () => {
       let handler;
       beforeEach(() => {
         handler = calculateUsedVolumeHandler();
-        utils.totalVolume.mockReset();
       });
 
       it("calculate the volume of the sync folder", async () => {
         const syncFolder = "/tmp";
-        getConfig.mockResolvedValue({
+        getConfig.mockResolvedValueOnce({
           syncFolder,
         });
 
         const volume = 1234567;
-        utils.totalVolume.mockResolvedValue(volume);
+        utils.totalVolume.mockResolvedValueOnce(volume);
 
         await expect(handler()).resolves.toEqual(volume);
         expect(getConfig).toHaveBeenCalled();
@@ -183,8 +184,6 @@ describe("handlers for the popup ", () => {
         preventDefault: jest.fn(),
       };
       beforeEach(() => {
-        app.exit.mockReset();
-        event.preventDefault.mockReset();
         handler = willQuitHandler(app);
       });
 
@@ -244,7 +243,6 @@ describe("handlers for the popup ", () => {
       let handler;
       beforeEach(async () => {
         menubarMock.appState = null;
-        menubarMock.tray.setImage.mockReset();
         handler = updateStateHandler(menubarMock);
       });
 
@@ -371,7 +369,6 @@ describe("handlers for the popup ", () => {
     let handler;
     beforeEach(() => {
       menubarMock.appState = null;
-      menubarMock.tray.setImage.mockClear();
       handler = themeChangedHandler(menubarMock);
     });
 
