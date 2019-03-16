@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,16 +68,6 @@ describe("Status component", () => {
     expect(onClickSyncFolder).toHaveBeenCalledTimes(1);
   });
 
-  // it("has an import drive button", () => {
-  //   const fn = jest.fn();
-  //   const wrapper = shallow(<Status onClickImportDrive={fn}/>);
-  //   const drive = wrapper.find(".import-drive");
-  //   expect(drive.exists()).toBeTruthy();
-  //
-  //   drive.simulate("click");
-  //   expect(fn).toHaveBeenCalledTimes(1);
-  // });
-
   it("has a footer", () => {
     const footer = wrapper.find(Footer);
     expect(footer.exists()).toBeTruthy();
@@ -87,5 +77,14 @@ describe("Status component", () => {
 
     footer.prop("onChangeState")(Paused);
     expect(onChangeState).toHaveBeenCalledWith(Paused);
+  });
+
+  it("doesn't add disabled class by default", () => {
+    expect(wrapper.hasClass("disabled")).toBeFalsy();
+  });
+
+  it("add disabled class to the root element if disabled prop is true", () => {
+    wrapper.setProps({disabled: true});
+    expect(wrapper.hasClass("disabled")).toBeTruthy();
   });
 });

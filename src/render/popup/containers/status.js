@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,16 @@ import {connect} from "react-redux";
 import * as actions from "../actions";
 import Status from "../components/status";
 
-export const mapStateToProps = state => ({
-  style: {
-    cursor: state.disabled ? "wait" : "auto",
-  },
-  usedVolume: state.usedVolume,
-  totalVolume: state.totalVolume,
-  state: state.state,
+export const mapStateToProps = ({
+  disabled,
+  usedVolume,
+  totalVolume,
+  state,
+}) => ({
+  disabled,
+  usedVolume,
+  totalVolume,
+  state,
 });
 
 export const mapDispatchToProps = dispatch => ({

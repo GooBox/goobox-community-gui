@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,17 +44,10 @@ describe("Status container", () => {
       expect(mapStateToProps({state})).toHaveProperty("state", state);
     });
 
-    it("sets wait to style.cursor when disabled is true", () => {
+    it("passes disabled state", () => {
       expect(mapStateToProps({disabled: true})).toHaveProperty(
-        "style.cursor",
-        "wait"
-      );
-    });
-
-    it("sets auto to style.cursor when disabled is false", () => {
-      expect(mapStateToProps({disabled: false})).toHaveProperty(
-        "style.cursor",
-        "auto"
+        "disabled",
+        true
       );
     });
   });

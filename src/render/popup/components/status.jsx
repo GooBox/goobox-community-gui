@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,14 @@
  */
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import Footer from "./footer";
 import Header from "./header";
 
 export const Status = ({
-  style,
+  disabled,
   usedVolume,
   totalVolume,
   state,
@@ -32,7 +33,7 @@ export const Status = ({
   onClickImportDrive,
   onChangeState,
 }) => (
-  <main style={style} className="d-flex flex-column">
+  <main className={classNames("d-flex flex-column", {disabled})}>
     <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo} />
 
     <section className="d-flex flex-column p-3">
@@ -65,8 +66,7 @@ export const Status = ({
 );
 
 Status.propTypes = {
-  /* eslint-disable react/forbid-prop-types */
-  style: PropTypes.object,
+  disabled: PropTypes.bool,
   usedVolume: PropTypes.number.isRequired,
   totalVolume: PropTypes.number.isRequired,
   state: PropTypes.string.isRequired,
@@ -78,7 +78,7 @@ Status.propTypes = {
 };
 
 Status.defaultProps = {
-  style: null,
+  disabled: false,
 };
 
 export default Status;
