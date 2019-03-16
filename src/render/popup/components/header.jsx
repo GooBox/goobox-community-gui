@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ export const Header = ({onClickSettings, onClickInfo}) => (
       id="info-btn"
       className="btn btn-link"
       type="button"
-      onClick={() => onClickInfo()}
+      onClick={onClickInfo}
     >
       <FontAwesomeIcon icon="info-circle" />
     </button>
@@ -41,7 +41,7 @@ export const Header = ({onClickSettings, onClickInfo}) => (
       id="settings-btn"
       className="ml-4 btn btn-link"
       type="button"
-      onClick={() => onClickSettings()}
+      onClick={onClickSettings}
     >
       <FontAwesomeIcon icon="cog" />
     </button>
