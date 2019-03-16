@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 import {mount} from "enzyme";
 import React from "react";
 import {Paused, Synchronizing} from "../../../../src/constants";
+import {PauseBtn} from "../../../../src/render/popup/components/buttons/pause";
+import {RestartBtn} from "../../../../src/render/popup/components/buttons/restart";
 import Footer from "../../../../src/render/popup/components/footer";
 
 describe("Footer component", () => {
@@ -38,40 +40,45 @@ describe("Footer component", () => {
     );
   });
 
-  it("has a synchronized icon and text when the state is synchronizing", () => {
-    expect(wrapper.find(".state-icon").prop("icon")).toEqual([
-      "far",
-      "pause-circle",
-    ]);
-    expect(wrapper.find(".state-text").text()).toEqual("Goobox is up to date.");
+  describe("state is synchronizing", () => {
+    it("has a synchronized icon and text when the state is synchronizing", () => {
+      expect(wrapper.find(".state-icon").prop("icon")).toEqual([
+        "far",
+        "pause-circle",
+      ]);
+      expect(wrapper.find(".state-text").text()).toEqual(
+        "Goobox is up to date."
+      );
+    });
+
+    it("has a pause button when the state is synchronizing", () => {
+      expect(wrapper.find(PauseBtn).prop("onChangeState")).toEqual(
+        onChangeState
+      );
+      expect(wrapper.find(RestartBtn).exists()).toBeFalsy();
+    });
   });
 
-  it("has a paused icon and text when the state is paused", () => {
-    wrapper.setProps({state: Paused});
-    expect(wrapper.find(".state-icon").prop("icon")).toEqual([
-      "far",
-      "play-circle",
-    ]);
-    expect(wrapper.find(".state-text").text()).toEqual(
-      "File transfers paused."
-    );
-  });
+  describe("state is paused", () => {
+    beforeEach(() => {
+      wrapper.setProps({state: Paused});
+    });
+    it("has a paused icon and text when the state is paused", () => {
+      expect(wrapper.find(".state-icon").prop("icon")).toEqual([
+        "far",
+        "play-circle",
+      ]);
+      expect(wrapper.find(".state-text").text()).toEqual(
+        "File transfers paused."
+      );
+    });
 
-  it("has a pause button when the state is synchronizing", () => {
-    const pause = wrapper.find(".pause-sync-btn");
-    expect(pause.exists()).toBeTruthy();
-
-    pause.simulate("click");
-    expect(onChangeState).toHaveBeenCalledWith("paused");
-  });
-
-  it("has a restart button when the state is paused", () => {
-    wrapper.setProps({state: Paused});
-    const restart = wrapper.find(".sync-again-btn");
-    expect(restart.exists()).toBeTruthy();
-
-    restart.simulate("click");
-    expect(onChangeState).toHaveBeenCalledWith(Synchronizing);
+    it("has a restart button when the state is paused", () => {
+      expect(wrapper.find(RestartBtn).prop("onChangeState")).toEqual(
+        onChangeState
+      );
+      expect(wrapper.find(PauseBtn).exists()).toBeFalsy();
+    });
   });
 
   it("has a usage percentage box", () => {

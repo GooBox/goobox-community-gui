@@ -15,29 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import React from "react";
-import {Synchronizing} from "../../../constants";
-import {PauseBtn, RestartBtn} from "./buttons";
+import {Synchronizing} from "../../../../constants";
 
-export const Footer = ({state, totalVolume, usedVolume, onChangeState}) => (
-  <footer className="d-flex px-3 py-2 mt-auto">
-    {state === Synchronizing ? (
-      <PauseBtn onChangeState={onChangeState} />
-    ) : (
-      <RestartBtn onChangeState={onChangeState} />
-    )}
-    <span className="usage-rate ml-auto">
-      Using {Math.round((usedVolume / totalVolume) * 100)}% of {totalVolume}GB
-    </span>
-  </footer>
+export const RestartBtn = ({onChangeState}) => (
+  <button
+    className="sync-again-btn btn btn-link"
+    type="button"
+    onClick={() => onChangeState(Synchronizing)}
+  >
+    <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]} />
+    &nbsp;
+    <span className="state-text">File transfers paused.</span>
+  </button>
 );
 
-Footer.propTypes = {
-  usedVolume: PropTypes.number.isRequired,
-  totalVolume: PropTypes.number.isRequired,
-  state: PropTypes.string.isRequired,
+RestartBtn.propTypes = {
   onChangeState: PropTypes.func.isRequired,
 };
 
-export default Footer;
+export default RestartBtn;
