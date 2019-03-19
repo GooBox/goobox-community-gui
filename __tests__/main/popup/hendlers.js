@@ -15,10 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {app} from "electron";
+import {app, shell} from "electron";
 // noinspection ES6CheckImport
 import {menubarMock} from "menubar";
-import * as opn from "opn";
 import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../../../src/constants";
 import {getConfig} from "../../../src/main/config";
@@ -36,7 +35,6 @@ import {
 import utils from "../../../src/main/utils";
 
 jest.mock("electron");
-jest.mock("opn", () => jest.fn().mockResolvedValue(null));
 jest.mock("../../../src/main/config");
 jest.mock("../../../src/main/utils");
 jest.mock("../../../src/main/notify");
@@ -153,7 +151,7 @@ describe("handlers for the popup ", () => {
 
         await expect(handler()).resolves.not.toBeDefined();
         expect(getConfig).toHaveBeenCalled();
-        expect(opn).toHaveBeenCalledWith(syncFolder);
+        expect(shell.openItem).toHaveBeenCalledWith(syncFolder);
       });
     });
 

@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {shell} from "electron";
 import log from "electron-log";
-import opn from "opn";
 import path from "path";
 import {AppID, Idle, Paused, Synchronizing} from "../../constants";
 import {getConfig} from "../config";
@@ -53,7 +53,9 @@ export const changeStateHandler = mb => async payload => {
 export const openSyncFolderHandler = () => async () => {
   const cfg = await getConfig();
   log.info(`[GUI main] Open sync folder ${cfg.syncFolder}`);
-  await opn(cfg.syncFolder);
+  if (!shell.openItem(cfg.syncFolder)) {
+    log.warn("[GUI main] failed to open the the sync folder");
+  }
 };
 
 export const calculateUsedVolumeHandler = () => async () => {
