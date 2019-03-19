@@ -10,7 +10,7 @@
     "installer:debug": "electron . --installer --dev-tools",
     "build": "webpack",
     "build:watch": "webpack -w",
-    "build:production": "NODE_ENV=production webpack --mode production --display-used-exports",
+    "build:production": "NODE_ENV=production webpack -p --mode production --display-used-exports",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "npm test -- --coverage",
