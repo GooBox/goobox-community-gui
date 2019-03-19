@@ -34,13 +34,16 @@ export const Status = ({
   onChangeState,
 }) => (
   <main className={classNames("d-flex flex-column", {disabled})}>
-    <Header onClickSettings={onClickSettings} onClickInfo={onClickInfo} />
+    <Header
+      onClickSettings={() => disabled || onClickSettings()}
+      onClickInfo={() => disabled || onClickInfo()}
+    />
 
     <section className="d-flex flex-column p-3">
       <button
         className="btn btn-light sync-folder d-flex align-items-center mb-3"
         type="button"
-        onClick={onClickSyncFolder}
+        onClick={() => disabled || onClickSyncFolder()}
       >
         <FontAwesomeIcon className="mr-2" icon="folder-open" />
         <span className="bold">Open my folder</span>
@@ -49,7 +52,7 @@ export const Status = ({
         id="import-drive"
         className="btn btn-light d-flex align-items-center invisible"
         type="button"
-        onClick={onClickImportDrive}
+        onClick={() => disabled || onClickImportDrive()}
       >
         <FontAwesomeIcon className="mr-2" icon="cloud-upload-alt" />
         <span className="bold">Import drive</span>
@@ -60,7 +63,7 @@ export const Status = ({
       usedVolume={usedVolume}
       totalVolume={totalVolume}
       state={state}
-      onChangeState={onChangeState}
+      onChangeState={next => disabled || onChangeState(next)}
     />
   </main>
 );

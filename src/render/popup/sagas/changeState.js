@@ -34,6 +34,7 @@ export default function* changeState(action) {
   } catch (err) {
     // TODO: error handling.
     log.error(`changeState saga catches an error: ${err}`);
+  } finally {
+    yield put(actions.enable());
   }
-  yield put(actions.enable());
 }

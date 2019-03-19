@@ -71,6 +71,14 @@ section i {
   cursor: default;
 }
 
+.disabled {
+  cursor: wait !important;
+}
+
+.disabled * {
+  cursor: wait !important;
+}
+
 a {
   color: white;
   text-decoration: none;
@@ -129,9 +137,5 @@ button:active {
 
 ::selection {
   background: transparent;
-}
-
-.disabled {
-  cursor: wait
 }
 

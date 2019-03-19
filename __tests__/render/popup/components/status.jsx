@@ -33,10 +33,7 @@ describe("Status component", () => {
 
   let wrapper;
   beforeEach(() => {
-    onChangeState.mockClear();
-    onClickInfo.mockClear();
-    onClickSettings.mockClear();
-    onClickSyncFolder.mockClear();
+    jest.clearAllMocks();
     wrapper = shallow(
       <Status
         usedVolume={used}
@@ -86,5 +83,21 @@ describe("Status component", () => {
   it("add disabled class to the root element if disabled prop is true", () => {
     wrapper.setProps({disabled: true});
     expect(wrapper.hasClass("disabled")).toBeTruthy();
+  });
+
+  it("disables all handlers if disabled is true", () => {
+    wrapper.setProps({disabled: true});
+
+    const header = wrapper.find(Header);
+    header.prop("onClickSettings")();
+    expect(onClickSettings).not.toHaveBeenCalled();
+    header.prop("onClickInfo")();
+    expect(onClickInfo).not.toHaveBeenCalled();
+
+    wrapper.find(".sync-folder").simulate("click");
+    expect(onClickSyncFolder).not.toHaveBeenCalled();
+
+    wrapper.find(Footer).prop("onChangeState")(Paused);
+    expect(onChangeState).not.toHaveBeenCalled();
   });
 });
