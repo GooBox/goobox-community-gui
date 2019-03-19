@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../constants";
+import * as constants from "../modules/types";
 import changeState from "./changeState";
 import openAboutWindow from "./openAboutWindow";
 import openSyncFolder from "./openSyncFolder";

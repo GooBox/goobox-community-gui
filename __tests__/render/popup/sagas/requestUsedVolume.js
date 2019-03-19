@@ -18,7 +18,7 @@
 import {call, delay, put} from "redux-saga/effects";
 import * as ipcActions from "../../../../src/ipc/actions";
 import sendAsync from "../../../../src/ipc/send";
-import {setVolumeSize} from "../../../../src/render/popup/actions";
+import {setVolumeSize} from "../../../../src/render/popup/modules/actions";
 import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUsedVolume";
 
 describe("requestUsedVolumeTimer", () => {

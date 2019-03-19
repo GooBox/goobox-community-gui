@@ -16,8 +16,8 @@
  */
 
 import {connect} from "react-redux";
-import * as actions from "../actions";
 import Status from "../components/status";
+import * as actions from "../modules";
 
 export const mapStateToProps = ({
   disabled,

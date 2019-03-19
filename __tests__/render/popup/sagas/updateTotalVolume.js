@@ -17,7 +17,7 @@
 
 import {call, put} from "redux-saga/effects";
 import {getConfig} from "../../../../src/config";
-import {setTotalVolumeSize} from "../../../../src/render/popup/actions";
+import {setTotalVolumeSize} from "../../../../src/render/popup/modules/actions";
 import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVolume";
 
 jest.mock("../../../../src/config");

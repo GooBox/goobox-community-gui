@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import {call, put} from "redux-saga/effects";
 import {getConfig} from "../../../config";
-import * as actions from "../actions";
+import * as actions from "../modules/actions";
 
 export default function* updateTotalVolume() {
   const cfg = yield call(getConfig);

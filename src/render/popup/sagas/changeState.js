@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import {call, put} from "redux-saga/effects";
 import {Synchronizing} from "../../../constants";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
-import * as actions from "../actions";
+import * as actions from "../modules/actions";
 
 export default function* changeState(action) {
   yield put(actions.disable());

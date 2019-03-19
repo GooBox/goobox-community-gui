@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as actions from "../../../../src/render/popup/actions";
+import * as actions from "../../../../src/render/popup/modules/actions";
 import {
   mapDispatchToProps,
   mapStateToProps,

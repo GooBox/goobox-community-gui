@@ -16,7 +16,7 @@
  */
 
 import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../../../../src/render/popup/constants";
+import * as constants from "../../../../src/render/popup/modules/types";
 import changeState from "../../../../src/render/popup/sagas/changeState";
 import rootSaga from "../../../../src/render/popup/sagas/index";
 import openAboutWindow from "../../../../src/render/popup/sagas/openAboutWindow";

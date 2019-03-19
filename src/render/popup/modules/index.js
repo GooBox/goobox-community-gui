@@ -17,5 +17,7 @@
 
 import reducer from "./reducers";
 
+export * from "./actions";
+export * from "./types";
 export {reducer};
 export default reducer;

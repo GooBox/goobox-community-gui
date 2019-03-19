@@ -16,7 +16,7 @@
  */
 
 import {Paused, Synchronizing} from "../../../../src/constants";
-import * as actions from "../../../../src/render/popup/actions";
+import * as actions from "../../../../src/render/popup/modules/actions";
 import reducer, {
   InitialState,
 } from "../../../../src/render/popup/modules/reducers";

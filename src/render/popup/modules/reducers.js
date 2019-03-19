@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import {handleActions} from "redux-actions";
 import {Paused, Synchronizing} from "../../../constants";
-import * as constants from "../constants";
+import * as constants from "./types";
 
 export const InitialState = {
   state: Synchronizing,
