@@ -124,11 +124,6 @@ button:active {
   display: inline-block;
 }
 
-#settings-btn {
-  /*Hide this button until setting screen is implemented*/
-  display: none;
-  /*display: inline-block;*/
-}
 
 #import-drive {
   /*Hide this component until import drive button is implemented*/

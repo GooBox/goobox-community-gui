@@ -39,7 +39,7 @@ export const Header = ({onClickSettings, onClickInfo}) => (
     </button>
     <button
       id="settings-btn"
-      className="ml-4 btn btn-link"
+      className="btn btn-link"
       type="button"
       onClick={onClickSettings}
     >
