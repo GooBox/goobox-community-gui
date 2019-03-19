@@ -26,7 +26,7 @@ export const InitialState = {
   disabled: false,
 };
 
-export default handleActions(
+export const reducer = handleActions(
   {
     [constants.Pause]: state => ({
       ...state,
@@ -55,3 +55,5 @@ export default handleActions(
   },
   InitialState
 );
+
+export default reducer;

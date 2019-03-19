@@ -22,7 +22,7 @@ import createSagaMiddleware from "redux-saga";
 import {createLogger} from "../logger";
 import Status from "./containers/status";
 import "./main.css";
-import reducer from "./reducers";
+import reducer from "./modules";
 import rootSaga from "./sagas";
 
 const configureStore = () => {
