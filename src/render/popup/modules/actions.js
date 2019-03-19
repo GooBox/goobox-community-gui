@@ -16,16 +16,16 @@
  */
 
 import {createAction} from "redux-actions";
-import * as constants from "./types";
+import * as types from "./types";
 
-export const changeState = createAction(constants.ChangeState);
-export const pause = createAction(constants.Pause);
-export const restart = createAction(constants.Restart);
-export const setVolumeSize = createAction(constants.SetVolumeSize);
-export const setTotalVolumeSize = createAction(constants.SetTotalVolumeSize);
-export const openSyncFolder = createAction(constants.OpenSyncFolder);
-export const openAboutWindow = createAction(constants.OpenAboutWindow);
-export const enable = createAction(constants.Enable);
-export const disable = createAction(constants.Disable);
-export const openSettings = createAction(constants.OpenSettings);
-export const importDrive = createAction(constants.ImportDrive);
+export const changeState = createAction(types.CHANGE_STATE);
+export const pause = createAction(types.PAUSE);
+export const restart = createAction(types.RESTART);
+export const setVolumeSize = createAction(types.SET_VOLUME_SIZE);
+export const setTotalVolumeSize = createAction(types.SET_TOTAL_VOLUME_SIZE);
+export const openSyncFolder = createAction(types.OPEN_SYNC_FOLDER);
+export const openAboutWindow = createAction(types.OPEN_ABOUT_WINDOW);
+export const enable = createAction(types.ENABLE);
+export const disable = createAction(types.DISABLE);
+export const openSettings = createAction(types.OPEN_SETTINGS);
+export const importDrive = createAction(types.IMPORT_DRIVE);

@@ -16,7 +16,7 @@
  */
 
 import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../modules/types";
+import * as types from "../modules/types";
 import changeState from "./changeState";
 import openAboutWindow from "./openAboutWindow";
 import openSyncFolder from "./openSyncFolder";
@@ -26,7 +26,7 @@ import updateTotalVolume from "./updateTotalVolume";
 export default function* rootSaga() {
   yield fork(updateTotalVolume);
   yield fork(requestUsedVolumeTimer);
-  yield takeEvery(constants.OpenSyncFolder, openSyncFolder);
-  yield takeEvery(constants.OpenAboutWindow, openAboutWindow);
-  yield takeEvery(constants.ChangeState, changeState);
+  yield takeEvery(types.OPEN_SYNC_FOLDER, openSyncFolder);
+  yield takeEvery(types.OPEN_ABOUT_WINDOW, openAboutWindow);
+  yield takeEvery(types.CHANGE_STATE, changeState);
 }

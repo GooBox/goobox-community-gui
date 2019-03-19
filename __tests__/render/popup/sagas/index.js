@@ -30,13 +30,13 @@ describe("rootSaga", () => {
     expect(saga.next().value).toEqual(fork(updateTotalVolume));
     expect(saga.next().value).toEqual(fork(requestUsedVolumeTimer));
     expect(saga.next().value).toEqual(
-      takeEvery(constants.OpenSyncFolder, openSyncFolder)
+      takeEvery(constants.OPEN_SYNC_FOLDER, openSyncFolder)
     );
     expect(saga.next().value).toEqual(
-      takeEvery(constants.OpenAboutWindow, openAboutWindow)
+      takeEvery(constants.OPEN_ABOUT_WINDOW, openAboutWindow)
     );
     expect(saga.next().value).toEqual(
-      takeEvery(constants.ChangeState, changeState)
+      takeEvery(constants.CHANGE_STATE, changeState)
     );
     expect(saga.next().done).toBeTruthy();
   });

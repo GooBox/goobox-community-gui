@@ -22,72 +22,72 @@ describe("actions of popup module", () => {
   it("provides change state action", () => {
     const state = "sample state";
     expect(actions.changeState(state)).toEqual({
-      type: constants.ChangeState,
+      type: constants.CHANGE_STATE,
       payload: state,
     });
   });
 
   it("provides pause action", () => {
     expect(actions.pause()).toEqual({
-      type: constants.Pause,
+      type: constants.PAUSE,
     });
   });
 
   it("provides restart action", () => {
     expect(actions.restart()).toEqual({
-      type: constants.Restart,
+      type: constants.RESTART,
     });
   });
 
   it("provides set volume size action", () => {
     const size = 12345;
     expect(actions.setVolumeSize(size)).toEqual({
-      type: constants.SetVolumeSize,
+      type: constants.SET_VOLUME_SIZE,
       payload: size,
     });
   });
 
   it("provides open sync folder action", () => {
     expect(actions.openSyncFolder()).toEqual({
-      type: constants.OpenSyncFolder,
+      type: constants.OPEN_SYNC_FOLDER,
     });
   });
 
   it("provides open about window action", () => {
     expect(actions.openAboutWindow()).toEqual({
-      type: constants.OpenAboutWindow,
+      type: constants.OPEN_ABOUT_WINDOW,
     });
   });
 
   it("provides enable action", () => {
     expect(actions.enable()).toEqual({
-      type: constants.Enable,
+      type: constants.ENABLE,
     });
   });
 
   it("provides disable action", () => {
     expect(actions.disable()).toEqual({
-      type: constants.Disable,
+      type: constants.DISABLE,
     });
   });
 
   it("provides set total volume size action", () => {
     const size = 12345;
     expect(actions.setTotalVolumeSize(size)).toEqual({
-      type: constants.SetTotalVolumeSize,
+      type: constants.SET_TOTAL_VOLUME_SIZE,
       payload: size,
     });
   });
 
   it("provides open settings action", () => {
     expect(actions.openSettings()).toEqual({
-      type: constants.OpenSettings,
+      type: constants.OPEN_SETTINGS,
     });
   });
 
   it("provides import drive action", () => {
     expect(actions.importDrive()).toEqual({
-      type: constants.ImportDrive,
+      type: constants.IMPORT_DRIVE,
     });
   });
 });
