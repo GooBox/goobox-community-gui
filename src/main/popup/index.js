@@ -19,7 +19,6 @@
 import {app, dialog, Menu, systemPreferences} from "electron";
 import log from "electron-log";
 import menubar from "menubar";
-import opn from "opn";
 import path from "path";
 import {Synchronizing} from "../../constants";
 import * as ipcActionTypes from "../../ipc/constants";
@@ -106,8 +105,7 @@ export const popup = async () => {
   mb.tray.removeAllListeners("double-click");
   mb.tray.on("double-click", async () => {
     singleClicked = false;
-    const cfg = await getConfig();
-    await opn(cfg.syncFolder);
+    await handlers.openSyncFolder()();
   });
 
   mb.tray.on("right-click", () => {

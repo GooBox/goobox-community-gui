@@ -17,7 +17,6 @@
 
 import {app, BrowserWindow, dialog, Menu, systemPreferences} from "electron";
 import {menubar, menubarMock} from "menubar";
-import * as opn from "opn";
 import path from "path";
 import {Idle, Synchronizing} from "../../../src/constants";
 import * as ipcActionTypes from "../../../src/ipc/constants";
@@ -35,7 +34,6 @@ import Sia from "../../../src/main/sia";
 import Storj from "../../../src/main/storj";
 
 jest.mock("electron");
-jest.mock("opn", () => jest.fn().mockResolvedValue(null));
 jest.mock("../../../src/main/jre");
 jest.mock("../../../src/main/desktop");
 jest.mock("../../../src/main/config");
@@ -146,9 +144,11 @@ describe("main process of the popup app", () => {
 
     describe("click and double click event handler", () => {
       const syncFolder = "/tmp";
+      const openSyncFolderHandler = jest.fn();
       let clickHandler, doubleClickHandler;
       beforeAll(() => {
         getConfig.mockResolvedValue({syncFolder});
+        handlers.openSyncFolder.mockReturnValue(openSyncFolderHandler);
       });
 
       beforeEach(() => {
@@ -166,8 +166,7 @@ describe("main process of the popup app", () => {
 
       it("opens the sync folder when double clicked", async () => {
         await doubleClickHandler();
-        expect(getConfig).toHaveBeenCalled();
-        expect(opn).toHaveBeenCalledWith(syncFolder);
+        expect(openSyncFolderHandler).toHaveBeenCalled();
       });
 
       it("doesn't invokes openDirectory when both click and double click event occur", async () => {
