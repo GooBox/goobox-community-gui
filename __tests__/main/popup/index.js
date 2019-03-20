@@ -26,15 +26,7 @@ import {getConfig} from "../../../src/main/config";
 import * as desktop from "../../../src/main/desktop";
 import icons from "../../../src/main/icons";
 import {installJRE} from "../../../src/main/jre";
-import {
-  calculateUsedVolumeHandler,
-  changeStateHandler,
-  openSyncFolderHandler,
-  siaFundEventHandler,
-  themeChangedHandler,
-  updateStateHandler,
-  willQuitHandler,
-} from "../../../src/main/popup/handlers";
+import * as handlers from "../../../src/main/popup/handlers";
 import popup, {
   DefaultHeight,
   DefaultWidth,
@@ -114,22 +106,21 @@ describe("main process of the popup app", () => {
 
   it("registers willQuitEventHandler", async () => {
     const handler = "expected handler";
-    willQuitHandler.mockReturnValueOnce(handler);
+    handlers.willQuit.mockReturnValueOnce(handler);
     await popup();
     expect(menubarMock.app.on).toHaveBeenCalledWith("will-quit", handler);
-    expect(willQuitHandler).toHaveBeenCalledWith(menubarMock.app);
+    expect(handlers.willQuit).toHaveBeenCalledWith(menubarMock.app);
   });
 
   it("subscribes AppleInterfaceThemeChangedNotification event", async () => {
     const cb = "cb";
-    themeChangedHandler.mockReturnValueOnce(cb);
-
+    handlers.changeTheme.mockReturnValue(cb);
     await popup();
     expect(systemPreferences.subscribeNotification).toHaveBeenCalledWith(
       "AppleInterfaceThemeChangedNotification",
       cb
     );
-    expect(themeChangedHandler).toHaveBeenCalledWith(menubarMock);
+    expect(handlers.changeTheme).toHaveBeenCalledWith(menubarMock);
   });
 
   it("prepare desktop integration", async () => {
@@ -215,43 +206,43 @@ describe("main process of the popup app", () => {
 
   describe("management of GUI event handlers", () => {
     beforeAll(() => {
-      changeStateHandler.mockReturnValue("changeStateHandler");
-      openSyncFolderHandler.mockReturnValue("openSyncFolderHandler");
-      calculateUsedVolumeHandler.mockReturnValue("calculateUsedVolumeHandler");
+      handlers.changeState.mockReturnValue("changeStateHandler");
+      handlers.openSyncFolder.mockReturnValue("openSyncFolderHandler");
+      handlers.usedVolume.mockReturnValue("calculateUsedVolumeHandler");
     });
 
     it("registers changeStateHandler", async () => {
       await popup();
       expect(addListener).toHaveBeenCalledWith(
         ipcActionTypes.ChangeState,
-        changeStateHandler()
+        handlers.changeState()
       );
-      expect(changeStateHandler).toHaveBeenCalledWith(menubarMock);
+      expect(handlers.changeState).toHaveBeenCalledWith(menubarMock);
     });
 
     it("registers openSyncFolderHandler", async () => {
       await popup();
       expect(addListener).toHaveBeenCalledWith(
         ipcActionTypes.OpenSyncFolder,
-        openSyncFolderHandler()
+        handlers.openSyncFolder()
       );
-      expect(openSyncFolderHandler).toHaveBeenCalled();
+      expect(handlers.openSyncFolder).toHaveBeenCalled();
     });
 
     it("registers calculateUsedVolumeHandler", async () => {
       await popup();
       expect(addListener).toHaveBeenCalledWith(
         ipcActionTypes.CalculateUsedVolume,
-        calculateUsedVolumeHandler()
+        handlers.usedVolume()
       );
-      expect(calculateUsedVolumeHandler).toHaveBeenCalled();
+      expect(handlers.usedVolume).toHaveBeenCalled();
     });
   });
 
   describe("sync-storj/sync-sia integration", () => {
     beforeAll(() => {
-      updateStateHandler.mockReturnValue("updateStateHandler");
-      siaFundEventHandler.mockReturnValue("siaFundEventHandler");
+      handlers.updateState.mockReturnValue("updateStateHandler");
+      handlers.siaFund.mockReturnValue("siaFundEventHandler");
     });
 
     let storjStart, storjOn, siaStart, siaOn;
@@ -310,8 +301,8 @@ describe("main process of the popup app", () => {
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
-      expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
+      expect(storjOn).toHaveBeenCalledWith("syncState", handlers.updateState());
+      expect(handlers.updateState).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -326,8 +317,8 @@ describe("main process of the popup app", () => {
       await popup();
       expect(getConfig).toHaveBeenCalled();
       expect(storjStart).not.toHaveBeenCalled();
-      expect(storjOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
+      expect(storjOn).toHaveBeenCalledWith("syncState", handlers.updateState());
+      expect(handlers.updateState).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -355,8 +346,8 @@ describe("main process of the popup app", () => {
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
-      expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
+      expect(siaOn).toHaveBeenCalledWith("syncState", handlers.updateState());
+      expect(handlers.updateState).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -367,8 +358,8 @@ describe("main process of the popup app", () => {
 
       await popup();
       expect(getConfig).toHaveBeenCalled();
-      expect(siaOn).toHaveBeenCalledWith("walletInfo", siaFundEventHandler());
-      expect(siaFundEventHandler).toHaveBeenCalled();
+      expect(siaOn).toHaveBeenCalledWith("walletInfo", handlers.siaFund());
+      expect(handlers.siaFund).toHaveBeenCalled();
       expect(app.quit).not.toHaveBeenCalled();
     });
 
@@ -384,8 +375,8 @@ describe("main process of the popup app", () => {
       await popup();
       expect(getConfig).toHaveBeenCalled();
       expect(siaStart).not.toHaveBeenCalled();
-      expect(siaOn).toHaveBeenCalledWith("syncState", updateStateHandler());
-      expect(updateStateHandler).toHaveBeenCalledWith(menubarMock);
+      expect(siaOn).toHaveBeenCalledWith("syncState", handlers.updateState());
+      expect(handlers.updateState).toHaveBeenCalledWith(menubarMock);
       expect(app.quit).not.toHaveBeenCalled();
 
       expect(menubarMock.tray.setImage).toHaveBeenCalledWith(

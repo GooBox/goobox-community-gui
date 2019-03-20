@@ -30,15 +30,7 @@ import icons from "../icons";
 import {installJRE} from "../jre";
 import Sia from "../sia";
 import Storj from "../storj";
-import {
-  calculateUsedVolumeHandler,
-  changeStateHandler,
-  openSyncFolderHandler,
-  siaFundEventHandler,
-  themeChangedHandler,
-  updateStateHandler,
-  willQuitHandler,
-} from "./handlers";
+import * as handlers from "./handlers";
 
 export const DefaultWidth = 360;
 export const DefaultHeight = 340;
@@ -64,7 +56,7 @@ export const popup = async () => {
   });
   mb.window.setSkipTaskbar(true);
   mb.app.on("window-all-closed", app.quit);
-  mb.app.on("will-quit", willQuitHandler(mb.app));
+  mb.app.on("will-quit", handlers.willQuit(mb.app));
   mb.app.on("quit", (_, code) =>
     log.info(`[GUI main] Goobox is closed: status code = ${code}`)
   );
@@ -129,18 +121,18 @@ export const popup = async () => {
 
   // Register GUI event handlers.
   log.debug("[GUI main] Register changeStateHandler");
-  addListener(ipcActionTypes.ChangeState, changeStateHandler(mb));
+  addListener(ipcActionTypes.ChangeState, handlers.changeState(mb));
   log.debug("[GUI main] Register openSyncFolderHandler");
-  addListener(ipcActionTypes.OpenSyncFolder, openSyncFolderHandler());
+  addListener(ipcActionTypes.OpenSyncFolder, handlers.openSyncFolder());
   log.debug("[GUI main] Register calculateUsedVolumeHandler");
-  addListener(ipcActionTypes.CalculateUsedVolume, calculateUsedVolumeHandler());
+  addListener(ipcActionTypes.CalculateUsedVolume, handlers.usedVolume());
   if (systemPreferences.subscribeNotification) {
     log.debug(
       "[GUI main] Register AppleInterfaceThemeChangedNotification event handler"
     );
     systemPreferences.subscribeNotification(
       "AppleInterfaceThemeChangedNotification",
-      themeChangedHandler(mb)
+      handlers.changeTheme(mb)
     );
   }
 
@@ -161,7 +153,7 @@ export const popup = async () => {
     }
     if (global.storj) {
       log.debug("[GUI main] Register updateStateHandler");
-      global.storj.on("syncState", updateStateHandler(mb));
+      global.storj.on("syncState", handlers.updateState(mb));
     }
 
     // Start sync-sia app.
@@ -171,9 +163,9 @@ export const popup = async () => {
     }
     if (global.sia) {
       log.debug("[GUI main] Register updateStateHandler");
-      global.sia.on("syncState", updateStateHandler(mb));
+      global.sia.on("syncState", handlers.updateState(mb));
       log.debug("[GUI main] Register siaFundEventHandler");
-      global.sia.on("walletInfo", siaFundEventHandler());
+      global.sia.on("walletInfo", handlers.siaFund());
 
       mb.tray.setImage(
         global.sia.syncState === Synchronizing
