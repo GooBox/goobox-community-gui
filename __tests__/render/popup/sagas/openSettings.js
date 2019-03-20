@@ -32,4 +32,11 @@ describe("openSettings", () => {
     );
     expect(saga.next(true).done);
   });
+
+  it("doesn't return any error even if openItem fails", () => {
+    expect(saga.next().value).toEqual(
+      call(shell.openItem, log.transports.file.file)
+    );
+    expect(saga.next(false).done);
+  });
 });

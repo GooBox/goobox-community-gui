@@ -65,6 +65,11 @@ describe("Status component", () => {
     expect(onClickSyncFolder).toHaveBeenCalledTimes(1);
   });
 
+  it("has an import drive button", () => {
+    wrapper.find("#import-drive").simulate("click");
+    expect(onClickImportDrive).toHaveBeenCalledTimes(1);
+  });
+
   it("has a footer", () => {
     const footer = wrapper.find(Footer);
     expect(footer.exists()).toBeTruthy();
@@ -96,6 +101,9 @@ describe("Status component", () => {
 
     wrapper.find(".sync-folder").simulate("click");
     expect(onClickSyncFolder).not.toHaveBeenCalled();
+
+    wrapper.find("#import-drive").simulate("click");
+    expect(onClickImportDrive).not.toHaveBeenCalled();
 
     wrapper.find(Footer).prop("onChangeState")(Paused);
     expect(onChangeState).not.toHaveBeenCalled();
