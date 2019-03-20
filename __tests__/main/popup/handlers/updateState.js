@@ -39,4 +39,10 @@ describe("updateState event handler", () => {
     expect(menubarMock.tray.setImage).toHaveBeenCalledWith(icons.getIdleIcon());
     expect(menubarMock.appState).toEqual(Idle);
   });
+
+  it("doesn't throw an error even if an unknown state is given", async () => {
+    await expect(
+      handler({newState: "a wrong state"})
+    ).resolves.not.toBeDefined();
+  });
 });

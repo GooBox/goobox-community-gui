@@ -27,4 +27,4 @@ export const openSyncFolder = () => async () => {
   }
 };
 
-export default openSyncFolder();
+export default openSyncFolder;
