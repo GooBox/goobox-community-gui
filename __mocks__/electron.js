@@ -86,3 +86,7 @@ export const systemPreferences = {
   isDarkMode: jest.fn(),
   subscribeNotification: jest.fn(),
 };
+
+export const shell = {
+  openItem: jest.fn().mockReturnValue(true),
+};

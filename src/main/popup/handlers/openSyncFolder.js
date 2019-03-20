@@ -15,26 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {shell} from "electron";
 import log from "electron-log";
-import {call, put} from "redux-saga/effects";
-import {Synchronizing} from "../../../constants";
-import * as ipcActions from "../../../ipc/actions";
-import sendAsync from "../../../ipc/send";
-import * as actions from "../modules/actions";
+import {getConfig} from "../../config";
 
-export default function* changeState(action) {
-  yield put(actions.disable());
-  try {
-    const res = yield call(sendAsync, ipcActions.changeState(action.payload));
-    if (res === Synchronizing) {
-      yield put(actions.restart());
-    } else {
-      yield put(actions.pause());
-    }
-  } catch (err) {
-    // TODO: error handling.
-    log.error(`changeState saga catches an error: ${err}`);
-  } finally {
-    yield put(actions.enable());
+export const openSyncFolder = () => async () => {
+  const cfg = await getConfig();
+  log.info(`[GUI main] Open sync folder ${cfg.syncFolder}`);
+  if (!shell.openItem(cfg.syncFolder)) {
+    log.warn("[GUI main] failed to open the the sync folder");
   }
-}
+};
+
+export default openSyncFolder;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import "~bootstrap/dist/css/bootstrap.css";
+/*noinspection CssUnknownTarget*/
 @import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
 
 * {
@@ -70,6 +71,14 @@ section i {
   cursor: default;
 }
 
+.disabled {
+  cursor: wait !important;
+}
+
+.disabled * {
+  cursor: wait !important;
+}
+
 a {
   color: white;
   text-decoration: none;
@@ -115,11 +124,6 @@ button:active {
   display: inline-block;
 }
 
-#settings-btn {
-  /*Hide this button until setting screen is implemented*/
-  display: none;
-  /*display: inline-block;*/
-}
 
 #import-drive {
   /*Hide this component until import drive button is implemented*/
@@ -129,3 +133,4 @@ button:active {
 ::selection {
   background: transparent;
 }
+

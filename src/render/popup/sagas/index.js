@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
  */
 
 import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../constants";
+import * as types from "../modules/types";
 import changeState from "./changeState";
 import openAboutWindow from "./openAboutWindow";
+import openSettings from "./openSettings";
 import openSyncFolder from "./openSyncFolder";
 import requestUsedVolumeTimer from "./requestUsedVolume";
 import updateTotalVolume from "./updateTotalVolume";
@@ -26,7 +27,8 @@ import updateTotalVolume from "./updateTotalVolume";
 export default function* rootSaga() {
   yield fork(updateTotalVolume);
   yield fork(requestUsedVolumeTimer);
-  yield takeEvery(constants.OpenSyncFolder, openSyncFolder);
-  yield takeEvery(constants.OpenAboutWindow, openAboutWindow);
-  yield takeEvery(constants.ChangeState, changeState);
+  yield takeEvery(types.OPEN_SYNC_FOLDER, openSyncFolder);
+  yield takeEvery(types.OPEN_SETTINGS, openSettings);
+  yield takeEvery(types.OPEN_ABOUT_WINDOW, openAboutWindow);
+  yield takeEvery(types.CHANGE_STATE, changeState);
 }

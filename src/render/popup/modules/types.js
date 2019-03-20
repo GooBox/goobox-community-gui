@@ -15,15 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {call, put} from "redux-saga/effects";
-import {getConfig} from "../../../config";
-import * as actions from "../modules/actions";
-
-export default function* updateTotalVolume() {
-  const cfg = yield call(getConfig);
-  if (cfg.storj) {
-    yield put(actions.setTotalVolumeSize(15.654));
-  } else {
-    yield put(actions.setTotalVolumeSize(20));
-  }
-}
+export const CHANGE_STATE = "popup/CHANGE_STATE";
+export const PAUSE = "popup/PAUSE";
+export const RESTART = "popup/RESTART";
+export const SET_VOLUME_SIZE = "popup/SET_VOLUME_SIZE";
+export const SET_TOTAL_VOLUME_SIZE = "popup/SET_TOTAL_VOLUME_SIZE";
+export const OPEN_SYNC_FOLDER = "popup/OPEN_SYNC_FOLDER";
+export const OPEN_ABOUT_WINDOW = "popup/OPEN_ABOUT_WINDOW";
+export const DISABLE = "popup/DISABLE";
+export const ENABLE = "popup/ENABLE";
+export const OPEN_SETTINGS = "popup/OPEN_SETTINGS";
+export const IMPORT_DRIVE = "popup/IMPORT_DRIVE";

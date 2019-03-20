@@ -15,6 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export const transports = {
+  file: {file: "dummy-file"},
+};
+
 export const log = () => {};
 export const info = () => {};
 export const debug = () => {};
@@ -35,4 +39,5 @@ export default {
   warn,
   error,
   silly,
+  transports,
 };

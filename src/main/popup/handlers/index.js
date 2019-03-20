@@ -15,15 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {call, put} from "redux-saga/effects";
-import {getConfig} from "../../../config";
-import * as actions from "../modules/actions";
-
-export default function* updateTotalVolume() {
-  const cfg = yield call(getConfig);
-  if (cfg.storj) {
-    yield put(actions.setTotalVolumeSize(15.654));
-  } else {
-    yield put(actions.setTotalVolumeSize(20));
-  }
-}
+export * from "./changeState";
+export * from "./changeTheme";
+export * from "./openSyncFolder";
+export * from "./siaFund";
+export * from "./updateState";
+export * from "./usedVolume";
+export * from "./willQuit";

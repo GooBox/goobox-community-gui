@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 import {handleActions} from "redux-actions";
 import {Paused, Synchronizing} from "../../../constants";
-import * as constants from "../constants";
+import * as types from "./types";
 
 export const InitialState = {
   state: Synchronizing,
@@ -26,32 +26,34 @@ export const InitialState = {
   disabled: false,
 };
 
-export default handleActions(
+export const reducer = handleActions(
   {
-    [constants.Pause]: state => ({
+    [types.PAUSE]: state => ({
       ...state,
       state: Paused,
     }),
-    [constants.Restart]: state => ({
+    [types.RESTART]: state => ({
       ...state,
       state: Synchronizing,
     }),
-    [constants.Enable]: state => ({
+    [types.ENABLE]: state => ({
       ...state,
       disabled: false,
     }),
-    [constants.Disable]: state => ({
+    [types.DISABLE]: state => ({
       ...state,
       disabled: true,
     }),
-    [constants.SetVolumeSize]: (state, action) => ({
+    [types.SET_VOLUME_SIZE]: (state, action) => ({
       ...state,
       usedVolume: action.payload,
     }),
-    [constants.SetTotalVolumeSize]: (state, action) => ({
+    [types.SET_TOTAL_VOLUME_SIZE]: (state, action) => ({
       ...state,
       totalVolume: action.payload,
     }),
   },
   InitialState
 );
+
+export default reducer;

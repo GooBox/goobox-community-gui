@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,11 @@
  */
 
 import {fork, takeEvery} from "redux-saga/effects";
-import * as constants from "../../../../src/render/popup/constants";
+import * as types from "../../../../src/render/popup/modules/types";
 import changeState from "../../../../src/render/popup/sagas/changeState";
 import rootSaga from "../../../../src/render/popup/sagas/index";
 import openAboutWindow from "../../../../src/render/popup/sagas/openAboutWindow";
+import openSettings from "../../../../src/render/popup/sagas/openSettings";
 import openSyncFolder from "../../../../src/render/popup/sagas/openSyncFolder";
 import requestUsedVolumeTimer from "../../../../src/render/popup/sagas/requestUsedVolume";
 import updateTotalVolume from "../../../../src/render/popup/sagas/updateTotalVolume";
@@ -30,13 +31,16 @@ describe("rootSaga", () => {
     expect(saga.next().value).toEqual(fork(updateTotalVolume));
     expect(saga.next().value).toEqual(fork(requestUsedVolumeTimer));
     expect(saga.next().value).toEqual(
-      takeEvery(constants.OpenSyncFolder, openSyncFolder)
+      takeEvery(types.OPEN_SYNC_FOLDER, openSyncFolder)
     );
     expect(saga.next().value).toEqual(
-      takeEvery(constants.OpenAboutWindow, openAboutWindow)
+      takeEvery(types.OPEN_SETTINGS, openSettings)
     );
     expect(saga.next().value).toEqual(
-      takeEvery(constants.ChangeState, changeState)
+      takeEvery(types.OPEN_ABOUT_WINDOW, openAboutWindow)
+    );
+    expect(saga.next().value).toEqual(
+      takeEvery(types.CHANGE_STATE, changeState)
     );
     expect(saga.next().done).toBeTruthy();
   });

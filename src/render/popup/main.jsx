@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import createSagaMiddleware from "redux-saga";
 import {createLogger} from "../logger";
 import Status from "./containers/status";
 import "./main.css";
-import reducer from "./reducers";
+import reducer from "./modules";
 import rootSaga from "./sagas";
 
 const configureStore = () => {

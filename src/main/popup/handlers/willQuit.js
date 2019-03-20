@@ -16,25 +16,26 @@
  */
 
 import log from "electron-log";
-import {call, put} from "redux-saga/effects";
-import {Synchronizing} from "../../../constants";
-import * as ipcActions from "../../../ipc/actions";
-import sendAsync from "../../../ipc/send";
-import * as actions from "../modules/actions";
 
-export default function* changeState(action) {
-  yield put(actions.disable());
-  try {
-    const res = yield call(sendAsync, ipcActions.changeState(action.payload));
-    if (res === Synchronizing) {
-      yield put(actions.restart());
-    } else {
-      yield put(actions.pause());
-    }
-  } catch (err) {
-    // TODO: error handling.
-    log.error(`changeState saga catches an error: ${err}`);
-  } finally {
-    yield put(actions.enable());
+export const willQuit = app => async event => {
+  if (
+    (!global.storj || global.storj.closed) &&
+    (!global.sia || global.sia.closed)
+  ) {
+    return;
   }
-}
+  log.info(
+    "[GUI main] Goobox will quit but synchronization processes are still running"
+  );
+  event.preventDefault();
+
+  if (global.storj) {
+    await global.storj.close();
+  }
+  if (global.sia) {
+    await global.sia.close();
+  }
+  app.exit();
+};
+
+export default willQuit;

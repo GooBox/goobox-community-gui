@@ -15,35 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {connect} from "react-redux";
-import Status from "../components/status";
-import * as actions from "../modules";
+import {shell} from "electron";
+import log from "electron-log";
+import {call} from "redux-saga/effects";
+import openSettings from "../../../../src/render/popup/sagas/openSettings";
 
-export const mapStateToProps = ({
-  disabled,
-  usedVolume,
-  totalVolume,
-  state,
-}) => ({
-  disabled,
-  usedVolume,
-  totalVolume,
-  state,
+describe("openSettings", () => {
+  let saga;
+  beforeEach(() => {
+    saga = openSettings();
+  });
+
+  it("calls shell.openItem", () => {
+    expect(saga.next().value).toEqual(
+      call(shell.openItem, log.transports.file.file)
+    );
+    expect(saga.next(true).done);
+  });
+
+  it("doesn't return any error even if openItem fails", () => {
+    expect(saga.next().value).toEqual(
+      call(shell.openItem, log.transports.file.file)
+    );
+    expect(saga.next(false).done);
+  });
 });
-
-export const mapDispatchToProps = dispatch => ({
-  onChangeState: args => dispatch(actions.changeState(args)),
-
-  onClickSyncFolder: () => dispatch(actions.openSyncFolder()),
-
-  onClickInfo: () => dispatch(actions.openAboutWindow()),
-
-  onClickSettings: () => dispatch(actions.openSettings()),
-
-  onClickImportDrive: () => dispatch(actions.importDrive()),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Status);

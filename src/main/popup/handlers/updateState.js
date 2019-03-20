@@ -16,25 +16,30 @@
  */
 
 import log from "electron-log";
-import {call, put} from "redux-saga/effects";
-import {Synchronizing} from "../../../constants";
-import * as ipcActions from "../../../ipc/actions";
-import sendAsync from "../../../ipc/send";
-import * as actions from "../modules/actions";
+import {Idle, Synchronizing} from "../../../constants";
+import icons from "../../icons";
 
-export default function* changeState(action) {
-  yield put(actions.disable());
-  try {
-    const res = yield call(sendAsync, ipcActions.changeState(action.payload));
-    if (res === Synchronizing) {
-      yield put(actions.restart());
-    } else {
-      yield put(actions.pause());
-    }
-  } catch (err) {
-    // TODO: error handling.
-    log.error(`changeState saga catches an error: ${err}`);
-  } finally {
-    yield put(actions.enable());
+export const updateState = mb => async payload => {
+  switch (payload.newState) {
+    case Synchronizing:
+      log.debug("[GUI main] Set the synchronizing icon");
+      mb.tray.setImage(icons.getSyncIcon());
+      mb.appState = Synchronizing;
+      break;
+
+    case Idle:
+      log.debug("[GUI main] Set the idle icon");
+      mb.tray.setImage(icons.getIdleIcon());
+      mb.appState = Idle;
+      break;
+
+    default:
+      log.debug(
+        `[GUI main] Received argument ${JSON.stringify(
+          payload
+        )} is not handled in updateStateHandler`
+      );
   }
-}
+};
+
+export default updateState;

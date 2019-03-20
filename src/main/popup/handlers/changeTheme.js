@@ -15,15 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {call, put} from "redux-saga/effects";
-import {getConfig} from "../../../config";
-import * as actions from "../modules/actions";
+import {Idle, Paused, Synchronizing} from "../../../constants";
+import icons from "../../icons";
 
-export default function* updateTotalVolume() {
-  const cfg = yield call(getConfig);
-  if (cfg.storj) {
-    yield put(actions.setTotalVolumeSize(15.654));
-  } else {
-    yield put(actions.setTotalVolumeSize(20));
+export const changeTheme = mb => async () => {
+  switch (mb.appState) {
+    case Synchronizing:
+      mb.tray.setImage(icons.getSyncIcon());
+      break;
+    case Paused:
+      mb.tray.setImage(icons.getPausedIcon());
+      break;
+    case Idle:
+    default:
+      mb.tray.setImage(icons.getIdleIcon());
   }
-}
+};
+
+export default changeTheme;

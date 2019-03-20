@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,42 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import React from "react";
-import {Paused, Synchronizing} from "../../../constants";
-
-const PauseBtn = ({onChangeState}) => (
-  <button
-    className="pause-sync-btn btn btn-link"
-    type="button"
-    onClick={() => onChangeState(Paused)}
-  >
-    <FontAwesomeIcon className="state-icon" icon={["far", "pause-circle"]} />
-    &nbsp;
-    <span className="state-text">Goobox is up to date.</span>
-  </button>
-);
-
-PauseBtn.propTypes = {
-  onChangeState: PropTypes.func.isRequired,
-};
-
-const RestartBtn = ({onChangeState}) => (
-  <button
-    className="sync-again-btn btn btn-link"
-    type="button"
-    onClick={() => onChangeState(Synchronizing)}
-  >
-    <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]} />
-    &nbsp;
-    <span className="state-text">File transfers paused.</span>
-  </button>
-);
-
-RestartBtn.propTypes = {
-  onChangeState: PropTypes.func.isRequired,
-};
+import {Synchronizing} from "../../../constants";
+import {PauseBtn, RestartBtn} from "./buttons";
 
 export const Footer = ({state, totalVolume, usedVolume, onChangeState}) => (
   <footer className="d-flex px-3 py-2 mt-auto">

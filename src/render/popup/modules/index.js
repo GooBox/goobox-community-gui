@@ -15,15 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {call, put} from "redux-saga/effects";
-import {getConfig} from "../../../config";
-import * as actions from "../modules/actions";
+import reducer from "./reducers";
 
-export default function* updateTotalVolume() {
-  const cfg = yield call(getConfig);
-  if (cfg.storj) {
-    yield put(actions.setTotalVolumeSize(15.654));
-  } else {
-    yield put(actions.setTotalVolumeSize(20));
-  }
-}
+export * from "./actions";
+export * from "./types";
+export {reducer};
+export default reducer;

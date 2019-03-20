@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Junpei Kawamoto
+ * Copyright (C) 2017-2019 Junpei Kawamoto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const ChangeState = "ChangeState";
-export const Pause = "Pause";
-export const Restart = "Restart";
-export const SetVolumeSize = "SetVolumeSize";
-export const SetTotalVolumeSize = "SetTotalVolumeSize";
-export const OpenSyncFolder = "OpenSyncFolder";
-export const OpenAboutWindow = "OpenAboutWindow";
-export const Disable = "Disable";
-export const Enable = "Enable";
-export const OpenSettings = "OpenSettings";
-export const ImportDrive = "ImportDrive";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
+import React from "react";
+import {Paused} from "../../../../constants";
+
+export const PauseBtn = ({onChangeState}) => (
+  <button
+    className="pause-sync-btn btn btn-link"
+    type="button"
+    onClick={() => onChangeState(Paused)}
+  >
+    <FontAwesomeIcon className="state-icon" icon={["far", "pause-circle"]} />
+    &nbsp;
+    <span className="state-text">Goobox is up to date.</span>
+  </button>
+);
+
+PauseBtn.propTypes = {
+  onChangeState: PropTypes.func.isRequired,
+};
+
+export default PauseBtn;

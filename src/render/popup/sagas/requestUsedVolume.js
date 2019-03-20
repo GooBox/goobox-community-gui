@@ -19,7 +19,7 @@ import log from "electron-log";
 import {call, delay, put} from "redux-saga/effects";
 import * as ipcActions from "../../../ipc/actions";
 import sendAsync from "../../../ipc/send";
-import {setVolumeSize} from "../actions";
+import {setVolumeSize} from "../modules/actions";
 
 export default function* requestUsedVolumeTimer() {
   while (true) {

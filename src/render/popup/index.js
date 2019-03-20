@@ -24,8 +24,11 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import {webFrame} from "electron";
+import log from "electron-log";
 import ReactDOM from "react-dom";
 import {initPopup} from "./main";
+
+log.info("[GUI render] Setting up the popup window");
 
 library.add(
   faPauseCircle,

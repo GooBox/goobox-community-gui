@@ -15,15 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {call, put} from "redux-saga/effects";
-import {getConfig} from "../../../config";
-import * as actions from "../modules/actions";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import PropTypes from "prop-types";
+import React from "react";
+import {Synchronizing} from "../../../../constants";
 
-export default function* updateTotalVolume() {
-  const cfg = yield call(getConfig);
-  if (cfg.storj) {
-    yield put(actions.setTotalVolumeSize(15.654));
-  } else {
-    yield put(actions.setTotalVolumeSize(20));
-  }
-}
+export const RestartBtn = ({onChangeState}) => (
+  <button
+    className="sync-again-btn btn btn-link"
+    type="button"
+    onClick={() => onChangeState(Synchronizing)}
+  >
+    <FontAwesomeIcon className="state-icon" icon={["far", "play-circle"]} />
+    &nbsp;
+    <span className="state-text">File transfers paused.</span>
+  </button>
+);
+
+RestartBtn.propTypes = {
+  onChangeState: PropTypes.func.isRequired,
+};
+
+export default RestartBtn;

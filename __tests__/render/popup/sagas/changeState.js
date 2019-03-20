@@ -19,7 +19,7 @@ import {call, put} from "redux-saga/effects";
 import {Paused, Synchronizing} from "../../../../src/constants";
 import * as ipcActions from "../../../../src/ipc/actions";
 import sendAsync from "../../../../src/ipc/send";
-import * as actions from "../../../../src/render/popup/actions/index";
+import * as actions from "../../../../src/render/popup/modules";
 import changeState from "../../../../src/render/popup/sagas/changeState";
 
 describe("changeState", () => {
