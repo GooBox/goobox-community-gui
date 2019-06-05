@@ -28,16 +28,16 @@ brew tap jkawamoto/pixeldrain
 brew install pixeldrain
 pd -v
 
-WIN_ID=$(basename $(pd upload dist/Goobox-0.3.1-setup_x64.exe -n Goobox-0.3.1-setup_x64.exe))
+WIN_ID=$(basename $(pd upload dist/Goobox-0.3.2-setup_x64.exe -n Goobox-0.3.2-setup_x64.exe))
 echo "Dev build for Windows is uploaded at ${WIN_ID}"
 
-MAC_ID=$(basename $(pd upload dist/Goobox-0.3.1.dmg -n Goobox-0.3.1.dmg))
+MAC_ID=$(basename $(pd upload dist/Goobox-0.3.2.dmg -n Goobox-0.3.2.dmg))
 echo "Dev build for MacOS is uploaded at ${MAC_ID}"
 
-LINUX_ID=$(basename $(pd upload dist/Goobox-0.3.1-x86_64.AppImage -n Goobox-0.3.1-x86_64.AppImage))
+LINUX_ID=$(basename $(pd upload dist/Goobox-0.3.2-x86_64.AppImage -n Goobox-0.3.2-x86_64.AppImage))
 echo "Dev build for Linux is uploaded at ${LINUX_ID}"
 
-LIST_URL=$(pd create-list -t "Goobox-0.3.1" ${WIN_ID}:Goobox-0.3.1-setup_x64.exe ${MAC_ID}:Goobox-0.3.1.dmg ${LINUX_ID}:Goobox-0.3.1-x86_64.AppImage)
+LIST_URL=$(pd create-list -t "Goobox-0.3.2" ${WIN_ID}:Goobox-0.3.2-setup_x64.exe ${MAC_ID}:Goobox-0.3.2.dmg ${LINUX_ID}:Goobox-0.3.2-x86_64.AppImage)
 echo "Download page for the dev builds are set up at ${LIST_URL}"
 
 curl -XPOST -H 'Content-Type:application/json' $DISCORD_WEBHOOK -d @- <<EOF
